@@ -1,0 +1,4 @@
+pylama
+nose
+coverage
+coveralls
