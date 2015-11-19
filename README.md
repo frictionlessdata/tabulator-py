@@ -7,6 +7,8 @@ A utility library that provides a consistent interface for reading tabular data
 
 ## Usage
 
+This section is intended to be used by end-users of the library.
+
 ### Getting Started
 
 To get started (under development):
@@ -19,6 +21,8 @@ pip install tabulator
 
 This section is intended to be used by tech users collaborating
 on this project.
+
+Development environment is based on `npm/gulp` as interface for developers to interact with the project.
 
 ### Getting Started
 
