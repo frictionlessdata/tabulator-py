@@ -7,4 +7,49 @@ A utility library that provides a consistent interface for reading tabular data
 
 ## Usage
 
+### Getting Started
+
+To get started (under development):
+
+```
+pip install tabulator
+```
+
 ## Development
+
+This section is intended to be used by tech users collaborating
+on this project.
+
+### Getting Started
+
+To get started activate virtual environments and install
+dependencies by command:
+
+```
+source activate.dev.sh
+```
+
+**Before pushing changes back check code style and tests**:
+
+```
+npm run check
+```
+
+### Reviewing
+
+The project follow the next style guides:
+- [Open Knowledge Coding Standards and Style Guide](https://github.com/okfn/coding-standards)
+- [PEP 8 - Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
+
+To check the project against Python style guide:
+```
+$ npm run review
+```
+
+### Testing
+
+To run tests with coverage check:
+```
+$ npm run test
+```
+Coverage data will be in the `.coverage` file.
