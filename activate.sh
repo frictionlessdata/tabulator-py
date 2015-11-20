@@ -8,4 +8,5 @@ pip install -r requirements.txt
 pip install -r requirements.dev.txt
 if [ ! -f .git/hooks/pre-commit ]; then
     echo -e "#!/bin/sh\n\n\nnpm run check" > .git/hooks/pre-commit
+    chmod +x .git/hooks/pre-commit
 fi
