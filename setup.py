@@ -30,7 +30,6 @@ setup(
     include_package_data=True,
     packages=find_packages(exclude=['examples', 'tests']),
     package_dir={package['slug']: package['slug']},
-    include_package_data=True,
     install_requires=requirements,
     tests_require=requirements_dev,
     test_suite='nose.collector',
