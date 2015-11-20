@@ -30,7 +30,7 @@ To get started activate virtual environments and install
 dependencies by command:
 
 ```
-source activate.dev.sh
+source activate.sh
 ```
 
 **Before pushing changes back check code style and tests**:
