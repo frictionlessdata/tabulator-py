@@ -61,3 +61,6 @@ node_modules/
 
 # Virtualenv
 venv/
+
+# Tmux
+.tmuxp.yml
