@@ -26,17 +26,14 @@ Development environment is based on `npm/gulp` as interface for developers to in
 
 ### Getting Started
 
-To get started activate virtual environments and install
-dependencies by command:
+Ensure you have `nvm` and `Python` installed.
+
+To get started activate virtual environments, install
+dependencies and add pre-commit hook to review and test code
+by command:
 
 ```
 source activate.sh
-```
-
-**Before pushing changes back check code style and tests**:
-
-```
-npm run check
 ```
 
 ### Reviewing
