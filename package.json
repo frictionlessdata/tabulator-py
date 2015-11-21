@@ -32,7 +32,7 @@
   "scripts": {
     "check": "npm run review && npm run test",
     "review": "pylama tabulator",
-    "test": "nosetests tests --with-coverage --cover-package tabulator"
+    "test": "nosetests tests -sv --with-coverage --cover-package tabulator"
   }
 
 }

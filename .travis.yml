@@ -10,7 +10,7 @@ install:
 
 script:
   - pylama tabulator
-  - nosetests tests --with-coverage --cover-package tabulator
+  - nosetests tests -sv --with-coverage --cover-package tabulator
 
 after_success:
   - coveralls
