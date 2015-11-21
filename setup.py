@@ -9,13 +9,19 @@ import json
 from setuptools import setup, find_packages
 
 
+# Helpers
+def read(path):
+    basedir = os.path.dirname(__file__)
+    return io.open(os.path.join(basedir, path), encoding='utf-8').read()
+
+
 # Prepare
-basedir = os.path.dirname(__file__)
-package = json.load(open(os.path.join(basedir, 'package.json')))
-readme = open(os.path.join(basedir, 'README.md')).read()
-license = open(os.path.join(basedir, 'LICENSE.txt')).read()
-requirements = open(os.path.join(basedir, 'requirements.txt')).read().split()
-requirements_dev = open(os.path.join(basedir, 'requirements.dev.txt')).read().split()
+readme = read('README.md')
+license = read('LICENSE.txt')
+requirements = read('requirements.txt')
+requirements_dev = read('requirements.dev.txt')
+package = json.loads(read('package.json'))
+
 
 # Run
 setup(
