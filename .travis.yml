@@ -9,8 +9,8 @@ install:
   - pip install -r requirements.dev.txt
 
 script:
-  - pylama tabulator
-  - nosetests tests -sv --with-coverage --cover-package tabulator
+  - python run.py review
+  - python run.py test
 
 after_success:
   - coveralls

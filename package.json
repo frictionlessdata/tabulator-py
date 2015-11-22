@@ -24,13 +24,8 @@
     "Topic :: Software Development :: Libraries :: Python Modules"
   ],
 
-  "private": true,
-  "engines": {
-    "node": "^4.1.0",
-    "npm": "^2.14.0"
-  },
   "scripts": {
-    "check": "npm run review && npm run test",
+    "check": "python run.py review && python run.py test",
     "review": "pylama tabulator",
     "test": "nosetests tests -sv --with-coverage --cover-package tabulator"
   }

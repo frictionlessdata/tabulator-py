@@ -22,15 +22,11 @@ pip install tabulator
 This section is intended to be used by tech users collaborating
 on this project.
 
-Development environment is based on `npm/gulp` as interface for developers to interact with the project.
-
 ### Getting Started
 
-Ensure you have `nvm` and `Python` installed.
-
-To get started activate virtual environments, install
-dependencies and add pre-commit hook to review and test code
-by command:
+To activate virtual environment, install
+dependencies, add pre-commit hook to review and test code
+and get `run` command as unified developer interface:
 
 ```
 source activate.sh
@@ -44,13 +40,13 @@ The project follow the next style guides:
 
 To check the project against Python style guide:
 ```
-$ npm run review
+$ run review
 ```
 
 ### Testing
 
 To run tests with coverage check:
 ```
-$ npm run test
+$ run test
 ```
 Coverage data will be in the `.coverage` file.
