@@ -14,7 +14,7 @@ This section is intended to be used by end-users of the library.
 To get started (under development):
 
 ```
-pip install tabulator
+$ pip install tabulator
 ```
 
 ## Development
@@ -29,7 +29,7 @@ dependencies, add pre-commit hook to review and test code
 and get `run` command as unified developer interface:
 
 ```
-source activate.sh
+$ source activate.sh
 ```
 
 ### Reviewing
