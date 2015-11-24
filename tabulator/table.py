@@ -95,12 +95,16 @@ class Table(object):
     def read(self, with_headers=False, limit=None):
         """Return full table.
         """
-        return list(self.readrow(with_headers=with_headers, limit=limit))
+        return list(self.readrow(
+            with_headers=with_headers, limit=limit))
 
     # Private
 
     def __iterate(self):
-        # TODO: check it's not closed
+        if self.closed:
+            raise RuntimeError(
+                    'Table have to be opened by `table.open()` before '
+                    'iteration interface will be available.')
         index = None
         headers = None
         for row in self.__rows:

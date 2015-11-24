@@ -10,8 +10,7 @@ class Headers(API):
         self.__headers = None
 
     def process(self, index, headers, row):
-        if self.__headers is not None:
-            headers = self.__headers
+        headers = self.__headers or headers
         if self.__index == index:
             if headers is None:
                 self.__headers = row

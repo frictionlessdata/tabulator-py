@@ -3,6 +3,8 @@ from .api import API
 
 
 class File(API):
+    """Loader to load source from filesystem.
+    """
 
     # Public
 

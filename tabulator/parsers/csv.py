@@ -4,6 +4,8 @@ from .api import API
 
 
 class CSV(API):
+    """Parser to parse CSV data format.
+    """
 
     # Public
 
