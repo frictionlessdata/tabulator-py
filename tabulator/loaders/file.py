@@ -6,9 +6,8 @@ class File(API):
 
     # Public
 
-    def __init__(self, path, encoding):
+    def __init__(self, path):
         self.__path = path
-        self.__encoding = encoding
 
     def load(self):
-        return io.open(self.__path, encoding=self.__encoding)
+        return io.open(self.__path, 'rb')

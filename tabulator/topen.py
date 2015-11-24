@@ -37,8 +37,8 @@ def topen(path, encoding, format):
     """
     # TODO: implement diff loaders
     # TODO: implement error handling
-    loader = LOADERS['file'](path, encoding=encoding)
-    parser = PARSERS[format]()
+    loader = LOADERS['file'](path)
+    parser = PARSERS[format](encoding)
     table = Table(loader=loader, parser=parser)
     table.open()
     return table

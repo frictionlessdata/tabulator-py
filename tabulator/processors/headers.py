@@ -17,6 +17,8 @@ class Headers(API):
                 self.__headers = row
                 # Reset iteration
                 index = None
+                # Skip row
+                row = None
             else:
                 # Skip row
                 row = None
