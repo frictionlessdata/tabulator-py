@@ -21,7 +21,7 @@ class API(object):
             stream (file-like): byte stream
 
         Yields:
-            row (tuple): parser row
+            values (tuple): parsed row
 
         """
         pass

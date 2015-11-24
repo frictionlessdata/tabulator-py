@@ -71,12 +71,11 @@ class Table(object):
         """Return table headers.
         """
         if self.__headers is None:
-            position = self.__stream.tell()
-            for index, headers, row in self.__iterate():
-                if headers is not None:
-                    self.__headers = headers
-                    break
-            self.__stream.seek(position)
+            if self.__stream.tell() == 0:
+                for _, _, _ in self.__iterate():
+                    if self.__headers is not None:
+                        break
+                self.__stream.seek(0)
         return self.__headers
 
     def readrow(self, with_headers=False, limit=None):
@@ -87,7 +86,8 @@ class Table(object):
                 if index > limit:
                     raise StopIteration()
             if with_headers:
-                # TODO: check for no headers
+                if headers is None:
+                    raise RuntimeError('No headers are available.')
                 Row = namedtuple('Row', headers)
                 row = Row(*row)
             yield row
@@ -95,16 +95,16 @@ class Table(object):
     def read(self, with_headers=False, limit=None):
         """Return full table.
         """
-        return list(self.readrow(
-            with_headers=with_headers, limit=limit))
+        return list(self.readrow(with_headers=with_headers, limit=limit))
 
     # Private
 
     def __iterate(self):
         if self.closed:
-            raise RuntimeError(
-                    'Table have to be opened by `table.open()` before '
-                    'iteration interface will be available.')
+            message = (
+               'Table have to be opened by `table.open()` before '
+               'iteration interface will be available.')
+            raise RuntimeError(message)
         index = None
         headers = None
         for row in self.__rows:
@@ -114,10 +114,12 @@ class Table(object):
                 index += 1
             for processor in self.__processors:
                 if index is None:
-                    self.reset()
+                    self.__stream.seek(0)
                     break
                 if row is None:
                     break
                 index, headers, row = processor.process(index, headers, row)
+            if headers is not None:
+                self.__headers = headers
             if row is not None:
                 yield (index, headers, row)

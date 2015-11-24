@@ -7,6 +7,10 @@ class API(object):
     """Processor representation.
     """
 
+    @abstractmethod
+    def __init__(self, **option):
+        pass
+
     # Public
 
     @abstractmethod

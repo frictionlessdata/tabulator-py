@@ -1,5 +1,5 @@
 import csv
-from io import TextIOWrapper
+from codecs import iterdecode
 from .api import API
 
 
@@ -9,13 +9,14 @@ class CSV(API):
 
     # Public
 
-    def __init__(self, encoding, **options):
+    def __init__(self, encoding, strategy='replace', **options):
         self.__encoding = encoding
+        self.__strategy = strategy
         self.__options = options
 
     def parse(self, stream):
         # TODO: implement Python2 support
-        text_stream = TextIOWrapper(stream, encoding=self.__encoding)
+        text_stream = iterdecode(stream, self.__encoding, self.__strategy)
         rows = csv.reader(text_stream, **self.__options)
         for row in rows:
             yield tuple(row)
