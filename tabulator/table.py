@@ -86,7 +86,8 @@ class Table(object):
             if limit is not None:
                 if index > limit:
                     raise StopIteration()
-            if headers is not None and with_headers:
+            if with_headers:
+                # TODO: check for no headers
                 Row = namedtuple('Row', headers)
                 row = Row(*row)
             yield row

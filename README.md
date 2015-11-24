@@ -35,7 +35,7 @@ with topen('path.csv', encoding='utf-8', format='csv') as table:
 To get full control over the process you can use `Table` class:
 
 ```
-from tabulator import topen, processors, loaders, parsers
+from tabulator import Table, processors, loaders, parsers
 
 table = Table(
         loader=loaders.File('path.csv', encoding='utf-8', strategy='replace'),
