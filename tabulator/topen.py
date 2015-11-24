@@ -1,11 +1,14 @@
+from six.moves.urllib.parse import urlparse
 from .table import Table
 from . import loaders, parsers
 
 
 LOADERS = {
     'file': loaders.File,
-    'ftp': loaders.FTP,
-    'http': loaders.HTTP,
+    'ftp': loaders.Web,
+    'ftps': loaders.Web,
+    'http': loaders.Web,
+    'https': loaders.Web,
 }
 
 PARSERS = {
@@ -22,8 +25,7 @@ def topen(path, encoding, format):
 
         path (str): path to source
             - file
-            - http [not implemented]
-            - ftp [not implemented]
+            - web (http(s), ftp(s))
 
         encoding (str): encoding of source
             - auto
@@ -35,9 +37,9 @@ def topen(path, encoding, format):
             - excel [not implemented]
 
     """
-    # TODO: implement diff loaders
     # TODO: implement error handling
-    loader = LOADERS['file'](path)
+    scheme = urlparse(path).scheme or 'file'
+    loader = LOADERS[scheme](path)
     parser = PARSERS[format](encoding)
     table = Table(loader=loader, parser=parser)
     table.open()
