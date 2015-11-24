@@ -43,7 +43,7 @@ table = Table(
 table.add_processor(processors.Headers(row=1))
 table.open()
 headers = table.headers
-contents = table.read(limit=100)
+contents = table.read(with_headers=True, limit=100)
 print(headers, contents)
 table.close()
 ```
