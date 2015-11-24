@@ -17,6 +17,37 @@ To get started (under development):
 $ pip install tabulator
 ```
 
+### Simple interface
+
+Fast access to the table with `topen` (stands for `table open`) function:
+
+```
+from tabulator import topen, processors
+
+with topen('path.csv', encoding='utf-8', format='csv') as table:
+    table.add_processor(processors.Headers(row=1))
+    for row in table.readrow(with_headers=True):
+        print(row)
+```
+
+### Advanced interface
+
+To get full control over the process you can use `Table` class:
+
+```
+from tabulator import topen, processors, loaders, parsers
+
+table = Table(
+        loader=loaders.File('path.csv', encoding='utf-8', strategy='replace'),
+        parser=parsers.CSV(delimiter=',', quotechar='|'))
+table.add_processor(processors.Headers(row=1))
+table.open()
+headers = table.headers
+contents = table.read(limit=100)
+print(headers, contents)
+table.close()
+```
+
 ## Development
 
 This section is intended to be used by tech users collaborating
