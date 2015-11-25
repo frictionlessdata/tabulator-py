@@ -12,6 +12,8 @@ class JSON(API):
         self.__path = path
 
     def parse(self, stream):
-        rows = ijson.items(stream, 'item')
-        for row in rows:
-            yield row
+        items = ijson.items(stream, 'item')
+        for item in items:
+            keys = tuple(item.keys())
+            values = tuple(item.values())
+            yield keys, values

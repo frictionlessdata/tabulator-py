@@ -22,8 +22,8 @@ class Table(object):
         self.__loader = loader
         self.__parser = parser
         self.__processors = []
-        self.__stream = None
-        self.__rows = None
+        self.__bytes = None
+        self.__items = None
         self.__headers = None
 
     def __enter__(self):
@@ -46,50 +46,51 @@ class Table(object):
         """Open table by opening source stream.
         """
         if self.closed:
-            self.__stream = self.__loader.load()
-            self.__rows = self.__parser.parse(self.__stream)
+            self.__bytes = self.__loader.load()
+            self.__items = self.__parser.parse(self.__bytes)
 
     def reset(self):
         """Reset pointer to the first row.
         """
-        self.__stream.seek(0)
+        self.__bytes.seek(0)
 
     def close(self):
         """Close table by closing source stream.
         """
-        if self.__stream:
-            self.__stream.close()
+        if self.__bytes:
+            self.__bytes.close()
 
     @property
     def closed(self):
         """Return true if table is closed.
         """
-        return not self.__stream or self.__stream.closed
+        return not self.__bytes or self.__bytes.closed
 
     @property
     def headers(self):
         """Return table headers.
         """
         if self.__headers is None:
-            if self.__stream.tell() == 0:
+            if self.__bytes.tell() == 0:
                 for _, _, _ in self.__iterate():
                     if self.__headers is not None:
                         break
-                self.__stream.seek(0)
+                self.__bytes.seek(0)
         return self.__headers
 
     def readrow(self, with_headers=False, limit=None):
         """Return next row from the source stream.
         """
-        for index, headers, row in self.__iterate():
+        for index, headers, values in self.__iterate():
             if limit is not None:
                 if index > limit:
                     raise StopIteration()
+            row = values
             if with_headers:
                 if headers is None:
                     raise RuntimeError('No headers are available.')
                 Row = namedtuple('Row', headers)
-                row = Row(*row)
+                row = Row(*values)
             yield row
 
     def read(self, with_headers=False, limit=None):
@@ -107,19 +108,22 @@ class Table(object):
             raise RuntimeError(message)
         index = None
         headers = None
-        for row in self.__rows:
+        for keys, values in self.__items:
+            if keys is not None:
+                headers = keys
             if index is None:
                 index = 1
             else:
                 index += 1
             for processor in self.__processors:
                 if index is None:
-                    self.__stream.seek(0)
+                    self.__bytes.seek(0)
                     break
-                if row is None:
+                if values is None:
                     break
-                index, headers, row = processor.process(index, headers, row)
+                index, headers, values = processor.process(
+                        index, headers, values)
             if headers is not None:
                 self.__headers = headers
-            if row is not None:
-                yield (index, headers, row)
+            if values is not None:
+                yield (index, headers, values)

@@ -15,13 +15,13 @@ class API(object):
 
     @abstractmethod
     def parse(self, stream):
-        """Yield one parsed row per step.
+        """Yield one parsed item per step.
 
         Args:
             stream (file-like): byte stream
 
         Yields:
-            values (tuple): parsed row
+            keys, values (tuple): parsed item
 
         """
         pass

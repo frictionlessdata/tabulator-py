@@ -6,3 +6,9 @@ with topen(path, encoding='utf-8', format='csv') as table:
     table.add_processor(processors.Headers(index=1))
     for row in table.readrow(with_headers=True):
         print(row)
+
+
+path = 'examples/data/valid.json'
+with topen(path, encoding='utf-8', format='json') as table:
+    for row in table.readrow(with_headers=True):
+        print(row)

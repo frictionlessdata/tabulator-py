@@ -14,7 +14,7 @@ class API(object):
     # Public
 
     @abstractmethod
-    def process(self, index, headers, row):
-        """Return processed (index, headers and row) tuple.
+    def process(self, index, headers, values):
+        """Return processed (index, headers and values) tuple.
         """
         pass

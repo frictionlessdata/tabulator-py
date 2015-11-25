@@ -17,6 +17,8 @@ class CSV(API):
     def parse(self, stream):
         # TODO: implement Python2 support
         text_stream = iterdecode(stream, self.__encoding, self.__strategy)
-        rows = csv.reader(text_stream, **self.__options)
-        for row in rows:
-            yield tuple(row)
+        items = csv.reader(text_stream, **self.__options)
+        for item in items:
+            keys = None
+            values = tuple(item)
+            yield keys, values

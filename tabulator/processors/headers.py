@@ -8,13 +8,13 @@ class Headers(API):
     def __init__(self, index=1):
         self.__index = index
 
-    def process(self, index, headers, row):
+    def process(self, index, headers, values):
         if self.__index == index:
             if headers is None:
                 # Set headers
-                headers = row
+                headers = values
                 # Reset iteration
                 index = None
-            # Skip row
-            row = None
-        return index, headers, row
+            # Skip values
+            values = None
+        return index, headers, values
