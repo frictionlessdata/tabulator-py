@@ -111,7 +111,9 @@ class Table(object):
             raise RuntimeError(message)
         index = None
         headers = None
-        for keys, values in self.__items:
+        values = None
+        while True:
+            keys, values = next(self.__items)
             if keys is not None:
                 headers = keys
             if index is None:
