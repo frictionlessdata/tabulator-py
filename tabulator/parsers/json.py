@@ -1,11 +1,17 @@
+import ijson
 from .api import API
 
 
-# TODO: implement
 class JSON(API):
     """Parser to parse JSON data format.
     """
 
     # Public
 
-    pass
+    def __init__(self, path):
+        self.__path = path
+
+    def parse(self, stream):
+        rows = ijson.items(stream, 'item')
+        for row in rows:
+            yield row
