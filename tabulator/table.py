@@ -78,13 +78,10 @@ class Table(object):
                 self.__bytes.seek(0)
         return self.__headers
 
-    def readrow(self, with_headers=False, limit=None):
+    def readrow(self, with_headers=False):
         """Return next row from the source stream.
         """
         for index, headers, values in self.__iterate():
-            if limit is not None:
-                if index > limit:
-                    raise StopIteration()
             row = values
             if with_headers:
                 if headers is None:
@@ -96,7 +93,13 @@ class Table(object):
     def read(self, with_headers=False, limit=None):
         """Return full table.
         """
-        return list(self.readrow(with_headers=with_headers, limit=limit))
+        rows = []
+        rows_iter = self.readrow(with_headers=with_headers)
+        for index, row in enumerate(rows_iter):
+            if index > limit:
+                break
+            rows.append(row)
+        return rows
 
     # Private
 
