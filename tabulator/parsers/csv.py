@@ -18,13 +18,15 @@ class CSV(API):
 
     def open(self, bytes):
         # TODO: implement Python2 support
+        self.close()
         self.__bytes = bytes
         chars = iterdecode(bytes, self.__encoding, self.__strategy)
         items = csv.reader(chars, **self.__options)
         self.__items = ((None, tuple(line)) for line in items)
 
     def close(self):
-        self.__bytes.close()
+        if not self.closed:
+            self.__bytes.close()
 
     @property
     def closed(self):
@@ -35,4 +37,9 @@ class CSV(API):
         return self.__items
 
     def reset(self):
+        if not self.__bytes.seekable():
+            message = (
+                'Loader\'s returned not seekable byte stream. '
+                'For this kind of stream reset is not supported.')
+            raise RuntimeError(message)
         return self.__bytes.seek(0)
