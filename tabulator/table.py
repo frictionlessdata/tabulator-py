@@ -50,6 +50,7 @@ class Table(object):
             self.__parser.open(bytes)
             self.__iterator = self.__iterator_class(
                     self.__parser, self.__processors)
+        return self
 
     def close(self):
         """Close table by closing source stream.
