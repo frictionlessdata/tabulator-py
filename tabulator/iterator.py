@@ -51,13 +51,14 @@ class Iterator(object):
         return template.format(self=self)
 
     def reset(self):
-        if not self.__bytes.seekable():
+        try:
+            self.__bytes.seek(0)
+            self.__input_index = 0
+        except Exception:
             message = (
                 'Parser\'s returned not seekable byte stream. '
                 'For this kind of stream reset is not supported.')
             raise RuntimeError(message)
-        self.__input_index = 0
-        self.__bytes.seek(0)
 
     def skip(self):
         self.__is_skip = True
