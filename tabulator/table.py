@@ -65,28 +65,9 @@ class Table(object):
         return not self.__bytes or self.__bytes.closed
 
     def read(self, with_headers=False, limit=None):
-        """Return full table.
+        """Return full table with row limit.
         """
-        rows = []
-        rows_iter = self.readrow(with_headers=with_headers)
-        for row_index, row in enumerate(rows_iter):
-            if row_index > limit:
-                break
-            rows.append(row)
-        return rows
-
-    def readrow(self, with_headers=False):
-        """Return next row from the source stream.
-        """
-        self.__require_not_closed()
-        for iterator in self.__iterator:
-            row = iterator.values
-            if with_headers:
-                if iterator.headers is None:
-                    raise RuntimeError('No headers are available.')
-                Row = namedtuple('Row', iterator.headers)
-                row = Row(*iterator.values)
-            yield row
+        return list(self.readrow(with_headers=with_headers, limit=limit))
 
     @property
     def headers(self):
@@ -94,12 +75,29 @@ class Table(object):
         """
         self.__require_not_closed()
         if self.__iterator.headers is None:
-            if self.__iterator.input_index == 0:
+            if self.__iterator.input_index == 1:
                 for iterator in self.__iterator:
                     if iterator.headers is not None:
                         break
-                self.__iterator.reset()
+                if self.__iterator.input_index > 1:
+                    self.__iterator.reset()
         return self.__iterator.headers
+
+    def readrow(self, with_headers=False, limit=None):
+        """Return next row from the source stream.
+        """
+        self.__require_not_closed()
+        for iterator in self.__iterator:
+            if limit is not None:
+                if iterator.output_index > limit:
+                    break
+            row = iterator.values
+            if with_headers:
+                if iterator.headers is None:
+                    raise RuntimeError('No headers are available.')
+                Row = namedtuple('Row', iterator.headers)
+                row = Row(*iterator.values)
+            yield row
 
     def reset(self):
         """Reset pointer to the first row.
