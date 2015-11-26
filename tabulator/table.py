@@ -23,6 +23,8 @@ class Table(object):
         self.__loader = loader
         self.__parser = parser
         self.__processors = []
+        self.__bytes = None
+        self.__items = None
         self.__iterator = None
 
     def __enter__(self):
@@ -45,20 +47,22 @@ class Table(object):
         """Open table by opening source stream.
         """
         if self.closed:
-            bytes = self.__loader.load()
-            items = self.__parser.parse(bytes)
-            self.__iterator = Iterator(bytes, items, self.__processors)
+            self.__bytes = self.__loader.load()
+            self.__items = self.__parser.parse(self.__bytes)
+            self.__iterator = Iterator(
+                    self.__bytes, self.__items, self.__processors)
 
     def close(self):
         """Close table by closing source stream.
         """
-        self.__iterator.close()
+        if not self.closed:
+            self.__bytes.close()
 
     @property
     def closed(self):
         """Return true if table is closed.
         """
-        return self.__iterator is None or self.__iterator.closed
+        return not self.__bytes or self.__bytes.closed
 
     def read(self, with_headers=False, limit=None):
         """Return full table.
@@ -74,7 +78,7 @@ class Table(object):
     def readrow(self, with_headers=False):
         """Return next row from the source stream.
         """
-        self.__require_iterator()
+        self.__require_not_closed()
         for iterator in self.__iterator:
             row = iterator.values
             if with_headers:
@@ -88,7 +92,7 @@ class Table(object):
     def headers(self):
         """Return table headers.
         """
-        self.__require_iterator()
+        self.__require_not_closed()
         if self.__iterator.headers is None:
             if self.__iterator.index == 0:
                 for iterator in self.__iterator:
@@ -100,12 +104,12 @@ class Table(object):
     def reset(self):
         """Reset pointer to the first row.
         """
-        self.__require_iterator()
+        self.__require_not_closed()
         self.__iterator.reset()
 
     # Private
 
-    def __require_iterator(self):
+    def __require_not_closed(self):
         if self.closed:
             message = (
                'Table have to be opened by `table.open()` before '
