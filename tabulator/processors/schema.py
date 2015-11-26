@@ -6,5 +6,4 @@ class Schema(API):
 
     # Public
 
-    def process(self, index, headers, row):
-        pass
+    pass
