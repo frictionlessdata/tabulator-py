@@ -42,4 +42,4 @@ class CSV(API):
                 'Loader\'s returned not seekable byte stream. '
                 'For this kind of stream reset is not supported.')
             raise RuntimeError(message)
-        return self.__bytes.seek(0)
+        self.__bytes.seek(0)

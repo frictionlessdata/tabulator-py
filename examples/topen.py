@@ -6,6 +6,8 @@ with topen(path, encoding='utf-8', format='csv') as table:
     table.add_processor(processors.Headers())
     for row in table.readrow(with_headers=True):
         print(row)
+    table.reset()
+    print(table.read())
 
 
 path = 'examples/data/valid.json'
