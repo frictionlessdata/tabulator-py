@@ -69,8 +69,8 @@ class Table(object):
         """
         rows = []
         rows_iter = self.readrow(with_headers=with_headers)
-        for index, row in enumerate(rows_iter):
-            if index > limit:
+        for row_index, row in enumerate(rows_iter):
+            if row_index > limit:
                 break
             rows.append(row)
         return rows
@@ -94,7 +94,7 @@ class Table(object):
         """
         self.__require_not_closed()
         if self.__iterator.headers is None:
-            if self.__iterator.index == 0:
+            if self.__iterator.input_index == 0:
                 for iterator in self.__iterator:
                     if iterator.headers is not None:
                         break
