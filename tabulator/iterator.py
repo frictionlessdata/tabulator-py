@@ -40,6 +40,8 @@ class Iterator(object):
             processor.process(self)
             if self.__is_skip:
                 break
+        if self.__exception:
+            raise self.__exception
         if self.__is_skip:
             self.__output_index -= 1
             return self.__next__()
