@@ -27,6 +27,7 @@ class Iterator(object):
         self.__values = None
         self.__is_stop = False
         self.__is_skip = False
+        self.__exception = None
         try:
             self.__keys, self.__values = next(self.__items)
         except StopIteration:
@@ -47,8 +48,17 @@ class Iterator(object):
         template = 'Iterator <{self.index}, {self.headers}, {self.values}>'
         return template.format(self=self)
 
-    def next(self):
-        return self.__next__()
+    def close(self):
+        """Close table by closing source stream.
+        """
+        if not self.__bytes.closed:
+            self.__bytes.close()
+
+    @property
+    def closed(self):
+        """Return true if table is closed.
+        """
+        return self.__bytes.closed
 
     def skip(self):
         self.__is_skip = True
@@ -88,3 +98,6 @@ class Iterator(object):
     @property
     def exception(self):
         return self.__exception
+
+    # Pyhton2 support
+    next = __next__
