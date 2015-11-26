@@ -10,7 +10,7 @@ class API(object):
     # Public
 
     @abstractmethod
-    def __init__(self, path, **options):
+    def __init__(self, path):
         pass
 
     @abstractmethod

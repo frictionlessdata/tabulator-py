@@ -4,9 +4,8 @@ class Iterator(object):
 
     # Public
 
-    def __init__(self, bytes, items, processors):
-        self.__bytes = bytes
-        self.__items = items
+    def __init__(self, parser, processors):
+        self.__parser = parser
         self.__processors = processors
         self.__input_index = 0
         self.__output_index = 0
@@ -30,7 +29,7 @@ class Iterator(object):
         self.__is_stop = False
         self.__is_skip = False
         try:
-            self.__keys, self.__values = next(self.__items)
+            self.__keys, self.__values = next(self.__parser.items)
         except StopIteration:
             raise
         except Exception as exception:
@@ -47,18 +46,14 @@ class Iterator(object):
         return self
 
     def __repr__(self):
-        template = 'Iterator <{self.index}, {self.headers}, {self.values}>'
+        template = (
+            'Iterator <{self.input_index}, {self.output_index}, '
+            '{self.headers}, {self.values}>')
         return template.format(self=self)
 
     def reset(self):
-        try:
-            self.__bytes.seek(0)
-            self.__input_index = 0
-        except Exception:
-            message = (
-                'Parser\'s returned not seekable byte stream. '
-                'For this kind of stream reset is not supported.')
-            raise RuntimeError(message)
+        self.__parser.reset()
+        self.__input_index = 0
 
     def skip(self):
         self.__is_skip = True

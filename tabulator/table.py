@@ -23,8 +23,6 @@ class Table(object):
         self.__loader = loader
         self.__parser = parser
         self.__iterator_class = iterator_class
-        self.__bytes = None
-        self.__items = None
         self.__processors = []
         self.__iterator = None
 
@@ -48,27 +46,22 @@ class Table(object):
         """Open table by opening source stream.
         """
         if self.closed:
-            self.__bytes = self.__loader.load()
-            self.__items = self.__parser.parse(self.__bytes)
+            bytes = self.__loader.load()
+            self.__parser.open(bytes)
             self.__iterator = self.__iterator_class(
-                    self.__bytes, self.__items, self.__processors)
+                    self.__parser, self.__processors)
 
     def close(self):
         """Close table by closing source stream.
         """
         if not self.closed:
-            self.__bytes.close()
+            self.__parser.close()
 
     @property
     def closed(self):
         """Return true if table is closed.
         """
-        return not self.__bytes or self.__bytes.closed
-
-    def read(self, with_headers=False, limit=None):
-        """Return full table with row limit.
-        """
-        return list(self.readrow(with_headers=with_headers, limit=limit))
+        return self.__parser.closed
 
     @property
     def headers(self):
@@ -99,6 +92,13 @@ class Table(object):
                 Row = namedtuple('Row', iterator.headers)
                 row = Row(*iterator.values)
             yield row
+
+    def read(self, with_headers=False, limit=None):
+        """Return full table with row limit.
+        """
+        self.__require_not_closed()
+        return list(self.readrow(
+            with_headers=with_headers, limit=limit))
 
     def reset(self):
         """Reset pointer to the first row.

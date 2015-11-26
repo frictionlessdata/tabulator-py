@@ -13,12 +13,26 @@ class CSV(API):
         self.__encoding = encoding
         self.__strategy = strategy
         self.__options = options
+        self.__bytes = None
+        self.__items = None
 
-    def parse(self, stream):
+    def open(self, bytes):
         # TODO: implement Python2 support
-        text_stream = iterdecode(stream, self.__encoding, self.__strategy)
-        items = csv.reader(text_stream, **self.__options)
-        for item in items:
-            keys = None
-            values = tuple(item)
-            yield keys, values
+        self.__bytes = bytes
+        chars = iterdecode(bytes, self.__encoding, self.__strategy)
+        items = csv.reader(chars, **self.__options)
+        self.__items = ((None, tuple(line)) for line in items)
+
+    def close(self):
+        self.__bytes.close()
+
+    @property
+    def closed(self):
+        return self.__bytes is None or self.__bytes.closed
+
+    @property
+    def items(self):
+        return self.__items
+
+    def reset(self):
+        return self.__bytes.seek(0)

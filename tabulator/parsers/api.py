@@ -10,18 +10,27 @@ class API(object):
     # Public
 
     @abstractmethod
-    def __init__(self, encoding, **options):
+    def __init__(self, encoding):
         pass
 
     @abstractmethod
-    def parse(self, stream):
-        """Yield one parsed item per step.
+    def open(self):
+        pass
 
-        Args:
-            stream (file-like): byte stream
+    @abstractmethod
+    def close(self):
+        pass
 
-        Yields:
-            keys, values (tuple): parsed item
+    @property
+    @abstractmethod
+    def closed(self):
+        pass
 
-        """
+    @property
+    @abstractmethod
+    def items(self):
+        pass
+
+    @abstractmethod
+    def reset(self):
         pass
