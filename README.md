@@ -21,7 +21,7 @@ $ pip install tabulator
 
 Fast access to the table with `topen` (stands for `table open`) function:
 
-```
+```python
 from tabulator import topen, processors
 
 with topen('path.csv') as table:
@@ -34,7 +34,7 @@ with topen('path.csv') as table:
 
 To get full control over the process you can use `Table` class:
 
-```
+```python
 from tabulator import Table, processors, loaders, parsers
 
 table = Table(
@@ -46,6 +46,27 @@ headers = table.headers
 contents = table.read(with_headers=True, limit=10)
 print(headers, contents)
 table.close()
+```
+
+### Expert interface
+
+All parts of Tabulator can be tweaked overriding main classes:
+
+```python
+from tabulator import Table, Iterator
+
+class UserIterator(Iterator):
+
+    ...
+
+class UserTable(Table):
+
+    ITERATOR_CLASS = UserIterator
+
+    ...
+
+table = UserTable(...)
+...
 ```
 
 ## Development
@@ -70,6 +91,7 @@ The project follow the next style guides:
 - [PEP 8 - Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
 
 To check the project against Python style guide:
+
 ```
 $ run review
 ```
@@ -77,7 +99,9 @@ $ run review
 ### Testing
 
 To run tests with coverage check:
+
 ```
 $ run test
 ```
+
 Coverage data will be in the `.coverage` file.

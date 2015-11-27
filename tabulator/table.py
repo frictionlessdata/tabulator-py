@@ -17,12 +17,13 @@ class Table(object):
 
     """
 
+    ITERATOR_CLASS = Iterator
+
     # Public
 
-    def __init__(self, loader, parser, iterator_class=Iterator):
+    def __init__(self, loader, parser):
         self.__loader = loader
         self.__parser = parser
-        self.__iterator_class = iterator_class
         self.__processors = []
         self.__iterator = None
 
@@ -47,7 +48,7 @@ class Table(object):
         """
         if self.closed:
             self.__parser.open(self.__loader)
-            self.__iterator = self.__iterator_class(
+            self.__iterator = self.ITERATOR_CLASS(
                     self.__parser, self.__processors)
         return self
 
