@@ -24,8 +24,8 @@ Fast access to the table with `topen` (stands for `table open`) function:
 ```
 from tabulator import topen, processors
 
-with topen('path.csv', encoding='utf-8', format='csv') as table:
-    table.add_processor(processors.Headers(row=1))
+with topen('path.csv') as table:
+    table.add_processor(processors.Headers())
     for row in table.readrow(with_headers=True):
         print(row)
 ```
@@ -38,12 +38,12 @@ To get full control over the process you can use `Table` class:
 from tabulator import Table, processors, loaders, parsers
 
 table = Table(
-        loader=loaders.File('path.csv', encoding='utf-8', strategy='replace'),
+        loader=loaders.File('path.csv', encoding='utf-8'),
         parser=parsers.CSV(delimiter=',', quotechar='|'))
 table.add_processor(processors.Headers(row=1))
 table.open()
 headers = table.headers
-contents = table.read(with_headers=True, limit=100)
+contents = table.read(with_headers=True, limit=10)
 print(headers, contents)
 table.close()
 ```
