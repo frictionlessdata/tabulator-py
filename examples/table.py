@@ -2,7 +2,7 @@ from tabulator import Table, loaders, parsers, processors
 
 
 table = Table(
-        loader=loaders.File('examples/data/valid.csv'),
+        loader=loaders.File('examples/data/table.csv'),
         parser=parsers.CSV())
 table.add_processor(processors.Headers())
 table.open()

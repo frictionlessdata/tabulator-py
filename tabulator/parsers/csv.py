@@ -21,7 +21,6 @@ class CSV(API):
         self.__items = None
 
     def open(self, loader):
-        # TODO: implement Python2 support
         self.close()
         self.__loader = loader
         self.__chars = loader.load(mode='t')
