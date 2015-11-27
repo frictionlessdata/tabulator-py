@@ -17,10 +17,10 @@ class API(object):
 
     @abstractmethod
     def __init__(self, source, encoding=None, **options):
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def load(self, mode):
         """Return byte stream file-like object.
         """
-        pass
+        pass  # pragma: no cover

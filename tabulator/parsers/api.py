@@ -17,26 +17,26 @@ class API(object):
 
     @abstractmethod
     def __init__(self, **options):
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def open(self, loader):
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def close(self):
-        pass
+        pass  # pragma: no cover
 
     @property
     @abstractmethod
     def closed(self):
-        pass
+        pass  # pragma: no cover
 
     @property
     @abstractmethod
     def items(self):
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def reset(self):
-        pass
+        pass  # pragma: no cover

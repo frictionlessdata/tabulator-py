@@ -15,7 +15,7 @@ class API(object):
 
     @abstractmethod
     def __init__(self, **option):
-        pass
+        pass  # pragma: no cover
 
     # Public
 
@@ -23,10 +23,10 @@ class API(object):
     def process(self, iterator):
         """Process iterator in normal mode.
         """
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def handle(self, iterator):
         """Process iterator with exception.
         """
-        pass
+        pass  # pragma: no cover
