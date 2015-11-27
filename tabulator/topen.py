@@ -27,7 +27,7 @@ PARSERS = {
 }
 
 
-def topen(source, encoding=None, format=None):
+def topen(source, schema=None, format=None, encoding=None):
     """Open table from source with encoding and format.
 
     Args:
@@ -55,7 +55,7 @@ def topen(source, encoding=None, format=None):
     """
     # TODO: refactor code
     # TODO: implement error handling
-    scheme = urlparse(source).scheme or 'file'
+    scheme = schema or urlparse(source).scheme or 'file'
     format = format or os.path.splitext(source)[1].replace('.', '')
     loader = LOADERS[scheme](source, encoding)
     parser = PARSERS[format]()
