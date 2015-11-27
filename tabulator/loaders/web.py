@@ -19,11 +19,6 @@ class Web(API):
         # Prepare response
         response = urlopen(self.__source)
 
-        # Prepare encoding
-        encoding = response.headers.get_content_charset()
-        if self.__encoding is not None:
-            encoding = self.__encoding
-
         # Prepare bytes
         if self.__stream:
             bytes = response
@@ -31,6 +26,11 @@ class Web(API):
             bytes = io.BufferedRandom(io.BytesIO())
             bytes.write(response.read())
             bytes.seek(0)
+
+        # Prepare encoding
+        encoding = response.headers.get_content_charset()
+        if self.__encoding is not None:
+            encoding = self.__encoding
 
         # Return or raise
         if mode == 'b':

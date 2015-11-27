@@ -21,13 +21,13 @@ class File(API):
         if source.startswith(schema):
             source = source.replace(schema, '', 1)
 
+        # Prepare bytes
+        bytes = io.open(source, 'rb')
+
         # Prepare encoding
         encoding = sys.getdefaultencoding()
         if self.__encoding is not None:
             encoding = self.__encoding
-
-        # Prepare bytes
-        bytes = io.open(source, 'rb')
 
         # Return or raise
         if mode == 'b':
