@@ -19,8 +19,8 @@ class topenTest(unittest.TestCase):
 
     def make_web_path(self, *paths):
         baseurl = 'https://raw.githubusercontent.com'
-        basepath = 'okfn/tabulator-py/master/examples/data'
-        return '/'.join([baseurl, basepath] + list(paths))
+        baseurl += '/okfn/tabulator-py/master/examples/data'
+        return '/'.join([baseurl] + list(paths))
 
     # Tests [loaders/parsers]
 
