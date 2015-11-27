@@ -1,3 +1,4 @@
+import os
 from six.moves.urllib.parse import urlparse
 from .table import Table
 from . import loaders, parsers
@@ -14,7 +15,8 @@ LOADERS = {
 
 PARSERS = {
     'csv': parsers.CSV,
-    'excel': parsers.Excel,
+    'xls': parsers.Excel,
+    'xlsx': parsers.Excel,
     'json': parsers.JSON,
 }
 
@@ -24,24 +26,31 @@ def topen(source, encoding=None, format=None):
 
     Args:
 
-        source (str): source to source
-            - file
+        source (str): table source
+            - file (default)
             - text
-            - web (http(s), ftp(s))
+            - http
+            - https
+            - ftp
+            - ftps
 
         encoding (str): encoding of source
-            - utf-8 [default]
-            - infer
+            - None (infer)
+            - utf-8
             - <any>
 
         format (str): format of source
-            - csv [default]
+            - None (infer)
+            - csv
             - json
-            - excel
+            - xls
+            - xlsx
 
     """
+    # TODO: refactor code
     # TODO: implement error handling
     scheme = urlparse(source).scheme or 'file'
+    format = format or os.path.splitext(source)[1].replace('.', '')
     loader = LOADERS[scheme](source, encoding)
     parser = PARSERS[format]()
     table = Table(loader=loader, parser=parser)

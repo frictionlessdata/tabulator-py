@@ -16,7 +16,7 @@ class JSON(API):
     def open(self, loader):
         self.close()
         self.__loader = loader
-        self.__bytes = loader.load(mode='b')
+        self.__bytes, self.__encoding = loader.load(mode='b')
         items = ijson.items(self.__bytes, self.__prefix)
         self.__items = (
             (tuple(item.keys()), tuple(item.values()))

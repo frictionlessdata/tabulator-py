@@ -10,18 +10,11 @@ class API(object):
     # Public
 
     @abstractmethod
-    def __init__(self, source, encoding, **options):
+    def __init__(self, source, encoding=None, **options):
         pass
 
     @abstractmethod
     def load(self, mode):
         """Return byte stream file-like object.
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def encoding(self):
-        """Encoding set by user.
         """
         pass

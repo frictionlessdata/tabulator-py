@@ -1,4 +1,5 @@
 import io
+import sys
 from .api import API
 
 
@@ -8,24 +9,32 @@ class File(API):
 
     # Public
 
-    def __init__(self, source, encoding):
-        schema = 'file://'
-        if source.startswith(schema):
-            source = source.replace(schema, '', 1)
+    def __init__(self, source, encoding=None):
         self.__source = source
         self.__encoding = encoding
 
     def load(self, mode):
-        bytes = io.open(self.__source, 'rb')
-        if mode == 't':
+
+        # Prepare source
+        schema = 'file://'
+        source = self.__source
+        if source.startswith(schema):
+            source = source.replace(schema, '', 1)
+
+        # Prepare encoding
+        encoding = sys.getdefaultencoding()
+        if self.__encoding is not None:
+            encoding = self.__encoding
+
+        # Prepare bytes
+        bytes = io.open(source, 'rb')
+
+        # Return or raise
+        if mode == 'b':
+            return (bytes, encoding)
+        elif mode == 't':
             chars = io.TextIOWrapper(bytes, self.__encoding)
             return chars
-        elif mode == 'b':
-            return bytes
         else:
             message = 'Mode %s is not supported' % mode
             raise RuntimeError(message)
-
-    @property
-    def encoding(self):
-        return self.__encoding

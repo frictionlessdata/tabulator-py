@@ -9,28 +9,35 @@ class Web(API):
 
     # Public
 
-    def __init__(self, source, encoding, stream=False):
+    def __init__(self, source, encoding=None, stream=False):
         self.__source = source
         self.__encoding = encoding
         self.__stream = stream
 
     def load(self, mode):
-        document = urlopen(self.__source)
+
+        # Prepare response
+        response = urlopen(self.__source)
+
+        # Prepare encoding
+        encoding = response.headers.get_content_charset()
+        if self.__encoding is not None:
+            encoding = self.__encoding
+
+        # Prepare bytes
         if self.__stream:
-            bytes = document
+            bytes = response
         else:
             bytes = io.BufferedRandom(io.BytesIO())
-            bytes.write(document.read())
+            bytes.write(response.read())
             bytes.seek(0)
-        if mode == 't':
-            chars = io.TextIOWrapper(bytes, self.__encoding)
+
+        # Return or raise
+        if mode == 'b':
+            return (bytes, encoding)
+        elif mode == 't':
+            chars = io.TextIOWrapper(bytes, encoding)
             return chars
-        elif mode == 'b':
-            return bytes
         else:
             message = 'Mode %s is not supported' % mode
             raise RuntimeError(message)
-
-    @property
-    def encoding(self):
-        return self.__encoding
