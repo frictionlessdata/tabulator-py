@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .table import Table
-from . import loaders, parsers, helpers
+from . import loaders, parsers, errors, helpers
 
 
 DEFAULT_SCHEME = 'file'
@@ -65,13 +65,13 @@ def topen(source, scheme=None, format=None, encoding=None):
     # Lookup and initiate loader
     if scheme not in LOADERS:
         message = 'Scheme "%s" is not supported' % scheme
-        raise RuntimeError(message)
+        raise errors.Error(message)
     loader = LOADERS[scheme](source, encoding)
 
     # Lookup and initiate parser
     if format not in PARSERS:
         message = 'Format "%s" is not supported' % format
-        raise RuntimeError(message)
+        raise errors.Error(message)
     parser = PARSERS[format]()
 
     # Initiate, open table

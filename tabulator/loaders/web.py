@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import io
 import six
 from six.moves.urllib.request import urlopen
+from .. import errors
 from .api import API
 
 
@@ -50,4 +51,4 @@ class Web(API):
             return chars
         else:
             message = 'Mode %s is not supported' % mode
-            raise RuntimeError(message)
+            raise errors.Error(message)

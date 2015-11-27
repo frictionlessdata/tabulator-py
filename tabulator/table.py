@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 from collections import namedtuple
 from .iterator import Iterator
+from . import errors
 
 
 class Table(object):
@@ -89,7 +90,7 @@ class Table(object):
             row = iterator.values
             if with_headers:
                 if iterator.headers is None:
-                    raise RuntimeError('No headers are available.')
+                    raise errors.Error('No headers are available.')
                 Row = namedtuple('Row', iterator.headers)
                 row = Row(*iterator.values)
             yield row
@@ -114,4 +115,4 @@ class Table(object):
             message = (
                'Table have to be opened by `table.open()` before '
                'iteration interface will be available.')
-            raise RuntimeError(message)
+            raise errors.Error(message)

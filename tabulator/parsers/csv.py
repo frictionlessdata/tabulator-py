@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import csv
+from .. import errors
 from .api import API
 
 
@@ -44,5 +45,5 @@ class CSV(API):
             message = (
                 'Loader\'s returned not seekable stream. '
                 'For this stream reset is not supported.')
-            raise RuntimeError(message)
+            raise errors.Error(message)
         self.__chars.seek(0)

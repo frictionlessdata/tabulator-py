@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import io
 import sys
+from .. import errors
 from .api import API
 
 
@@ -43,4 +44,4 @@ class File(API):
             return chars
         else:
             message = 'Mode %s is not supported' % mode
-            raise RuntimeError(message)
+            raise errors.Error(message)
