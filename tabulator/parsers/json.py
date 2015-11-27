@@ -18,9 +18,17 @@ class JSON(API):
         self.__loader = loader
         self.__bytes, self.__encoding = loader.load(mode='b')
         items = ijson.items(self.__bytes, self.__prefix)
-        self.__items = (
-            (tuple(item.keys()), tuple(item.values()))
-            for item in items)
+
+        def iterator(items):
+            for item in items:
+                keys = []
+                values = []
+                for key in sorted(item.keys()):
+                    keys.append(key)
+                    values.append(item[key])
+                yield (tuple(keys), tuple(values))
+
+        self.__items = iterator(items)
 
     def close(self):
         if not self.closed:
