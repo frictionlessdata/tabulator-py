@@ -17,10 +17,11 @@ class Web(API):
 
     # Public
 
-    def __init__(self, source, encoding=None, stream=False):
+    def __init__(self, source, encoding=None, stream=False, **options):
         self.__source = source
         self.__encoding = encoding
         self.__stream = stream
+        self.__options = options
 
     def load(self, mode):
 
@@ -47,7 +48,7 @@ class Web(API):
         if mode == 'b':
             return (bytes, encoding)
         elif mode == 't':
-            chars = io.TextIOWrapper(bytes, encoding)
+            chars = io.TextIOWrapper(bytes, encoding, **self.__options)
             return chars
         else:
             message = 'Mode %s is not supported' % mode

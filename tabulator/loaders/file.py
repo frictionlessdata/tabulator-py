@@ -16,9 +16,10 @@ class File(API):
 
     # Public
 
-    def __init__(self, source, encoding=None):
+    def __init__(self, source, encoding=None, **options):
         self.__source = source
         self.__encoding = encoding
+        self.__options = options
 
     def load(self, mode):
 
@@ -40,7 +41,7 @@ class File(API):
         if mode == 'b':
             return (bytes, encoding)
         elif mode == 't':
-            chars = io.TextIOWrapper(bytes, self.__encoding)
+            chars = io.TextIOWrapper(bytes, encoding, **self.__options)
             return chars
         else:
             message = 'Mode %s is not supported' % mode

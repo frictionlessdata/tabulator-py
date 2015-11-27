@@ -17,11 +17,10 @@ class Text(API):
 
     # Public
 
-    def __init__(self, source, encoding=None):
-        if encoding is None:
-            encoding = 'utf-8'
+    def __init__(self, source, encoding=None, **options):
         self.__source = source
         self.__encoding = encoding
+        self.__options = options
 
     def load(self, mode):
 
@@ -45,7 +44,7 @@ class Text(API):
         if mode == 'b':
             return (bytes, encoding)
         elif mode == 't':
-            chars = io.TextIOWrapper(bytes, self.__encoding)
+            chars = io.TextIOWrapper(bytes, encoding, **self.__options)
             return chars
         else:
             message = 'Mode %s is not supported' % mode
