@@ -5,8 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
-import sys
-from .. import errors
+from .. import errors, helpers
 from .api import API
 
 
@@ -33,9 +32,9 @@ class File(API):
         bytes = io.open(source, 'rb')
 
         # Prepare encoding
-        encoding = sys.getdefaultencoding()
-        if self.__encoding is not None:
-            encoding = self.__encoding
+        encoding = self.__encoding
+        if encoding is None:
+            encoding = helpers.detect_encoding(bytes)
 
         # Return or raise
         if mode == 'b':

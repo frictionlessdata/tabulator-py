@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
 
 
@@ -20,4 +21,19 @@ def detect_format(source):
 
 
 def detect_encoding(bytes):
-    pass
+    detector = UniversalDetector()
+    for line in bytes.readlines():
+        detector.feed(line)
+        if detector.done:
+            break
+    detector.close()
+    bytes.seek(0)
+    confidence = detector.result['confidence']
+    encoding = detector.result['encoding']
+    # Do not use if not confident
+    if confidence < 0.95:
+        encoding = None
+    # Default to utf-8 for safety
+    if encoding == 'ascii':
+        encoding = 'utf-8'
+    return encoding

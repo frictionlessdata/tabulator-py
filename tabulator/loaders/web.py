@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import io
 import six
 from six.moves.urllib.request import urlopen
-from .. import errors
+from .. import errors, helpers
 from .api import API
 
 
@@ -37,12 +37,14 @@ class Web(API):
             bytes.seek(0)
 
         # Prepare encoding
-        if six.PY2:
-            encoding = response.headers.getparam('charset')
-        else:
-            encoding = response.headers.get_content_charset()
-        if self.__encoding is not None:
-            encoding = self.__encoding
+        encoding = self.__encoding
+        if encoding is None:
+            if six.PY2:
+                encoding = response.headers.getparam('charset')
+            else:
+                encoding = response.headers.get_content_charset()
+        if encoding is None:
+            encoding = helpers.detect_encoding(bytes)
 
         # Return or raise
         if mode == 'b':

@@ -31,9 +31,9 @@ class Text(API):
             source = source.replace(schema, '', 1)
 
         # Prepare encoding
-        encoding = self.DEFAULT_ENCODING
-        if self.__encoding is not None:
-            encoding = self.__encoding
+        encoding = self.__encoding
+        if encoding is None:
+            encoding = self.DEFAULT_ENCODING
 
         # Prepare bytes
         bytes = io.BufferedRandom(io.BytesIO())
