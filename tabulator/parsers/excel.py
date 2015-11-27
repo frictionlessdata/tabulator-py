@@ -8,15 +8,15 @@ class Excel(API):
 
     # Public
 
-    def __init__(self, encoding, sheet_index=0):
-        self.__encoding = encoding
+    def __init__(self, sheet_index=0):
         self.__sheet_index = sheet_index
         self.__bytes = None
         self.__items = None
 
-    def open(self, bytes):
+    def open(self, loader):
         self.close()
-        self.__bytes = bytes
+        self.__loader = loader
+        self.__bytes = loader.load(mode='b')
         self.reset()
 
     def close(self):
@@ -35,7 +35,7 @@ class Excel(API):
         self.__bytes.seek(0)
         self.__workbook = xlrd.open_workbook(
                 file_contents=self.__bytes.read(),
-                encoding_override=self.__encoding)
+                encoding_override=self.__loader.encoding)
         self.__sheet = self.__workbook.sheet_by_index(self.__sheet_index)
         self.__items = (
             (None, tuple(self.__sheet.row_values(rownum)))

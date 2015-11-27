@@ -10,11 +10,11 @@ class API(object):
     # Public
 
     @abstractmethod
-    def __init__(self, encoding):
+    def __init__(self, **options):
         pass
 
     @abstractmethod
-    def open(self):
+    def open(self, loader):
         pass
 
     @abstractmethod

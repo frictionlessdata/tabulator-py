@@ -2,8 +2,8 @@ from tabulator import Table, loaders, parsers, processors
 
 
 table = Table(
-        loader=loaders.File('examples/data/valid.csv'),
-        parser=parsers.CSV('utf-8'))
+        loader=loaders.File('examples/data/valid.csv', encoding='utf-8'),
+        parser=parsers.CSV())
 table.add_processor(processors.Headers())
 table.open()
 headers = table.headers
@@ -13,8 +13,8 @@ table.close()
 
 
 table = Table(
-        loader=loaders.Bytes(b'id,name\n1,Joe\n2,Rachel\n'),
-        parser=parsers.CSV('utf-8'))
+        loader=loaders.Bytes(b'id,name\n1,Joe\n2,Rachel\n', encoding='utf-8'),
+        parser=parsers.CSV())
 with table.open() as table:
     table.add_processor(processors.Headers())
     for row in table.readrow(with_headers=True):

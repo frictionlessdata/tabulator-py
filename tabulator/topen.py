@@ -18,12 +18,12 @@ PARSERS = {
 }
 
 
-def topen(path, encoding, format):
-    """Open table from path with encoding and format.
+def topen(source, encoding, format):
+    """Open table from source with encoding and format.
 
     Args:
 
-        path (str): path to source
+        source (str): source to source
             - file
             - web (http(s), ftp(s))
 
@@ -38,9 +38,9 @@ def topen(path, encoding, format):
 
     """
     # TODO: implement error handling
-    scheme = urlparse(path).scheme or 'file'
-    loader = LOADERS[scheme](path)
-    parser = PARSERS[format](encoding)
+    scheme = urlparse(source).scheme or 'file'
+    loader = LOADERS[scheme](source, encoding)
+    parser = PARSERS[format]()
     table = Table(loader=loader, parser=parser)
     table.open()
     return table

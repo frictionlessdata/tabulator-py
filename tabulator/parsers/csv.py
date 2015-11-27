@@ -1,5 +1,4 @@
 import csv
-from codecs import iterdecode
 from .api import API
 
 
@@ -9,37 +8,36 @@ class CSV(API):
 
     # Public
 
-    def __init__(self, encoding, strategy='replace', **options):
-        self.__encoding = encoding
-        self.__strategy = strategy
+    def __init__(self, **options):
         self.__options = options
-        self.__bytes = None
+        self.__loader = None
+        self.__chars = None
         self.__items = None
 
-    def open(self, bytes):
+    def open(self, loader):
         # TODO: implement Python2 support
         self.close()
-        self.__bytes = bytes
-        chars = iterdecode(bytes, self.__encoding, self.__strategy)
-        items = csv.reader(chars, **self.__options)
+        self.__loader = loader
+        self.__chars = loader.load(mode='t')
+        items = csv.reader(self.__chars, **self.__options)
         self.__items = ((None, tuple(line)) for line in items)
 
     def close(self):
         if not self.closed:
-            self.__bytes.close()
+            self.__chars.close()
 
     @property
     def closed(self):
-        return self.__bytes is None or self.__bytes.closed
+        return self.__chars is None or self.__chars.closed
 
     @property
     def items(self):
         return self.__items
 
     def reset(self):
-        if not self.__bytes.seekable():
+        if not self.__chars.seekable():
             message = (
-                'Loader\'s returned not seekable byte stream. '
-                'For this kind of stream reset is not supported.')
+                'Loader\'s returned not seekable stream. '
+                'For this stream reset is not supported.')
             raise RuntimeError(message)
-        self.__bytes.seek(0)
+        self.__chars.seek(0)

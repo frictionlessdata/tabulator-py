@@ -46,8 +46,7 @@ class Table(object):
         """Open table by opening source stream.
         """
         if self.closed:
-            bytes = self.__loader.load()
-            self.__parser.open(bytes)
+            self.__parser.open(self.__loader)
             self.__iterator = self.__iterator_class(
                     self.__parser, self.__processors)
         return self
