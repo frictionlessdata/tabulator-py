@@ -6,4 +6,8 @@ class Schema(API):
 
     # Public
 
-    pass
+    def process(self, iterator):
+        pass
+
+    def handle(self, iterator):
+        pass

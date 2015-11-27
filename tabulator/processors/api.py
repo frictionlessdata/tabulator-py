@@ -15,6 +15,12 @@ class API(object):
 
     @abstractmethod
     def process(self, iterator):
-        """Return processed iterator.
+        """Process iterator in normal mode.
+        """
+        pass
+
+    @abstractmethod
+    def handle(self, iterator):
+        """Process iterator with exception.
         """
         pass

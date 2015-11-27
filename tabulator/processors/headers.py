@@ -18,3 +18,6 @@ class Headers(API):
                     iterator.reset()
             # Skip iteration
             iterator.skip()
+
+    def handle(self, iterator):
+        pass

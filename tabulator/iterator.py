@@ -19,32 +19,50 @@ class Iterator(object):
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def __next__(self): #noqa
+
+        # Stop iteration
         if self.__is_stop:
             raise StopIteration()
+
+        # Update indexes, reset vars
         self.__input_index += 1
         self.__output_index += 1
         self.__keys = None
         self.__values = None
         self.__is_stop = False
         self.__is_skip = False
+
+        # Get next keys, values from parser
         try:
             self.__keys, self.__values = next(self.__parser.items)
         except StopIteration:
             raise
         except Exception as exception:
             self.__exception = exception
+
+        # Update headers if keys
         if self.__keys is not None:
             self.__headers = self.__keys
+
+        # Process iterator by processors
         for processor in self.__processors:
-            processor.process(self)
+            if self.__exception is None:
+                processor.process(self)
+            else:
+                processor.handle(self)
             if self.__is_skip:
                 break
-        if self.__exception:
+
+        # Raise if there is active exception
+        if self.__exception is not None:
             raise self.__exception
+
+        # Skip iteration
         if self.__is_skip:
             self.__output_index -= 1
             return self.__next__()
+
         return self
 
     def __repr__(self):
