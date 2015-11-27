@@ -13,7 +13,7 @@ table.close()
 
 
 table = Table(
-        loader=loaders.Bytes(b'id,name\n1,Joe\n2,Rachel\n', encoding='utf-8'),
+        loader=loaders.Text('id,name\n1,Joe\n2,Rachel\n'),
         parser=parsers.CSV())
 with table.open() as table:
     table.add_processor(processors.Headers())

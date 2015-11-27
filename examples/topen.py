@@ -10,7 +10,14 @@ with topen(source, encoding='utf-8', format='csv') as table:
     print(table.read())
 
 
-source = 'examples/data/valid.json'
+source = 'text://id,name\n1,Joe\n2,Rachel\n'
+with topen(source, format='csv') as table:
+    table.add_processor(processors.Headers())
+    for row in table.readrow(with_headers=True):
+        print(row)
+
+
+source = 'file://examples/data/valid.json'
 with topen(source, encoding='utf-8', format='json') as table:
     for row in table.readrow(with_headers=True):
         print(row)

@@ -1,4 +1,4 @@
 from .api import API
-from .bytes import Bytes
 from .file import File
+from .text import Text
 from .web import Web

@@ -9,6 +9,9 @@ class File(API):
     # Public
 
     def __init__(self, source, encoding):
+        schema = 'file://'
+        if source.startswith(schema):
+            source = source.replace(schema, '', 1)
         self.__source = source
         self.__encoding = encoding
 

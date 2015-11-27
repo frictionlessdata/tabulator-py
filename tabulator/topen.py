@@ -5,6 +5,7 @@ from . import loaders, parsers
 
 LOADERS = {
     'file': loaders.File,
+    'text': loaders.Text,
     'ftp': loaders.Web,
     'ftps': loaders.Web,
     'http': loaders.Web,
@@ -18,23 +19,25 @@ PARSERS = {
 }
 
 
-def topen(source, encoding, format):
+def topen(source, encoding=None, format=None):
     """Open table from source with encoding and format.
 
     Args:
 
         source (str): source to source
             - file
+            - text
             - web (http(s), ftp(s))
 
         encoding (str): encoding of source
-            - auto
-            - utf-8
+            - utf-8 [default]
+            - infer
+            - <any>
 
         format (str): format of source
-            - csv
-            - json [not implemented]
-            - excel [not implemented]
+            - csv [default]
+            - json
+            - excel
 
     """
     # TODO: implement error handling
