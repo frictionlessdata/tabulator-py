@@ -4,11 +4,11 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import os
-from six.moves.urllib.parse import urlparse
 from .table import Table
-from . import loaders, parsers
+from . import loaders, parsers, helpers
 
+
+DEFAULT_SCHEME = 'file'
 
 LOADERS = {
     'file': loaders.File,
@@ -27,12 +27,14 @@ PARSERS = {
 }
 
 
-def topen(source, schema=None, format=None, encoding=None):
+def topen(source, scheme=None, format=None, encoding=None):
     """Open table from source with encoding and format.
 
     Args:
 
-        source (str): table source
+        source (str): path of contents
+
+        scheme (str): schema of source
             - file (default)
             - text
             - http
@@ -40,25 +42,40 @@ def topen(source, schema=None, format=None, encoding=None):
             - ftp
             - ftps
 
-        encoding (str): encoding of source
-            - None (infer)
-            - utf-8
-            - <any>
-
         format (str): format of source
-            - None (infer)
+            - None (detect)
             - csv
             - json
             - xls
             - xlsx
 
+        encoding (str): encoding of source
+            - None (detect)
+            - utf-8
+            - <any>
+
     """
-    # TODO: refactor code
-    # TODO: implement error handling
-    scheme = schema or urlparse(source).scheme or 'file'
-    format = format or os.path.splitext(source)[1].replace('.', '')
+
+    # Get scheme, format
+    if scheme is None:
+        scheme = helpers.detect_scheme(source) or DEFAULT_SCHEME
+    if format is None:
+        format = helpers.detect_format(source)
+
+    # Lookup and initiate loader
+    if scheme not in LOADERS:
+        message = 'Scheme "%s" is not supported' % scheme
+        raise RuntimeError(message)
     loader = LOADERS[scheme](source, encoding)
+
+    # Lookup and initiate parser
+    if format not in PARSERS:
+        message = 'Format "%s" is not supported' % format
+        raise RuntimeError(message)
     parser = PARSERS[format]()
+
+    # Initiate, open table
     table = Table(loader=loader, parser=parser)
     table.open()
+
     return table

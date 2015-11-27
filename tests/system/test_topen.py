@@ -55,7 +55,7 @@ class topenTest(unittest.TestCase):
 
         # Get results
         source = 'id,name\n1,name1\n2,name2\n'
-        actual = topen(source, schema='text', format='csv').read()
+        actual = topen(source, scheme='text', format='csv').read()
         expected = [('id', 'name'), ('1', 'name1'), ('2', 'name2')]
 
         # Make assertions
@@ -65,7 +65,7 @@ class topenTest(unittest.TestCase):
 
         # Get results
         source = '[{"id": 1, "name": "name1" }, {"id": 2, "name": "name2" }]'
-        actual = topen(source, schema='text', format='json').read()
+        actual = topen(source, scheme='text', format='json').read()
         expected = [(1, 'name1'), (2, 'name2')]
 
         # Make assertions
