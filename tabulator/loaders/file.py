@@ -20,7 +20,7 @@ class File(API):
         self.__encoding = encoding
         self.__options = options
 
-    def load(self, mode):
+    def load(self, mode, detect_encoding=True):
 
         # Prepare source
         schema = 'file://'
@@ -33,8 +33,9 @@ class File(API):
 
         # Prepare encoding
         encoding = self.__encoding
-        if encoding is None:
-            encoding = helpers.detect_encoding(bytes)
+        if detect_encoding:
+            if encoding is None:
+                encoding = helpers.detect_encoding(bytes)
 
         # Return or raise
         if mode == 'b':

@@ -22,7 +22,8 @@ class Excel(API):
     def open(self, loader):
         self.close()
         self.__loader = loader
-        self.__bytes, self.__encoding = loader.load(mode='b')
+        self.__bytes, self.__encoding = loader.load(
+                mode='b', detect_encoding=False)
         self.reset()
 
     def close(self):
@@ -39,7 +40,9 @@ class Excel(API):
 
     def reset(self):
         self.__bytes.seek(0)
-        self.__workbook = xlrd.open_workbook(file_contents=self.__bytes.read())
+        self.__workbook = xlrd.open_workbook(
+                file_contents=self.__bytes.read(),
+                encoding_override=self.__encoding)
         self.__sheet = self.__workbook.sheet_by_index(self.__sheet_index)
         self.__items = (
             (None, tuple(self.__sheet.row_values(rownum)))

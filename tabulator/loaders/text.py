@@ -22,7 +22,7 @@ class Text(API):
         self.__encoding = encoding
         self.__options = options
 
-    def load(self, mode):
+    def load(self, mode, detect_encoding=True):
 
         # Prepare source
         schema = 'text://'

@@ -23,7 +23,7 @@ class Web(API):
         self.__stream = stream
         self.__options = options
 
-    def load(self, mode):
+    def load(self, mode, detect_encoding=True):
 
         # Prepare response
         response = urlopen(self.__source)
@@ -38,13 +38,14 @@ class Web(API):
 
         # Prepare encoding
         encoding = self.__encoding
-        if encoding is None:
-            if six.PY2:
-                encoding = response.headers.getparam('charset')
-            else:
-                encoding = response.headers.get_content_charset()
-        if encoding is None:
-            encoding = helpers.detect_encoding(bytes)
+        if detect_encoding:
+            if encoding is None:
+                if six.PY2:
+                    encoding = response.headers.getparam('charset')
+                else:
+                    encoding = response.headers.get_content_charset()
+            if encoding is None:
+                encoding = helpers.detect_encoding(bytes)
 
         # Return or raise
         if mode == 'b':

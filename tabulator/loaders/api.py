@@ -20,7 +20,7 @@ class API(object):
         pass  # pragma: no cover
 
     @abstractmethod
-    def load(self, mode):
-        """Return byte stream file-like object.
+    def load(self, mode, detect_encoding=True):
+        """Load byte/text stream file-like object.
         """
         pass  # pragma: no cover
