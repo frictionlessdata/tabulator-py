@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import os
 import unittest
-from tabulator import topen
+from tabulator import topen, processors
 
 
 class topenTest(unittest.TestCase):
@@ -22,7 +22,7 @@ class topenTest(unittest.TestCase):
         basepath = 'okfn/tabulator-py/master/examples/data'
         return '/'.join([baseurl, basepath] + list(paths))
 
-    # Tests
+    # Tests [loaders/parsers]
 
     def test_file_csv(self):
 
@@ -97,3 +97,19 @@ class topenTest(unittest.TestCase):
 
         # Make assertions
         self.assertEqual(actual, expected)
+
+    # Tests [processors]
+
+    def test_headers(self):
+
+        # Get results
+        with topen(self.make_file_path('table.csv')) as table:
+            table.add_processor(processors.Headers())
+            headers = table.headers
+            contents = table.read(with_headers=True)
+
+        # Make assertions
+        self.assertEqual(headers, ('id', 'name'))
+        self.assertEqual(contents, [('1', 'name1'), ('2', 'name2')])
+        self.assertEqual(contents[0].id, '1')
+        self.assertEqual(contents[0].name, 'name1')

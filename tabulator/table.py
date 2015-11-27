@@ -70,7 +70,7 @@ class Table(object):
         """
         self.__require_not_closed()
         if self.__iterator.headers is None:
-            if self.__iterator.input_index == 1:
+            if self.__iterator.input_index == 0:
                 for iterator in self.__iterator:
                     if iterator.headers is not None:
                         break
