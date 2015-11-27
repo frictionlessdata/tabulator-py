@@ -12,7 +12,7 @@ class Schema(API):
     # Public
 
     def process(self, iterator):
-        pass
+        pass  # pragma: no cover
 
     def handle(self, iterator):
-        pass
+        pass  # pragma: no cover

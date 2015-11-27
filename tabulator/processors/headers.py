@@ -26,4 +26,4 @@ class Headers(API):
             iterator.skip()
 
     def handle(self, iterator):
-        pass
+        pass  # pragma: no cover
