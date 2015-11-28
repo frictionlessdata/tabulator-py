@@ -99,7 +99,6 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    @unittest.skip('reason')
     def test_web_json_dicts(self):
 
         # Get results
@@ -109,12 +108,11 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    @unittest.skip('reason')
     def test_web_json_lists(self):
 
         # Get results
         actual = topen(self.make_web_path('table-lists.json')).read()
-        expected = [(1, 'name1'), (2, 'name2')]
+        expected = [('id', 'name'), (1, 'name1'), (2, 'name2')]
 
         # Make assertions
         self.assertEqual(actual, expected)
