@@ -20,7 +20,7 @@ class File(API):
         self.__encoding = encoding
         self.__options = options
 
-    def load(self, mode, detect_encoding=True):
+    def load(self, mode):
 
         # Prepare source
         schema = 'file://'
@@ -33,16 +33,19 @@ class File(API):
 
         # Prepare encoding
         encoding = self.__encoding
-        if detect_encoding:
-            if encoding is None:
-                encoding = helpers.detect_encoding(bytes)
+        if encoding is None:
+            encoding = helpers.detect_encoding(bytes)
 
         # Return or raise
         if mode == 'b':
-            return (bytes, encoding)
+            return bytes
         elif mode == 't':
             chars = io.TextIOWrapper(bytes, encoding, **self.__options)
             return chars
         else:
             message = 'Mode %s is not supported' % mode
             raise errors.Error(message)
+
+    @property
+    def encoding(self):
+        return self.__encoding

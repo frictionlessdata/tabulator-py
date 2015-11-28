@@ -42,10 +42,14 @@ class Text(API):
 
         # Return or raise
         if mode == 'b':
-            return (bytes, encoding)
+            return bytes
         elif mode == 't':
             chars = io.TextIOWrapper(bytes, encoding, **self.__options)
             return chars
         else:
             message = 'Mode %s is not supported' % mode
             raise errors.Error(message)
+
+    @property
+    def encoding(self):
+        return self.__encoding

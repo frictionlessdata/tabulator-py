@@ -23,8 +23,7 @@ class JSON(API):
     def open(self, loader):
         self.close()
         self.__loader = loader
-        self.__bytes, self.__encoding = loader.load(
-                mode='b', detect_encoding=False)
+        self.__bytes = loader.load(mode='b')
         items = ijson.items(self.__bytes, self.__prefix)
 
         def iterator(items):
