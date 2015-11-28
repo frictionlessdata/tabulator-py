@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import xlrd
+from .. import helpers
 from .api import API
 
 
@@ -23,6 +24,10 @@ class Excel(API):
         self.close()
         self.__loader = loader
         self.__bytes = loader.load(mode='b')
+        self.__workbook = xlrd.open_workbook(
+                file_contents=self.__bytes.read(),
+                encoding_override=self.__loader.encoding)
+        self.__sheet = self.__workbook.sheet_by_index(self.__sheet_index)
         self.reset()
 
     def close(self):
@@ -38,11 +43,11 @@ class Excel(API):
         return self.__items
 
     def reset(self):
-        self.__bytes.seek(0)
-        self.__workbook = xlrd.open_workbook(
-                file_contents=self.__bytes.read(),
-                encoding_override=self.__loader.encoding)
-        self.__sheet = self.__workbook.sheet_by_index(self.__sheet_index)
-        self.__items = (
-            (None, tuple(self.__sheet.row_values(rownum)))
-            for rownum in range(self.__sheet.nrows))
+        helpers.reset_stream(self.__bytes)
+        self.__items = self.__emit_items()
+
+    # Private
+
+    def __emit_items(self):
+        for rownum in range(self.__sheet.nrows):
+            yield (None, tuple(self.__sheet.row_values(rownum)))

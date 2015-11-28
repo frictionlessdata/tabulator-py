@@ -81,6 +81,7 @@ class Iterator(object):
     def reset(self):
         self.__parser.reset()
         self.__input_index = 0
+        self.__output_index = 0
 
     def skip(self):
         self.__is_skip = True

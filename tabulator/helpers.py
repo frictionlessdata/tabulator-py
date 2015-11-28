@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import os
 from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
+from . import errors
 
 
 def detect_scheme(source):
@@ -37,3 +38,15 @@ def detect_encoding(bytes):
     if encoding == 'ascii':
         encoding = 'utf-8'
     return encoding
+
+
+def reset_stream(stream):
+    try:
+        position = stream.tell()
+    except Exception:
+        position = True
+    if position != 0:
+        if not stream.seekable():
+            message = 'Stream is not seekable.'
+            raise errors.Error(message)
+        stream.seek(0)

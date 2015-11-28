@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import csv
-from .. import errors
+from .. import helpers
 from .api import API
 
 
@@ -25,8 +25,7 @@ class CSV(API):
         self.close()
         self.__loader = loader
         self.__chars = loader.load(mode='t')
-        items = csv.reader(self.__chars, **self.__options)
-        self.__items = ((None, tuple(line)) for line in items)
+        self.reset()
 
     def close(self):
         if not self.closed:
@@ -41,9 +40,12 @@ class CSV(API):
         return self.__items
 
     def reset(self):
-        if not self.__chars.seekable():
-            message = (
-                'Loader\'s returned not seekable stream. '
-                'For this stream reset is not supported.')
-            raise errors.Error(message)
-        self.__chars.seek(0)
+        helpers.reset_stream(self.__chars)
+        self.__items = self.__emit_items()
+
+    # Private
+
+    def __emit_items(self):
+        items = csv.reader(self.__chars, **self.__options)
+        for item in items:
+            yield (None, tuple(item))

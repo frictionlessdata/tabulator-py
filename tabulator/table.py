@@ -58,12 +58,13 @@ class Table(object):
         """
         if not self.closed:
             self.__parser.close()
+            self.__iterator = None
 
     @property
     def closed(self):
         """Return true if table is closed.
         """
-        return self.__parser.closed
+        return self.__parser.closed or self.__iterator is None
 
     @property
     def headers(self):

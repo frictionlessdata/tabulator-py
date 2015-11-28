@@ -113,3 +113,18 @@ class topenTest(unittest.TestCase):
         self.assertEqual(contents, [('1', 'name1'), ('2', 'name2')])
         self.assertEqual(contents[0].id, '1')
         self.assertEqual(contents[0].name, 'name1')
+
+    # Tests [reset]
+
+    def test_reset(self):
+
+        # Get results
+        with topen(self.make_file_path('table.csv')) as table:
+            table.add_processor(processors.Headers())
+            contents1 = table.read(with_headers=True)
+            table.reset()
+            contents2 = table.read(with_headers=True)
+
+        # Make assertions
+        self.assertEqual(contents1, [('1', 'name1'), ('2', 'name2')])
+        self.assertEqual(contents2, [('1', 'name1'), ('2', 'name2')])
