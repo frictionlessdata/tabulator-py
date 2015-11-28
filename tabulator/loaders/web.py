@@ -23,7 +23,7 @@ class Web(API):
         self.__stream = stream
         self.__options = options
 
-    def load(self, mode, detect_encoding=True):
+    def load(self, mode):
 
         # Prepare response
         response = urlopen(self.__source)
