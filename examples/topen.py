@@ -8,8 +8,15 @@ with topen('examples/data/table.csv') as table:
         print(row)
 
 
-print('Parse json format:')
-with topen('file://examples/data/table.json') as table:
+print('Parse json with dicts:')
+with topen('file://examples/data/table-dicts.json') as table:
+    for row in table.readrow(with_headers=True):
+        print(row)
+
+
+print('Parse json with lists:')
+with topen('file://examples/data/table-lists.json') as table:
+    table.add_processor(processors.Headers())
     for row in table.readrow(with_headers=True):
         print(row)
 

@@ -33,11 +33,20 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    def test_file_json(self):
+    def test_file_json_dicts(self):
 
         # Get results
-        actual = topen(self.make_file_path('table.json')).read()
+        actual = topen(self.make_file_path('table-dicts.json')).read()
         expected = [(1, 'name1'), (2, 'name2')]
+
+        # Make assertions
+        self.assertEqual(actual, expected)
+
+    def test_file_json_lists(self):
+
+        # Get results
+        actual = topen(self.make_file_path('table-lists.json')).read()
+        expected = [('id', 'name'), (1, 'name1'), (2, 'name2')]
 
         # Make assertions
         self.assertEqual(actual, expected)
@@ -61,12 +70,22 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    def test_text_json(self):
+    def test_text_json_dicts(self):
 
         # Get results
         source = '[{"id": 1, "name": "name1" }, {"id": 2, "name": "name2" }]'
         actual = topen(source, scheme='text', format='json').read()
         expected = [(1, 'name1'), (2, 'name2')]
+
+        # Make assertions
+        self.assertEqual(actual, expected)
+
+    def test_text_json_lists(self):
+
+        # Get results
+        source = '[["id", "name"], [1, "name1"], [2, "name2"]]'
+        actual = topen(source, scheme='text', format='json').read()
+        expected = [('id', 'name'), (1, 'name1'), (2, 'name2')]
 
         # Make assertions
         self.assertEqual(actual, expected)
@@ -80,10 +99,21 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    def test_web_json(self):
+    @unittest.skip('reason')
+    def test_web_json_dicts(self):
 
         # Get results
-        actual = topen(self.make_web_path('table.json')).read()
+        actual = topen(self.make_web_path('table-dicts.json')).read()
+        expected = [(1, 'name1'), (2, 'name2')]
+
+        # Make assertions
+        self.assertEqual(actual, expected)
+
+    @unittest.skip('reason')
+    def test_web_json_lists(self):
+
+        # Get results
+        actual = topen(self.make_web_path('table-lists.json')).read()
         expected = [(1, 'name1'), (2, 'name2')]
 
         # Make assertions
