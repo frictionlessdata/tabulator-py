@@ -37,7 +37,7 @@ with topen(source) as table:
         print(row)
 
 
-print('Table reset and read limit')
+print('Table reset and read limit:')
 with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
     print(table.read(limit=1))

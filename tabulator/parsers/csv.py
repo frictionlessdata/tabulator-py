@@ -5,6 +5,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import csv
+import six
+from codecs import iterencode
 from .. import helpers
 from .api import API
 
@@ -46,6 +48,21 @@ class CSV(API):
     # Private
 
     def __emit_items(self):
-        items = csv.reader(self.__chars, **self.__options)
-        for item in items:
-            yield (None, tuple(item))
+
+        # For PY2 encode/decode
+        if six.PY2:
+            # Reader requires utf-8 encoded stream
+            bytes = iterencode(self.__chars, 'utf-8')
+            items = csv.reader(bytes, **self.__options)
+            for item in items:
+                values = []
+                for value in item:
+                    value = value.decode('utf-8')
+                    values.append(value)
+                yield (None, tuple(values))
+
+        # For PY3 use chars
+        else:
+            items = csv.reader(self.__chars, **self.__options)
+            for item in items:
+                yield (None, tuple(item))
