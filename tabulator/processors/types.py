@@ -8,6 +8,8 @@ from .api import API
 
 
 class Types(API):
+    """Processor to add types to row.
+    """
 
     # Public
 

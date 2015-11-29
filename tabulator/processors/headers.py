@@ -8,6 +8,8 @@ from .api import API
 
 
 class Headers(API):
+    """Processor to add headers to row.
+    """
 
     # Public
 

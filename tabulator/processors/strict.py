@@ -8,6 +8,8 @@ from .api import API
 
 
 class Strict(API):
+    """Processor to ensure rows to follow the rules.
+    """
 
     # Public
 
