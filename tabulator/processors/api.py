@@ -11,10 +11,21 @@ from abc import ABCMeta, abstractmethod
 @add_metaclass(ABCMeta)
 class API(object):
     """Processor representation.
+
+    Processor will be called on every iteration
+    with `process` or `handle` methods. Processor
+    can update `Iterator` instance to change
+    rows emitted by `Table` instance.
+
+    Parameters
+    ----------
+    options: dict
+        Processing options.
+
     """
 
     @abstractmethod
-    def __init__(self, **option):
+    def __init__(self, **options):
         pass  # pragma: no cover
 
     # Public
@@ -22,11 +33,27 @@ class API(object):
     @abstractmethod
     def process(self, iterator):
         """Process iterator in normal mode.
+
+        This method will be called if
+        iterator.exception == None.
+
+        Parameters
+        ----------
+        iterator: `Iterator`
+            Table iterator.
         """
         pass  # pragma: no cover
 
     @abstractmethod
     def handle(self, iterator):
         """Process iterator with exception.
+
+        This method will be called if
+        iterator.exception != None.
+
+        Parameters
+        ----------
+        iterator: `Iterator`
+            Table iterator.
         """
         pass  # pragma: no cover
