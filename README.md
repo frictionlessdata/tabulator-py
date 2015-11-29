@@ -74,7 +74,9 @@ table = UserTable(...)
 ### Design Overview
 
 Loader API - [docstrings](https://github.com/okfn/tabulator-py/blob/master/tabulator/loaders/api.py)
+
 Parser API - [docstrings](https://github.com/okfn/tabulator-py/blob/master/tabulator/parsers/api.py)
+
 Processor API - [docstrings](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py)
 
 ## Development
