@@ -11,13 +11,15 @@ This section is intended to be used by end-users of the library.
 
 ### Getting Started
 
+#### Installation
+
 To get started (under development):
 
 ```
 $ pip install tabulator
 ```
 
-### Simple interface
+#### Simple interface
 
 Fast access to the table with `topen` (stands for `table open`) function:
 
@@ -30,7 +32,7 @@ with topen('path.csv') as table:
         print(row)
 ```
 
-### Advanced interface
+#### Advanced interface
 
 To get full control over the process you can use `Table` class:
 
@@ -48,7 +50,7 @@ print(headers, contents)
 table.close()
 ```
 
-### Expert interface
+#### Expert interface
 
 All parts of Tabulator can be tweaked overriding main classes:
 
@@ -68,6 +70,12 @@ class UserTable(Table):
 table = UserTable(...)
 ...
 ```
+
+### Design Overview
+
+Loader API - [docstrings](https://github.com/okfn/tabulator-py/blob/master/tabulator/loaders/api.py)
+Parser API - [docstrings](https://github.com/okfn/tabulator-py/blob/master/tabulator/parsers/api.py)
+Processor API - [docstrings](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py)
 
 ## Development
 
