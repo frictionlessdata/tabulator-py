@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 from .api import API
 
 
-class Schema(API):
+class Strict(API):
 
     # Public
 
