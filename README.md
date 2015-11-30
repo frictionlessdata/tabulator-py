@@ -45,6 +45,13 @@ as function arguments.
 The last `topen` argument is `encoding` - user can force Tabulator
 to use encoding of choice to open the table.
 
+Read more about `topen` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/topen.py).
+
+Function `topen` returns `Table` instance. We use context manager
+to call `table.open()` on enter and `table.close()` when we exit.
+
+Read more about `Table` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/table.py).
+
 #### Advanced interface
 
 To get full control over the process you can use `Table` class:
