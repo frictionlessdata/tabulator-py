@@ -7,5 +7,5 @@ from __future__ import unicode_literals
 
 from .api import API
 from .headers import Headers
+from .schema import Schema
 from .strict import Strict
-from .types import Types

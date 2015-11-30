@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 from .api import API
 
 
-class Types(API):
+class Schema(API):
     """Processor to add types to row.
     """
 

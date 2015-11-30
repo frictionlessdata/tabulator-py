@@ -6,13 +6,13 @@ from __future__ import unicode_literals
 
 import unittest
 from importlib import import_module
-module = import_module('tabulator.processors.types')
+module = import_module('tabulator.processors.schema')
 
 
 # TODO: implement
-class TypesTest(unittest.TestCase):
+class SchemaTest(unittest.TestCase):
 
     # Tests
 
     def test(self):
-        self.assertTrue(module.Types)
+        self.assertTrue(module.Schema)
