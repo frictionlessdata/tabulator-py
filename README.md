@@ -32,6 +32,19 @@ with topen('path.csv') as table:
         print(row)
 ```
 
+For the most use cases `topen` function is far enough. It gets
+`source` argument:
+
+```
+<scheme>://path/to/file.<format>
+```
+and uses corresponding Loader and Parser to open and start to iterate
+over the table. Also user can pass `scheme` and `format` explicitly
+as function arguments.
+
+The last `topen` argument is `encoding` - user can force Tabulator
+to use encoding of choice to open the table.
+
 #### Advanced interface
 
 To get full control over the process you can use `Table` class:
@@ -73,11 +86,18 @@ table = UserTable(...)
 
 ### Design Overview
 
-Loader API - [docstrings](https://github.com/okfn/tabulator-py/blob/master/tabulator/loaders/api.py)
+### Documentation
 
-Parser API - [docstrings](https://github.com/okfn/tabulator-py/blob/master/tabulator/parsers/api.py)
-
-Processor API - [docstrings](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py)
+API documentation is presented as docstings:
+- High-level:
+    - [topen](https://github.com/okfn/tabulator-py/blob/master/tabulator/topen.py)
+- Core elements:
+    - [Table](https://github.com/okfn/tabulator-py/blob/master/tabulator/table.py)
+    - [Iterator](https://github.com/okfn/tabulator-py/blob/master/tabulator/iterator.py)
+- Plugin elements:
+    - [Loader API](https://github.com/okfn/tabulator-py/blob/master/tabulator/loaders/api.py)
+    - [Parser API](https://github.com/okfn/tabulator-py/blob/master/tabulator/parsers/api.py)
+    - [Processor API](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py)
 
 ## Development
 
