@@ -62,7 +62,8 @@ def reset_stream(stream):
     except Exception:
         position = True
     if position != 0:
-        if not stream.seekable():
+        try:
+            stream.seek(0)
+        except Exception:
             message = 'Stream is not seekable.'
             raise errors.Error(message)
-        stream.seek(0)
