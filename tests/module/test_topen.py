@@ -13,17 +13,18 @@ from importlib import import_module
 module = import_module('tabulator.topen')
 
 
-@unittest.skip('travis error')
 class topenTest(unittest.TestCase):
 
     # Actions
 
     def setUp(self):
-        self.addCleanup(patch.stopall)
         self.Table = patch.object(module, 'Table').start()
         self.Loader = Mock()
         self.Parser = Mock()
         self.encoding = 'encoding'
+
+    def tearDown(self):
+        patch.stopall()
 
     # Tests
 
