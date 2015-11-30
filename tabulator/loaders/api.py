@@ -47,6 +47,12 @@ class API(object):
         pass  # pragma: no cover
 
     @property
+    def source(self):
+        """Table source.
+        """
+        pass  # pragma: no cover
+
+    @property
     def encoding(self):
         """User defined encoding.
 
