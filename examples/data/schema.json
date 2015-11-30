@@ -1,0 +1,18 @@
+{
+    "fields": [
+        {
+            "title": "",
+            "type": "integer",
+            "description": "",
+            "name": "id",
+            "format": "default"
+        },
+        {
+            "title": "",
+            "type": "string",
+            "description": "",
+            "name": "name",
+            "format": "default"
+        }
+    ]
+}

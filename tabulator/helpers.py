@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+import ast
 from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
 from . import errors
@@ -68,3 +69,14 @@ def reset_stream(stream):
         except Exception:
             message = 'Stream is not seekable.'
             raise errors.Error(message)
+
+
+def parse_value(value):
+    """Parse value as a literal.
+    """
+    try:
+        if isinstance(value, str):
+            value = ast.literal_eval(value)
+    except Exception:
+        pass
+    return value

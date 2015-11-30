@@ -2,3 +2,4 @@ six
 xlrd
 ijson
 chardet
+jsontableschema

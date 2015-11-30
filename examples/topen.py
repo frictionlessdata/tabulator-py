@@ -93,3 +93,19 @@ with topen('examples/data/special/bad_headers_dimension.csv') as table:
         table.read(with_headers=True)
     except Exception as exception:
         print(exception)
+
+
+print('Using schema processor (parse):')
+with topen('examples/data/table.csv') as table:
+    table.add_processor(processors.Headers())
+    table.add_processor(processors.Schema())
+    for row in table.readrow(with_headers=True):
+        print(row)
+
+
+print('Using schema processor (from schema):')
+with topen('examples/data/table.csv') as table:
+    table.add_processor(processors.Headers())
+    table.add_processor(processors.Schema('examples/data/schema.json'))
+    for row in table.readrow(with_headers=True):
+        print(row)
