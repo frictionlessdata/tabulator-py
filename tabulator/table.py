@@ -44,6 +44,12 @@ class Table(object):
 
     def add_processor(self, processor):
         """Add processor to pipeline.
+
+        Parameters
+        ----------
+        processor: `processors.API`
+            Processor to add to pipeline.
+
         """
         self.__processors.append(processor)
 
@@ -85,6 +91,14 @@ class Table(object):
 
     def readrow(self, with_headers=False, limit=None):
         """Return next row from the table.
+
+        Parameters
+        ----------
+        with_headers: bool
+            If True return namedtuples for each row
+        limit: int
+            Rows count to return.
+
         """
         self.__require_not_closed()
         for iterator in self.__iterator:
@@ -101,6 +115,14 @@ class Table(object):
 
     def read(self, with_headers=False, limit=None):
         """Return full table with row limit.
+
+        Parameters
+        ----------
+        with_headers: bool
+            If True return namedtuples for each row
+        limit: int
+            Rows count to return.
+
         """
         self.__require_not_closed()
         return list(self.readrow(
