@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import sys
 import unittest
 try:
     from unittest.mock import Mock, patch
@@ -13,18 +14,17 @@ from importlib import import_module
 module = import_module('tabulator.topen')
 
 
+@unittest.skipIf(sys.version_info < (3, 4), 'patch.stopall doens\'t work')
 class topenTest(unittest.TestCase):
 
     # Actions
 
     def setUp(self):
+        self.addCleanup(patch.stopall)
         self.Table = patch.object(module, 'Table').start()
         self.Loader = Mock()
         self.Parser = Mock()
         self.encoding = 'encoding'
-
-    def tearDown(self):
-        patch.stopall()
 
     # Tests
 
