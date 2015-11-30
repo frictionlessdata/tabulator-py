@@ -17,29 +17,29 @@ class JSON(API):
 
     def __init__(self, path=None):
         self.__path = path
-        self.__bytes = None
+        self.__chars = None
         self.__items = None
 
     def open(self, loader):
         self.close()
         self.__loader = loader
-        self.__bytes = loader.load(mode='b')
+        self.__chars = loader.load(mode='t')
         self.reset()
 
     def close(self):
         if not self.closed:
-            self.__bytes.close()
+            self.__chars.close()
 
     @property
     def closed(self):
-        return self.__bytes is None or self.__bytes.closed
+        return self.__chars is None or self.__chars.closed
 
     @property
     def items(self):
         return self.__items
 
     def reset(self):
-        helpers.reset_stream(self.__bytes)
+        helpers.reset_stream(self.__chars)
         self.__items = self.__emit_items()
 
     # Private
@@ -48,7 +48,7 @@ class JSON(API):
         prefix = 'item'
         if self.__path is not None:
             prefix = '%s.item' % self.__path
-        items = ijson.items(self.__bytes, prefix)
+        items = ijson.items(self.__chars, prefix)
         for item in items:
             if isinstance(item, list):
                 yield (None, tuple(item))
