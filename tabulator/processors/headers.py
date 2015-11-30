@@ -17,6 +17,14 @@ class Headers(API):
         self.__input_index = input_index
 
     def process(self, iterator):
+
+        # Items before headers
+        if self.__input_index > iterator.input_index:
+            if iterator.headers is None:
+                # Skip iteration
+                iterator.skip()
+
+        # Item has to be headers
         if self.__input_index == iterator.input_index:
             if iterator.headers is None:
                 # Set headers

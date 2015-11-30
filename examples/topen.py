@@ -1,6 +1,13 @@
 from tabulator import topen, loaders, parsers, processors
 
 
+print('Headers on second row:')
+with topen('examples/data/special/late_headers.csv') as table:
+    table.add_processor(processors.Headers(2))
+    for row in table.readrow(with_headers=True):
+        print(row)
+
+
 print('Parse csv format:')
 with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
