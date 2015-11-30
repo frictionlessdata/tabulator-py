@@ -9,7 +9,6 @@ from importlib import import_module
 module = import_module('tabulator.loaders.web')
 
 
-@unittest.skip('changing remote file')
 class WebTest(unittest.TestCase):
 
     # Actions

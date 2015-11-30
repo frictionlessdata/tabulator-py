@@ -90,7 +90,6 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    @unittest.skip('changing remote file')
     def test_web_csv(self):
 
         # Get results
@@ -100,7 +99,6 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    @unittest.skip('changing remote file')
     def test_web_json_dicts(self):
 
         # Get results
@@ -110,7 +108,6 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    @unittest.skip('changing remote file')
     def test_web_json_lists(self):
 
         # Get results
@@ -120,7 +117,6 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    @unittest.skip('changing remote file')
     def test_web_excel(self):
 
         # Get results
