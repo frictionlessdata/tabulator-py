@@ -38,19 +38,30 @@ For the most use cases `topen` function is far enough. It gets
 ```
 <scheme>://path/to/file.<format>
 ```
-and uses corresponding Loader and Parser to open and start to iterate
+and uses corresponding `Loader` and `Parser` to open and start to iterate
 over the table. Also user can pass `scheme` and `format` explicitly
-as function arguments.
-
-The last `topen` argument is `encoding` - user can force Tabulator
+as function arguments. The last `topen` argument is `encoding` - user can force Tabulator
 to use encoding of choice to open the table.
 
 Read more about `topen` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/topen.py).
 
 Function `topen` returns `Table` instance. We use context manager
-to call `table.open()` on enter and `table.close()` when we exit.
+to call `table.open()` on enter and `table.close()` when we exit:
+- table can be iterated using `readrow` method (it returns row tuples
+or row named tuples if `with_headers` if True)
+- table can be read into memory using `read` function (return list or row tuples)
+with `limit` of output rows as parameter.
+- headers can be accessed via `headers` property
+- table pointer can be set to start via `reset` method.
 
 Read more about `Table` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/table.py).
+
+In the example above we use `processors.Headers` to extract headers
+from the table. Processors is a powerfull Tabulator concept.
+Parsed data goes thru pipelene of processors to be updated before
+returning from `readrow` method.
+
+Read more about `Processor` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py).
 
 #### Advanced interface
 
@@ -92,6 +103,12 @@ table = UserTable(...)
 ```
 
 ### Design Overview
+
+Tabulator uses modular architecture to be fully extensible and flexible.
+It uses loosely cupled modules like `Loader`, `Parser` and `Processor`
+to provide clear data flow.
+
+For more information see documentation section.
 
 ### Documentation
 
