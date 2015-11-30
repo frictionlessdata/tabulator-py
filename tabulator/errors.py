@@ -1,4 +1,6 @@
 class Error(Exception):
+    """Base Tabulator error.
+    """
 
     # Public
 

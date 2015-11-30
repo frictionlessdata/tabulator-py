@@ -12,9 +12,12 @@ from . import errors
 class Table(object):
     """Table representation.
 
-    Args:
-        loader (tabulator.loaders.API): table loader
-        parser (tabulator.parsers.API): table parser
+    Parameters
+    ----------
+    loader: loaders.API
+        Table loader.
+    parser: parsers.API
+        Table parser.
 
     """
 
@@ -45,7 +48,7 @@ class Table(object):
         self.__processors.append(processor)
 
     def open(self):
-        """Open table by opening source stream.
+        """Open table to iterate over it.
         """
         if self.closed:
             self.__parser.open(self.__loader)
@@ -54,7 +57,7 @@ class Table(object):
         return self
 
     def close(self):
-        """Close table by closing source stream.
+        """Close table by closing underlaying stream.
         """
         if not self.closed:
             self.__parser.close()
@@ -81,7 +84,7 @@ class Table(object):
         return self.__iterator.headers
 
     def readrow(self, with_headers=False, limit=None):
-        """Return next row from the source stream.
+        """Return next row from the table.
         """
         self.__require_not_closed()
         for iterator in self.__iterator:
@@ -104,7 +107,7 @@ class Table(object):
             with_headers=with_headers, limit=limit))
 
     def reset(self):
-        """Reset pointer to the first row.
+        """Reset table pointer to the first row.
         """
         self.__require_not_closed()
         self.__iterator.reset()

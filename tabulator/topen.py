@@ -28,31 +28,39 @@ PARSERS = {
 
 
 def topen(source, scheme=None, format=None, encoding=None):
-    """Open table from source with encoding and format.
+    """Open table from source with scheme, encoding and format.
 
-    Args:
+    Function `topen` is a wrapper around `Table` interface.
 
-        source (str): path of contents
-
-        scheme (str): schema of source
+    Parameters
+    ----------
+    source: str
+        Path of contents.
+    scheme: str
+        Schema of source:
             - file (default)
             - text
             - http
             - https
             - ftp
             - ftps
-
-        format (str): format of source
+    format: str
+        Format of source:
             - None (detect)
             - csv
             - json
             - xls
             - xlsx
-
-        encoding (str): encoding of source
+    Encoding: str
+        Encoding of source:
             - None (detect)
             - utf-8
             - <any>
+
+    Returns
+    -------
+    table: `Table`
+        Opened Table instance.
 
     """
 

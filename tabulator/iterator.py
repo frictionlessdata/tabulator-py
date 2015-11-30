@@ -79,42 +79,72 @@ class Iterator(object):
         return template.format(self=self)
 
     def reset(self):
+        """Reset iteration process.
+        """
         self.__parser.reset()
         self.__input_index = 0
         self.__output_index = 0
 
     def skip(self):
+        """Skip current iteration.
+        """
         self.__is_skip = True
 
     def stop(self):
+        """Stop iteration process.
+        """
         self.__is_stop = True
 
     @property
     def input_index(self):
+        """Item index from underlaying stream.
+        """
         return self.__input_index
 
     @property
     def output_index(self):
+        """Item index for the consumer.
+        """
         return self.__output_index
 
     @property
     def headers(self):
+        """Row headers.
+        """
         return self.__headers
 
     @headers.setter
     def headers(self, headers):
+        """Set row headers.
+
+        Parameters
+        ----------
+        headers: tuple
+
+        """
         self.__headers = headers
 
     @property
     def values(self):
+        """Row values.
+        """
         return self.__values
 
     @values.setter
     def values(self, values):
+        """Set row values.
+
+        Parameters
+        ----------
+        values: tuple
+
+        """
         self.__values = values
 
     @property
     def exception(self):
+        """Current exception.
+        """
         return self.__exception
 
     # Python2 support

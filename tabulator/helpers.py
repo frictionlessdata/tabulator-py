@@ -11,17 +11,29 @@ from . import errors
 
 
 def detect_scheme(source):
+    """Detect sheme by source.
+
+    For example `http` from `http://example.com/table.csv`
+
+    """
     # TODO: rewrite without urlparse
     scheme = urlparse(source).scheme
     return scheme
 
 
 def detect_format(source):
+    """Detect sheme by source.
+
+    For example `csv` from `http://example.com/table.csv`
+
+    """
     format = os.path.splitext(source)[1].replace('.', '')
     return format
 
 
 def detect_encoding(bytes):
+    """Detect encoding of a byte stream.
+    """
     detector = UniversalDetector()
     for line in bytes.readlines():
         detector.feed(line)
@@ -41,6 +53,10 @@ def detect_encoding(bytes):
 
 
 def reset_stream(stream):
+    """Reset stream pointer to the first element.
+
+    If stream is not seekable raise Exception.
+    """
     try:
         position = stream.tell()
     except Exception:
