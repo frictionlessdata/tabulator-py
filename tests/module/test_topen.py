@@ -34,8 +34,8 @@ class topenTest(unittest.TestCase):
                 source = '%s://path.%s' % (scheme, format)
                 table = module.topen(source, encoding=self.encoding)
                 self.assertEqual(table, self.Table.return_value)
-                self.Loader.assert_calles_with(source, self.encoding)
-                self.Parser.assert_calles_with()
+                self.Loader.assert_called_with(source, self.encoding)
+                self.Parser.assert_called_with()
                 self.Table.assert_called_with(
                         loader=self.Loader(),
                         parser=self.Parser())
@@ -52,8 +52,8 @@ class topenTest(unittest.TestCase):
                         format=format,
                         encoding=self.encoding)
                 self.assertEqual(table, self.Table.return_value)
-                self.Loader.assert_calles_with(source, self.encoding)
-                self.Parser.assert_calles_with()
+                self.Loader.assert_called_with(source, self.encoding)
+                self.Parser.assert_called_with()
                 self.Table.assert_called_with(
                         loader=self.Loader(),
                         parser=self.Parser())

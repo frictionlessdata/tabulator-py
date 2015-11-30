@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import os
 import unittest
 from importlib import import_module
 module = import_module('tabulator.helpers')
@@ -31,7 +32,8 @@ class detect_encoding(unittest.TestCase):
     # Tests
 
     def test(self):
-        bytes = io.open(__file__, 'rb')
+        path = os.path.join(os.path.dirname(__file__), '..', '..', 'README.md')
+        bytes = io.open(path, 'rb')
         self.assertEqual(module.detect_encoding(bytes), 'utf-8')
 
 
