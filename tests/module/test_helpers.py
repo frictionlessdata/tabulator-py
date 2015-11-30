@@ -13,5 +13,14 @@ class helpersTest(unittest.TestCase):
 
     # Tests
 
-    def test(self):
-        self.assertTrue(module)
+    def test_detect_scheme(self):
+        self.assertTrue(module.detect_scheme)
+
+    def test_detect_format(self):
+        self.assertTrue(module.detect_format)
+
+    def test_detect_encoding(self):
+        self.assertTrue(module.detect_encoding)
+
+    def test_reset_stream(self):
+        self.assertTrue(module.reset_stream)

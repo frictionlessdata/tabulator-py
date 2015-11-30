@@ -14,4 +14,4 @@ class errorsTest(unittest.TestCase):
     # Tests
 
     def test(self):
-        self.assertTrue(module)
+        self.assertTrue(issubclass(module.Error, Exception))
