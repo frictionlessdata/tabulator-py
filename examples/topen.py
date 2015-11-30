@@ -29,7 +29,7 @@ with topen('examples/data/table.xls') as table:
 
 
 print('Load from text scheme:')
-with topen('text://id,name\n1,name1\n2,name2\n', format='csv') as table:
+with topen('text://id,name\n1,english\n2,中国人\n', format='csv') as table:
     table.add_processor(processors.Headers())
     for row in table.readrow(with_headers=True):
         print(row)

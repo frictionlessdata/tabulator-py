@@ -41,8 +41,8 @@ class ExcelTest(unittest.TestCase):
         self.assertEqual(
             list(self.parser.items),
             [(None, ('id', 'name')),
-                (None, (1.0, 'name1')),
-                (None, (2.0, 'name2'))])
+                (None, (1.0, 'english')),
+                (None, (2.0, '中国人'))])
 
         self.assertEqual(len(list(self.parser.items)), 0)
         self.parser.reset()

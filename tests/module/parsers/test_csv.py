@@ -37,8 +37,8 @@ class CSVTest(unittest.TestCase):
         self.assertEqual(
             list(self.parser.items),
             [(None, ('id', 'name')),
-                (None, ('1', 'name1')),
-                (None, ('2', 'name2'))])
+                (None, ('1', 'english')),
+                (None, ('2', '中国人'))])
 
         self.assertEqual(len(list(self.parser.items)), 0)
         self.parser.reset()

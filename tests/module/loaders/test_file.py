@@ -24,11 +24,12 @@ class FileTest(unittest.TestCase):
 
     def test_load_t(self):
         chars = self.loader.load(mode='t')
-        self.assertEqual(chars.read(), 'id,name\n1,name1\n2,name2\n')
+        self.assertEqual(chars.read(), 'id,name\n1,english\n2,中国人\n')
 
     def test_load_b(self):
+        spec = '中国人'.encode('utf-8')
         chars = self.loader.load(mode='b')
-        self.assertEqual(chars.read(), b'id,name\n1,name1\n2,name2\n')
+        self.assertEqual(chars.read(), b'id,name\n1,english\n2,' + spec + b'\n')
 
     def test_encoding(self):
         self.assertEqual(self.loader.encoding, self.encoding)

@@ -28,7 +28,7 @@ class topenTest(unittest.TestCase):
 
         # Get results
         actual = topen(self.make_file_path('table.csv')).read()
-        expected = [('id', 'name'), ('1', 'name1'), ('2', 'name2')]
+        expected = [('id', 'name'), ('1', 'english'), ('2', '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
@@ -37,7 +37,7 @@ class topenTest(unittest.TestCase):
 
         # Get results
         actual = topen(self.make_file_path('table-dicts.json')).read()
-        expected = [(1, 'name1'), (2, 'name2')]
+        expected = [(1, 'english'), (2, '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
@@ -46,7 +46,7 @@ class topenTest(unittest.TestCase):
 
         # Get results
         actual = topen(self.make_file_path('table-lists.json')).read()
-        expected = [('id', 'name'), (1, 'name1'), (2, 'name2')]
+        expected = [('id', 'name'), (1, 'english'), (2, '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
@@ -55,7 +55,7 @@ class topenTest(unittest.TestCase):
 
         # Get results
         actual = topen(self.make_file_path('table.xls')).read()
-        expected = [('id', 'name'), (1.0, 'name1'), (2.0, 'name2')]
+        expected = [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
@@ -63,9 +63,9 @@ class topenTest(unittest.TestCase):
     def test_text_csv(self):
 
         # Get results
-        source = 'id,name\n1,name1\n2,name2\n'
+        source = 'id,name\n1,english\n2,中国人\n'
         actual = topen(source, scheme='text', format='csv').read()
-        expected = [('id', 'name'), ('1', 'name1'), ('2', 'name2')]
+        expected = [('id', 'name'), ('1', 'english'), ('2', '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
@@ -73,9 +73,9 @@ class topenTest(unittest.TestCase):
     def test_text_json_dicts(self):
 
         # Get results
-        source = '[{"id": 1, "name": "name1" }, {"id": 2, "name": "name2" }]'
+        source = '[{"id": 1, "name": "english" }, {"id": 2, "name": "中国人" }]'
         actual = topen(source, scheme='text', format='json').read()
-        expected = [(1, 'name1'), (2, 'name2')]
+        expected = [(1, 'english'), (2, '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
@@ -83,45 +83,49 @@ class topenTest(unittest.TestCase):
     def test_text_json_lists(self):
 
         # Get results
-        source = '[["id", "name"], [1, "name1"], [2, "name2"]]'
+        source = '[["id", "name"], [1, "english"], [2, "中国人"]]'
         actual = topen(source, scheme='text', format='json').read()
-        expected = [('id', 'name'), (1, 'name1'), (2, 'name2')]
+        expected = [('id', 'name'), (1, 'english'), (2, '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
 
+    @unittest.skip('changing remote file')
     def test_web_csv(self):
 
         # Get results
         actual = topen(self.make_web_path('table.csv')).read()
-        expected = [('id', 'name'), ('1', 'name1'), ('2', 'name2')]
+        expected = [('id', 'name'), ('1', 'english'), ('2', '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
 
+    @unittest.skip('changing remote file')
     def test_web_json_dicts(self):
 
         # Get results
         actual = topen(self.make_web_path('table-dicts.json')).read()
-        expected = [(1, 'name1'), (2, 'name2')]
+        expected = [(1, 'english'), (2, '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
 
+    @unittest.skip('changing remote file')
     def test_web_json_lists(self):
 
         # Get results
         actual = topen(self.make_web_path('table-lists.json')).read()
-        expected = [('id', 'name'), (1, 'name1'), (2, 'name2')]
+        expected = [('id', 'name'), (1, 'english'), (2, '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
 
+    @unittest.skip('changing remote file')
     def test_web_excel(self):
 
         # Get results
         actual = topen(self.make_web_path('table.xls')).read()
-        expected = [('id', 'name'), (1.0, 'name1'), (2.0, 'name2')]
+        expected = [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
 
         # Make assertions
         self.assertEqual(actual, expected)
@@ -138,9 +142,9 @@ class topenTest(unittest.TestCase):
 
         # Make assertions
         self.assertEqual(headers, ('id', 'name'))
-        self.assertEqual(contents, [('1', 'name1'), ('2', 'name2')])
+        self.assertEqual(contents, [('1', 'english'), ('2', '中国人')])
         self.assertEqual(contents[0].id, '1')
-        self.assertEqual(contents[0].name, 'name1')
+        self.assertEqual(contents[0].name, 'english')
 
     # Tests [reset]
 
@@ -154,5 +158,5 @@ class topenTest(unittest.TestCase):
             contents2 = table.read(with_headers=True)
 
         # Make assertions
-        self.assertEqual(contents1, [('1', 'name1'), ('2', 'name2')])
-        self.assertEqual(contents2, [('1', 'name1'), ('2', 'name2')])
+        self.assertEqual(contents1, [('1', 'english'), ('2', '中国人')])
+        self.assertEqual(contents2, [('1', 'english'), ('2', '中国人')])

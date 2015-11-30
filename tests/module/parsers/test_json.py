@@ -36,8 +36,8 @@ class JSONTest(unittest.TestCase):
 
         self.assertEqual(
             list(self.parser.items),
-            [(('id', 'name'), (1, 'name1')),
-             (('id', 'name'), (2, 'name2'))])
+            [(('id', 'name'), (1, 'english')),
+             (('id', 'name'), (2, '中国人'))])
 
         self.assertEqual(len(list(self.parser.items)), 0)
         self.parser.reset()

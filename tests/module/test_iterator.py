@@ -9,6 +9,7 @@ from importlib import import_module
 module = import_module('tabulator.iterator')
 
 
+# TODO: implement
 class IteratorTest(unittest.TestCase):
 
     # Tests
