@@ -4,23 +4,47 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import io
 import unittest
 from importlib import import_module
 module = import_module('tabulator.helpers')
 
 
-class helpersTest(unittest.TestCase):
+class detect_schemeTest(unittest.TestCase):
 
     # Tests
 
-    def test_detect_scheme(self):
-        self.assertTrue(module.detect_scheme)
+    def test(self):
+        self.assertEqual(module.detect_scheme('http://path'), 'http')
 
-    def test_detect_format(self):
-        self.assertTrue(module.detect_format)
 
-    def test_detect_encoding(self):
-        self.assertTrue(module.detect_encoding)
+class detect_formatTest(unittest.TestCase):
 
-    def test_reset_stream(self):
-        self.assertTrue(module.reset_stream)
+    # Tests
+
+    def test(self):
+        self.assertEqual(module.detect_format('path.csv'), 'csv')
+
+
+class detect_encoding(unittest.TestCase):
+
+    # Tests
+
+    def test(self):
+        bytes = io.open(__file__, 'rb')
+        self.assertEqual(module.detect_encoding(bytes), 'utf-8')
+
+
+class reset_streamTest(unittest.TestCase):
+
+    # Tests
+
+    def test_seekable(self):
+        file = io.open(__file__)
+        file.seek(1)
+        self.assertEqual(file.tell(), 1)
+        module.reset_stream(file)
+        self.assertEqual(file.tell(), 0)
+
+    def test_not_seekable(self):
+        self.assertRaises(Exception, module.reset_stream, 'not_seekable')

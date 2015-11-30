@@ -38,6 +38,7 @@ def detect_encoding(bytes):
     for line in bytes.readlines():
         detector.feed(line)
         if detector.done:
+            # TODO: does it work?
             break
     detector.close()
     bytes.seek(0)

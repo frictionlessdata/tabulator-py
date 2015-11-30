@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import io
 import os
 import unittest
 try:
@@ -22,7 +23,7 @@ class JSONTest(unittest.TestCase):
         basedir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
         self.source = os.path.join(basedir, 'examples', 'data', 'table-dicts.json')
         self.loader = Mock()
-        self.loader.load = Mock(return_value=open(self.source, 'rb'))
+        self.loader.load = Mock(return_value=io.open(self.source, 'rb'))
         self.parser = module.JSON()
 
     # Tests
