@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from collections import namedtuple
+from collections import OrderedDict
 from .iterator import Iterator
 from . import errors
 
@@ -109,8 +109,7 @@ class Table(object):
             if with_headers:
                 if iterator.headers is None:
                     raise errors.Error('No headers are available.')
-                Row = namedtuple('Row', iterator.headers)
-                row = Row(*iterator.values)
+                row = OrderedDict(zip(iterator.headers, iterator.values))
             yield row
 
     def read(self, with_headers=False, limit=None):

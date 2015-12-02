@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import os
 import unittest
+from collections import OrderedDict
 from tabulator import topen, processors
 
 
@@ -138,9 +139,11 @@ class topenTest(unittest.TestCase):
 
         # Make assertions
         self.assertEqual(headers, ('id', 'name'))
-        self.assertEqual(contents, [('1', 'english'), ('2', '中国人')])
-        self.assertEqual(contents[0].id, '1')
-        self.assertEqual(contents[0].name, 'english')
+        self.assertEqual(contents, [
+            OrderedDict([('id', '1'), ('name', 'english')]),
+            OrderedDict([('id', '2'), ('name', '中国人')])])
+        self.assertEqual(contents[0]['id'], '1')
+        self.assertEqual(contents[0]['name'], 'english')
 
     # Tests [reset]
 
@@ -154,5 +157,7 @@ class topenTest(unittest.TestCase):
             contents2 = table.read(with_headers=True)
 
         # Make assertions
-        self.assertEqual(contents1, [('1', 'english'), ('2', '中国人')])
-        self.assertEqual(contents2, [('1', 'english'), ('2', '中国人')])
+        self.assertEqual(contents1, [
+            OrderedDict([('id', '1'), ('name', 'english')]),
+            OrderedDict([('id', '2'), ('name', '中国人')])])
+        self.assertEqual(contents1, contents2)
