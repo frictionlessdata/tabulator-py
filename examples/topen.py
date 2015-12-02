@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 from tabulator import topen, loaders, parsers, processors
 
 
@@ -108,4 +114,12 @@ with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Schema('examples/data/schema.json'))
     for row in table.readrow(with_headers=True):
+        print(row)
+
+
+print('Spaces in headers:')
+source = 'https://raw.githubusercontent.com/datasets/gdp/master/data/gdp.csv'
+with topen(source) as table:
+    table.add_processor(processors.Headers())
+    for row in table.readrow(with_headers=True, limit=10):
         print(row)
