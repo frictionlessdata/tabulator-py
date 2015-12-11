@@ -10,4 +10,4 @@ fi
 # Python env
 virtualenv venv
 source venv/bin/activate
-pip install --upgrade -r requirements.dev.txt
+python run.py install

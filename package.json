@@ -26,8 +26,10 @@
 
   "scripts": {
     "check": "python run.py review && python run.py test",
+    "install": "pip install --upgrade -r requirements.dev.txt",
+    "report": "coveralls",
     "review": "pylama tabulator",
-    "test": "nosetests tests -sv --with-coverage --cover-package tabulator"
+    "test": "PACKAGE=tabulator tox"
   }
 
 }

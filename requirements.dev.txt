@@ -1,6 +1,8 @@
 -r requirements.txt
 pylama
-nose
+tox
 mock
+pytest
+pytest-cov
 coverage
 coveralls
