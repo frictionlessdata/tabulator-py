@@ -18,14 +18,17 @@ class Table(object):
         Table loader.
     parser: parsers.API
         Table parser.
+    iterator_class: object
+        Custom iterator class.
 
     """
 
-    ITERATOR_CLASS = Iterator
-
     # Public
 
-    def __init__(self, loader, parser):
+    def __init__(self, loader, parser, iterator_class=None):
+        if iterator_class is None:
+            iterator_class = Iterator
+        self.__iterator_class = iterator_class
         self.__loader = loader
         self.__parser = parser
         self.__processors = []
@@ -58,7 +61,7 @@ class Table(object):
         """
         if self.closed:
             self.__parser.open(self.__loader)
-            self.__iterator = self.ITERATOR_CLASS(
+            self.__iterator = self.__iterator_class(
                     self.__parser, self.__processors)
         return self
 

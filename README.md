@@ -72,34 +72,14 @@ from tabulator import Table, processors, loaders, parsers
 
 table = Table(
         loader=loaders.File('path.csv', encoding='utf-8'),
-        parser=parsers.CSV(delimiter=',', quotechar='|'))
-table.add_processor(processors.Headers(row=1))
+        parser=parsers.CSV(delimiter=',', quotechar='|'),
+        iterator_class=CustomIterator)
+table.add_processor(processors.Headers(1))
 table.open()
 headers = table.headers
 contents = table.read(with_headers=True, limit=10)
 print(headers, contents)
 table.close()
-```
-
-#### Expert interface
-
-All parts of Tabulator can be tweaked overriding main classes:
-
-```python
-from tabulator import Table, Iterator
-
-class UserIterator(Iterator):
-
-    ...
-
-class UserTable(Table):
-
-    ITERATOR_CLASS = UserIterator
-
-    ...
-
-table = UserTable(...)
-...
 ```
 
 ### Design Overview

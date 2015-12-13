@@ -27,7 +27,9 @@ PARSERS = {
 }
 
 
-def topen(source, scheme=None, format=None, encoding=None):
+def topen(source,
+          scheme=None, format=None, encoding=None,
+          loader_options=None, parser_options=None):
     """Open table from source with scheme, encoding and format.
 
     Function `topen` is a wrapper around `Table` interface.
@@ -51,11 +53,15 @@ def topen(source, scheme=None, format=None, encoding=None):
             - json
             - xls
             - xlsx
-    Encoding: str
+    encoding: str
         Encoding of source:
             - None (detect)
             - utf-8
             - <any>
+    loader_options: dict
+        Loader options.
+    parser_options: dict
+        Parser options.
 
     Returns
     -------
@@ -63,6 +69,11 @@ def topen(source, scheme=None, format=None, encoding=None):
         Opened Table instance.
 
     """
+    # Initiate if None
+    if loader_options is None:
+        loader_options = {}
+    if parser_options is None:
+        parser_options = {}
 
     # Get scheme, format
     if scheme is None:
@@ -74,7 +85,7 @@ def topen(source, scheme=None, format=None, encoding=None):
     if scheme not in LOADERS:
         message = 'Scheme "%s" is not supported' % scheme
         raise errors.Error(message)
-    loader = LOADERS[scheme](source, encoding)
+    loader = LOADERS[scheme](source, encoding, **loader_options)
 
     # Lookup and initiate parser
     if format not in PARSERS:
@@ -83,7 +94,7 @@ def topen(source, scheme=None, format=None, encoding=None):
     parser = PARSERS[format]()
 
     # Initiate, open table
-    table = Table(loader=loader, parser=parser)
+    table = Table(loader=loader, parser=parser, **parser_options)
     table.open()
 
     return table
