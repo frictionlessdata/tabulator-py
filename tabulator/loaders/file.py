@@ -23,10 +23,10 @@ class File(API):
     def load(self, mode):
 
         # Prepare source
-        schema = 'file://'
+        scheme = 'file://'
         source = self.__source
-        if source.startswith(schema):
-            source = source.replace(schema, '', 1)
+        if source.startswith(scheme):
+            source = source.replace(scheme, '', 1)
 
         # Prepare bytes
         bytes = io.open(source, 'rb')

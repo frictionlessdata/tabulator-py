@@ -12,7 +12,7 @@ from . import errors
 
 
 def detect_scheme(source):
-    """Detect sheme by source.
+    """Detect scheme by source.
 
     For example `http` from `http://example.com/table.csv`
 
@@ -23,7 +23,7 @@ def detect_scheme(source):
 
 
 def detect_format(source):
-    """Detect sheme by source.
+    """Detect scheme by source.
 
     For example `csv` from `http://example.com/table.csv`
 
