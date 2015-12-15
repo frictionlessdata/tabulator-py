@@ -39,7 +39,7 @@ def topen(source,
     source: str
         Path of contents.
     scheme: str
-        Schema of source:
+        Scheme of source:
             - file (default)
             - text
             - http
