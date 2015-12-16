@@ -29,7 +29,8 @@ PARSERS = {
 
 def topen(source,
           scheme=None, format=None, encoding=None,
-          loader_options=None, parser_options=None):
+          loader_options=None, parser_options=None,
+          loader_class=None, parser_class=None):
     """Open table from source with scheme, encoding and format.
 
     Function `topen` is a wrapper around `Table` interface.
@@ -62,6 +63,10 @@ def topen(source,
         Loader options.
     parser_options: dict
         Parser options.
+    loader_class: type
+        Loader class.
+    parser_class: type
+        Parser class.
 
     Returns
     -------
@@ -75,26 +80,28 @@ def topen(source,
     if parser_options is None:
         parser_options = {}
 
-    # Get scheme, format
-    if scheme is None:
-        scheme = helpers.detect_scheme(source) or DEFAULT_SCHEME
-    if format is None:
-        format = helpers.detect_format(source)
+    # Get loader
+    if loader_class is None:
+        if scheme is None:
+            scheme = helpers.detect_scheme(source) or DEFAULT_SCHEME
+        if scheme not in LOADERS:
+            message = 'Scheme "%s" is not supported' % scheme
+            raise errors.Error(message)
+        loader_class = LOADERS[scheme]
+    loader = loader_class(source, encoding, **loader_options)
 
-    # Lookup and initiate loader
-    if scheme not in LOADERS:
-        message = 'Scheme "%s" is not supported' % scheme
-        raise errors.Error(message)
-    loader = LOADERS[scheme](source, encoding, **loader_options)
+    # Get parser
+    if parser_class is None:
+        if format is None:
+            format = helpers.detect_format(source)
+        if format not in PARSERS:
+            message = 'Format "%s" is not supported' % format
+            raise errors.Error(message)
+        parser_class = PARSERS[format]
+    parser = parser_class(**parser_options)
 
-    # Lookup and initiate parser
-    if format not in PARSERS:
-        message = 'Format "%s" is not supported' % format
-        raise errors.Error(message)
-    parser = PARSERS[format]()
-
-    # Initiate, open table
-    table = Table(loader=loader, parser=parser, **parser_options)
+    # Initiate and open table
+    table = Table(loader=loader, parser=parser)
     table.open()
 
     return table
