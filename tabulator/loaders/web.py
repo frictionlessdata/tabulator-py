@@ -28,16 +28,15 @@ class Web(API):
 
     def load(self, mode):
 
-        # Prepare response
-        response = urlopen(self.__source)
-
         # Prepare bytes
-        if self.__stream:
-            bytes = response
-        else:
+        if six.PY2:
+            response = urlopen(self.__source)
             bytes = io.BufferedRandom(io.BytesIO())
             bytes.write(response.read())
             bytes.seek(0)
+        else:
+            bytes = _WebStream(self.__source)
+            response = bytes.response
 
         # Prepare encoding
         encoding = self.__encoding
@@ -62,3 +61,35 @@ class Web(API):
     @property
     def encoding(self):
         return self.__encoding
+
+
+# Internal
+
+class _WebStream(object):
+
+    # Public
+
+    def __init__(self, source):
+        self.__source = source
+        self.__response = self.__make_request()
+
+    def __getattr__(self, name):
+        return getattr(self.__response, name)
+
+    @property
+    def response(self):
+        return self.__response
+
+    def seekable(self):
+        return True
+
+    def seek(self, offset):
+        if offset != 0:
+            message = 'Seek support only 0 offset.'
+            raise ValueError(message)
+        self.__response = self.__make_request()
+
+    # Private
+
+    def __make_request(self):
+        return urlopen(self.__source)
