@@ -5,7 +5,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .table import Table
-from . import loaders, parsers, errors, helpers
+from .iterator import Iterator
+from . import loaders
+from . import parsers
+from . import errors
+from . import helpers
 
 
 DEFAULT_SCHEME = 'file'
@@ -27,10 +31,12 @@ PARSERS = {
 }
 
 
-def topen(source,
+def topen(source, #noqa
           scheme=None, format=None, encoding=None,
           loader_options=None, parser_options=None,
-          loader_class=None, parser_class=None):
+          loader_class=None, parser_class=None,
+          iterator_class=None,
+          table_class=None):
     """Open table from source with scheme, encoding and format.
 
     Function `topen` is a wrapper around `Table` interface.
@@ -67,6 +73,10 @@ def topen(source,
         Loader class.
     parser_class: type
         Parser class.
+    iterator_class: type
+        Iterator class.
+    table_class: type
+        Table class.
 
     Returns
     -------
@@ -79,6 +89,10 @@ def topen(source,
         loader_options = {}
     if parser_options is None:
         parser_options = {}
+    if iterator_class is None:
+        iterator_class = Iterator
+    if table_class is None:
+        table_class = Table
 
     # Get loader
     if loader_class is None:
@@ -101,7 +115,10 @@ def topen(source,
     parser = parser_class(**parser_options)
 
     # Initiate and open table
-    table = Table(loader=loader, parser=parser)
+    table = table_class(
+            loader=loader,
+            parser=parser,
+            iterator_class=iterator_class)
     table.open()
 
     return table

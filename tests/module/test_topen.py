@@ -40,7 +40,8 @@ class topenTest(unittest.TestCase):
                 self.Parser.assert_called_with()
                 self.Table.assert_called_with(
                         loader=self.Loader(),
-                        parser=self.Parser())
+                        parser=self.Parser(),
+                        iterator_class=module.Iterator)
 
     def test_supported_in_parameters(self):
         for scheme in ['file', 'text', 'ftp', 'ftps', 'http', 'https']:
@@ -58,7 +59,8 @@ class topenTest(unittest.TestCase):
                 self.Parser.assert_called_with()
                 self.Table.assert_called_with(
                         loader=self.Loader(),
-                        parser=self.Parser())
+                        parser=self.Parser(),
+                        iterator_class=module.Iterator)
 
     def test_not_supported(self):
         self.assertRaises(Exception, module.topen, 'path',

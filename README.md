@@ -65,22 +65,29 @@ Read more about `Processor` - [documentation](https://github.com/okfn/tabulator-
 
 #### Advanced interface
 
-To get full control over the process you can use `Table` class:
+To get full control over the process you can use more paramters:
 
 ```python
-from tabulator import Table, processors, loaders, parsers
+from tabulator import topen, processors, loaders, parsers
 
-table = Table(
-        loader=loaders.File('path.csv', encoding='utf-8'),
-        parser=parsers.CSV(delimiter=',', quotechar='|'),
-        iterator_class=CustomIterator)
+table = topen(
+        'path.csv',
+        loader_options={'encondig': 'utf-8'},
+        parser_options={'delimeter': ',', quotechar: '|'},
+        loader_class=loaders.File,
+        parser_class=parsers.CSV,
+        iterator_class=CustomIterator,
+        table_class=CustomTable)
 table.add_processor(processors.Headers(1))
-table.open()
 headers = table.headers
 contents = table.read(limit=10)
 print(headers, contents)
 table.close()
 ```
+
+Also `Table` class can be initiated by user (see documentation).
+But there is no difference between it and `topen` call with extended
+list of parameters except `topen` also call `table.open()` method.
 
 ### Design Overview
 
