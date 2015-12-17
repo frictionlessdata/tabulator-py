@@ -14,8 +14,8 @@ class Iterator(object):
     def __init__(self, parser, processors):
         self.__parser = parser
         self.__processors = processors
-        self.__input_index = 0
-        self.__output_index = 0
+        self.__index = 0
+        self.__count = 0
         self.__keys = None
         self.__values = None
         self.__headers = None
@@ -33,8 +33,8 @@ class Iterator(object):
             raise StopIteration()
 
         # Update indexes, reset vars
-        self.__input_index += 1
-        self.__output_index += 1
+        self.__index += 1
+        self.__count += 1
         self.__keys = None
         self.__values = None
         self.__is_stop = False
@@ -67,14 +67,14 @@ class Iterator(object):
 
         # Skip iteration
         if self.__is_skip:
-            self.__output_index -= 1
+            self.__count -= 1
             return self.__next__()
 
         return self
 
     def __repr__(self):
         template = (
-            'Iterator <{self.input_index}, {self.output_index}, '
+            'Iterator <{self.index}, {self.count}, '
             '{self.headers}, {self.values}>')
         return template.format(self=self)
 
@@ -82,8 +82,8 @@ class Iterator(object):
         """Reset iteration process.
         """
         self.__parser.reset()
-        self.__input_index = 0
-        self.__output_index = 0
+        self.__index = 0
+        self.__count = 0
 
     def skip(self):
         """Skip current iteration.
@@ -96,16 +96,16 @@ class Iterator(object):
         self.__is_stop = True
 
     @property
-    def input_index(self):
+    def index(self):
         """Item index from underlaying stream.
         """
-        return self.__input_index
+        return self.__index
 
     @property
-    def output_index(self):
+    def count(self):
         """Item index for the consumer.
         """
-        return self.__output_index
+        return self.__count
 
     @property
     def headers(self):
