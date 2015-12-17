@@ -30,6 +30,7 @@ with topen('path.csv') as table:
     table.add_processor(processors.Headers())
     for row in table.readrow():
         print(row)
+        print(row.get('header'))
 ```
 
 For the most use cases `topen` function is far enough. It gets
