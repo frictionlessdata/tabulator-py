@@ -28,7 +28,7 @@ from tabulator import topen, processors
 
 with topen('path.csv') as table:
     table.add_processor(processors.Headers())
-    for row in table.readrow():
+    for row in table:
         print(row)
         print(row.get('header'))
 ```

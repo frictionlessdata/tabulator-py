@@ -46,6 +46,16 @@ class Table(object):
         """
         self.close()
 
+    def __iter__(self):
+        self.__require_not_closed()
+        return self
+
+    def __next__(self):
+        self.__require_not_closed()
+        next(self.__iterator)
+        row = Row(self.__iterator.headers, self.__iterator.values)
+        return row
+
     def add_processor(self, processor):
         """Add processor to pipeline.
 
@@ -90,11 +100,12 @@ class Table(object):
                     if iterator.headers is not None:
                         self.__headers = iterator.headers
                         break
+                # TODO: remove comment?
                 # Reset call can be avoided if reimplement
                 # `Iterator` exposing `is_skipped` flag
                 # to handle it on `Table` level. It can
                 # be usefull if there will be some
-                # not resetable strams in a future
+                # non resetable streams in a future
                 self.reset()
         return self.__headers
 
@@ -143,3 +154,6 @@ class Table(object):
                'Table have to be opened by `table.open()` before '
                'iteration interface will be available.')
             raise errors.Error(message)
+
+    # Python2 support
+    next = __next__
