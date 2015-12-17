@@ -33,6 +33,7 @@ class Table(object):
         self.__parser = parser
         self.__processors = []
         self.__iterator = None
+        self.__headers = None
 
     def __enter__(self):
         """Enter context manager by opening table.
@@ -62,7 +63,7 @@ class Table(object):
         if self.closed:
             self.__parser.open(self.__loader)
             self.__iterator = self.__iterator_class(
-                    self.__parser, self.__processors)
+                    self.__parser.items, self.__processors)
         return self
 
     def close(self):
@@ -83,14 +84,14 @@ class Table(object):
         """Return table headers.
         """
         self.__require_not_closed()
-        if self.__iterator.headers is None:
+        if self.__headers is None:
             if self.__iterator.index == 0:
                 for iterator in self.__iterator:
                     if iterator.headers is not None:
+                        self.__headers = iterator.headers
                         break
-                if self.__iterator.index > 1:
-                    self.__iterator.reset()
-        return self.__iterator.headers
+                self.reset()
+        return self.__headers
 
     def readrow(self, limit=None):
         """Return next row from the table.
@@ -125,7 +126,9 @@ class Table(object):
         """Reset table pointer to the first row.
         """
         self.__require_not_closed()
-        self.__iterator.reset()
+        self.__parser.reset()
+        self.__iterator = self.__iterator_class(
+                self.__parser.items, self.__processors)
 
     # Private
 

@@ -11,8 +11,8 @@ class Iterator(object):
 
     # Public
 
-    def __init__(self, parser, processors):
-        self.__parser = parser
+    def __init__(self, items, processors):
+        self.__items = items
         self.__processors = processors
         self.__index = 0
         self.__count = 0
@@ -40,9 +40,9 @@ class Iterator(object):
         self.__is_stop = False
         self.__is_skip = False
 
-        # Get next keys, values from parser
+        # Get next keys, values from items
         try:
-            self.__keys, self.__values = next(self.__parser.items)
+            self.__keys, self.__values = next(self.__items)
         except StopIteration:
             raise
         except Exception as exception:
@@ -77,13 +77,6 @@ class Iterator(object):
             'Iterator <{self.index}, {self.count}, '
             '{self.headers}, {self.values}>')
         return template.format(self=self)
-
-    def reset(self):
-        """Reset iteration process.
-        """
-        self.__parser.reset()
-        self.__index = 0
-        self.__count = 0
 
     def skip(self):
         """Skip current iteration.

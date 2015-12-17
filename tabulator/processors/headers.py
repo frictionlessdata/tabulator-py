@@ -13,27 +13,19 @@ class Headers(API):
 
     # Public
 
-    def __init__(self, index=1):
-        self.__index = index
+    def __init__(self, skip=0):
+        self.__skip = skip
 
     def process(self, iterator):
 
-        # Items before headers
-        if self.__index > iterator.index:
-            if iterator.headers is None:
-                # Skip iteration
-                iterator.skip()
-
-        # Item has to be headers
-        if self.__index == iterator.index:
-            if iterator.headers is None:
-                # Set headers
-                iterator.headers = iterator.values
-                # Reset iterator
-                if self.__index > 1:
-                    iterator.reset()
+        # Skip items
+        if iterator.index <= self.__skip + 1:
             # Skip iteration
             iterator.skip()
+
+        # Set headers
+        if iterator.index == self.__skip + 1:
+            iterator.headers = iterator.values
 
     def handle(self, iterator):
         pass  # pragma: no cover

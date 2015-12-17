@@ -78,7 +78,7 @@ table = topen('path.csv',
         parser_class=parsers.CSV,
         iterator_class=CustomIterator,
         table_class=CustomTable)
-table.add_processor(processors.Headers(1))
+table.add_processor(processors.Headers(skip=1))
 headers = table.headers
 contents = table.read(limit=10)
 print(headers, contents)
