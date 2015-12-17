@@ -10,34 +10,34 @@ from tabulator import topen, loaders, parsers, processors
 print('Parse csv format:')
 with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
 print('Parse json with dicts:')
 with topen('file://examples/data/table-dicts.json') as table:
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
 print('Parse json with lists:')
 with topen('file://examples/data/table-lists.json') as table:
     table.add_processor(processors.Headers())
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
 print('Parse xls format:')
 with topen('examples/data/table.xls') as table:
     table.add_processor(processors.Headers())
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
 print('Load from text scheme:')
 with topen('text://id,name\n1,english\n2,中国人\n', format='csv') as table:
     table.add_processor(processors.Headers())
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
@@ -46,7 +46,7 @@ source = 'https://raw.githubusercontent.com'
 source += '/okfn/tabulator-py/master/examples/data/table.csv'
 with topen(source) as table:
     table.add_processor(processors.Headers())
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
@@ -61,14 +61,14 @@ with topen('examples/data/table.csv') as table:
 print('Late headers (on a second row):')
 with topen('examples/data/special/late_headers.csv') as table:
     table.add_processor(processors.Headers(2))
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
 print('Bad headers (skip):')
 with topen('examples/data/special/bad_headers.json') as table:
     table.add_processor(processors.Strict(skip=True))
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
@@ -76,7 +76,7 @@ print('Bad headers (raise):')
 with topen('examples/data/special/bad_headers.json') as table:
     table.add_processor(processors.Strict())
     try:
-        table.read(with_headers=True)
+        table.read()
     except Exception as exception:
         print(exception)
 
@@ -86,7 +86,7 @@ with topen('examples/data/special/bad_dimension.csv') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Strict())
     try:
-        table.read(with_headers=True)
+        table.read()
     except Exception as exception:
         print(exception)
 
@@ -96,7 +96,7 @@ with topen('examples/data/special/bad_headers_dimension.csv') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Strict())
     try:
-        table.read(with_headers=True)
+        table.read()
     except Exception as exception:
         print(exception)
 
@@ -105,7 +105,7 @@ print('Using schema processor (parse):')
 with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Schema())
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
@@ -113,7 +113,7 @@ print('Using schema processor (from schema):')
 with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Schema('examples/data/schema.json'))
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 
 
@@ -121,5 +121,5 @@ print('Spaces in headers:')
 source = 'https://raw.githubusercontent.com/datasets/gdp/master/data/gdp.csv'
 with topen(source) as table:
     table.add_processor(processors.Headers())
-    for row in table.readrow(with_headers=True, limit=10):
+    for row in table.readrow(limit=10):
         print(row)

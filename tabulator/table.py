@@ -4,7 +4,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from collections import OrderedDict
+
+from .row import Row
 from .iterator import Iterator
 from . import errors
 
@@ -92,13 +93,11 @@ class Table(object):
                     self.__iterator.reset()
         return self.__iterator.headers
 
-    def readrow(self, with_headers=False, limit=None):
+    def readrow(self, limit=None):
         """Return next row from the table.
 
         Parameters
         ----------
-        with_headers: bool
-            If True return namedtuples for each row
         limit: int
             Rows count to return.
 
@@ -108,27 +107,20 @@ class Table(object):
             if limit is not None:
                 if iterator.output_index > limit:
                     break
-            row = iterator.values
-            if with_headers:
-                if iterator.headers is None:
-                    raise errors.Error('No headers are available.')
-                row = OrderedDict(zip(iterator.headers, iterator.values))
+            row = Row(iterator.headers, iterator.values)
             yield row
 
-    def read(self, with_headers=False, limit=None):
+    def read(self, limit=None):
         """Return full table with row limit.
 
         Parameters
         ----------
-        with_headers: bool
-            If True return namedtuples for each row
         limit: int
             Rows count to return.
 
         """
         self.__require_not_closed()
-        return list(self.readrow(
-            with_headers=with_headers, limit=limit))
+        return list(self.readrow(limit=limit))
 
     def reset(self):
         """Reset table pointer to the first row.

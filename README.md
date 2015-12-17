@@ -28,7 +28,7 @@ from tabulator import topen, processors
 
 with topen('path.csv') as table:
     table.add_processor(processors.Headers())
-    for row in table.readrow(with_headers=True):
+    for row in table.readrow():
         print(row)
 ```
 
@@ -47,8 +47,7 @@ Read more about `topen` - [documentation](https://github.com/okfn/tabulator-py/b
 
 Function `topen` returns `Table` instance. We use context manager
 to call `table.open()` on enter and `table.close()` when we exit:
-- table can be iterated using `readrow` method (it returns row tuples
-or row named tuples if `with_headers` if True)
+- table can be iterated using `readrow` method (it returns row tuple)
 - table can be read into memory using `read` function (return list or row tuples)
 with `limit` of output rows as parameter.
 - headers can be accessed via `headers` property
@@ -77,7 +76,7 @@ table = Table(
 table.add_processor(processors.Headers(1))
 table.open()
 headers = table.headers
-contents = table.read(with_headers=True, limit=10)
+contents = table.read(limit=10)
 print(headers, contents)
 table.close()
 ```

@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 
 import os
 import unittest
-from collections import OrderedDict
 from tabulator import topen, processors
 
 
@@ -135,15 +134,13 @@ class topenTest(unittest.TestCase):
         with topen(self.make_file_path('table.csv')) as table:
             table.add_processor(processors.Headers())
             headers = table.headers
-            contents = table.read(with_headers=True)
+            contents = table.read()
 
         # Make assertions
         self.assertEqual(headers, ('id', 'name'))
-        self.assertEqual(contents, [
-            OrderedDict([('id', '1'), ('name', 'english')]),
-            OrderedDict([('id', '2'), ('name', '中国人')])])
-        self.assertEqual(contents[0]['id'], '1')
-        self.assertEqual(contents[0]['name'], 'english')
+        self.assertEqual(contents, [('1', 'english'), ('2', '中国人')])
+        self.assertEqual(contents[0].get('id'), '1')
+        self.assertEqual(contents[0].get('name'), 'english')
 
     # Tests [reset]
 
@@ -152,12 +149,10 @@ class topenTest(unittest.TestCase):
         # Get results
         with topen(self.make_file_path('table.csv')) as table:
             table.add_processor(processors.Headers())
-            contents1 = table.read(with_headers=True)
+            contents1 = table.read()
             table.reset()
-            contents2 = table.read(with_headers=True)
+            contents2 = table.read()
 
         # Make assertions
-        self.assertEqual(contents1, [
-            OrderedDict([('id', '1'), ('name', 'english')]),
-            OrderedDict([('id', '2'), ('name', '中国人')])])
+        self.assertEqual(contents1, [('1', 'english'), ('2', '中国人')])
         self.assertEqual(contents1, contents2)
