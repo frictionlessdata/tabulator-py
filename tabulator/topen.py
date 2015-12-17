@@ -80,21 +80,21 @@ def topen(source, #noqa
     # Get loader
     if loader_class is None:
         if scheme is None:
-            scheme = helpers.detect_scheme(source) or DEFAULT_SCHEME
-        if scheme not in LOADERS:
+            scheme = helpers.detect_scheme(source) or _DEFAULT_SCHEME
+        if scheme not in _LOADERS:
             message = 'Scheme "%s" is not supported' % scheme
             raise errors.Error(message)
-        loader_class = LOADERS[scheme]
+        loader_class = _LOADERS[scheme]
     loader = loader_class(source, encoding, **loader_options)
 
     # Get parser
     if parser_class is None:
         if format is None:
             format = helpers.detect_format(source)
-        if format not in PARSERS:
+        if format not in _PARSERS:
             message = 'Format "%s" is not supported' % format
             raise errors.Error(message)
-        parser_class = PARSERS[format]
+        parser_class = _PARSERS[format]
     parser = parser_class(**parser_options)
 
     # Initiate and open table
@@ -109,9 +109,9 @@ def topen(source, #noqa
 
 # Internal
 
-DEFAULT_SCHEME = 'file'
+_DEFAULT_SCHEME = 'file'
 
-LOADERS = {
+_LOADERS = {
     'file': loaders.File,
     'text': loaders.Text,
     'ftp': loaders.Web,
@@ -120,7 +120,7 @@ LOADERS = {
     'https': loaders.Web,
 }
 
-PARSERS = {
+_PARSERS = {
     'csv': parsers.CSV,
     'xls': parsers.Excel,
     'xlsx': parsers.Excel,

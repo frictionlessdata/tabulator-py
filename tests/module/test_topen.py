@@ -31,8 +31,8 @@ class topenTest(unittest.TestCase):
     def test_supported_in_source(self):
         for scheme in ['file', 'text', 'ftp', 'ftps', 'http', 'https']:
             for format in ['csv', 'xls', 'xlsx', 'json']:
-                patch.object(module, 'LOADERS', {scheme: self.Loader}).start()
-                patch.object(module, 'PARSERS', {format: self.Parser}).start()
+                patch.object(module, '_LOADERS', {scheme: self.Loader}).start()
+                patch.object(module, '_PARSERS', {format: self.Parser}).start()
                 source = '%s://path.%s' % (scheme, format)
                 table = module.topen(source, encoding=self.encoding)
                 self.assertEqual(table, self.Table.return_value)
@@ -46,8 +46,8 @@ class topenTest(unittest.TestCase):
     def test_supported_in_parameters(self):
         for scheme in ['file', 'text', 'ftp', 'ftps', 'http', 'https']:
             for format in ['csv', 'xls', 'xlsx', 'json']:
-                patch.object(module, 'LOADERS', {scheme: self.Loader}).start()
-                patch.object(module, 'PARSERS', {format: self.Parser}).start()
+                patch.object(module, '_LOADERS', {scheme: self.Loader}).start()
+                patch.object(module, '_PARSERS', {format: self.Parser}).start()
                 source = 'path'
                 table = module.topen(
                         source,
