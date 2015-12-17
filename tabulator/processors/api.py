@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from six import add_metaclass
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 
 
 @add_metaclass(ABCMeta)
@@ -24,13 +24,8 @@ class API(object):
 
     """
 
-    @abstractmethod
-    def __init__(self, **options):
-        pass  # pragma: no cover
-
     # Public
 
-    @abstractmethod
     def process(self, iterator):
         """Process iterator in normal mode.
 
@@ -44,7 +39,6 @@ class API(object):
         """
         pass  # pragma: no cover
 
-    @abstractmethod
     def handle(self, iterator):
         """Process iterator with exception.
 

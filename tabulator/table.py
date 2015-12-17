@@ -90,6 +90,11 @@ class Table(object):
                     if iterator.headers is not None:
                         self.__headers = iterator.headers
                         break
+                # Reset call can be avoided if reimplement
+                # `Iterator` exposing `is_skipped` flag
+                # to handle it on `Table` level. It can
+                # be usefull if there will be some
+                # not resetable strams in a future
                 self.reset()
         return self.__headers
 
