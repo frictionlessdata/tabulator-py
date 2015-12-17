@@ -20,10 +20,9 @@ class Web(API):
 
     # Public
 
-    def __init__(self, source, encoding=None, stream=False, **options):
+    def __init__(self, source, encoding=None, **options):
         self.__source = source
         self.__encoding = encoding
-        self.__stream = stream
         self.__options = options
 
     def load(self, mode):
