@@ -65,7 +65,7 @@ Read more about `Processor` - [documentation](https://github.com/okfn/tabulator-
 
 #### Advanced interface
 
-To get full control over the process you can use more paramters:
+To get full control over the process you can use more parameters:
 
 ```python
 from tabulator import topen, processors, loaders, parsers
