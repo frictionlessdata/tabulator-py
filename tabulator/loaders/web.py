@@ -7,9 +7,12 @@ from __future__ import unicode_literals
 import io
 import six
 from six.moves.urllib.request import urlopen
+
 from .. import errors, helpers
 from .api import API
 
+
+# Module API
 
 class Web(API):
     """Loader to load source from the web.

@@ -5,9 +5,12 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import xlrd
+
 from .. import helpers
 from .api import API
 
+
+# Module API
 
 class Excel(API):
     """Parser to parse Excel data format.

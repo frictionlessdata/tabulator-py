@@ -7,9 +7,12 @@ from __future__ import unicode_literals
 import csv
 import six
 from codecs import iterencode
+
 from .. import helpers
 from .api import API
 
+
+# Module API
 
 class CSV(API):
     """Parser to parse CSV data format.

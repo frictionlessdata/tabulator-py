@@ -5,9 +5,12 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import ijson
+
 from .. import helpers, errors
 from .api import API
 
+
+# Module API
 
 class JSON(API):
     """Parser to parse JSON data format.

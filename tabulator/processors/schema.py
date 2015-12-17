@@ -5,9 +5,12 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from jsontableschema.model import SchemaModel
+
 from .. import helpers
 from .api import API
 
+
+# Module API
 
 class Schema(API):
     """Processor to add types to row.

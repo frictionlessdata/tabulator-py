@@ -5,6 +5,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
+# Module API
+
 class Iterator(object):
     """Iterator representation.
     """
@@ -83,10 +85,14 @@ class Iterator(object):
         return self
 
     def __repr__(self):
+
+        # Template and format
         template = (
             'Iterator <{self.index}, {self.count}, '
             '{self.headers}, {self.values}>')
-        return template.format(self=self)
+        result = template.format(self=self)
+
+        return result
 
     def skip(self):
         """Skip current iteration.

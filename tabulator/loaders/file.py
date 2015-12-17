@@ -5,9 +5,12 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+
 from .. import errors, helpers
 from .api import API
 
+
+# Module API
 
 class File(API):
     """Loader to load source from filesystem.

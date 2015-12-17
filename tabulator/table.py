@@ -9,6 +9,8 @@ from .iterator import Iterator
 from . import errors
 
 
+# Module API
+
 class Table(object):
     """Table representation.
 
@@ -26,8 +28,12 @@ class Table(object):
     # Public
 
     def __init__(self, loader, parser, iterator_class=None):
+
+        # Default values
         if iterator_class is None:
             iterator_class = Iterator
+
+        # Set attributes
         self.__iterator_class = iterator_class
         self.__loader = loader
         self.__parser = parser
@@ -47,13 +53,17 @@ class Table(object):
         self.close()
 
     def __iter__(self):
-        self.__require_not_closed()
         return self
 
     def __next__(self):
+
+        # Check not closed
         self.__require_not_closed()
+
+        # Get the next row
         next(self.__iterator)
         row = Row(self.__iterator.headers, self.__iterator.values)
+
         return row
 
     def add_processor(self, processor):
@@ -70,15 +80,20 @@ class Table(object):
     def open(self):
         """Open table to iterate over it.
         """
+
+        # Open parser, create iterator
         if self.closed:
             self.__parser.open(self.__loader)
             self.__iterator = self.__iterator_class(
                     self.__parser.items, self.__processors)
+
         return self
 
     def close(self):
         """Close table by closing underlaying stream.
         """
+
+        # Close parser, remove iterator
         if not self.closed:
             self.__parser.close()
             self.__iterator = None
@@ -93,20 +108,20 @@ class Table(object):
     def headers(self):
         """Return table headers.
         """
-        self.__require_not_closed()
+
+        # Retrieve headers
         if self.__headers is None:
-            if self.__iterator.index is None:
-                for iterator in self.__iterator:
-                    if iterator.headers is not None:
-                        self.__headers = iterator.headers
-                        break
-                self.reset()
+            for row in self:
+                if row.headers is not None:
+                    self.__headers = row.headers
+                    break
+            self.reset()
+
         return self.__headers
 
     def readrow(self):
         """Return the next row from the table.
         """
-        self.__require_not_closed()
         return next(self)
 
     def read(self, limit=None):
@@ -118,19 +133,25 @@ class Table(object):
             Rows limit to return.
 
         """
-        self.__require_not_closed()
+
+        # Collect rows
         rows = []
         for count, row in enumerate(self, start=1):
             if limit is not None:
                 if count > limit:
                     break
             rows.append(row)
+
         return rows
 
     def reset(self):
         """Reset table pointer to the first row.
         """
+
+        # Check not closed
         self.__require_not_closed()
+
+        # Reset parser, recreate iterator
         self.__parser.reset()
         self.__iterator = self.__iterator_class(
                 self.__parser.items, self.__processors)
@@ -138,6 +159,8 @@ class Table(object):
     # Private
 
     def __require_not_closed(self):
+
+        # Raise error
         if self.closed:
             message = (
                'Table have to be opened by `table.open()` before '

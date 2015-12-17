@@ -12,24 +12,7 @@ from . import errors
 from . import helpers
 
 
-DEFAULT_SCHEME = 'file'
-
-LOADERS = {
-    'file': loaders.File,
-    'text': loaders.Text,
-    'ftp': loaders.Web,
-    'ftps': loaders.Web,
-    'http': loaders.Web,
-    'https': loaders.Web,
-}
-
-PARSERS = {
-    'csv': parsers.CSV,
-    'xls': parsers.Excel,
-    'xlsx': parsers.Excel,
-    'json': parsers.JSON,
-}
-
+# Module API
 
 def topen(source, #noqa
           scheme=None, format=None, encoding=None,
@@ -122,3 +105,24 @@ def topen(source, #noqa
     table.open()
 
     return table
+
+
+# Internal
+
+DEFAULT_SCHEME = 'file'
+
+LOADERS = {
+    'file': loaders.File,
+    'text': loaders.Text,
+    'ftp': loaders.Web,
+    'ftps': loaders.Web,
+    'http': loaders.Web,
+    'https': loaders.Web,
+}
+
+PARSERS = {
+    'csv': parsers.CSV,
+    'xls': parsers.Excel,
+    'xlsx': parsers.Excel,
+    'json': parsers.JSON,
+}

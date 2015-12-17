@@ -8,6 +8,8 @@ from six import add_metaclass
 from abc import ABCMeta, abstractmethod
 
 
+# Module API
+
 @add_metaclass(ABCMeta)
 class API(object):
     """Parser representation.

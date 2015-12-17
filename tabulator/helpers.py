@@ -8,8 +8,11 @@ import os
 import ast
 from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
+
 from . import errors
 
+
+# Module API
 
 def detect_scheme(source):
     """Detect scheme by source.

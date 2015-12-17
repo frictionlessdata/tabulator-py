@@ -8,6 +8,8 @@ from .. import errors
 from .api import API
 
 
+# Module API
+
 class Strict(API):
     """Processor to ensure the same headers and dimension of the rows.
     """

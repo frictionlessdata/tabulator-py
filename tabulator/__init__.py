@@ -6,5 +6,6 @@ from __future__ import unicode_literals
 
 from .errors import Error
 from .iterator import Iterator
+from .row import Row
 from .table import Table
 from .topen import topen
