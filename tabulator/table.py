@@ -100,31 +100,14 @@ class Table(object):
                     if iterator.headers is not None:
                         self.__headers = iterator.headers
                         break
-                # TODO: remove comment?
-                # Reset call can be avoided if reimplement
-                # `Iterator` exposing `is_skipped` flag
-                # to handle it on `Table` level. It can
-                # be usefull if there will be some
-                # non resetable streams in a future
                 self.reset()
         return self.__headers
 
-    def readrow(self, limit=None):
-        """Return next row from the table.
-
-        Parameters
-        ----------
-        limit: int
-            Rows count to return.
-
+    def readrow(self):
+        """Return the next row from the table.
         """
         self.__require_not_closed()
-        for iterator in self.__iterator:
-            if limit is not None:
-                if iterator.count > limit:
-                    break
-            row = Row(iterator.headers, iterator.values)
-            yield row
+        return next(self)
 
     def read(self, limit=None):
         """Return full table with row limit.
@@ -132,11 +115,17 @@ class Table(object):
         Parameters
         ----------
         limit: int
-            Rows count to return.
+            Rows limit to return.
 
         """
         self.__require_not_closed()
-        return list(self.readrow(limit=limit))
+        rows = []
+        for num, row in enumerate(self, start=1):
+            if limit is not None:
+                if num > limit:
+                    break
+            rows.append(row)
+        return rows
 
     def reset(self):
         """Reset table pointer to the first row.

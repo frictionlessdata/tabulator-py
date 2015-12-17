@@ -96,7 +96,7 @@ class Iterator(object):
 
     @property
     def count(self):
-        """Item index for the consumer.
+        """Count of non skipped items.
         """
         return self.__count
 

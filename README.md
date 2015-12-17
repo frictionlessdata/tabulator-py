@@ -48,7 +48,8 @@ Read more about `topen` - [documentation](https://github.com/okfn/tabulator-py/b
 
 Function `topen` returns `Table` instance. We use context manager
 to call `table.open()` on enter and `table.close()` when we exit:
-- table can be iterated using `readrow` method (it returns row tuple)
+- table can be iterated like file-like object returning row by row
+- table can be read row by bow using `readrow` method (it returns row tuple)
 - table can be read into memory using `read` function (return list or row tuples)
 with `limit` of output rows as parameter.
 - headers can be accessed via `headers` property
@@ -58,8 +59,8 @@ Read more about `Table` - [documentation](https://github.com/okfn/tabulator-py/b
 
 In the example above we use `processors.Headers` to extract headers
 from the table. Processors is a powerfull Tabulator concept.
-Parsed data goes thru pipelene of processors to be updated before
-returning from `readrow` method.
+Parsed data goes thru pipeline of processors to be updated before
+returning as table row.
 
 Read more about `Processor` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py).
 
