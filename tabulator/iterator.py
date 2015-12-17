@@ -14,8 +14,8 @@ class Iterator(object):
     def __init__(self, items, processors):
         self.__items = items
         self.__processors = processors
-        self.__index = 0
-        self.__count = 0
+        self.__index = None
+        self.__count = None
         self.__keys = None
         self.__values = None
         self.__headers = None
@@ -32,9 +32,19 @@ class Iterator(object):
         if self.__is_stop:
             raise StopIteration()
 
-        # Update indexes, reset vars
-        self.__index += 1
-        self.__count += 1
+        # Update index
+        if self.__index is None:
+            self.__index = 0
+        else:
+            self.__index += 1
+
+        # Update count
+        if self.__count is None:
+            self.__count = 1
+        else:
+            self.__count += 1
+
+        # Reset variables
         self.__keys = None
         self.__values = None
         self.__is_stop = False
@@ -90,13 +100,13 @@ class Iterator(object):
 
     @property
     def index(self):
-        """Item index from underlaying stream.
+        """Item index from underlaying stream (from 0).
         """
         return self.__index
 
     @property
     def count(self):
-        """Count of non skipped items.
+        """Count of non skipped items (from 1).
         """
         return self.__count
 

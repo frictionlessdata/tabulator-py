@@ -19,12 +19,12 @@ class Headers(API):
     def process(self, iterator):
 
         # Skip items
-        if iterator.index <= self.__skip + 1:
+        if iterator.index <= self.__skip:
             # Skip iteration
             iterator.skip()
 
         # Set headers
-        if iterator.index == self.__skip + 1:
+        if iterator.index == self.__skip:
             iterator.headers = iterator.values
 
     def handle(self, iterator):

@@ -95,7 +95,7 @@ class Table(object):
         """
         self.__require_not_closed()
         if self.__headers is None:
-            if self.__iterator.index == 0:
+            if self.__iterator.index is None:
                 for iterator in self.__iterator:
                     if iterator.headers is not None:
                         self.__headers = iterator.headers
@@ -120,9 +120,9 @@ class Table(object):
         """
         self.__require_not_closed()
         rows = []
-        for num, row in enumerate(self, start=1):
+        for count, row in enumerate(self, start=1):
             if limit is not None:
-                if num > limit:
+                if count > limit:
                     break
             rows.append(row)
         return rows
