@@ -104,6 +104,7 @@ API documentation is presented as docstings:
 - High-level:
     - [topen](https://github.com/okfn/tabulator-py/blob/master/tabulator/topen.py)
 - Core elements:
+    - [Row](https://github.com/okfn/tabulator-py/blob/master/tabulator/row.py)
     - [Table](https://github.com/okfn/tabulator-py/blob/master/tabulator/table.py)
     - [Iterator](https://github.com/okfn/tabulator-py/blob/master/tabulator/iterator.py)
 - Plugin elements:
