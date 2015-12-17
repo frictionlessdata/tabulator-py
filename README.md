@@ -65,13 +65,13 @@ Read more about `Processor` - [documentation](https://github.com/okfn/tabulator-
 
 #### Advanced interface
 
-To get full control over the process you can use more parameters:
+To get full control over the process you can use more parameters.
+Below all parts of Tabulator are presented:
 
 ```python
 from tabulator import topen, processors, loaders, parsers
 
-table = topen(
-        'path.csv',
+table = topen('path.csv',
         loader_options={'encondig': 'utf-8'},
         parser_options={'delimeter': ',', quotechar: '|'},
         loader_class=loaders.File,
