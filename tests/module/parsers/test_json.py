@@ -12,7 +12,7 @@ from importlib import import_module
 module = import_module('tabulator.parsers.json')
 
 
-class JSONTest(unittest.TestCase):
+class TestJSON(unittest.TestCase):
 
     # Actions
 

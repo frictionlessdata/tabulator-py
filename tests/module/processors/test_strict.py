@@ -9,8 +9,7 @@ from importlib import import_module
 module = import_module('tabulator.processors.strict')
 
 
-# TODO: implement
-class StrictTest(unittest.TestCase):
+class TestStrict(unittest.TestCase):
 
     # Tests
 

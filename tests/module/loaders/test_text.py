@@ -9,7 +9,7 @@ from importlib import import_module
 module = import_module('tabulator.loaders.text')
 
 
-class TextTest(unittest.TestCase):
+class TestText(unittest.TestCase):
 
     # Actions
 

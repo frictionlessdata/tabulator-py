@@ -9,7 +9,7 @@ from importlib import import_module
 module = import_module('tabulator.loaders.web')
 
 
-class WebTest(unittest.TestCase):
+class TestWeb(unittest.TestCase):
 
     # Actions
 

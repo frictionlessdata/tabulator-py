@@ -12,7 +12,7 @@ from importlib import import_module
 module = import_module('tabulator.parsers.csv')
 
 
-class CSVTest(unittest.TestCase):
+class TestCSV(unittest.TestCase):
 
     # Actions
 

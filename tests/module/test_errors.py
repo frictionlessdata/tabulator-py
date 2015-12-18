@@ -9,7 +9,7 @@ from importlib import import_module
 module = import_module('tabulator.errors')
 
 
-class errorsTest(unittest.TestCase):
+class Test_errors(unittest.TestCase):
 
     # Tests
 

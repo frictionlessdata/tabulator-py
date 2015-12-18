@@ -9,8 +9,7 @@ from importlib import import_module
 module = import_module('tabulator.processors.schema')
 
 
-# TODO: implement
-class SchemaTest(unittest.TestCase):
+class TestSchema(unittest.TestCase):
 
     # Tests
 

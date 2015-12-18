@@ -12,7 +12,7 @@ module = import_module('tabulator.topen')
 
 
 @unittest.skipIf(sys.version_info < (3, 4), 'patch.stopall doens\'t work')
-class topenTest(unittest.TestCase):
+class Test_topen(unittest.TestCase):
 
     # Actions
 

@@ -10,7 +10,7 @@ from importlib import import_module
 module = import_module('tabulator.loaders.file')
 
 
-class FileTest(unittest.TestCase):
+class TestFile(unittest.TestCase):
 
     # Actions
 

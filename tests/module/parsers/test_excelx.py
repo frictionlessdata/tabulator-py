@@ -12,7 +12,7 @@ from importlib import import_module
 module = import_module('tabulator.parsers.excelx')
 
 
-class ExcelxTest(unittest.TestCase):
+class TestExcelx(unittest.TestCase):
 
     # Actions
 

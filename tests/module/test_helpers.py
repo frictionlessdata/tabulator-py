@@ -11,7 +11,7 @@ from importlib import import_module
 module = import_module('tabulator.helpers')
 
 
-class detect_schemeTest(unittest.TestCase):
+class Test_detect_scheme(unittest.TestCase):
 
     # Tests
 
@@ -19,7 +19,7 @@ class detect_schemeTest(unittest.TestCase):
         self.assertEqual(module.detect_scheme('http://path'), 'http')
 
 
-class detect_formatTest(unittest.TestCase):
+class Test_detect_format(unittest.TestCase):
 
     # Tests
 
@@ -27,7 +27,7 @@ class detect_formatTest(unittest.TestCase):
         self.assertEqual(module.detect_format('path.csv'), 'csv')
 
 
-class detect_encoding(unittest.TestCase):
+class Test_detect_encoding(unittest.TestCase):
 
     # Tests
 
@@ -37,7 +37,7 @@ class detect_encoding(unittest.TestCase):
         self.assertEqual(module.detect_encoding(bytes), 'utf-8')
 
 
-class reset_streamTest(unittest.TestCase):
+class Test_reset_stream(unittest.TestCase):
 
     # Tests
 
