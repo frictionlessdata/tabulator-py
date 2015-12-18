@@ -51,10 +51,19 @@ class topenTest(unittest.TestCase):
         # Make assertions
         self.assertEqual(actual, expected)
 
-    def test_file_excel(self):
+    def test_file_xls(self):
 
         # Get results
         actual = topen(self.make_file_path('table.xls')).read()
+        expected = [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
+
+        # Make assertions
+        self.assertEqual(actual, expected)
+
+    def test_file_xlsx(self):
+
+        # Get results
+        actual = topen(self.make_file_path('table.xlsx')).read()
         expected = [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
 
         # Make assertions
