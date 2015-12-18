@@ -2,7 +2,7 @@
 
   "name": "tabulator",
   "description": "A utility library that provides a consistent interface for reading tabular data.",
-  "version": "0.1.0-alpha",
+  "version": "0.2.0",
   "slug": "tabulator",
   "author": "Open Knowledge Foundation",
   "author_email": "info@okfn.org",
