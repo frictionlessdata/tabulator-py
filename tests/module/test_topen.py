@@ -6,10 +6,7 @@ from __future__ import unicode_literals
 
 import sys
 import unittest
-try:
-    from unittest.mock import Mock, patch
-except ImportError:
-    from mock import Mock, patch
+from mock import Mock, patch
 from importlib import import_module
 module = import_module('tabulator.topen')
 

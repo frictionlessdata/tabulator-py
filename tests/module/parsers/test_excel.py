@@ -5,16 +5,9 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
-import unittest
-from importlib import import_module
-module = import_module('tabulator.parsers.excel')
-
 import os
 import unittest
-try:
-    from unittest.mock import Mock
-except ImportError:
-    from mock import Mock
+from mock import Mock
 from importlib import import_module
 module = import_module('tabulator.parsers.excel')
 

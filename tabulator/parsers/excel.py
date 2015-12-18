@@ -27,10 +27,10 @@ class Excel(API):
         self.close()
         self.__loader = loader
         self.__bytes = loader.load(mode='b')
-        self.__workbook = xlrd.open_workbook(
+        self.__book = xlrd.open_workbook(
                 file_contents=self.__bytes.read(),
                 encoding_override=self.__loader.encoding)
-        self.__sheet = self.__workbook.sheet_by_index(self.__sheet_index)
+        self.__sheet = self.__book.sheet_by_index(self.__sheet_index)
         self.reset()
 
     def close(self):
