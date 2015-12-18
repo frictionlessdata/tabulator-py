@@ -123,6 +123,6 @@ _LOADERS = {
 _PARSERS = {
     'csv': parsers.CSV,
     'xls': parsers.Excel,
-    'xlsx': parsers.Excel,
+    'xlsx': parsers.Excelx,
     'json': parsers.JSON,
 }

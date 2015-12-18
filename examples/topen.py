@@ -37,6 +37,13 @@ with topen('examples/data/table.xls') as table:
         print(row)
 
 
+print('Parse xlsx format:')
+with topen('examples/data/table.xlsx') as table:
+    table.add_processor(processors.Headers())
+    for row in table:
+        print(row)
+
+
 print('Load from text scheme:')
 with topen('text://id,name\n1,english\n2,中国人\n', format='csv') as table:
     table.add_processor(processors.Headers())

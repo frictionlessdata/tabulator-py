@@ -7,4 +7,5 @@ from __future__ import unicode_literals
 from .api import API
 from .csv import CSV
 from .excel import Excel
+from .excelx import Excelx
 from .json import JSON
