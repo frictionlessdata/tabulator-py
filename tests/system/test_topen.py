@@ -123,9 +123,7 @@ class topenTest(unittest.TestCase):
     def test_headers(self):
 
         # Get results
-        # TODO: rebase on with_headers param
-        with topen(FPATH % 'table.csv') as table:
-            table.add_processor(processors.Headers())
+        with topen(FPATH % 'table.csv', with_headers=True) as table:
             headers = table.headers
             contents = table.read()
 
@@ -142,9 +140,7 @@ class topenTest(unittest.TestCase):
     def test_reset(self):
 
         # Get results
-        # TODO: rebase on with_headers param
-        with topen(FPATH % 'table.csv') as table:
-            table.add_processor(processors.Headers())
+        with topen(FPATH % 'table.csv', with_headers=True) as table:
             headers1 = table.headers
             contents1 = table.read()
             table.reset()

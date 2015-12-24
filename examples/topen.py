@@ -11,48 +11,48 @@ from tabulator import topen, loaders, parsers, processors
 
 
 print('Parse csv format:')
-with topen('examples/data/table.csv') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/table.csv'
+with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
         print(row)
 
 
 print('\nParse json with dicts:')
-with topen('file://examples/data/table-dicts.json') as table:
-    table.add_processor(processors.Headers())
+source = 'file://examples/data/table-dicts.json'
+with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
         print(row)
 
 
 print('\nParse json with lists:')
-with topen('file://examples/data/table-lists.json') as table:
-    table.add_processor(processors.Headers())
+source = 'file://examples/data/table-lists.json'
+with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
         print(row)
 
 
 print('\nParse xls format:')
-with topen('examples/data/table.xls') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/table.xls'
+with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
         print(row)
 
 
 print('\nParse xlsx format:')
-with topen('examples/data/table.xlsx') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/table.xlsx'
+with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
         print(row)
 
 
 print('\nLoad from text scheme:')
-with topen('text://id,name\n1,english\n2,中国人\n', format='csv') as table:
-    table.add_processor(processors.Headers())
+source = 'text://id,name\n1,english\n2,中国人\n'
+with topen(source, with_headers=True, format='csv') as table:
     print(table.headers)
     for row in table:
         print(row)
@@ -61,16 +61,15 @@ with topen('text://id,name\n1,english\n2,中国人\n', format='csv') as table:
 print('\nLoad from http scheme:')
 source = 'https://raw.githubusercontent.com'
 source += '/okfn/tabulator-py/master/examples/data/table.csv'
-with topen(source) as table:
-    table.add_processor(processors.Headers())
+with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
         print(row)
 
 
 print('\nTable reset and read limit:')
-with topen('examples/data/table.csv') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/table.csv'
+with topen(source, with_headers=True) as table:
     print(table.headers)
     print(table.read(limit=1))
     table.reset()
@@ -78,16 +77,17 @@ with topen('examples/data/table.csv') as table:
 
 
 print('\nLate headers (on a second row):')
-with topen('examples/data/special/late_headers.csv') as table:
-    table.add_processor(processors.Headers(2))
+source = 'examples/data/special/late_headers.csv'
+with topen(source) as table:
+    table.add_processor(processors.Headers(skip=1))
     print(table.headers)
     for row in table:
         print(row)
 
 
 print('\nBad headers (skip):')
-with topen('examples/data/special/bad_headers.json') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/special/bad_headers.json'
+with topen(source, with_headers=True) as table:
     table.add_processor(processors.Strict(skip=True))
     print(table.headers)
     for row in table:
@@ -95,8 +95,8 @@ with topen('examples/data/special/bad_headers.json') as table:
 
 
 print('\nBad headers (raise):')
-with topen('examples/data/special/bad_headers.json') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/special/bad_headers.json'
+with topen(source, with_headers=True) as table:
     table.add_processor(processors.Strict())
     print(table.headers)
     try:
@@ -106,8 +106,8 @@ with topen('examples/data/special/bad_headers.json') as table:
 
 
 print('\nBad dimension (raise):')
-with topen('examples/data/special/bad_dimension.csv') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/special/bad_dimension.csv'
+with topen(source, with_headers=True) as table:
     table.add_processor(processors.Strict())
     try:
         table.read()
@@ -116,8 +116,8 @@ with topen('examples/data/special/bad_dimension.csv') as table:
 
 
 print('\nBad headers dimension (raise):')
-with topen('examples/data/special/bad_headers_dimension.csv') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/special/bad_headers_dimension.csv'
+with topen(source, with_headers=True) as table:
     table.add_processor(processors.Strict())
     try:
         table.read()
@@ -126,8 +126,8 @@ with topen('examples/data/special/bad_headers_dimension.csv') as table:
 
 
 print('\nUsing schema processor (parse):')
-with topen('examples/data/table.csv') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/table.csv'
+with topen(source, with_headers=True) as table:
     table.add_processor(processors.Schema())
     print(table.headers)
     for row in table:
@@ -135,8 +135,8 @@ with topen('examples/data/table.csv') as table:
 
 
 print('\nUsing schema processor (from schema):')
-with topen('examples/data/table.csv') as table:
-    table.add_processor(processors.Headers())
+source = 'examples/data/table.csv'
+with topen(source, with_headers=True) as table:
     table.add_processor(processors.Schema('examples/data/schema.json'))
     print(table.headers)
     for row in table:
@@ -145,8 +145,7 @@ with topen('examples/data/table.csv') as table:
 
 print('\nSpaces in headers:')
 source = 'https://raw.githubusercontent.com/datasets/gdp/master/data/gdp.csv'
-with topen(source) as table:
-    table.add_processor(processors.Headers())
+with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table.read(limit=5):
         print(row)

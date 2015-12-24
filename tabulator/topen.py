@@ -8,6 +8,7 @@ from .table import Table
 from .iterator import Iterator
 from . import loaders
 from . import parsers
+from . import processors
 from . import errors
 from . import helpers
 
@@ -15,6 +16,7 @@ from . import helpers
 # Module API
 
 def topen(source, #noqa
+          with_headers=False,
           scheme=None, format=None, encoding=None,
           loader_options=None, parser_options=None,
           loader_class=None, parser_class=None,
@@ -28,6 +30,8 @@ def topen(source, #noqa
     ----------
     source: str
         Path of contents.
+    with_headers: bool
+        Extract headers.
     scheme: str
         Scheme of source:
             - file (default)
@@ -103,6 +107,10 @@ def topen(source, #noqa
             parser=parser,
             iterator_class=iterator_class)
     table.open()
+
+    # Add headers processor
+    if with_headers:
+        table.add_processor(processors.Headers())
 
     return table
 
