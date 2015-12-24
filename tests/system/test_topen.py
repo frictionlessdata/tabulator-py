@@ -135,6 +135,24 @@ class Test_topen(unittest.TestCase):
         assert contents[1].get('id') == '2'
         assert contents[1].get('name') == '中国人'
 
+    def test_headers_json(self):
+
+        # Get results
+        source = ('text://['
+            '{"country": "China", "value": "中国"},'
+            '{"country": "Brazil", "value": "Brazil"}]')
+        with topen(source, with_headers=True, format='json') as table:
+            headers = table.headers
+            contents = table.read()
+
+        # Make assertions
+        assert headers == ('country', 'value')
+        assert contents == [('China', '中国'), ('Brazil', 'Brazil')]
+        assert contents[0].get('country') == 'China'
+        assert contents[0].get('value') == '中国'
+        assert contents[1].get('country') == 'Brazil'
+        assert contents[1].get('value') == 'Brazil'
+
     # Tests [reset]
 
     def test_reset(self):
