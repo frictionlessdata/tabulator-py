@@ -9,159 +9,150 @@ import unittest
 from tabulator import topen, processors
 
 
+FPATH = 'examples/data/%s'
+WPATH = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/examples/data/%s'
+
 class topenTest(unittest.TestCase):
-
-    # Helpers
-
-    def make_file_path(self, *paths):
-        basedir = os.path.join(os.path.dirname(__file__), '..', '..')
-        return os.path.join(basedir, 'examples', 'data', *paths)
-
-    def make_web_path(self, *paths):
-        baseurl = 'https://raw.githubusercontent.com'
-        baseurl += '/okfn/tabulator-py/master/examples/data'
-        return '/'.join([baseurl] + list(paths))
 
     # Tests [loaders/parsers]
 
     def test_file_csv(self):
 
-        # Get results
-        actual = topen(self.make_file_path('table.csv')).read()
-        expected = [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+        # Get table
+        table = topen(FPATH % 'table.csv')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
 
     def test_file_json_dicts(self):
 
-        # Get results
-        actual = topen(self.make_file_path('table-dicts.json')).read()
-        expected = [(1, 'english'), (2, '中国人')]
+        # Get table
+        table = topen(FPATH % 'table-dicts.json')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [(1, 'english'), (2, '中国人')]
 
     def test_file_json_lists(self):
 
-        # Get results
-        actual = topen(self.make_file_path('table-lists.json')).read()
-        expected = [('id', 'name'), (1, 'english'), (2, '中国人')]
+        # Get table
+        table = topen(FPATH % 'table-lists.json')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), (1, 'english'), (2, '中国人')]
 
     def test_file_xls(self):
 
-        # Get results
-        actual = topen(self.make_file_path('table.xls')).read()
-        expected = [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
+        # Get table
+        table = topen(FPATH % 'table.xls')
 
         # Make assertions
-        self.assertEqual(actual, expected)
-
-    def test_file_xlsx(self):
-
-        # Get results
-        actual = topen(self.make_file_path('table.xlsx')).read()
-        expected = [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
-
-        # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
 
     def test_text_csv(self):
 
-        # Get results
+        # Get table
         source = 'id,name\n1,english\n2,中国人\n'
-        actual = topen(source, scheme='text', format='csv').read()
-        expected = [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+        table = topen(source, scheme='text', format='csv')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
 
     def test_text_json_dicts(self):
 
-        # Get results
+        # Get table
         source = '[{"id": 1, "name": "english" }, {"id": 2, "name": "中国人" }]'
-        actual = topen(source, scheme='text', format='json').read()
-        expected = [(1, 'english'), (2, '中国人')]
+        table = topen(source, scheme='text', format='json')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [(1, 'english'), (2, '中国人')]
 
     def test_text_json_lists(self):
 
-        # Get results
+        # Get table
         source = '[["id", "name"], [1, "english"], [2, "中国人"]]'
-        actual = topen(source, scheme='text', format='json').read()
-        expected = [('id', 'name'), (1, 'english'), (2, '中国人')]
+        table = topen(source, scheme='text', format='json')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), (1, 'english'), (2, '中国人')]
 
     def test_web_csv(self):
 
-        # Get results
-        actual = topen(self.make_web_path('table.csv')).read()
-        expected = [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+        # Get table
+        table = topen(WPATH % 'table.csv')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
 
     def test_web_json_dicts(self):
 
-        # Get results
-        actual = topen(self.make_web_path('table-dicts.json')).read()
-        expected = [(1, 'english'), (2, '中国人')]
+        # Get table
+        table = topen(WPATH % 'table-dicts.json')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [(1, 'english'), (2, '中国人')]
 
     def test_web_json_lists(self):
 
-        # Get results
-        actual = topen(self.make_web_path('table-lists.json')).read()
-        expected = [('id', 'name'), (1, 'english'), (2, '中国人')]
+        # Get table
+        table = topen(WPATH % 'table-lists.json')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), (1, 'english'), (2, '中国人')]
 
     def test_web_excel(self):
 
-        # Get results
-        actual = topen(self.make_web_path('table.xls')).read()
-        expected = [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
+        # Get table
+        table = topen(WPATH % 'table.xls')
 
         # Make assertions
-        self.assertEqual(actual, expected)
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
 
     # Tests [processors]
 
     def test_headers(self):
 
         # Get results
-        with topen(self.make_file_path('table.csv')) as table:
+        # TODO: rebase on with_headers param
+        with topen(FPATH % 'table.csv') as table:
             table.add_processor(processors.Headers())
             headers = table.headers
             contents = table.read()
 
         # Make assertions
-        self.assertEqual(headers, ('id', 'name'))
-        self.assertEqual(contents, [('1', 'english'), ('2', '中国人')])
-        self.assertEqual(contents[0].get('id'), '1')
-        self.assertEqual(contents[0].get('name'), 'english')
+        assert headers == ('id', 'name')
+        assert contents == [('1', 'english'), ('2', '中国人')]
+        assert contents[0].get('id') == '1'
+        assert contents[0].get('name') == 'english'
+        assert contents[1].get('id') == '2'
+        assert contents[1].get('name') == '中国人'
 
     # Tests [reset]
 
     def test_reset(self):
 
         # Get results
-        with topen(self.make_file_path('table.csv')) as table:
+        # TODO: rebase on with_headers param
+        with topen(FPATH % 'table.csv') as table:
             table.add_processor(processors.Headers())
+            headers1 = table.headers
             contents1 = table.read()
             table.reset()
+            headers2 = table.headers
             contents2 = table.read()
 
         # Make assertions
-        self.assertEqual(contents1, [('1', 'english'), ('2', '中国人')])
-        self.assertEqual(contents1, contents2)
+        assert headers1 == ('id', 'name')
+        assert contents1 == [('1', 'english'), ('2', '中国人')]
+        assert headers1 == headers2
+        assert contents1 == contents2
