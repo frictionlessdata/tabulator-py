@@ -19,6 +19,7 @@ with topen('examples/data/table.csv') as table:
 
 print('Parse json with dicts:')
 with topen('file://examples/data/table-dicts.json') as table:
+    table.add_processor(processors.Headers())
     for row in table:
         print(row)
 
@@ -77,6 +78,7 @@ with topen('examples/data/special/late_headers.csv') as table:
 
 print('Bad headers (skip):')
 with topen('examples/data/special/bad_headers.json') as table:
+    table.add_processor(processors.Headers())
     table.add_processor(processors.Strict(skip=True))
     for row in table:
         print(row)
@@ -84,6 +86,7 @@ with topen('examples/data/special/bad_headers.json') as table:
 
 print('Bad headers (raise):')
 with topen('examples/data/special/bad_headers.json') as table:
+    table.add_processor(processors.Headers())
     table.add_processor(processors.Strict())
     try:
         table.read()

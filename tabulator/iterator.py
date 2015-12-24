@@ -4,6 +4,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from . import errors
+
 
 # Module API
 
@@ -60,10 +62,6 @@ class Iterator(object):
         except Exception as exception:
             self.__exception = exception
 
-        # Update headers if keys
-        if self.__keys is not None:
-            self.__headers = self.__keys
-
         # Process iterator by processors
         for processor in self.__processors:
             if self.__exception is None:
@@ -106,42 +104,31 @@ class Iterator(object):
 
     @property
     def index(self):
-        """Item index from underlaying stream (from 0).
+        """Item index from underlaying stream (starts from 0).
         """
         return self.__index
 
     @property
     def count(self):
-        """Count of non skipped items (from 1).
+        """Count of non skipped items (starts from 1).
         """
         return self.__count
 
     @property
-    def headers(self):
-        """Row headers.
+    def keys(self):
+        """Item keys.
         """
-        return self.__headers
-
-    @headers.setter
-    def headers(self, headers):
-        """Set row headers.
-
-        Parameters
-        ----------
-        headers: tuple
-
-        """
-        self.__headers = headers
+        return self.__keys
 
     @property
     def values(self):
-        """Row values.
+        """Item values.
         """
         return self.__values
 
     @values.setter
     def values(self, values):
-        """Set row values.
+        """Set item values.
 
         Parameters
         ----------
@@ -149,6 +136,25 @@ class Iterator(object):
 
         """
         self.__values = values
+
+    @property
+    def headers(self):
+        """Item headers.
+        """
+        return self.__headers
+
+    @headers.setter
+    def headers(self, headers):
+        """Set item headers.
+
+        Parameters
+        ----------
+        headers: tuple
+
+        """
+        if self.__headers is not None:
+            raise errors.Error('Headers are immutable.')
+        self.__headers = headers
 
     @property
     def exception(self):
