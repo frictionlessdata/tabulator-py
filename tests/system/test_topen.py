@@ -12,7 +12,7 @@ from tabulator import topen, processors
 FPATH = 'examples/data/%s'
 WPATH = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/examples/data/%s'
 
-class topenTest(unittest.TestCase):
+class Test_topen(unittest.TestCase):
 
     # Tests [loaders/parsers]
 
