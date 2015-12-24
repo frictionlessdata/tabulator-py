@@ -13,88 +13,99 @@ from tabulator import topen, loaders, parsers, processors
 print('Parse csv format:')
 with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Parse json with dicts:')
+print('\nParse json with dicts:')
 with topen('file://examples/data/table-dicts.json') as table:
     table.add_processor(processors.Headers())
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Parse json with lists:')
+print('\nParse json with lists:')
 with topen('file://examples/data/table-lists.json') as table:
     table.add_processor(processors.Headers())
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Parse xls format:')
+print('\nParse xls format:')
 with topen('examples/data/table.xls') as table:
     table.add_processor(processors.Headers())
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Parse xlsx format:')
+print('\nParse xlsx format:')
 with topen('examples/data/table.xlsx') as table:
     table.add_processor(processors.Headers())
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Load from text scheme:')
+print('\nLoad from text scheme:')
 with topen('text://id,name\n1,english\n2,中国人\n', format='csv') as table:
     table.add_processor(processors.Headers())
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Load from http scheme:')
+print('\nLoad from http scheme:')
 source = 'https://raw.githubusercontent.com'
 source += '/okfn/tabulator-py/master/examples/data/table.csv'
 with topen(source) as table:
     table.add_processor(processors.Headers())
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Table reset and read limit:')
+print('\nTable reset and read limit:')
 with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
+    print(table.headers)
     print(table.read(limit=1))
     table.reset()
     print(table.read(limit=1))
 
 
-print('Late headers (on a second row):')
+print('\nLate headers (on a second row):')
 with topen('examples/data/special/late_headers.csv') as table:
     table.add_processor(processors.Headers(2))
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Bad headers (skip):')
+print('\nBad headers (skip):')
 with topen('examples/data/special/bad_headers.json') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Strict(skip=True))
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Bad headers (raise):')
+print('\nBad headers (raise):')
 with topen('examples/data/special/bad_headers.json') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Strict())
+    print(table.headers)
     try:
         table.read()
     except Exception as exception:
         print(exception)
 
 
-print('Bad dimension (raise):')
+print('\nBad dimension (raise):')
 with topen('examples/data/special/bad_dimension.csv') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Strict())
@@ -104,7 +115,7 @@ with topen('examples/data/special/bad_dimension.csv') as table:
         print(exception)
 
 
-print('Bad headers dimension (raise):')
+print('\nBad headers dimension (raise):')
 with topen('examples/data/special/bad_headers_dimension.csv') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Strict())
@@ -114,25 +125,28 @@ with topen('examples/data/special/bad_headers_dimension.csv') as table:
         print(exception)
 
 
-print('Using schema processor (parse):')
+print('\nUsing schema processor (parse):')
 with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Schema())
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Using schema processor (from schema):')
+print('\nUsing schema processor (from schema):')
 with topen('examples/data/table.csv') as table:
     table.add_processor(processors.Headers())
     table.add_processor(processors.Schema('examples/data/schema.json'))
+    print(table.headers)
     for row in table:
         print(row)
 
 
-print('Spaces in headers:')
+print('\nSpaces in headers:')
 source = 'https://raw.githubusercontent.com/datasets/gdp/master/data/gdp.csv'
 with topen(source) as table:
     table.add_processor(processors.Headers())
+    print(table.headers)
     for row in table.read(limit=5):
         print(row)
