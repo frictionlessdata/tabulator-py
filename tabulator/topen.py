@@ -6,9 +6,9 @@ from __future__ import unicode_literals
 
 from .table import Table
 from .iterator import Iterator
+from .processors import Headers
 from . import loaders
 from . import parsers
-from . import processors
 from . import errors
 from . import helpers
 
@@ -16,7 +16,7 @@ from . import helpers
 # Module API
 
 def topen(source, #noqa
-          with_headers=False,
+          with_headers=False, processors=None,
           scheme=None, format=None, encoding=None,
           loader_options=None, parser_options=None,
           loader_class=None, parser_class=None,
@@ -32,6 +32,8 @@ def topen(source, #noqa
         Path of contents.
     with_headers: bool
         Extract headers.
+    processors: list
+        Processors to add to pipeline.
     scheme: str
         Scheme of source:
             - file (default)
@@ -110,7 +112,12 @@ def topen(source, #noqa
 
     # Add headers processor
     if with_headers:
-        table.add_processor(processors.Headers())
+        table.add_processor(Headers())
+
+    # Add user processors
+    if processors is not None:
+        for processor in processors:
+            table.add_processor(processor)
 
     return table
 

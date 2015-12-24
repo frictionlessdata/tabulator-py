@@ -135,6 +135,23 @@ class Test_topen(unittest.TestCase):
         assert contents[1].get('id') == '2'
         assert contents[1].get('name') == '中国人'
 
+    def test_headers_via_processors_param(self):
+
+        # Get results
+        with topen(FPATH % 'table.csv',
+                   with_headers=True,
+                   processors=[processors.Headers()]) as table:
+            headers = table.headers
+            contents = table.read()
+
+        # Make assertions
+        assert headers == ('id', 'name')
+        assert contents == [('1', 'english'), ('2', '中国人')]
+        assert contents[0].get('id') == '1'
+        assert contents[0].get('name') == 'english'
+        assert contents[1].get('id') == '2'
+        assert contents[1].get('name') == '中国人'
+
     def test_headers_json(self):
 
         # Get results
