@@ -26,8 +26,7 @@ Fast access to the table with `topen` (stands for `table open`) function:
 ```python
 from tabulator import topen, processors
 
-with topen('path.csv') as table:
-    table.add_processor(processors.Headers())
+with topen('path.csv', with_headers=True) as table:
     for row in table:
         print(row)
         print(row.get('header'))
@@ -58,8 +57,8 @@ with `limit` of output rows as parameter.
 Read more about `Table` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/table.py).
 
 In the example above we use `processors.Headers` to extract headers
-from the table. Processors is a powerfull Tabulator concept.
-Parsed data goes thru pipeline of processors to be updated before
+from the table (via `with_headers=True` shortcut). Processors is a powerfull
+Tabulator concept. Parsed data goes thru pipeline of processors to be updated before
 returning as table row.
 
 Read more about `Processor` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py).
