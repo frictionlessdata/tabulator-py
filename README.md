@@ -63,6 +63,8 @@ returning as table row.
 
 Read more about `Processor` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py).
 
+Read a processors tutorial - [tutorial](https://github.com/okfn/tabulator-py/blob/master/docs/processors.md).
+
 #### Advanced interface
 
 To get full control over the process you can use more parameters.
