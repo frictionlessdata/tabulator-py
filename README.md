@@ -99,8 +99,6 @@ to provide clear data flow.
 
 ![diagram](docs/diagram.png)
 
-For more information see documentation section.
-
 ### Documentation
 
 API documentation is presented as docstings:
