@@ -6,5 +6,6 @@ from __future__ import unicode_literals
 
 from .api import API
 from .file import File
+from .stream import Stream
 from .text import Text
 from .web import Web

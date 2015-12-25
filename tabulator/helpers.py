@@ -20,8 +20,11 @@ def detect_scheme(source):
     For example `http` from `http://example.com/table.csv`
 
     """
-    # TODO: rewrite without urlparse
-    scheme = urlparse(source).scheme
+    if hasattr(source, 'read'):
+        scheme = 'stream'
+    else:
+        # TODO: rewrite without urlparse
+        scheme = urlparse(source).scheme
     return scheme
 
 
@@ -31,7 +34,10 @@ def detect_format(source):
     For example `csv` from `http://example.com/table.csv`
 
     """
-    format = os.path.splitext(source)[1].replace('.', '')
+    if hasattr(source, 'read'):
+        format = ''
+    else:
+        format = os.path.splitext(source)[1].replace('.', '')
     return format
 
 

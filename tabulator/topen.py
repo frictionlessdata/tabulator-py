@@ -128,6 +128,7 @@ _DEFAULT_SCHEME = 'file'
 
 _LOADERS = {
     'file': loaders.File,
+    'stream': loaders.Stream,
     'text': loaders.Text,
     'ftp': loaders.Web,
     'ftps': loaders.Web,

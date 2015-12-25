@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import io
 import os
 import unittest
 from tabulator import topen, processors
@@ -52,11 +53,31 @@ class Test_topen(unittest.TestCase):
         assert table.headers is None
         assert table.read() == [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
 
+    def test_stream_csv(self):
+
+        # Get table
+        source = io.open(FPATH % 'table.csv', mode='rb')
+        table = topen(source, format='csv')
+
+        # Make assertions
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+
+    def test_stream_xlsx(self):
+
+        # Get table
+        source = io.open(FPATH % 'table.xlsx', mode='rb')
+        table = topen(source, format='xlsx')
+
+        # Make assertions
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
+
     def test_text_csv(self):
 
         # Get table
-        source = 'id,name\n1,english\n2,中国人\n'
-        table = topen(source, scheme='text', format='csv')
+        source = 'text://id,name\n1,english\n2,中国人\n'
+        table = topen(source, format='csv')
 
         # Make assertions
         assert table.headers is None
