@@ -19,18 +19,24 @@ class Iterator(object):
         self.__items = items
         self.__processors = processors
         self.__index = None
-        self.__count = None
+        self.__count = 0
         self.__keys = None
         self.__values = None
         self.__headers = None
         self.__is_stop = False
         self.__is_skip = False
+        self.__lookahead = False
         self.__exception = None
 
     def __iter__(self):
         return self
 
-    def __next__(self): #noqa
+    def __next__(self, lookahead=False): #noqa
+
+        # Return if lookahead is set on prev iteration
+        if self.__lookahead and not lookahead:
+            self.__lookahead = False
+            return self
 
         # Stop iteration
         if self.__is_stop:
@@ -41,12 +47,6 @@ class Iterator(object):
             self.__index = 0
         else:
             self.__index += 1
-
-        # Update count
-        if self.__count is None:
-            self.__count = 1
-        else:
-            self.__count += 1
 
         # Reset variables
         self.__keys = None
@@ -77,8 +77,13 @@ class Iterator(object):
 
         # Skip iteration
         if self.__is_skip:
-            self.__count -= 1
-            return self.__next__()
+            return self.__next__(lookahead)
+
+        # Update count
+        self.__count += 1
+
+        # Set lookahead
+        self.__lookahead = lookahead
 
         return self
 
@@ -104,13 +109,25 @@ class Iterator(object):
 
     @property
     def index(self):
-        """Item index from underlaying stream (starts from 0).
+        """Item index from underlaying stream.
+
+        Before iteration: None
+        On first item: 0
+        On second item: 1
+        ...
+
         """
         return self.__index
 
     @property
     def count(self):
-        """Count of non skipped items (starts from 1).
+        """Count of non skipped items.
+
+        Before iteration: 0
+        After first non skipped item: 1
+        After second non skipped item: 2
+        ...
+
         """
         return self.__count
 
@@ -152,8 +169,9 @@ class Iterator(object):
         headers: tuple
 
         """
-        if self.__headers is not None:
-            raise errors.Error('Headers are immutable.')
+        if self.__count != 0:
+            message = 'Headers could be set only before first item is emited.'
+            raise errors.Error(message)
         self.__headers = headers
 
     @property

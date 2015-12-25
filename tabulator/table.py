@@ -61,7 +61,7 @@ class Table(object):
         self.__require_not_closed()
 
         # Get the next row
-        next(self.__iterator)
+        self.__iterator.__next__()
         row = Row(self.__iterator.headers, self.__iterator.values)
 
         return row
@@ -110,14 +110,10 @@ class Table(object):
         """
 
         # Retrieve headers
-        if self.__headers is None:
-            for row in self:
-                if row.headers is not None:
-                    self.__headers = row.headers
-                    break
-            self.reset()
+        if self.__iterator.count == 0:
+            self.__iterator.__next__(lookahead=True)
 
-        return self.__headers
+        return self.__iterator.headers
 
     def readrow(self):
         """Return the next row from the table.
