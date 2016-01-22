@@ -50,11 +50,14 @@ def detect_encoding(bytes):
     """Detect encoding of a byte stream.
     """
     detector = UniversalDetector()
-    for line in bytes.readlines():
+    num_lines = 1000
+    while num_lines > 0:
+        line = bytes.readline()
         detector.feed(line)
         if detector.done:
             # TODO: does it work?
             break
+        num_lines -= 1
     detector.close()
     bytes.seek(0)
     confidence = detector.result['confidence']
