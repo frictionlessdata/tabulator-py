@@ -1,7 +1,7 @@
 # tabulator-py
 
-[![Travis](https://img.shields.io/travis/okfn/tabulator-py.svg)](https://travis-ci.org/okfn/tabulator-py)
-[![Coveralls](http://img.shields.io/coveralls/okfn/tabulator-py.svg?branch=master)](https://coveralls.io/r/okfn/tabulator-py?branch=master)
+[![Travis](https://img.shields.io/travis/datapackages/tabulator-py.svg)](https://travis-ci.org/datapackages/tabulator-py)
+[![Coveralls](http://img.shields.io/coveralls/datapackages/tabulator-py.svg?branch=master)](https://coveralls.io/r/datapackages/tabulator-py?branch=master)
 
 A utility library that provides a consistent interface for reading tabular data.
 
@@ -32,7 +32,7 @@ with topen('path.csv', with_headers=True) as table:
         print(row.get('header'))
 ```
 
-For the most use cases `topen` function is far enough. It gets
+For the most use cases `topen` function is enough. It takes the
 `source` argument:
 
 ```
@@ -43,7 +43,7 @@ over the table. Also user can pass `scheme` and `format` explicitly
 as function arguments. The last `topen` argument is `encoding` - user can force Tabulator
 to use encoding of choice to open the table.
 
-Read more about `topen` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/topen.py).
+Read more about `topen` - [documentation](https://github.com/datapackages/tabulator-py/blob/master/tabulator/topen.py).
 
 Function `topen` returns `Table` instance. We use context manager
 to call `table.open()` on enter and `table.close()` when we exit:
@@ -54,16 +54,16 @@ with `limit` of output rows as parameter.
 - headers can be accessed via `headers` property
 - table pointer can be set to start via `reset` method.
 
-Read more about `Table` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/table.py).
+Read more about `Table` - [documentation](https://github.com/datapackages/tabulator-py/blob/master/tabulator/table.py).
 
 In the example above we use `processors.Headers` to extract headers
 from the table (via `with_headers=True` shortcut). Processors is a powerfull
 Tabulator concept. Parsed data goes thru pipeline of processors to be updated before
 returning as table row.
 
-Read more about `Processor` - [documentation](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py).
+Read more about `Processor` - [documentation](https://github.com/datapackages/tabulator-py/blob/master/tabulator/processors/api.py).
 
-Read a processors tutorial - [tutorial](https://github.com/okfn/tabulator-py/blob/master/docs/processors.md).
+Read a processors tutorial - [tutorial](https://github.com/datapackages/tabulator-py/blob/master/docs/processors.md).
 
 #### Advanced interface
 
@@ -87,31 +87,31 @@ print(headers, contents)
 table.close()
 ```
 
-Also `Table` class can be initiated by user (see documentation).
+Also `Table` class can be instantiated by user (see documentation).
 But there is no difference between it and `topen` call with extended
-list of parameters except `topen` also call `table.open()` method.
+list of parameters except `topen` also calls the `table.open()` method.
 
 ### Design Overview
 
 Tabulator uses modular architecture to be fully extensible and flexible.
-It uses loosely cupled modules like `Loader`, `Parser` and `Processor`
+It uses loosely coupled modules like `Loader`, `Parser` and `Processor`
 to provide clear data flow.
 
 ![diagram](docs/diagram.png)
 
 ### Documentation
 
-API documentation is presented as docstings:
+API documentation is presented as docstrings:
 - High-level:
-    - [topen](https://github.com/okfn/tabulator-py/blob/master/tabulator/topen.py)
+    - [topen](https://github.com/datapackages/tabulator-py/blob/master/tabulator/topen.py)
 - Core elements:
-    - [Row](https://github.com/okfn/tabulator-py/blob/master/tabulator/row.py)
-    - [Table](https://github.com/okfn/tabulator-py/blob/master/tabulator/table.py)
-    - [Iterator](https://github.com/okfn/tabulator-py/blob/master/tabulator/iterator.py)
+    - [Row](https://github.com/datapackages/tabulator-py/blob/master/tabulator/row.py)
+    - [Table](https://github.com/datapackages/tabulator-py/blob/master/tabulator/table.py)
+    - [Iterator](https://github.com/datapackages/tabulator-py/blob/master/tabulator/iterator.py)
 - Plugin elements:
-    - [Loader API](https://github.com/okfn/tabulator-py/blob/master/tabulator/loaders/api.py)
-    - [Parser API](https://github.com/okfn/tabulator-py/blob/master/tabulator/parsers/api.py)
-    - [Processor API](https://github.com/okfn/tabulator-py/blob/master/tabulator/processors/api.py)
+    - [Loader API](https://github.com/datapackages/tabulator-py/blob/master/tabulator/loaders/api.py)
+    - [Parser API](https://github.com/datapackages/tabulator-py/blob/master/tabulator/parsers/api.py)
+    - [Processor API](https://github.com/datapackages/tabulator-py/blob/master/tabulator/processors/api.py)
 
 ## Development
 
