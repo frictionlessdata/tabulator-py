@@ -18,7 +18,7 @@ def read(path):
 
 # Prepare
 readme = read('README.md')
-license = read('LICENSE.txt')
+license = read('LICENSE.md')
 requirements = read('requirements.txt').split()
 requirements_dev = read('requirements.dev.txt').split()
 package = json.loads(read('package.json'))
