@@ -1,12 +1,11 @@
 {
-
   "name": "tabulator",
-  "description": "A utility library that provides a consistent interface for reading tabular data.",
-  "version": "0.3.0",
   "slug": "tabulator",
+  "description": "A Python library for reading tabular data from various formats.",
+  "version": "0.3.3",
   "author": "Open Knowledge Foundation",
   "author_email": "info@okfn.org",
-  "repository": "https://github.com/okfn/tabulator-py",
+  "repository": "https://github.com/datapackages/tabulator-py",
   "license": "MIT",
   "keywords": "frictionless data",
   "classifiers": [
@@ -20,16 +19,8 @@
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.3",
     "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Software Development :: Libraries :: Python Modules"
-  ],
-
-  "scripts": {
-    "check": "python run.py review && python run.py test",
-    "install": "pip install --upgrade -r requirements.dev.txt",
-    "report": "coveralls",
-    "review": "pylama tabulator",
-    "test": "PACKAGE=tabulator tox"
-  }
-
+  ]
 }

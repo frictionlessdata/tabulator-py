@@ -2,7 +2,6 @@
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
-from __future__ import unicode_literals
 
 import os
 import io
@@ -10,37 +9,42 @@ import json
 from setuptools import setup, find_packages
 
 
-# Helpers
 def read(path):
+    """Read a text file at the given relative path."""
     basedir = os.path.dirname(__file__)
     return io.open(os.path.join(basedir, path), encoding='utf-8').read()
 
 
-# Prepare
-readme = read('README.md')
-license = read('LICENSE.txt')
-requirements = read('requirements.txt').split()
-requirements_dev = read('requirements.dev.txt').split()
-package = json.loads(read('package.json'))
+README = read('README.md')
+LICENSE = read('LICENSE.md')
+INFO = json.loads(read(os.path.join('tabulator', 'info.json')))
+INSTALL_REQUIRES = [
+    'six>=1.9',
+    'xlrd>=0.9',
+    'ijson>=2.0',
+    'chardet>=2.0',
+    'openpyxl>=2.0',
+    'jsontableschema>=0.5'
+]
+TESTS_REQUIRE = read('tests_require').split()
 
 
-# Run
 setup(
-    name=package['name'],
-    version=package['version'],
-    description=package['description'],
-    long_description=readme,
-    author=package['author'],
-    author_email=package['author_email'],
-    url=package['repository'],
-    license=package['license'],
+    name=INFO['name'],
+    version=INFO['version'],
+    description=INFO['description'],
+    long_description=README,
+    author=INFO['author'],
+    author_email=INFO['author_email'],
+    url=INFO['repository'],
+    license=INFO['license'],
     include_package_data=True,
     packages=find_packages(exclude=['examples', 'tests']),
-    package_dir={package['slug']: package['slug']},
-    install_requires=requirements,
-    tests_require=requirements_dev,
-    test_suite='nose.collector',
+    package_dir={INFO['slug']: INFO['slug']},
+    install_requires=INSTALL_REQUIRES,
+    tests_require=TESTS_REQUIRE,
+    test_suite='make test',
     zip_safe=False,
-    keywords=package['keywords'],
-    classifiers=package['classifiers'],
+    keywords=INFO['keywords'],
+    classifiers=INFO['classifiers'],
 )

@@ -1,0 +1,7 @@
+pylint
+tox
+mock
+pytest
+pytest-cov
+coverage
+coveralls
