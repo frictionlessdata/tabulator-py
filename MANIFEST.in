@@ -1,8 +1,8 @@
-include LICENSE.txt
-include package.json
-include pylama.ini
+include Makefile
+include LICENSE.md
+include tabulator/info.json
 include README.md
-include requirements.dev.txt
-include requirements.txt
-include run.py
 include tox.ini
+include pylintrc
+include .coveragerc
+include tests_require
