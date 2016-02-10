@@ -1,20 +1,29 @@
-sudo: false
-language: python
+sudo:
+  false
+
+language:
+  python
+
 python:
-- 2.7
-- 3.3
-- 3.4
-- 3.5
+  - 2.7
+  - 3.3
+  - 3.4
+  - 3.5
+
 env:
   global:
   - TOXENV="py${PYTHON_VERSION//./}"
+
 install:
-- python run.py install
+  - make install
+
 script:
-- python run.py review
-- python run.py test
+  - make review
+  - make test
+
 after_success:
-- python run.py report
+  - make report
+
 deploy:
   provider: pypi
   user: okfn
