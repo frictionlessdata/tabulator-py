@@ -14,8 +14,8 @@ from setuptools import setup, find_packages
 def read(path):
     basedir = os.path.dirname(__file__)
     return io.open(os.path.join(basedir, path), encoding='utf-8').read()
-def version(name):
-    return '0.3.2' # implement
+def version(package):
+    return '0.3.2' # implement parsing
 
 
 # Prepare

@@ -18,7 +18,6 @@ install:
   - make install
 
 script:
-  - make review
   - make test
 
 after_success:
