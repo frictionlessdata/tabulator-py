@@ -5,13 +5,9 @@
 
 A utility library that provides a consistent interface for reading tabular data.
 
-## Usage
+## Getting Started
 
-This section is intended to be used by end-users of the library.
-
-### Getting Started
-
-#### Installation
+### Installation
 
 To get started (under development):
 
@@ -19,7 +15,7 @@ To get started (under development):
 $ pip install tabulator
 ```
 
-#### Simple interface
+### Simple interface
 
 Fast access to the table with `topen` (stands for `table open`) function:
 
@@ -65,7 +61,7 @@ Read more about `Processor` - [documentation](https://github.com/datapackages/ta
 
 Read a processors tutorial - [tutorial](https://github.com/datapackages/tabulator-py/blob/master/docs/processors.md).
 
-#### Advanced interface
+### Advanced interface
 
 To get full control over the process you can use more parameters.
 Below all parts of Tabulator are presented:
@@ -91,7 +87,7 @@ Also `Table` class can be instantiated by user (see documentation).
 But there is no difference between it and `topen` call with extended
 list of parameters except `topen` also calls the `table.open()` method.
 
-### Design Overview
+## Design Overview
 
 Tabulator uses modular architecture to be fully extensible and flexible.
 It uses loosely coupled modules like `Loader`, `Parser` and `Processor`
@@ -99,7 +95,7 @@ to provide clear data flow.
 
 ![diagram](docs/diagram.png)
 
-### Documentation
+## Documentation
 
 API documentation is presented as docstrings:
 - High-level:
@@ -113,39 +109,10 @@ API documentation is presented as docstrings:
     - [Parser API](https://github.com/datapackages/tabulator-py/blob/master/tabulator/parsers/api.py)
     - [Processor API](https://github.com/datapackages/tabulator-py/blob/master/tabulator/processors/api.py)
 
-## Development
+## Contributing
 
-This section is intended to be used by tech users collaborating
-on this project.
+Please read the contribution guideline:
 
-### Getting Started
+[How to Contribute](CONTRIBUTING.md)
 
-To activate virtual environment, install
-dependencies, add pre-commit hook to review and test code
-and get `run` command as unified developer interface:
-
-```
-$ source activate.sh
-```
-
-### Reviewing
-
-The project follow the next style guides:
-- [Open Knowledge Coding Standards and Style Guide](https://github.com/okfn/coding-standards)
-- [PEP 8 - Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
-
-To check the project against Python style guide:
-
-```
-$ run review
-```
-
-### Testing
-
-To run tests with coverage check:
-
-```
-$ run test
-```
-
-Coverage data will be in the `.coverage` file.
+Thanks!
