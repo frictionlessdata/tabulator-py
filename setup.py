@@ -20,10 +20,6 @@ def version(name):
 
 # Prepare
 NAME = 'tabulator'
-README = read('README.md')
-LICENSE = read('LICENSE.md')
-VERSION = version(NAME)
-PACKAGES = find_packages(exclude=['examples', 'tests'])
 INSTALL_REQUIRES = [
     'six',
     'xlrd',
@@ -41,6 +37,10 @@ TESTS_REQUIRE = [
     'coverage',
     'coveralls',
 ]
+README = read('README.md')
+LICENSE = read('LICENSE.md')
+VERSION = version(NAME)
+PACKAGES = find_packages(exclude=['examples', 'tests'])
 
 
 # Run
