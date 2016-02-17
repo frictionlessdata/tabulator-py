@@ -38,7 +38,6 @@ TESTS_REQUIRE = [
     'coveralls',
 ]
 README = read('README.md')
-LICENSE = read('LICENSE.md')
 VERSION = version(NAME)
 PACKAGES = find_packages(exclude=['examples', 'tests'])
 
@@ -58,7 +57,7 @@ setup(
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',
     url='https://github.com/okfn/tabulator-py',
-    license=LICENSE,
+    license='MIT',
     keywords="frictionless data",
     classifiers=[
         'Development Status :: 4 - Beta',
