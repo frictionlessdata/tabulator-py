@@ -29,6 +29,9 @@ INSTALL_REQUIRES = [
     'openpyxl>=2.0',
     'jsontableschema>=0.5',
 ]
+LINT_REQUIRES = [
+    'pylint',
+]
 TESTS_REQUIRE = [
     'tox',
 ]
@@ -45,7 +48,7 @@ setup(
     include_package_data=True,
     install_requires=INSTALL_REQUIRES,
     tests_require=TESTS_REQUIRE,
-    extras_require = {'develop': TESTS_REQUIRE},
+    extras_require = {'develop': LINT_REQUIRES + TESTS_REQUIRE},
     test_suite='tox',
     zip_safe=False,
     long_description=LONG_DESCRIPTION,
