@@ -46,7 +46,7 @@ setup(
     install_requires=INSTALL_REQUIRES,
     tests_require=TESTS_REQUIRE,
     extras_require = {'develop': TESTS_REQUIRE},
-    test_suite='make test',
+    test_suite='tox',
     zip_safe=False,
     long_description=LONG_DESCRIPTION,
     description='A utility library that provides a consistent interface for reading tabular data.',
