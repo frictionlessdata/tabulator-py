@@ -1,6 +1,0 @@
-six
-xlrd
-ijson
-chardet
-openpyxl
-jsontableschema
