@@ -1,7 +1,7 @@
 .PHONY: all develop list lint test version
 
 
-PACKAGE := $(shell grep '^NAME' setup.py | cut -d "'" -f2)
+PACKAGE := $(shell grep '^PACKAGE =' setup.py | cut -d "'" -f2)
 VERSION := $(shell head -n 1 $(PACKAGE)/VERSION)
 
 

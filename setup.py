@@ -20,7 +20,7 @@ def read(*paths):
 
 
 # Prepare
-NAME = 'tabulator'
+PACKAGE = 'tabulator'
 INSTALL_REQUIRES = [
     'six>=1.9',
     'xlrd>=0.9',
@@ -35,14 +35,14 @@ LINT_REQUIRES = [
 TESTS_REQUIRE = [
     'tox',
 ]
-VERSION = read(NAME, 'VERSION')
+README = read('README.md')
+VERSION = read(PACKAGE, 'VERSION')
 PACKAGES = find_packages(exclude=['examples', 'tests'])
-LONG_DESCRIPTION = read('README.md')
 
 
 # Run
 setup(
-    name=NAME,
+    name=PACKAGE,
     version=VERSION,
     packages=PACKAGES,
     include_package_data=True,
@@ -51,7 +51,7 @@ setup(
     extras_require = {'develop': LINT_REQUIRES + TESTS_REQUIRE},
     test_suite='tox',
     zip_safe=False,
-    long_description=LONG_DESCRIPTION,
+    long_description=README,
     description='A utility library that provides a consistent interface for reading tabular data.',
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',
