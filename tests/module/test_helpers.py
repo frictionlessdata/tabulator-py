@@ -24,7 +24,11 @@ class Test_detect_format(unittest.TestCase):
     # Tests
 
     def test(self):
-        self.assertEqual(module.detect_format('path.csv'), 'csv')
+        self.assertEqual(module.detect_format('path.CsV'), 'csv')
+
+    def test_works_with_urls_with_query_and_fragment_components(self):
+        url = 'http://someplace.com/foo/path.csv?foo=bar#baz'
+        self.assertEqual(module.detect_format(url), 'csv')
 
 
 class Test_detect_encoding(unittest.TestCase):

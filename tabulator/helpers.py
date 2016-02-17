@@ -4,7 +4,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import os
 import ast
 from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
@@ -37,7 +36,13 @@ def detect_format(source):
     if hasattr(source, 'read'):
         format = ''
     else:
-        format = os.path.splitext(source)[1].replace('.', '')
+        parsed_source = urlparse(source)
+        path = parsed_source.path
+        if not path:
+            # FIXME: This supports valid paths like file://foo.csv, but also
+            # invalid ones like http://foo.csv
+            path = parsed_source.netloc
+        format = path.split('.')[-1].lower()
     return format
 
 

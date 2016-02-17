@@ -26,6 +26,8 @@ class Test_topen(unittest.TestCase):
     # Tests
 
     def test_supported_in_source(self):
+        # FIXME: This is testing if paths like "http://path.csv" work, which
+        # aren't valid.
         for scheme in ['file', 'text', 'ftp', 'ftps', 'http', 'https']:
             for format in ['csv', 'xls', 'xlsx', 'json']:
                 patch.object(module, '_LOADERS', {scheme: self.Loader}).start()
