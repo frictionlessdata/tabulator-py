@@ -7,10 +7,10 @@ The contributing guideline.
 To install package and development dependencies:
 
 ```
-$ make install
+$ make develop
 ```
 
-## Reviewing
+## Linting
 
 The project follow the next style guides:
 - [Open Knowledge Coding Standards and Style Guide](https://github.com/okfn/coding-standards)
@@ -19,12 +19,12 @@ The project follow the next style guides:
 To check the project against Python style guide:
 
 ```
-$ make review
+$ make lint
 ```
 
 ## Testing
 
-To run tests with coverage check:
+To run tests with coverage:
 
 ```
 $ make test

@@ -11,48 +11,44 @@ from setuptools import setup, find_packages
 
 
 # Helpers
-def read(path):
+def read(*paths):
+    """Read a text file."""
     basedir = os.path.dirname(__file__)
-    return io.open(os.path.join(basedir, path), encoding='utf-8').read()
-def version(package):
-    return '0.3.2' # implement parsing
+    fullpath = os.path.join(basedir, *paths)
+    contents = io.open(fullpath, encoding='utf-8').read().strip()
+    return contents
 
 
 # Prepare
 NAME = 'tabulator'
 INSTALL_REQUIRES = [
-    'six',
-    'xlrd',
-    'ijson',
-    'chardet',
-    'openpyxl',
-    'jsontableschema',
+    'six>=1.9',
+    'xlrd>=0.9',
+    'ijson>=2.0',
+    'chardet>=2.0',
+    'openpyxl>=2.0',
+    'jsontableschema>=0.5',
 ]
 TESTS_REQUIRE = [
-    'pylint',
     'tox',
-    'mock',
-    'pytest',
-    'pytest-cov',
-    'coverage',
-    'coveralls',
 ]
-README = read('README.md')
-VERSION = version(NAME)
+VERSION = read(NAME, 'VERSION')
 PACKAGES = find_packages(exclude=['examples', 'tests'])
+LONG_DESCRIPTION = read('README.md')
 
 
 # Run
 setup(
-    name='tabulator',
+    name=NAME,
     version=VERSION,
     packages=PACKAGES,
     include_package_data=True,
     install_requires=INSTALL_REQUIRES,
     tests_require=TESTS_REQUIRE,
-    extras_require = {'development': TESTS_REQUIRE},
+    extras_require = {'develop': TESTS_REQUIRE},
     test_suite='make test',
     zip_safe=False,
+    long_description=LONG_DESCRIPTION,
     description='A utility library that provides a consistent interface for reading tabular data.',
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',

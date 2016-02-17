@@ -1,21 +1,23 @@
-.PHONY: all list install review report test
+.PHONY: all develop list lint test version
 
-PKG := tabulator
 
-all: review test
+PACKAGE := $(shell grep '^NAME' setup.py | cut -d "'" -f2)
+VERSION := $(shell head -n 1 $(PACKAGE)/VERSION)
 
-# http://stackoverflow.com/questions/4219255/how-do-you-get-the-list-of-targets-in-a-makefile
+
+all: list
+
+develop:
+	pip install --upgrade -e .[develop]
+
 list:
-	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs
+	@grep '^\.PHONY' Makefile | cut -d' ' -f2- | tr ' ' '\n'
 
-install:
-	pip install --upgrade -e .[development]
-
-review:
-	pylint $(PKG)
-
-report:
-	coveralls
+lint:
+	pylint $(PACKAGE)
 
 test:
 	tox
+
+version:
+	@echo $(VERSION)

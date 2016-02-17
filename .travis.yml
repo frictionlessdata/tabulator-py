@@ -15,13 +15,14 @@ env:
   - TOXENV="py${PYTHON_VERSION//./}"
 
 install:
-  - make install
+  - make develop
+  - pip install coveralls
 
 script:
   - make test
 
 after_success:
-  - make report
+  - coveralls
 
 deploy:
   provider: pypi
