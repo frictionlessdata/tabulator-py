@@ -16,6 +16,11 @@ list:
 lint:
 	pylint $(PACKAGE)
 
+release:
+	bash -c '[[ -z `git status -s` ]]'
+	git tag -a -m release $(VERSION)
+	git push --tags
+
 test:
 	tox
 

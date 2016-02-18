@@ -31,7 +31,7 @@ class Iterator(object):
     def __iter__(self):
         return self
 
-    def __next__(self, lookahead=False): #noqa
+    def __next__(self, lookahead=False):
 
         # Return if lookahead is set on prev iteration
         if self.__lookahead and not lookahead:
