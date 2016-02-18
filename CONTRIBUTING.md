@@ -13,11 +13,9 @@ $ make develop
 
 ## Linting
 
-The project follow the next style guides:
-- [Open Knowledge Coding Standards and Style Guide](https://github.com/okfn/coding-standards)
-- [PEP 8 - Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
+The project follows the [Open Knowledge International coding standards](https://github.com/okfn/coding-standards).
 
-To check the project against Python style guide:
+To lint the project codebase:
 
 ```
 $ make lint
