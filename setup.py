@@ -25,6 +25,7 @@ INSTALL_REQUIRES = [
     'ijson>=2.0',
     'chardet>=2.0',
     'openpyxl>=2.0',
+    'requests>=2.8',
     'jsontableschema>=0.5',
 ]
 LINT_REQUIRES = [
