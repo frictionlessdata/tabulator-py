@@ -15,7 +15,7 @@ from . import helpers
 
 # Module API
 
-def topen(source, #noqa
+def topen(source,
           with_headers=False, processors=None,
           scheme=None, format=None, encoding=None,
           loader_options=None, parser_options=None,

@@ -48,6 +48,7 @@ setup(
     install_requires=INSTALL_REQUIRES,
     tests_require=TESTS_REQUIRE,
     extras_require = {'develop': LINT_REQUIRES + TESTS_REQUIRE},
+    # FIXME: not correct
     test_suite='tox',
     zip_safe=False,
     long_description=README,
