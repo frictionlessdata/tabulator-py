@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import io
 import six
+from requests.utils import requote_uri
 from six.moves.urllib.request import urlopen
 
 from .. import errors, helpers
@@ -27,14 +28,17 @@ class Web(API):
 
     def load(self, mode):
 
+        # Requote uri if it contains spaces etc
+        source = requote_uri(self.__source)
+
         # Prepare bytes
         if six.PY2:
-            response = urlopen(self.__source)
+            response = urlopen(source)
             bytes = io.BufferedRandom(io.BytesIO())
             bytes.write(response.read())
             bytes.seek(0)
         else:
-            bytes = _WebStream(self.__source)
+            bytes = _WebStream(source)
             response = bytes.response
 
         # Prepare encoding
