@@ -1,6 +1,6 @@
 # tabulator-py
 
-[![Travis](https://img.shields.io/travis/datapackages/tabulator-py.svg)](https://travis-ci.org/datapackages/tabulator-py)
+[![Travis](https://img.shields.io/travis/datapackages/tabulator-py/master.svg)](https://travis-ci.org/datapackages/tabulator-py)
 [![Coveralls](http://img.shields.io/coveralls/datapackages/tabulator-py.svg?branch=master)](https://coveralls.io/r/datapackages/tabulator-py?branch=master)
 
 A utility library that provides a consistent interface for reading tabular data.
