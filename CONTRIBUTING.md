@@ -1,6 +1,6 @@
 # Contributing
 
-The contributing guideline.
+The project follows the [Open Knowledge International coding standards](https://github.com/okfn/coding-standards).
 
 ## Getting Started
 
@@ -12,8 +12,6 @@ $ make develop
 ```
 
 ## Linting
-
-The project follows the [Open Knowledge International coding standards](https://github.com/okfn/coding-standards).
 
 To lint the project codebase:
 
