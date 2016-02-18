@@ -5,7 +5,6 @@ from __future__ import absolute_import
 
 import os
 import io
-import json
 from setuptools import setup, find_packages
 
 
@@ -47,7 +46,7 @@ setup(
     include_package_data=True,
     install_requires=INSTALL_REQUIRES,
     tests_require=TESTS_REQUIRE,
-    extras_require = {'develop': LINT_REQUIRES + TESTS_REQUIRE},
+    extras_require={'develop': LINT_REQUIRES + TESTS_REQUIRE},
     test_suite='tox',
     zip_safe=False,
     long_description=README,
@@ -56,7 +55,9 @@ setup(
     author_email='info@okfn.org',
     url='https://github.com/okfn/tabulator-py',
     license='MIT',
-    keywords="frictionless data",
+    keywords=[
+        'frictionless data',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
