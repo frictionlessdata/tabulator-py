@@ -12,7 +12,7 @@ python:
 
 env:
   global:
-  - TOXENV="py${PYTHON_VERSION//./}"
+    - TOXENV="py${PYTHON_VERSION//./}"
 
 install:
   - make develop
