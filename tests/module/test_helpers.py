@@ -16,7 +16,23 @@ class Test_detect_scheme(unittest.TestCase):
     # Tests
 
     def test(self):
+        self.assertEqual(module.detect_scheme('text://path'), 'text')
+        self.assertEqual(module.detect_scheme('stream://path'), 'stream')
+        self.assertEqual(module.detect_scheme('file://path'), 'file')
+        self.assertEqual(module.detect_scheme('ftp://path'), 'ftp')
+        self.assertEqual(module.detect_scheme('ftps://path'), 'ftps')
         self.assertEqual(module.detect_scheme('http://path'), 'http')
+        self.assertEqual(module.detect_scheme('https://path'), 'https')
+        self.assertEqual(module.detect_scheme('xxx://path'), 'xxx')
+        self.assertEqual(module.detect_scheme('xx://path'), 'xx')
+        self.assertEqual(module.detect_scheme('XXX://path'), 'xxx')
+        self.assertEqual(module.detect_scheme('XX://path'), 'xx')
+        self.assertEqual(module.detect_scheme('c://path'), None)
+        self.assertEqual(module.detect_scheme('c:\\path'), None)
+        self.assertEqual(module.detect_scheme('c:\path'), None)
+        self.assertEqual(module.detect_scheme('http:/path'), None)
+        self.assertEqual(module.detect_scheme('http//path'), None)
+        self.assertEqual(module.detect_scheme('path'), None)
 
 
 class Test_detect_format(unittest.TestCase):

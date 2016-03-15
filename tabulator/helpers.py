@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import re
 import ast
 from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
@@ -16,19 +17,22 @@ from . import errors
 def detect_scheme(source):
     """Detect scheme by source.
 
+    Schema is a minimum 2 letters before `://` (will be lower cased).
     For example `http` from `http://example.com/table.csv`
 
     """
     if hasattr(source, 'read'):
         scheme = 'stream'
     else:
-        # TODO: rewrite without urlparse
-        scheme = urlparse(source).scheme
+        match = re.search(r'^([a-zA-Z]{2,}):\/{2}', source)
+        if not match:
+            return None
+        scheme = match.group(1).lower()
     return scheme
 
 
 def detect_format(source):
-    """Detect scheme by source.
+    """Detect format by source.
 
     For example `csv` from `http://example.com/table.csv`
 
