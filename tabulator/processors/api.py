@@ -11,7 +11,7 @@ from abc import ABCMeta
 # Module API
 
 @add_metaclass(ABCMeta)
-class API(object):
+class Processor(object):
     """Processor representation.
 
     Processor will be called on every iteration

@@ -10,12 +10,12 @@ from requests.utils import requote_uri
 from six.moves.urllib.request import urlopen
 
 from .. import errors, helpers
-from .api import API
+from . import api
 
 
 # Module API
 
-class Web(API):
+class WebLoader(api.Loader):
     """Loader to load source from the web.
     """
 

@@ -21,7 +21,7 @@ class TestExcel(unittest.TestCase):
         self.source = os.path.join(basedir, 'examples', 'data', 'table.xls')
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source, 'rb'))
-        self.parser = module.Excel()
+        self.parser = module.ExcelParser()
 
     # Tests
 

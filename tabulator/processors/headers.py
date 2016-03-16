@@ -4,12 +4,12 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .api import API
+from . import api
 
 
 # Module API
 
-class Headers(API):
+class HeadersProcessor(api.Processor):
     """Processor to add headers to row.
     """
 

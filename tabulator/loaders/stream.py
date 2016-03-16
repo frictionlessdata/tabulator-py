@@ -7,12 +7,12 @@ from __future__ import unicode_literals
 import io
 
 from .. import errors, helpers
-from .api import API
+from . import api
 
 
 # Module API
 
-class Stream(API):
+class StreamLoader(api.Loader):
     """Loader to load source from file-like byte stream.
     """
 

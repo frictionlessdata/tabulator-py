@@ -16,7 +16,7 @@ class TestText(unittest.TestCase):
     def setUp(self):
         self.source = 'id,name\n1,english\n2,中国人\n'
         self.encoding = 'utf-8'
-        self.loader = module.Text(self.source, self.encoding)
+        self.loader = module.TextLoader(self.source, self.encoding)
 
     # Tests
 

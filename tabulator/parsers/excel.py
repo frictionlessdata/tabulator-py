@@ -7,12 +7,12 @@ from __future__ import unicode_literals
 import xlrd
 
 from .. import helpers
-from .api import API
+from . import api
 
 
 # Module API
 
-class Excel(API):
+class ExcelParser(api.Parser):
     """Parser to parse Excel data format.
     """
 

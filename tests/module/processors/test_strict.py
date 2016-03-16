@@ -14,4 +14,4 @@ class TestStrict(unittest.TestCase):
     # Tests
 
     def test(self):
-        self.assertTrue(module.Strict)
+        self.assertTrue(module.StrictProcessor)

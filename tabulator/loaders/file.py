@@ -7,12 +7,12 @@ from __future__ import unicode_literals
 import io
 
 from .. import errors, helpers
-from .api import API
+from . import api
 
 
 # Module API
 
-class File(API):
+class FileLoader(api.Loader):
     """Loader to load source from filesystem.
     """
 

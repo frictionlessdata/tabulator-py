@@ -7,12 +7,12 @@ from __future__ import unicode_literals
 import openpyxl
 
 from .. import helpers
-from .api import API
+from . import api
 
 
 # Module API
 
-class Excelx(API):
+class ExcelxParser(api.Parser):
     """Parser to parse Excel modern `xlsx` data format.
     """
 

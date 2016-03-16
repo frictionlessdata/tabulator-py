@@ -7,12 +7,12 @@ from __future__ import unicode_literals
 import ijson
 
 from .. import helpers, errors
-from .api import API
+from . import api
 
 
 # Module API
 
-class JSON(API):
+class JSONParser(api.Parser):
     """Parser to parse JSON data format.
     """
 

@@ -21,7 +21,7 @@ class TestCSV(unittest.TestCase):
         self.source = os.path.join(basedir, 'examples', 'data', 'table.csv')
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source))
-        self.parser = module.CSV()
+        self.parser = module.CSVParser()
 
     # Tests
 

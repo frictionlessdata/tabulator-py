@@ -9,12 +9,12 @@ import six
 from codecs import iterencode
 
 from .. import helpers
-from .api import API
+from . import api
 
 
 # Module API
 
-class CSV(API):
+class CSVParser(api.Parser):
     """Parser to parse CSV data format.
     """
 

@@ -14,4 +14,4 @@ class TestSchema(unittest.TestCase):
     # Tests
 
     def test(self):
-        self.assertTrue(module.Schema)
+        self.assertTrue(module.SchemaProcessor)

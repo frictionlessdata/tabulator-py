@@ -18,7 +18,7 @@ class TestWeb(unittest.TestCase):
         baseurl += '/okfn/tabulator-py/master/examples/data'
         self.source = baseurl + '/table.csv'
         self.encoding = 'utf-8'
-        self.loader = module.Web(self.source, self.encoding)
+        self.loader = module.WebLoader(self.source, self.encoding)
 
     # Tests
 

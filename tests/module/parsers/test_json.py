@@ -21,7 +21,7 @@ class TestJSON(unittest.TestCase):
         self.source = os.path.join(basedir, 'examples', 'data', 'table-dicts.json')
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source, 'rb'))
-        self.parser = module.JSON()
+        self.parser = module.JSONParser()
 
     # Tests
 

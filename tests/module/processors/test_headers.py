@@ -14,4 +14,4 @@ class TestHeaders(unittest.TestCase):
     # Tests
 
     def test(self):
-        self.assertTrue(module.Headers)
+        self.assertTrue(module.HeadersProcessor)

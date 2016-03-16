@@ -5,12 +5,12 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .. import errors
-from .api import API
+from . import api
 
 
 # Module API
 
-class Strict(API):
+class StrictProcessor(api.Processor):
     """Processor to ensure the same headers and dimension of the rows.
     """
 

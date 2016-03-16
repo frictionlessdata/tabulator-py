@@ -11,7 +11,7 @@ from abc import ABCMeta, abstractmethod
 # Module API
 
 @add_metaclass(ABCMeta)
-class API(object):
+class Parser(object):
     """Parser representation.
 
     Parameters

@@ -18,7 +18,7 @@ class TestFile(unittest.TestCase):
         basedir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
         self.source = os.path.join(basedir, 'examples', 'data', 'table.csv')
         self.encoding = 'utf-8'
-        self.loader = module.File(self.source, self.encoding)
+        self.loader = module.FileLoader(self.source, self.encoding)
 
     # Tests
 
