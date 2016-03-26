@@ -53,7 +53,7 @@ setup(
     description='A utility library that provides a consistent interface for reading tabular data.',
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',
-    url='https://github.com/okfn/tabulator-py',
+    url='https://github.com/frictionlessdata/tabulator-py',
     license='MIT',
     keywords=[
         'frictionless data',
