@@ -1,8 +1,9 @@
 # tabulator-py
 
+[![Travis](https://img.shields.io/travis/frictionlessdata/tabulator-py/master.svg)](https://travis-ci.org/frictionlessdata/tabulator-py)
+[![Coveralls](http://img.shields.io/coveralls/frictionlessdata/tabulator-py.svg?branch=master)](https://coveralls.io/r/frictionlessdata/tabulator-py?branch=master)
+[![PyPi](https://img.shields.io/pypi/v/tabulator.svg)](https://pypi.python.org/pypi/tabulator)
 [![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
-[![Travis](https://img.shields.io/travis/datapackages/tabulator-py/master.svg)](https://travis-ci.org/datapackages/tabulator-py)
-[![Coveralls](http://img.shields.io/coveralls/datapackages/tabulator-py.svg?branch=master)](https://coveralls.io/r/datapackages/tabulator-py?branch=master)
 
 A utility library that provides a consistent interface for reading tabular data.
 
@@ -40,7 +41,7 @@ over the table. Also user can pass `scheme` and `format` explicitly
 as function arguments. The last `topen` argument is `encoding` - user can force Tabulator
 to use encoding of choice to open the table.
 
-Read more about `topen` - [documentation](https://github.com/datapackages/tabulator-py/blob/master/tabulator/topen.py).
+Read more about `topen` - [documentation](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/topen.py).
 
 Function `topen` returns `Table` instance. We use context manager
 to call `table.open()` on enter and `table.close()` when we exit:
@@ -51,16 +52,16 @@ with `limit` of output rows as parameter.
 - headers can be accessed via `headers` property
 - table pointer can be set to start via `reset` method.
 
-Read more about `Table` - [documentation](https://github.com/datapackages/tabulator-py/blob/master/tabulator/table.py).
+Read more about `Table` - [documentation](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/table.py).
 
 In the example above we use `processors.Headers` to extract headers
 from the table (via `with_headers=True` shortcut). Processors is a powerfull
 Tabulator concept. Parsed data goes thru pipeline of processors to be updated before
 returning as table row.
 
-Read more about `Processor` - [documentation](https://github.com/datapackages/tabulator-py/blob/master/tabulator/processors/api.py).
+Read more about `Processor` - [documentation](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/processors/api.py).
 
-Read a processors tutorial - [tutorial](https://github.com/datapackages/tabulator-py/blob/master/docs/processors.md).
+Read a processors tutorial - [tutorial](https://github.com/frictionlessdata/tabulator-py/blob/master/docs/processors.md).
 
 ### Advanced interface
 
@@ -100,15 +101,15 @@ to provide clear data flow.
 
 API documentation is presented as docstrings:
 - High-level:
-    - [topen](https://github.com/datapackages/tabulator-py/blob/master/tabulator/topen.py)
+    - [topen](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/topen.py)
 - Core elements:
-    - [Row](https://github.com/datapackages/tabulator-py/blob/master/tabulator/row.py)
-    - [Table](https://github.com/datapackages/tabulator-py/blob/master/tabulator/table.py)
-    - [Iterator](https://github.com/datapackages/tabulator-py/blob/master/tabulator/iterator.py)
+    - [Row](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/row.py)
+    - [Table](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/table.py)
+    - [Iterator](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/iterator.py)
 - Plugin elements:
-    - [Loader API](https://github.com/datapackages/tabulator-py/blob/master/tabulator/loaders/api.py)
-    - [Parser API](https://github.com/datapackages/tabulator-py/blob/master/tabulator/parsers/api.py)
-    - [Processor API](https://github.com/datapackages/tabulator-py/blob/master/tabulator/processors/api.py)
+    - [Loader API](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/loaders/api.py)
+    - [Parser API](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/parsers/api.py)
+    - [Processor API](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/processors/api.py)
 
 ## Contributing
 
