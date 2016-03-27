@@ -134,24 +134,6 @@ with topen(source, with_headers=True) as table:
         print(exception)
 
 
-print('\nUsing schema processor (parse):')
-source = 'examples/data/table.csv'
-with topen(source, with_headers=True) as table:
-    table.add_processor(processors.Schema())
-    print(table.headers)
-    for row in table:
-        print(row)
-
-
-print('\nUsing schema processor (from schema):')
-source = 'examples/data/table.csv'
-with topen(source, with_headers=True) as table:
-    table.add_processor(processors.Schema('examples/data/schema.json'))
-    print(table.headers)
-    for row in table:
-        print(row)
-
-
 print('\nSpaces in headers:')
 source = 'https://raw.githubusercontent.com/datasets/gdp/master/data/gdp.csv'
 with topen(source, with_headers=True) as table:
