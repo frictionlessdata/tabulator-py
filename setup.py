@@ -26,7 +26,6 @@ INSTALL_REQUIRES = [
     'chardet>=2.0',
     'openpyxl>=2.0',
     'requests>=2.8',
-    'jsontableschema>=0.5',
 ]
 LINT_REQUIRES = [
     'pylint',

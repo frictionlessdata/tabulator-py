@@ -17,7 +17,7 @@ from . import errors
 def detect_scheme(source):
     """Detect scheme by source.
 
-    Schema is a minimum 2 letters before `://` (will be lower cased).
+    Scheme is a minimum 2 letters before `://` (will be lower cased).
     For example `http` from `http://example.com/table.csv`
 
     """
