@@ -4,8 +4,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from jsontableschema.model import SchemaModel
-
 from .. import helpers
 from . import api
 
@@ -28,6 +26,10 @@ class SchemaProcessor(api.Processor):
     def __init__(self, schema=None):
         self.__schema = None
         if schema is not None:
+            # TODO: review
+            # Import here as a quick fix for:
+            # https://github.com/frictionlessdata/tabulator-py/issues/51
+            from jsontableschema.model import SchemaModel
             self.__schema = SchemaModel(schema)
 
     def process(self, iterator):
