@@ -1,11 +1,6 @@
 sudo:
   false
 
-addons:
-  apt:
-    packages:
-      - pandoc
-
 language:
   python
 
@@ -30,9 +25,6 @@ script:
 
 after_success:
   - coveralls
-
-before_deploy:
-  - pandoc -f markdown -t rst -o README.rst README.md && mv README.rst README.md
 
 deploy:
   provider: pypi
