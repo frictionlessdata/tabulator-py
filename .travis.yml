@@ -32,7 +32,7 @@ after_success:
   - coveralls
 
 before_deploy:
-  - pandoc -f markdown -t rst -o README.md README.md
+  - pandoc -f markdown -t rst -o README.rst README.md && mv README.rst README.md
 
 deploy:
   provider: pypi
