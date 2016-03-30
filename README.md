@@ -95,7 +95,7 @@ Tabulator uses modular architecture to be fully extensible and flexible.
 It uses loosely coupled modules like `Loader`, `Parser` and `Processor`
 to provide clear data flow.
 
-![diagram](docs/diagram.png)
+![diagram](files/diagram.png)
 
 ## Documentation
 
