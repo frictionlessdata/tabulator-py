@@ -5,13 +5,13 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import unittest
-from importlib import import_module
-module = import_module('tabulator.errors')
+
+from tabulator import processors
 
 
-class Test_errors(unittest.TestCase):
+class TestStrict(unittest.TestCase):
 
     # Tests
 
     def test(self):
-        self.assertTrue(issubclass(module.Error, Exception))
+        self.assertTrue(processors.Strict)

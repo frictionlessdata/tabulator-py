@@ -8,20 +8,20 @@ import io
 import os
 import unittest
 from mock import Mock
-from importlib import import_module
-module = import_module('tabulator.parsers.excel')
+
+from tabulator import parsers
 
 
-class TestExcel(unittest.TestCase):
+class TestCSV(unittest.TestCase):
 
     # Actions
 
     def setUp(self):
-        basedir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
-        self.source = os.path.join(basedir, 'data', 'table.xls')
+        basedir = os.path.join(os.path.dirname(__file__), '..', '..')
+        self.source = os.path.join(basedir, 'data', 'table.csv')
         self.loader = Mock()
-        self.loader.load = Mock(return_value=io.open(self.source, 'rb'))
-        self.parser = module.ExcelParser()
+        self.loader.load = Mock(return_value=io.open(self.source))
+        self.parser = parsers.CSV()
 
     # Tests
 
@@ -34,8 +34,8 @@ class TestExcel(unittest.TestCase):
         self.assertEqual(
             list(self.parser.items),
             [(None, ('id', 'name')),
-                (None, (1.0, 'english')),
-                (None, (2.0, '中国人'))])
+                (None, ('1', 'english')),
+                (None, ('2', '中国人'))])
 
         self.assertEqual(len(list(self.parser.items)), 0)
         self.parser.reset()

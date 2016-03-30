@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import io
 import os
 import unittest
+
 from tabulator import topen, processors
 
 

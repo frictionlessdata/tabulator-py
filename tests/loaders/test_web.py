@@ -5,8 +5,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import unittest
-from importlib import import_module
-module = import_module('tabulator.loaders.web')
+
+from tabulator import loaders
 
 
 class TestWeb(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestWeb(unittest.TestCase):
         baseurl += '/okfn/tabulator-py/master/data'
         self.source = baseurl + '/table.csv'
         self.encoding = 'utf-8'
-        self.loader = module.WebLoader(self.source, self.encoding)
+        self.loader = loaders.Web(self.source, self.encoding)
 
     # Tests
 

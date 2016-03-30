@@ -5,8 +5,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import unittest
-from importlib import import_module
-module = import_module('tabulator.loaders.text')
+
+from tabulator import loaders
 
 
 class TestText(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestText(unittest.TestCase):
     def setUp(self):
         self.source = 'id,name\n1,english\n2,中国人\n'
         self.encoding = 'utf-8'
-        self.loader = module.TextLoader(self.source, self.encoding)
+        self.loader = loaders.Text(self.source, self.encoding)
 
     # Tests
 

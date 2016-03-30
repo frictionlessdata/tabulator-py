@@ -5,13 +5,13 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import unittest
-from importlib import import_module
-module = import_module('tabulator.processors.headers')
+
+from tabulator import processors
 
 
-class TestHeaders(unittest.TestCase):
+class TestSchema(unittest.TestCase):
 
     # Tests
 
     def test(self):
-        self.assertTrue(module.HeadersProcessor)
+        self.assertTrue(processors.Schema)

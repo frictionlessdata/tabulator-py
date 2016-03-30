@@ -5,13 +5,13 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import unittest
-from importlib import import_module
-module = import_module('tabulator.iterator')
+
+from tabulator import Table
 
 
-class TestIterator(unittest.TestCase):
+class TestTable(unittest.TestCase):
 
     # Tests
 
     def test(self):
-        self.assertTrue(module.Iterator)
+        self.assertTrue(Table)

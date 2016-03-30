@@ -8,20 +8,20 @@ import io
 import os
 import unittest
 from mock import Mock
-from importlib import import_module
-module = import_module('tabulator.parsers.json')
+
+from tabulator import parsers
 
 
-class TestJSON(unittest.TestCase):
+class TestExcelx(unittest.TestCase):
 
     # Actions
 
     def setUp(self):
-        basedir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
-        self.source = os.path.join(basedir, 'data', 'table-dicts.json')
+        basedir = os.path.join(os.path.dirname(__file__), '..', '..')
+        self.source = os.path.join(basedir, 'data', 'table.xlsx')
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source, 'rb'))
-        self.parser = module.JSONParser()
+        self.parser = parsers.Excelx()
 
     # Tests
 
@@ -33,12 +33,13 @@ class TestJSON(unittest.TestCase):
 
         self.assertEqual(
             list(self.parser.items),
-            [(('id', 'name'), (1, 'english')),
-             (('id', 'name'), (2, '中国人'))])
+            [(None, ('id', 'name')),
+                (None, (1.0, 'english')),
+                (None, (2.0, '中国人'))])
 
         self.assertEqual(len(list(self.parser.items)), 0)
         self.parser.reset()
-        self.assertEqual(len(list(self.parser.items)), 2)
+        self.assertEqual(len(list(self.parser.items)), 3)
 
         self.parser.close()
         self.assertTrue(self.parser.closed)

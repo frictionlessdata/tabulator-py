@@ -5,13 +5,13 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import unittest
-from importlib import import_module
-module = import_module('tabulator.processors.schema')
+
+from tabulator import errors
 
 
-class TestSchema(unittest.TestCase):
+class Test_errors(unittest.TestCase):
 
     # Tests
 
     def test(self):
-        self.assertTrue(module.SchemaProcessor)
+        self.assertTrue(issubclass(errors.Error, Exception))

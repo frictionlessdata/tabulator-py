@@ -8,20 +8,20 @@ import io
 import os
 import unittest
 from mock import Mock
-from importlib import import_module
-module = import_module('tabulator.parsers.excelx')
+
+from tabulator import parsers
 
 
-class TestExcelx(unittest.TestCase):
+class TestExcel(unittest.TestCase):
 
     # Actions
 
     def setUp(self):
-        basedir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
-        self.source = os.path.join(basedir, 'data', 'table.xlsx')
+        basedir = os.path.join(os.path.dirname(__file__), '..', '..')
+        self.source = os.path.join(basedir, 'data', 'table.xls')
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source, 'rb'))
-        self.parser = module.ExcelxParser()
+        self.parser = parsers.Excel()
 
     # Tests
 

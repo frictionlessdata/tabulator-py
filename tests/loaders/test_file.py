@@ -6,8 +6,8 @@ from __future__ import unicode_literals
 
 import os
 import unittest
-from importlib import import_module
-module = import_module('tabulator.loaders.file')
+
+from tabulator import loaders
 
 
 class TestFile(unittest.TestCase):
@@ -15,10 +15,10 @@ class TestFile(unittest.TestCase):
     # Actions
 
     def setUp(self):
-        basedir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        basedir = os.path.join(os.path.dirname(__file__), '..', '..')
         self.source = os.path.join(basedir, 'data', 'table.csv')
         self.encoding = 'utf-8'
-        self.loader = module.FileLoader(self.source, self.encoding)
+        self.loader = loaders.File(self.source, self.encoding)
 
     # Tests
 
