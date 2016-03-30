@@ -18,7 +18,7 @@ class TestCSV(unittest.TestCase):
 
     def setUp(self):
         basedir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
-        self.source = os.path.join(basedir, 'examples', 'data', 'table.csv')
+        self.source = os.path.join(basedir, 'data', 'table.csv')
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source))
         self.parser = module.CSVParser()

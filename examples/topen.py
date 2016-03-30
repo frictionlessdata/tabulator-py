@@ -12,7 +12,7 @@ from tabulator import topen, loaders, parsers, processors
 
 
 print('Parse csv format:')
-source = 'examples/data/table.csv'
+source = 'data/table.csv'
 with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
@@ -20,7 +20,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nParse json with dicts:')
-source = 'file://examples/data/table-dicts.json'
+source = 'file://data/table-dicts.json'
 with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
@@ -28,7 +28,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nParse json with lists:')
-source = 'file://examples/data/table-lists.json'
+source = 'file://data/table-lists.json'
 with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
@@ -36,7 +36,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nParse xls format:')
-source = 'examples/data/table.xls'
+source = 'data/table.xls'
 with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
@@ -44,7 +44,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nParse xlsx format:')
-source = 'examples/data/table.xlsx'
+source = 'data/table.xlsx'
 with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
@@ -52,7 +52,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nLoad from stream scheme:')
-source = io.open('examples/data/table.csv', mode='rb')
+source = io.open('data/table.csv', mode='rb')
 with topen(source, with_headers=True, format='csv') as table:
     print(table.headers)
     for row in table:
@@ -69,7 +69,7 @@ with topen(source, with_headers=True, format='csv') as table:
 
 print('\nLoad from http scheme:')
 source = 'https://raw.githubusercontent.com'
-source += '/okfn/tabulator-py/master/examples/data/table.csv'
+source += '/okfn/tabulator-py/master/data/table.csv'
 with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:
@@ -77,7 +77,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nTable reset and read limit:')
-source = 'examples/data/table.csv'
+source = 'data/table.csv'
 with topen(source, with_headers=True) as table:
     print(table.headers)
     print(table.read(limit=1))
@@ -86,7 +86,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nLate headers (on a second row):')
-source = 'examples/data/special/late_headers.csv'
+source = 'data/special/late_headers.csv'
 with topen(source) as table:
     table.add_processor(processors.Headers(skip=1))
     print(table.headers)
@@ -95,7 +95,7 @@ with topen(source) as table:
 
 
 print('\nBad headers (skip):')
-source = 'examples/data/special/bad_headers.json'
+source = 'data/special/bad_headers.json'
 with topen(source, with_headers=True) as table:
     table.add_processor(processors.Strict(skip=True))
     print(table.headers)
@@ -104,7 +104,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nBad headers (raise):')
-source = 'examples/data/special/bad_headers.json'
+source = 'data/special/bad_headers.json'
 with topen(source, with_headers=True) as table:
     table.add_processor(processors.Strict())
     print(table.headers)
@@ -115,7 +115,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nBad dimension (raise):')
-source = 'examples/data/special/bad_dimension.csv'
+source = 'data/special/bad_dimension.csv'
 with topen(source, with_headers=True) as table:
     table.add_processor(processors.Strict())
     try:
@@ -125,7 +125,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nBad headers dimension (raise):')
-source = 'examples/data/special/bad_headers_dimension.csv'
+source = 'data/special/bad_headers_dimension.csv'
 with topen(source, with_headers=True) as table:
     table.add_processor(processors.Strict())
     try:
@@ -135,7 +135,7 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nUsing schema processor (parse):')
-source = 'examples/data/table.csv'
+source = 'data/table.csv'
 with topen(source, with_headers=True) as table:
     table.add_processor(processors.Schema())
     print(table.headers)
@@ -144,9 +144,9 @@ with topen(source, with_headers=True) as table:
 
 
 print('\nUsing schema processor (from schema):')
-source = 'examples/data/table.csv'
+source = 'data/table.csv'
 with topen(source, with_headers=True) as table:
-    table.add_processor(processors.Schema('examples/data/schema.json'))
+    table.add_processor(processors.Schema('data/schema.json'))
     print(table.headers)
     for row in table:
         print(row)

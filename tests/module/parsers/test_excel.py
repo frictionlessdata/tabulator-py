@@ -18,7 +18,7 @@ class TestExcel(unittest.TestCase):
 
     def setUp(self):
         basedir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
-        self.source = os.path.join(basedir, 'examples', 'data', 'table.xls')
+        self.source = os.path.join(basedir, 'data', 'table.xls')
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source, 'rb'))
         self.parser = module.ExcelParser()

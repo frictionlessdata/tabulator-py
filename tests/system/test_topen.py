@@ -10,8 +10,8 @@ import unittest
 from tabulator import topen, processors
 
 
-FPATH = 'examples/data/%s'
-WPATH = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/examples/data/%s'
+FPATH = 'data/%s'
+WPATH = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/data/%s'
 
 class Test_topen(unittest.TestCase):
 

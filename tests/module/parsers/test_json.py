@@ -18,7 +18,7 @@ class TestJSON(unittest.TestCase):
 
     def setUp(self):
         basedir = os.path.join(os.path.dirname(__file__), '..', '..', '..')
-        self.source = os.path.join(basedir, 'examples', 'data', 'table-dicts.json')
+        self.source = os.path.join(basedir, 'data', 'table-dicts.json')
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source, 'rb'))
         self.parser = module.JSONParser()

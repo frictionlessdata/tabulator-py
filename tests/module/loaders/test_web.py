@@ -15,7 +15,7 @@ class TestWeb(unittest.TestCase):
 
     def setUp(self):
         baseurl = 'https://raw.githubusercontent.com'
-        baseurl += '/okfn/tabulator-py/master/examples/data'
+        baseurl += '/okfn/tabulator-py/master/data'
         self.source = baseurl + '/table.csv'
         self.encoding = 'utf-8'
         self.loader = module.WebLoader(self.source, self.encoding)
