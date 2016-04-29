@@ -67,7 +67,7 @@ def detect_encoding(bytes):
     confidence = detector.result['confidence']
     encoding = detector.result['encoding']
     # Do not use if not confident
-    if confidence < 0.95:
+    if confidence < 0.5:
         encoding = None
     # Default to utf-8 for safety
     if encoding == 'ascii':
