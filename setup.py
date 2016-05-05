@@ -27,6 +27,7 @@ INSTALL_REQUIRES = [
     'openpyxl>=2.0',
     'requests>=2.8',
     'jsontableschema>=0.5',
+    'linear-tsv',
 ]
 LINT_REQUIRES = [
     'pylint',

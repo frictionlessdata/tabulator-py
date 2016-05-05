@@ -19,6 +19,14 @@ with topen(source, with_headers=True) as table:
         print(row)
 
 
+print('\nParse linear tsv format:')
+source = 'data/table.tsv'
+with topen(source, with_headers=True) as table:
+    print(table.headers)
+    for row in table:
+        print(row)
+
+
 print('\nParse json with dicts:')
 source = 'file://data/table-dicts.json'
 with topen(source, with_headers=True) as table:
