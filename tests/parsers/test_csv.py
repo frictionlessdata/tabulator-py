@@ -20,7 +20,7 @@ class TestCSV(unittest.TestCase):
         basedir = os.path.join(os.path.dirname(__file__), '..', '..')
         self.source = os.path.join(basedir, 'data', 'table.csv')
         self.loader = Mock()
-        self.loader.load = Mock(return_value=io.open(self.source))
+        self.loader.load = Mock(return_value=io.open(self.source, encoding='utf-8'))
         self.parser = parsers.CSV()
 
     # Tests
