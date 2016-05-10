@@ -56,6 +56,17 @@ class Test_detect_encoding(unittest.TestCase):
         bytes = io.open(path, 'rb')
         self.assertEqual(helpers.detect_encoding(bytes), 'utf-8')
 
+    def test_unknown(self):
+        bytes = io.BytesIO(b'\xff\x81')
+        self.assertEqual(helpers.detect_encoding(bytes), 'utf-8')
+
+    def test_long(self):
+        bytes = io.BytesIO(b'A\n' * 1000 + b'\xff\xff')
+        self.assertEqual(helpers.detect_encoding(bytes), 'utf-8')
+
+    def test_not_so_long(self):
+        bytes = io.BytesIO(b'A\n' * 999 + b'\xff\xff')
+        self.assertEqual(helpers.detect_encoding(bytes), 'windows-1252')
 
 class Test_reset_stream(unittest.TestCase):
 
