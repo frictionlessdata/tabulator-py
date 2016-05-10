@@ -11,6 +11,8 @@ from six.moves.urllib.parse import urlparse
 
 from . import errors
 
+CHARSET_DETECTION_MAX_LINES = 1000
+CHARSET_DETECTION_MIN_CONFIDENCE = 0.5
 
 # Module API
 
@@ -54,7 +56,7 @@ def detect_encoding(bytes):
     """Detect encoding of a byte stream.
     """
     detector = UniversalDetector()
-    num_lines = 1000
+    num_lines = CHARSET_DETECTION_MAX_LINES
     while num_lines > 0:
         line = bytes.readline()
         detector.feed(line)
@@ -67,8 +69,8 @@ def detect_encoding(bytes):
     confidence = detector.result['confidence']
     encoding = detector.result['encoding']
     # Do not use if not confident
-    if confidence < 0.5:
-        encoding = None
+    if confidence < CHARSET_DETECTION_MIN_CONFIDENCE:
+        encoding = 'utf-8'
     # Default to utf-8 for safety
     if encoding == 'ascii':
         encoding = 'utf-8'
