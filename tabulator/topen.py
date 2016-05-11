@@ -46,6 +46,7 @@ def topen(source,
         Format of source:
             - None (detect)
             - csv
+            - tsv
             - json
             - xls
             - xlsx
@@ -138,6 +139,7 @@ _LOADERS = {
 
 _PARSERS = {
     'csv': parsers.CSV,
+    'tsv': parsers.TSV,
     'xls': parsers.Excel,
     'xlsx': parsers.Excelx,
     'json': parsers.JSON,
