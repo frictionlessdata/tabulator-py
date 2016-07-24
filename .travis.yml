@@ -25,7 +25,7 @@ script:
 
 after_success:
   - coveralls
-  - ./scripts/testsuite.sh
+  - bash scripts/testsuite.sh
 
 deploy:
   provider: pypi

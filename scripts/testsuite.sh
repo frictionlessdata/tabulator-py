@@ -1,3 +1,6 @@
+# Trigger testsuite build on Travis
+# TRAVIS_TOKEN should be set in Travis settings or in travis.yml
+
 body='{
 "request": {
   "branch":"master"
