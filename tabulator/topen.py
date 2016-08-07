@@ -37,6 +37,7 @@ def topen(source,
     scheme: str
         Scheme of source:
             - file (default)
+            - stream
             - text
             - http
             - https
