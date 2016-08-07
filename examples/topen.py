@@ -6,8 +6,6 @@ from __future__ import unicode_literals
 
 import io
 import sys
-
-sys.path.insert(0, '.')
 from tabulator import topen, loaders, parsers, processors
 
 
