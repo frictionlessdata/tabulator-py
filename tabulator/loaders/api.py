@@ -41,6 +41,7 @@ class Loader(object):
         pass  # pragma: no cover
 
     @property
+    @abstractmethod
     def source(self):
         """mixed: passed by user source
 
@@ -51,6 +52,7 @@ class Loader(object):
         pass  # pragma: no cover
 
     @property
+    @abstractmethod
     def encoding(self):
         """str: user defined encoding
 
