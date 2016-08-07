@@ -8,11 +8,8 @@ import re
 import ast
 from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
-
 from . import errors
 
-CHARSET_DETECTION_MAX_LINES = 1000
-CHARSET_DETECTION_MIN_CONFIDENCE = 0.5
 
 # Module API
 
@@ -55,6 +52,8 @@ def detect_format(source):
 def detect_encoding(bytes):
     """Detect encoding of a byte stream.
     """
+    CHARSET_DETECTION_MAX_LINES = 1000
+    CHARSET_DETECTION_MIN_CONFIDENCE = 0.5
     detector = UniversalDetector()
     num_lines = CHARSET_DETECTION_MAX_LINES
     while num_lines > 0:
