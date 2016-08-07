@@ -14,14 +14,10 @@ from abc import ABCMeta, abstractmethod
 class Loader(object):
     """Loader representation.
 
-    Parameters
-    ----------
-    source: str
-        Table source.
-    encoding: str
-        Table encoding.
-    options: dict
-        Loader options.
+    Args:
+        source(str): table source
+        encoding(str): table encoding
+        options(dict): loader options
 
     """
 
@@ -35,22 +31,28 @@ class Loader(object):
     def load(self, mode):
         """Return byte/text stream file-like object.
 
-        Parameters
-        ----------
-        mode: str
-            Text stream mode: 't' or 'b'.
+        Args:
+            mode(str): text stream mode: 't' or 'b'
 
-        Returns
-        -------
-        file-like
-            File-like object of byte/text stream.
+        Returns:
+            file-like: file-like object of byte/text stream
+
+        """
+        pass  # pragma: no cover
+
+    @property
+    def source(self):
+        """mixed: passed by user source
+
+        This property returns source set by user
+        on Loader creation.
 
         """
         pass  # pragma: no cover
 
     @property
     def encoding(self):
-        """User defined encoding.
+        """str: user defined encoding
 
         This property returns encoding set by user
         on Loader creation. No detection here.
