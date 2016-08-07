@@ -6,7 +6,8 @@ from __future__ import unicode_literals
 
 from .api import Parser as API
 from .csv import CSVParser as CSV
-from .tsv import TSVParser as TSV
 from .excel import ExcelParser as Excel
 from .excelx import ExcelxParser as Excelx
 from .json import JSONParser as JSON
+from .native import NativeParser as Native
+from .tsv import TSVParser as TSV
