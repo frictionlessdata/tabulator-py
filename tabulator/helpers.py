@@ -20,7 +20,9 @@ def detect_scheme(source):
     For example `http` from `http://example.com/table.csv`
 
     """
-    if hasattr(source, 'read'):
+    if isinstance(source, list):
+        scheme = 'native'
+    elif hasattr(source, 'read'):
         scheme = 'stream'
     else:
         match = re.search(r'^([a-zA-Z]{2,}):\/{2}', source)
@@ -36,7 +38,9 @@ def detect_format(source):
     For example `csv` from `http://example.com/table.csv`
 
     """
-    if hasattr(source, 'read'):
+    if isinstance(source, list):
+        format = 'native'
+    elif hasattr(source, 'read'):
         format = ''
     else:
         parsed_source = urlparse(source)
