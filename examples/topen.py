@@ -82,6 +82,22 @@ with topen(source, with_headers=True) as table:
         print(row)
 
 
+print('\nUsage of native lists:')
+source = [['id', 'name'], ['1', 'english'], ('2', '中国人')]
+with topen(source, with_headers=True) as table:
+    print(table.headers)
+    for row in table:
+        print(row)
+
+
+print('\nUsage of native lists (keyed):')
+source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+with topen(source, with_headers=True) as table:
+    print(table.headers)
+    for row in table:
+        print(row)
+
+
 print('\nTable reset and read limit:')
 source = 'data/table.csv'
 with topen(source, with_headers=True) as table:

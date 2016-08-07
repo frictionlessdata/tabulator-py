@@ -49,7 +49,7 @@ class NativeParser(api.Parser):
     def __emit_items(self):
         items = self.__loader.source
         for item in items:
-            if isinstance(item, list):
+            if isinstance(item, (tuple, list)):
                 yield (None, tuple(item))
             elif isinstance(item, dict):
                 keys = []
@@ -59,4 +59,4 @@ class NativeParser(api.Parser):
                     values.append(item[key])
                 yield (tuple(keys), tuple(values))
             else:
-                raise errors.Error('Native item has to be list or dict')
+                raise errors.Error('Native item has to be tuple, list or dict')
