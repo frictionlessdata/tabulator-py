@@ -140,6 +140,26 @@ class Test_topen(unittest.TestCase):
         assert table.headers is None
         assert table.read() == [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
 
+    def test_native(self):
+
+        # Get table
+        source = [['id', 'name'], ['1', 'english'], ('2', '中国人')]
+        table = topen(source)
+
+        # Make assertions
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+
+    def test_native_keyed(self):
+
+        # Get table
+        source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+        table = topen(source, scheme='native', format='native')
+
+        # Make assertions
+        assert table.headers is None
+        assert table.read() == [('1', 'english'), ('2', '中国人')]
+
     # Tests [processors]
 
     def test_headers(self):
@@ -191,6 +211,16 @@ class Test_topen(unittest.TestCase):
         assert contents[0].get('value') == '中国'
         assert contents[1].get('country') == 'Brazil'
         assert contents[1].get('value') == 'Brazil'
+
+    def test_headers_native(self):
+
+        # Get table
+        source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+        table = topen(source, with_headers=True)
+
+        # Make assertions
+        assert table.headers == ('id', 'name')
+        assert table.read() == [('1', 'english'), ('2', '中国人')]
 
     # Tests [reset]
 
