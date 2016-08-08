@@ -150,6 +150,30 @@ class Test_topen(unittest.TestCase):
         assert table.headers is None
         assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
 
+    def test_native_iterator(self):
+
+        # Get table
+        source = iter([['id', 'name'], ['1', 'english'], ('2', '中国人')])
+        table = topen(source)
+
+        # Make assertions
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+
+    def test_native_generator(self):
+
+        # Get table
+        def generator():
+            yield ['id', 'name']
+            yield ['1', 'english']
+            yield ('2', '中国人')
+        source = generator()
+        table = topen(source)
+
+        # Make assertions
+        assert table.headers is None
+        assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+
     def test_native_keyed(self):
 
         # Get table
