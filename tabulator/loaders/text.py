@@ -54,5 +54,9 @@ class TextLoader(api.Loader):
             raise errors.Error(message)
 
     @property
+    def source(self):
+        return self.__source
+
+    @property
     def encoding(self):
         return self.__encoding

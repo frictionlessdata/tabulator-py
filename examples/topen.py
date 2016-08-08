@@ -6,8 +6,6 @@ from __future__ import unicode_literals
 
 import io
 import sys
-
-sys.path.insert(0, '.')
 from tabulator import topen, loaders, parsers, processors
 
 
@@ -78,6 +76,22 @@ with topen(source, with_headers=True, format='csv') as table:
 print('\nLoad from http scheme:')
 source = 'https://raw.githubusercontent.com'
 source += '/okfn/tabulator-py/master/data/table.csv'
+with topen(source, with_headers=True) as table:
+    print(table.headers)
+    for row in table:
+        print(row)
+
+
+print('\nUsage of native lists:')
+source = [['id', 'name'], ['1', 'english'], ('2', '中国人')]
+with topen(source, with_headers=True) as table:
+    print(table.headers)
+    for row in table:
+        print(row)
+
+
+print('\nUsage of native lists (keyed):')
+source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
 with topen(source, with_headers=True) as table:
     print(table.headers)
     for row in table:

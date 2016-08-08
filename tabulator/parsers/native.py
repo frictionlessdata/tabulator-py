@@ -4,54 +4,50 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import ijson
-
-from .. import helpers, errors
+import csv
+import six
+from codecs import iterencode
+from .. import errors
+from .. import helpers
 from . import api
 
 
 # Module API
 
-class JSONParser(api.Parser):
-    """Parser to parse JSON data format.
+class NativeParser(api.Parser):
+    """Parser to provide support for python native lists.
     """
 
     # Public
 
-    def __init__(self, path=None):
-        self.__path = path
-        self.__chars = None
+    def __init__(self, **options):
+        self.__options = options
+        self.__loader = None
         self.__items = None
 
     def open(self, loader):
         self.close()
         self.__loader = loader
-        self.__chars = loader.load(mode='t')
         self.reset()
 
     def close(self):
-        if not self.closed:
-            self.__chars.close()
+        pass
 
     @property
     def closed(self):
-        return self.__chars is None or self.__chars.closed
+        return False
 
     @property
     def items(self):
         return self.__items
 
     def reset(self):
-        helpers.reset_stream(self.__chars)
         self.__items = self.__emit_items()
 
     # Private
 
     def __emit_items(self):
-        prefix = 'item'
-        if self.__path is not None:
-            prefix = '%s.item' % self.__path
-        items = ijson.items(self.__chars, prefix)
+        items = self.__loader.source
         for item in items:
             if isinstance(item, (tuple, list)):
                 yield (None, tuple(item))
@@ -63,5 +59,4 @@ class JSONParser(api.Parser):
                     values.append(item[key])
                 yield (tuple(keys), tuple(values))
             else:
-                message = 'JSON item has to be list or dict'
-                raise errors.Error(message)
+                raise errors.Error('Native item has to be tuple, list or dict')

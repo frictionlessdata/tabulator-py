@@ -172,6 +172,11 @@ API documentation is presented as docstrings:
     - [Parser API](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/parsers/api.py)
     - [Processor API](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/processors/api.py)
 
+## Changelog
+
+- 0.5.0
+  - BREAKING CHANGE: added `loaders.API.source` abstract property
+
 ## Contributing
 
 Please read the contribution guideline:

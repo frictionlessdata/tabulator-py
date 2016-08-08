@@ -4,15 +4,14 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
 import re
 import ast
+import six
 from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
-
 from . import errors
 
-CHARSET_DETECTION_MAX_LINES = 1000
-CHARSET_DETECTION_MIN_CONFIDENCE = 0.5
 
 # Module API
 
@@ -25,11 +24,13 @@ def detect_scheme(source):
     """
     if hasattr(source, 'read'):
         scheme = 'stream'
-    else:
+    elif isinstance(source, six.string_types):
         match = re.search(r'^([a-zA-Z]{2,}):\/{2}', source)
         if not match:
             return None
         scheme = match.group(1).lower()
+    else:
+        scheme = 'native'
     return scheme
 
 
@@ -41,20 +42,23 @@ def detect_format(source):
     """
     if hasattr(source, 'read'):
         format = ''
-    else:
+    elif isinstance(source, six.string_types):
         parsed_source = urlparse(source)
-        path = parsed_source.path
-        if not path:
-            # FIXME: This supports valid paths like file://foo.csv, but also
-            # invalid ones like http://foo.csv
-            path = parsed_source.netloc
-        format = path.split('.')[-1].lower()
+        path = parsed_source.path or parsed_source.netloc
+        format = os.path.splitext(path)[1]
+        if not format:
+            return None
+        format = format[1:].lower()
+    else:
+        format = 'native'
     return format
 
 
 def detect_encoding(bytes):
     """Detect encoding of a byte stream.
     """
+    CHARSET_DETECTION_MAX_LINES = 1000
+    CHARSET_DETECTION_MIN_CONFIDENCE = 0.5
     detector = UniversalDetector()
     num_lines = CHARSET_DETECTION_MAX_LINES
     while num_lines > 0:

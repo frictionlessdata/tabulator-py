@@ -37,11 +37,13 @@ def topen(source,
     scheme: str
         Scheme of source:
             - file (default)
+            - stream
             - text
             - http
             - https
             - ftp
             - ftps
+            - native
     format: str
         Format of source:
             - None (detect)
@@ -50,6 +52,7 @@ def topen(source,
             - json
             - xls
             - xlsx
+            - native
     encoding: str
         Encoding of source:
             - None (detect)
@@ -135,6 +138,7 @@ _LOADERS = {
     'ftps': loaders.Web,
     'http': loaders.Web,
     'https': loaders.Web,
+    'native': loaders.Native,
 }
 
 _PARSERS = {
@@ -143,4 +147,5 @@ _PARSERS = {
     'xls': parsers.Excel,
     'xlsx': parsers.Excelx,
     'json': parsers.JSON,
+    'native': parsers.Native,
 }
