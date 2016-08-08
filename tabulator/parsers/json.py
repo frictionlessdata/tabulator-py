@@ -53,7 +53,7 @@ class JSONParser(api.Parser):
             prefix = '%s.item' % self.__path
         items = ijson.items(self.__chars, prefix)
         for item in items:
-            if isinstance(item, list):
+            if isinstance(item, (tuple, list)):
                 yield (None, tuple(item))
             elif isinstance(item, dict):
                 keys = []
