@@ -76,8 +76,9 @@ table = topen('path.csv',
         parser_options={'delimeter': ',', quotechar: '|'},
         loader_class=loaders.File,
         parser_class=parsers.CSV,
+        table_class=CustomTable,
         iterator_class=CustomIterator,
-        table_class=CustomTable)
+        row_class=CustomRow)
 table.add_processor(processors.Headers(skip=1))
 headers = table.headers
 contents = table.read(limit=10)
