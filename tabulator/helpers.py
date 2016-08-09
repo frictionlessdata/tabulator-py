@@ -64,7 +64,6 @@ def detect_encoding(bytes):
         line = bytes.readline()
         detector.feed(line)
         if detector.done:
-            # TODO: does it work?
             break
         num_lines -= 1
     detector.close()
