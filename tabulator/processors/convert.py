@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import ast
-from .. import helpers
 from . import api
 
 
@@ -18,7 +17,7 @@ class ConvertProcessor(api.Processor):
     using python literal parser (ast.literal_eval).
 
     Args:
-        converter (callable): callable with signature converter(values) -> values
+        converter (callable): callable with signature func(values) -> values
 
     """
 
