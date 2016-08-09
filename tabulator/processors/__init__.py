@@ -6,6 +6,6 @@ from __future__ import unicode_literals
 
 
 from .api import Processor
+from .convert import ConvertProcessor as Convert
 from .headers import HeadersProcessor as Headers
-from .schema import SchemaProcessor as Schema
 from .strict import StrictProcessor as Strict

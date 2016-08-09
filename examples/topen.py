@@ -156,19 +156,10 @@ with topen(source, with_headers=True) as table:
         print(exception)
 
 
-print('\nUsing schema processor (parse):')
+print('\nUsing convert processor:')
 source = 'data/table.csv'
 with topen(source, with_headers=True) as table:
-    table.add_processor(processors.Schema())
-    print(table.headers)
-    for row in table:
-        print(row)
-
-
-print('\nUsing schema processor (from schema):')
-source = 'data/table.csv'
-with topen(source, with_headers=True) as table:
-    table.add_processor(processors.Schema('data/schema.json'))
+    table.add_processor(processors.Convert())
     print(table.headers)
     for row in table:
         print(row)

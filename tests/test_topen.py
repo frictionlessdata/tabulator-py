@@ -246,6 +246,16 @@ class Test_topen(unittest.TestCase):
         assert table.headers == ('id', 'name')
         assert table.read() == [('1', 'english'), ('2', '中国人')]
 
+    def test_convert(self):
+
+        # Get table
+        table = topen(FPATH % 'table.csv',
+            with_headers=True, processors=[processors.Convert()])
+
+        # Make assertions
+        assert table.headers == ('id', 'name')
+        assert table.read() == [(1, 'english'), (2, '中国人')]
+
     # Tests [reset]
 
     def test_reset(self):

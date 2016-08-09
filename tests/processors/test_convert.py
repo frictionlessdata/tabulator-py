@@ -9,9 +9,9 @@ import unittest
 from tabulator import processors
 
 
-class TestSchema(unittest.TestCase):
+class TestConvert(unittest.TestCase):
 
     # Tests
 
     def test(self):
-        self.assertTrue(processors.Schema)
+        self.assertTrue(processors.Convert)
