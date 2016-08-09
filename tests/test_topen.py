@@ -6,6 +6,8 @@ from __future__ import unicode_literals
 
 import io
 import os
+import sys
+import pytest
 import unittest
 
 from tabulator import topen, processors
@@ -246,6 +248,8 @@ class Test_topen(unittest.TestCase):
         assert table.headers == ('id', 'name')
         assert table.read() == [('1', 'english'), ('2', '中国人')]
 
+    # It works for Python 2 but values convertion differs
+    @pytest.mark.skipif(sys.version_info < (3,3), reason='requires python 3.3')
     def test_convert(self):
 
         # Get table
@@ -255,6 +259,18 @@ class Test_topen(unittest.TestCase):
         # Make assertions
         assert table.headers == ('id', 'name')
         assert table.read() == [(1, 'english'), (2, '中国人')]
+
+    def test_convert_custom(self):
+
+        # Get table
+        def converter(values):
+            return [float(values[0]), values[1]]
+        table = topen(FPATH % 'table.csv',
+            with_headers=True, processors=[processors.Convert(converter)])
+
+        # Make assertions
+        assert table.headers == ('id', 'name')
+        assert table.read() == [(1.0, 'english'), (2.0, '中国人')]
 
     # Tests [reset]
 

@@ -30,7 +30,7 @@ class ConvertProcessor(api.Processor):
         self.__converter = converter
 
     def process(self, iterator):
-        iterator.values = tuple(self.__converter(iterator.values))
+        iterator.values = tuple(self.__converter(list(iterator.values)))
 
     def handle(self, iterator):
         pass  # pragma: no cover
