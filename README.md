@@ -176,6 +176,8 @@ API documentation is presented as docstrings:
 
 - 0.5.0
   - BREAKING CHANGE: added `loaders.API.source` abstract property
+  - BREAKING CHANGE: removed `processors.Schema`
+  - added `processors.Convert`
 
 ## Contributing
 

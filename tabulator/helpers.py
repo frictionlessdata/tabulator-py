@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 
 import os
 import re
-import ast
 import six
 from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
@@ -18,7 +17,7 @@ from . import errors
 def detect_scheme(source):
     """Detect scheme by source.
 
-    Schema is a minimum 2 letters before `://` (will be lower cased).
+    Scheme is a minimum 2 letters before `://` (will be lower cased).
     For example `http` from `http://example.com/table.csv`
 
     """
@@ -65,7 +64,6 @@ def detect_encoding(bytes):
         line = bytes.readline()
         detector.feed(line)
         if detector.done:
-            # TODO: does it work?
             break
         num_lines -= 1
     detector.close()
@@ -97,14 +95,3 @@ def reset_stream(stream):
             print(e)
             message = 'Stream is not seekable.'
             raise errors.Error(message)
-
-
-def parse_value(value):
-    """Parse value as a literal.
-    """
-    try:
-        if isinstance(value, str):
-            value = ast.literal_eval(value)
-    except Exception:
-        pass
-    return value
