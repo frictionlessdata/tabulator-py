@@ -28,10 +28,10 @@ class TextLoader(api.Loader):
     def load(self, mode):
 
         # Prepare source
-        schema = 'text://'
+        scheme = 'text://'
         source = self.__source
-        if source.startswith(schema):
-            source = source.replace(schema, '', 1)
+        if source.startswith(scheme):
+            source = source.replace(scheme, '', 1)
 
         # Prepare encoding
         encoding = self.__encoding
