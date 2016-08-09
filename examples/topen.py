@@ -98,6 +98,14 @@ with topen(source, with_headers=True) as table:
         print(row)
 
 
+print('\nKeyed rows with row_class=dict:')
+source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+with topen(source, with_headers=True, row_class=dict) as table:
+    print(table.headers)
+    for row in table:
+        print(row)
+
+
 print('\nTable reset and read limit:')
 source = 'data/table.csv'
 with topen(source, with_headers=True) as table:

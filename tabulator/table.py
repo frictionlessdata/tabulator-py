@@ -65,7 +65,15 @@ class Table(object):
 
         # Get the next row
         self.__iterator.__next__()
-        row = self.__row_class(self.__iterator.headers, self.__iterator.values)
+        if issubclass(self.__row_class, Row):
+            row = self.__row_class(
+                self.__iterator.headers, self.__iterator.values)
+        elif issubclass(self.__row_class, dict):
+            if self.__iterator.headers is None:
+                raise ValueError('Headers are required for dict row class')
+            row = dict(zip(self.__iterator.headers, self.__iterator.values))
+        else:
+            raise TypeError('Row class should be tabulator.Row or dict')
 
         return row
 
