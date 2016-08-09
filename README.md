@@ -85,10 +85,6 @@ print(headers, contents)
 table.close()
 ```
 
-Also `Table` class can be instantiated by user (see documentation).
-But there is no difference between it and `topen` call with extended
-list of parameters except `topen` also calls the `table.open()` method.
-
 ## Design Overview
 
 Tabulator uses modular architecture to be fully extensible and flexible.
