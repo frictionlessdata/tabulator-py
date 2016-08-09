@@ -29,10 +29,8 @@ INSTALL_REQUIRES = [
     'jsontableschema>=0.5',
     'linear-tsv>=0.99.1',
 ]
-LINT_REQUIRES = [
-    'pylint',
-]
 TESTS_REQUIRE = [
+    'pylama',
     'tox',
 ]
 README = read('README.md')
@@ -48,7 +46,7 @@ setup(
     include_package_data=True,
     install_requires=INSTALL_REQUIRES,
     tests_require=TESTS_REQUIRE,
-    extras_require={'develop': LINT_REQUIRES + TESTS_REQUIRE},
+    extras_require={'develop': TESTS_REQUIRE},
     zip_safe=False,
     long_description=README,
     description='A utility library that provides a consistent interface for reading tabular data.',

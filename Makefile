@@ -1,4 +1,4 @@
-.PHONY: all install list lint test version
+.PHONY: all install list release test version
 
 
 PACKAGE := $(shell grep '^PACKAGE =' setup.py | cut -d "'" -f2)
@@ -13,15 +13,13 @@ install:
 list:
 	@grep '^\.PHONY' Makefile | cut -d' ' -f2- | tr ' ' '\n'
 
-lint:
-	pylint $(PACKAGE)
-
 release:
 	bash -c '[[ -z `git status -s` ]]'
 	git tag -a -m release $(VERSION)
 	git push --tags
 
 test:
+	pylama $(PACKAGE)
 	tox
 
 version:
