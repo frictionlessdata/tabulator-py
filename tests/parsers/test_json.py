@@ -8,7 +8,6 @@ import io
 import os
 import unittest
 from mock import Mock
-
 from tabulator import parsers
 
 
@@ -19,6 +18,7 @@ class TestJSON(unittest.TestCase):
     def setUp(self):
         basedir = os.path.join(os.path.dirname(__file__), '..', '..')
         self.source = os.path.join(basedir, 'data', 'table-dicts.json')
+        self.encoding = None
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source, 'rb'))
         self.parser = parsers.JSON()
@@ -28,7 +28,7 @@ class TestJSON(unittest.TestCase):
     def test(self):
 
         self.assertTrue(self.parser.closed)
-        self.parser.open(self.loader)
+        self.parser.open(self.source, self.encoding, self.loader)
         self.assertFalse(self.parser.closed)
 
         self.assertEqual(

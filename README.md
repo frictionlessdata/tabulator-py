@@ -26,8 +26,7 @@ from tabulator import topen, processors
 
 with topen('path.csv', with_headers=True) as table:
     for row in table:
-        print(row)
-        print(row.get('header'))
+        print(row)  # will print row tuple
 ```
 
 For the most use cases `topen` function is enough. It takes the
@@ -41,8 +40,6 @@ over the table. Also user can pass `scheme` and `format` explicitly
 as function arguments. The last `topen` argument is `encoding` - user can force Tabulator
 to use encoding of choice to open the table.
 
-Read more about `topen` - [documentation](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/topen.py).
-
 Function `topen` returns `Table` instance. We use context manager
 to call `table.open()` on enter and `table.close()` when we exit:
 - table can be iterated like file-like object returning row by row
@@ -52,16 +49,10 @@ with `limit` of output rows as parameter.
 - headers can be accessed via `headers` property
 - table pointer can be set to start via `reset` method.
 
-Read more about `Table` - [documentation](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/table.py).
-
 In the example above we use `processors.Headers` to extract headers
 from the table (via `with_headers=True` shortcut). Processors is a powerfull
 Tabulator concept. Parsed data goes thru pipeline of processors to be updated before
 returning as table row.
-
-Read more about `Processor` - [documentation](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/processors/api.py).
-
-Read a processors tutorial - [tutorial](https://github.com/frictionlessdata/tabulator-py/blob/master/docs/processors.md).
 
 ### Advanced interface
 
@@ -71,18 +62,16 @@ Below all parts of Tabulator are presented:
 ```python
 from tabulator import topen, processors, loaders, parsers
 
-table = topen('path.csv',
-        loader_options={'encoding': 'utf-8'},
-        parser_options={'delimeter': ',', quotechar: '|'},
-        loader_class=loaders.File,
-        parser_class=parsers.CSV,
-        table_class=CustomTable,
-        iterator_class=CustomIterator,
-        row_class=CustomRow)
+table = topen('path.csv', encoding='utf-8',
+        loader_options={'constructor': loaders.File},
+        parser_options={'constructor': parsers.CSV, delimeter': ',', quotechar: '|'})
 table.add_processor(processors.Headers(skip=1))
 headers = table.headers
 contents = table.read(limit=10)
 print(headers, contents)
+table.reset()
+for keyed_row in table.iter(keyed=True):
+    print keyed_row  # will print row dict
 table.close()
 ```
 
@@ -155,25 +144,18 @@ class MyProcessor(processors.API):
         # will be called on exception
 ```
 
-## Documentation
-
-API documentation is presented as docstrings:
-- High-level:
-    - [topen](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/topen.py)
-- Core elements:
-    - [Row](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/row.py)
-    - [Table](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/table.py)
-    - [Iterator](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/iterator.py)
-- Plugin elements:
-    - [Loader API](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/loaders/api.py)
-    - [Parser API](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/parsers/api.py)
-    - [Processor API](https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/processors/api.py)
-
 ## Changelog
 
 - 0.5.0
-  - BREAKING CHANGE: added `loaders.API.source` abstract property
+  - BREAKING CHANGE: updated `loaders.API` and `parsers.API`
+  - BREAKING CHANGE: moved topen `loader_class` argument to `loader_options` argument as `constructor` key
+  - BREAKING CHANGE: moved topen `parser_class` argument to `parser_options` argument as `constructor` key
+  - BREAKING CHANGE: removed topen `table_class` argument
+  - BREAKING CHANGE: removed topen `iterator_class` argument
+  - BREAKING CHANGE: removed topen `row_class` argument
   - BREAKING CHANGE: removed `processors.Schema`
+  - BREAKING CHANGE: removed `Row`
+  - added `Table.iter(keyed=False)`
   - added `processors.Convert`
 
 ## Contributing

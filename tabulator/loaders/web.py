@@ -21,15 +21,13 @@ class WebLoader(api.Loader):
 
     # Public
 
-    def __init__(self, source, encoding=None, **options):
-        self.__source = source
-        self.__encoding = encoding
+    def __init__(self, **options):
         self.__options = options
 
-    def load(self, mode):
+    def load(self, source, encoding, mode):
 
         # Requote uri if it contains spaces etc
-        source = requote_uri(self.__source)
+        source = requote_uri(source)
 
         # Prepare bytes
         if six.PY2:
@@ -42,7 +40,6 @@ class WebLoader(api.Loader):
             response = bytes.response
 
         # Prepare encoding
-        encoding = self.__encoding
         if encoding is None:
             if six.PY2:
                 encoding = response.headers.getparam('charset')
@@ -60,14 +57,6 @@ class WebLoader(api.Loader):
         else:
             message = 'Mode %s is not supported' % mode
             raise errors.Error(message)
-
-    @property
-    def source(self):
-        return self.__source
-
-    @property
-    def encoding(self):
-        return self.__encoding
 
 
 # Internal

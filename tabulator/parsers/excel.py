@@ -23,13 +23,17 @@ class ExcelParser(api.Parser):
         self.__bytes = None
         self.__items = None
 
-    def open(self, loader):
+    @property
+    def closed(self):
+        return self.__bytes is None or self.__bytes.closed
+
+    def open(self, source, encoding, loader):
         self.close()
         self.__loader = loader
-        self.__bytes = loader.load(mode='b')
+        self.__bytes = loader.load(source, encoding, mode='b')
         self.__book = xlrd.open_workbook(
                 file_contents=self.__bytes.read(),
-                encoding_override=self.__loader.encoding)
+                encoding_override=encoding)
         self.__sheet = self.__book.sheet_by_index(self.__sheet_index)
         self.reset()
 
@@ -37,17 +41,13 @@ class ExcelParser(api.Parser):
         if not self.closed:
             self.__bytes.close()
 
-    @property
-    def closed(self):
-        return self.__bytes is None or self.__bytes.closed
+    def reset(self):
+        helpers.reset_stream(self.__bytes)
+        self.__items = self.__emit_items()
 
     @property
     def items(self):
         return self.__items
-
-    def reset(self):
-        helpers.reset_stream(self.__bytes)
-        self.__items = self.__emit_items()
 
     # Private
 

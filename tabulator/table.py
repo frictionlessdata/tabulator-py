@@ -4,7 +4,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .row import Row
 from .iterator import Iterator
 from . import errors
 
@@ -14,35 +13,27 @@ from . import errors
 class Table(object):
     """Table representation.
 
-    Parameters
-    ----------
-    loader: loaders.API
-        Table loader.
-    parser: parsers.API
-        Table parser.
-    iterator_class: object
-        Custom iterator class.
+    NOTE: constructor is not a part of public API
+
+    Args:
+        source (str): table source
+        encoding (str): encoding of source
+        loader (loaders.API): table loader
+        parser (parsers.API): table parser
 
     """
 
     # Public
 
-    def __init__(self, loader, parser, iterator_class=None, row_class=None):
-
-        # Default values
-        if iterator_class is None:
-            iterator_class = Iterator
-        if row_class is None:
-            row_class = Row
-
-        # Set attributes
-        self.__iterator_class = iterator_class
-        self.__row_class = row_class
+    def __init__(self, source, encoding, loader, parser):
+        self.__source = source
+        self.__encoding = encoding
         self.__loader = loader
         self.__parser = parser
         self.__processors = []
         self.__iterator = None
         self.__headers = None
+        self.__keyed = False
 
     def __enter__(self):
         """Enter context manager by opening table.
@@ -65,28 +56,20 @@ class Table(object):
 
         # Get the next row
         self.__iterator.__next__()
-        if issubclass(self.__row_class, Row):
-            row = self.__row_class(
-                self.__iterator.headers, self.__iterator.values)
-        elif issubclass(self.__row_class, dict):
+        if self.__keyed:
             if self.__iterator.headers is None:
-                raise ValueError('Headers are required for dict row class')
+                raise ValueError('Headers are required for keyed output')
             row = dict(zip(self.__iterator.headers, self.__iterator.values))
         else:
-            raise TypeError('Row class should be tabulator.Row or dict')
+            row = tuple(self.__iterator.values)
 
         return row
 
-    def add_processor(self, processor):
-        """Add processor to pipeline.
-
-        Parameters
-        ----------
-        processor: `processors.API`
-            Processor to add to pipeline.
-
+    @property
+    def closed(self):
+        """Return true if table is closed.
         """
-        self.__processors.append(processor)
+        return self.__parser.closed or self.__iterator is None
 
     def open(self):
         """Open table to iterate over it.
@@ -94,9 +77,8 @@ class Table(object):
 
         # Open parser, create iterator
         if self.closed:
-            self.__parser.open(self.__loader)
-            self.__iterator = self.__iterator_class(
-                    self.__parser.items, self.__processors)
+            self.__parser.open(self.__source, self.__encoding, self.__loader)
+            self.__iterator = Iterator(self.__parser.items, self.__processors)
 
         return self
 
@@ -109,11 +91,16 @@ class Table(object):
             self.__parser.close()
             self.__iterator = None
 
-    @property
-    def closed(self):
-        """Return true if table is closed.
+    def reset(self):
+        """Reset table pointer to the first row.
         """
-        return self.__parser.closed or self.__iterator is None
+
+        # Check not closed
+        self.__require_not_closed()
+
+        # Reset parser, recreate iterator
+        self.__parser.reset()
+        self.__iterator = Iterator(self.__parser.items, self.__processors)
 
     @property
     def headers(self):
@@ -126,6 +113,18 @@ class Table(object):
 
         return self.__iterator.headers
 
+    def iter(self, keyed=False):
+        """Return rows iterator.
+
+        Args:
+            keyed (bool): if true return keyed rows iterator
+
+        """
+        # Temporal sulution untile main iter
+        # logic will be moved here
+        self.__keyed = keyed
+        return self
+
     def readrow(self):
         """Return the next row from the table.
         """
@@ -133,12 +132,6 @@ class Table(object):
 
     def read(self, limit=None):
         """Return full table with row limit.
-
-        Parameters
-        ----------
-        limit: int
-            Rows limit to return.
-
         """
 
         # Collect rows
@@ -151,17 +144,14 @@ class Table(object):
 
         return rows
 
-    def reset(self):
-        """Reset table pointer to the first row.
+    def add_processor(self, processor):
+        """Add processor to pipeline.
+
+        Args:
+            processor (processors.API): processor to add to pipeline
+
         """
-
-        # Check not closed
-        self.__require_not_closed()
-
-        # Reset parser, recreate iterator
-        self.__parser.reset()
-        self.__iterator = self.__iterator_class(
-                self.__parser.items, self.__processors)
+        self.__processors.append(processor)
 
     # Private
 
