@@ -5,79 +5,69 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
-import os
-import unittest
+import pytest
 from tabulator import helpers
 
 
-class Test_detect_scheme(unittest.TestCase):
+# Tests
 
-    # Tests
-
-    def test(self):
-        self.assertEqual(helpers.detect_scheme('text://path'), 'text')
-        self.assertEqual(helpers.detect_scheme('stream://path'), 'stream')
-        self.assertEqual(helpers.detect_scheme('file://path'), 'file')
-        self.assertEqual(helpers.detect_scheme('ftp://path'), 'ftp')
-        self.assertEqual(helpers.detect_scheme('ftps://path'), 'ftps')
-        self.assertEqual(helpers.detect_scheme('http://path'), 'http')
-        self.assertEqual(helpers.detect_scheme('https://path'), 'https')
-        self.assertEqual(helpers.detect_scheme('xxx://path'), 'xxx')
-        self.assertEqual(helpers.detect_scheme('xx://path'), 'xx')
-        self.assertEqual(helpers.detect_scheme('XXX://path'), 'xxx')
-        self.assertEqual(helpers.detect_scheme('XX://path'), 'xx')
-        self.assertEqual(helpers.detect_scheme('c://path'), None)
-        self.assertEqual(helpers.detect_scheme('c:\\path'), None)
-        self.assertEqual(helpers.detect_scheme('c:\path'), None)
-        self.assertEqual(helpers.detect_scheme('http:/path'), None)
-        self.assertEqual(helpers.detect_scheme('http//path'), None)
-        self.assertEqual(helpers.detect_scheme('path'), None)
+def test_detect_scheme():
+    assert helpers.detect_scheme('text://path') == 'text'
+    assert helpers.detect_scheme('stream://path') == 'stream'
+    assert helpers.detect_scheme('file://path') == 'file'
+    assert helpers.detect_scheme('ftp://path') == 'ftp'
+    assert helpers.detect_scheme('ftps://path') == 'ftps'
+    assert helpers.detect_scheme('http://path') == 'http'
+    assert helpers.detect_scheme('https://path') == 'https'
+    assert helpers.detect_scheme('xxx://path') == 'xxx'
+    assert helpers.detect_scheme('xx://path') == 'xx'
+    assert helpers.detect_scheme('XXX://path') == 'xxx'
+    assert helpers.detect_scheme('XX://path') == 'xx'
+    assert helpers.detect_scheme('c://path') == None
+    assert helpers.detect_scheme('c:\\path') == None
+    assert helpers.detect_scheme('c:\path') == None
+    assert helpers.detect_scheme('http:/path') == None
+    assert helpers.detect_scheme('http//path') == None
+    assert helpers.detect_scheme('path') == None
 
 
-class Test_detect_format(unittest.TestCase):
-
-    # Tests
-
-    def test(self):
-        self.assertEqual(helpers.detect_format('path.CsV'), 'csv')
-
-    def test_works_with_urls_with_query_and_fragment_components(self):
-        url = 'http://someplace.com/foo/path.csv?foo=bar#baz'
-        self.assertEqual(helpers.detect_format(url), 'csv')
+def test_detect_format():
+    assert helpers.detect_format('path.CsV') == 'csv'
 
 
-class Test_detect_encoding(unittest.TestCase):
-
-    # Tests
-
-    def test(self):
-        path = os.path.join(os.path.dirname(__file__), '..', 'README.md')
-        bytes = io.open(path, 'rb')
-        self.assertEqual(helpers.detect_encoding(bytes), 'utf-8')
-
-    def test_unknown(self):
-        bytes = io.BytesIO(b'\xff\x81')
-        self.assertEqual(helpers.detect_encoding(bytes), 'utf-8')
-
-    def test_long(self):
-        bytes = io.BytesIO(b'A\n' * 1000 + b'\xff\xff')
-        self.assertEqual(helpers.detect_encoding(bytes), 'utf-8')
-
-    def test_not_so_long(self):
-        bytes = io.BytesIO(b'A\n' * 999 + b'\xff\xff')
-        self.assertEqual(helpers.detect_encoding(bytes), 'windows-1252')
+def test_detect_format_works_with_urls_with_query_and_fragment_components():
+    url = 'http://someplace.com/foo/path.csv?foo=bar#baz'
+    assert helpers.detect_format(url) == 'csv'
 
 
-class Test_reset_stream(unittest.TestCase):
+def test_detect_encoding():
+    bytes = io.open('README.md', 'rb')
+    assert helpers.detect_encoding(bytes) == 'utf-8'
 
-    # Tests
 
-    def test_seekable(self):
-        file = io.open(__file__)
-        file.seek(1)
-        self.assertEqual(file.tell(), 1)
-        helpers.reset_stream(file)
-        self.assertEqual(file.tell(), 0)
+def test_detect_encoding_unknown():
+    bytes = io.BytesIO(b'\xff\x81')
+    assert helpers.detect_encoding(bytes) == 'utf-8'
 
-    def test_not_seekable(self):
-        self.assertRaises(Exception, helpers.reset_stream, 'not_seekable')
+
+def test_detect_encoding_long():
+    bytes = io.BytesIO(b'A\n' * 1000 + b'\xff\xff')
+    assert helpers.detect_encoding(bytes) == 'utf-8'
+
+
+def test_detect_encoding_not_so_long():
+    bytes = io.BytesIO(b'A\n' * 999 + b'\xff\xff')
+    assert helpers.detect_encoding(bytes) == 'windows-1252'
+
+
+def test_reset_stream_seekable():
+    file = io.open(__file__)
+    file.seek(1)
+    assert file.tell() == 1
+    helpers.reset_stream(file)
+    assert file.tell() == 0
+
+
+def test_reset_stream_not_seekable():
+    with pytest.raises(Exception):
+        helpers.reset_stream('not_seekable')

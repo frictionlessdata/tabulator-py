@@ -5,42 +5,33 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
-import os
-import unittest
 from mock import Mock
 from tabulator import parsers
 
 
-class TestTSV(unittest.TestCase):
+# Tests
 
-    # Actions
+def test_tsv_parser():
 
-    def setUp(self):
-        basedir = os.path.join(os.path.dirname(__file__), '..', '..')
-        self.source = os.path.join(basedir, 'data', 'table.tsv')
-        self.encoding = None
-        self.loader = Mock()
-        self.loader.load = Mock(return_value=io.open(self.source))
-        self.parser = parsers.TSV()
+    source = 'data/table.tsv'
+    encoding = None
+    loader = Mock()
+    loader.load = Mock(return_value=io.open(source))
+    parser = parsers.TSV()
 
-    # Tests
+    assert parser.closed
+    parser.open(source, encoding, loader)
+    assert not parser.closed
 
-    def test(self):
+    assert list(parser.items) == [
+        (None, ('id', 'name')),
+        (None, ('1', 'english')),
+        (None, ('2', '中国人')),
+        (None, ('3', None))]
 
-        self.assertTrue(self.parser.closed)
-        self.parser.open(self.source, self.encoding, self.loader)
-        self.assertFalse(self.parser.closed)
+    assert len(list(parser.items)) == 0
+    parser.reset()
+    assert len(list(parser.items)) == 4
 
-        self.assertEqual(list(self.parser.items), [
-            (None, ('id', 'name')),
-            (None, ('1', 'english')),
-            (None, ('2', '中国人')),
-            (None, ('3', None)),
-        ])
-
-        self.assertEqual(len(list(self.parser.items)), 0)
-        self.parser.reset()
-        self.assertEqual(len(list(self.parser.items)), 4)
-
-        self.parser.close()
-        self.assertTrue(self.parser.closed)
+    parser.close()
+    assert parser.closed
