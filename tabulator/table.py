@@ -13,27 +13,17 @@ from . import errors
 class Table(object):
     """Table representation.
 
-    Parameters
-    ----------
-    loader: loaders.API
-        Table loader.
-    parser: parsers.API
-        Table parser.
-    iterator_class: object
-        Custom iterator class.
+    NOTE: constructor is not a part of public API
+
+    Args:
+        loader (loaders.API): table loader
+        parser (parsers.API): table parser
 
     """
 
     # Public
 
-    def __init__(self, loader, parser, iterator_class=None):
-
-        # Default values
-        if iterator_class is None:
-            iterator_class = Iterator
-
-        # Set attributes
-        self.__iterator_class = iterator_class
+    def __init__(self, loader, parser):
         self.__loader = loader
         self.__parser = parser
         self.__processors = []
@@ -89,8 +79,7 @@ class Table(object):
         # Open parser, create iterator
         if self.closed:
             self.__parser.open(self.__loader)
-            self.__iterator = self.__iterator_class(
-                    self.__parser.items, self.__processors)
+            self.__iterator = Iterator(self.__parser.items, self.__processors)
 
         return self
 
@@ -118,8 +107,7 @@ class Table(object):
 
         # Reset parser, recreate iterator
         self.__parser.reset()
-        self.__iterator = self.__iterator_class(
-                self.__parser.items, self.__processors)
+        self.__iterator = Iterator(self.__parser.items, self.__processors)
 
     @property
     def headers(self):

@@ -63,10 +63,8 @@ Below all parts of Tabulator are presented:
 from tabulator import topen, processors, loaders, parsers
 
 table = topen('path.csv',
-        loader_options={'encoding': 'utf-8'},
-        parser_options={'delimeter': ',', quotechar: '|'},
-        loader_class=loaders.File,
-        parser_class=parsers.CSV)
+        loader_options={'constructor': loaders.File, encoding': 'utf-8'},
+        parser_options={'constructor': parsers.CSV, delimeter': ',', quotechar: '|'})
 table.add_processor(processors.Headers(skip=1))
 headers = table.headers
 contents = table.read(limit=10)
@@ -150,11 +148,15 @@ class MyProcessor(processors.API):
 
 - 0.5.0
   - BREAKING CHANGE: added `loaders.API.source` abstract property
+  - BREAKING CHANGE: moved topen `loader_class` argument to `loader_options` argument as `constructor` key
+  - BREAKING CHANGE: moved topen `parser_class` argument to `parser_options` argument as `constructor` key
+  - BREAKING CHANGE: removed topen `table_class` argument
+  - BREAKING CHANGE: removed topen `iterator_class` argument
+  - BREAKING CHANGE: removed topen `row_class` argument
   - BREAKING CHANGE: removed `processors.Schema`
-  - BREAKING CHANGE: removed topen `*_class` arguments
   - BREAKING CHANGE: removed `Row`
-  - added `processors.Convert`
   - added `Table.iter(keyed=False)`
+  - added `processors.Convert`
 
 ## Contributing
 

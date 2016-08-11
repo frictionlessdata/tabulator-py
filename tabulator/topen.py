@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .table import Table
-from .iterator import Iterator
 from .processors import Headers
 from . import loaders
 from . import parsers
@@ -16,64 +15,55 @@ from . import helpers
 # Module API
 
 def topen(source,
-          with_headers=False, processors=None,
-          scheme=None, format=None, encoding=None,
-          loader_options=None, parser_options=None,
-          loader_class=None, parser_class=None,
-          table_class=None, iterator_class=None):
+          with_headers=False,
+          processors=None,
+          scheme=None,
+          format=None,
+          loader_options=None,
+          parser_options=None,
+          # BACKWARD-COMPATIBILITY (before v0.5)
+          loader_class=None,
+          parser_class=None,
+          encoding=None):
     """Open table from source with scheme, encoding and format.
 
     Function `topen` is a wrapper around `Table` interface.
 
-    Parameters
-    ----------
-    source: str
-        Path of contents.
-    with_headers: bool
-        Extract headers.
-    processors: list
-        Processors to add to pipeline.
-    scheme: str
-        Scheme of source:
-            - file (default)
-            - stream
-            - text
-            - http
-            - https
-            - ftp
-            - ftps
-            - native
-    format: str
-        Format of source:
-            - None (detect)
-            - csv
-            - tsv
-            - json
-            - xls
-            - xlsx
-            - native
-    encoding: str
-        Encoding of source:
-            - None (detect)
-            - utf-8
-            - <any>
-    loader_options: dict
-        Loader options.
-    parser_options: dict
-        Parser options.
-    loader_class: type
-        Loader class.
-    parser_class: type
-        Parser class.
-    table_class: type
-        Table class.
-    iterator_class: type
-        Iterator class.
+    Args:
+        source (str): path of contents
+        with_headers (bool): extract headers
+        processors (list): processors to add to the pipeline
+        scheme (str):
+            scheme of source:
+                - file (default)
+                - stream
+                - text
+                - http
+                - https
+                - ftp
+                - ftps
+                - native
+        format (str):
+            format of source:
+                - None (detect)
+                - csv
+                - tsv
+                - json
+                - xls
+                - xlsx
+                - native
+        loader_options (dict):
+            loader options:
+                `constructor`: constructor returning `loaders.API` instance
+                `encoding`: encoding of source
+                <backend options>
+        parser_options (dict):
+            parser options:
+                `constructor`: constructor returning `parsers.API` instance
+                <backend options>
 
-    Returns
-    -------
-    table: `Table`
-        Opened Table instance.
+    Returns:
+        table (Table): opened table instance
 
     """
     # Initiate if None
@@ -81,36 +71,39 @@ def topen(source,
         loader_options = {}
     if parser_options is None:
         parser_options = {}
-    if table_class is None:
-        table_class = Table
-    if iterator_class is None:
-        iterator_class = Iterator
+
+    # BACKWARD-COMPATIBILITY (before v0.5)
+    if loader_class is not None:
+        loader_options['constructor'] = loader_class
+    if parser_class is not None:
+        parser_options['constructor'] = parser_class
+    if encoding is not None:
+        loader_options['encoding'] = encoding
 
     # Get loader
-    if loader_class is None:
+    loader_constructor = loader_options.pop('constructor', None)
+    if loader_constructor is None:
         if scheme is None:
             scheme = helpers.detect_scheme(source) or _DEFAULT_SCHEME
         if scheme not in _LOADERS:
             message = 'Scheme "%s" is not supported' % scheme
             raise errors.Error(message)
-        loader_class = _LOADERS[scheme]
-    loader = loader_class(source, encoding, **loader_options)
+        loader_constructor = _LOADERS[scheme]
+    loader = loader_constructor(source, **loader_options)
 
     # Get parser
-    if parser_class is None:
+    parser_constructor = parser_options.pop('constructor', None)
+    if parser_constructor is None:
         if format is None:
             format = helpers.detect_format(source)
         if format not in _PARSERS:
             message = 'Format "%s" is not supported' % format
             raise errors.Error(message)
-        parser_class = _PARSERS[format]
-    parser = parser_class(**parser_options)
+        parser_constructor = _PARSERS[format]
+    parser = parser_constructor(**parser_options)
 
     # Initiate and open table
-    table = table_class(
-            loader=loader,
-            parser=parser,
-            iterator_class=iterator_class)
+    table = Table(loader=loader, parser=parser)
     table.open()
 
     # Add headers processor

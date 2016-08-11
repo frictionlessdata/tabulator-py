@@ -11,6 +11,9 @@ from . import errors
 
 class Iterator(object):
     """Iterator representation.
+
+    NOTE: constructor is not a part of public API
+
     """
 
     # Public
