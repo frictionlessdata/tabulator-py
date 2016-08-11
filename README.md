@@ -62,7 +62,7 @@ Below all parts of Tabulator are presented:
 ```python
 from tabulator import topen, processors, loaders, parsers
 
-table = topen('path.csv', encoding': 'utf-8',
+table = topen('path.csv', encoding='utf-8',
         loader_options={'constructor': loaders.File},
         parser_options={'constructor': parsers.CSV, delimeter': ',', quotechar: '|'})
 table.add_processor(processors.Headers(skip=1))
