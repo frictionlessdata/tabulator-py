@@ -144,23 +144,6 @@ class MyProcessor(processors.API):
         # will be called on exception
 ```
 
-## Changelog
-
-```
-- 0.5.0
-  - BREAKING CHANGE: updated loaders.API and parsers.API
-  - BREAKING CHANGE: renamed topen argument with_headers to extract_headers
-  - BREAKING CHANGE: moved topen loader_class argument to loader_options argument as constructor key
-  - BREAKING CHANGE: moved topen parser_class argument to parser_options argument as constructor key
-  - BREAKING CHANGE: removed topen table_class argument
-  - BREAKING CHANGE: removed topen iterator_class argument
-  - BREAKING CHANGE: removed topen row_class argument
-  - BREAKING CHANGE: removed processors.Schema
-  - BREAKING CHANGE: removed Row
-  - added Table.iter(keyed=False)
-  - added processors.Convert
-```
-
 ## Contributing
 
 Please read the contribution guideline:
