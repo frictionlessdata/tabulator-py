@@ -76,18 +76,15 @@ table = topen('path.csv',
         parser_options={'delimeter': ',', quotechar: '|'},
         loader_class=loaders.File,
         parser_class=parsers.CSV,
+        table_class=CustomTable,
         iterator_class=CustomIterator,
-        table_class=CustomTable)
+        row_class=CustomRow)
 table.add_processor(processors.Headers(skip=1))
 headers = table.headers
 contents = table.read(limit=10)
 print(headers, contents)
 table.close()
 ```
-
-Also `Table` class can be instantiated by user (see documentation).
-But there is no difference between it and `topen` call with extended
-list of parameters except `topen` also calls the `table.open()` method.
 
 ## Design Overview
 

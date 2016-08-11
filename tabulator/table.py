@@ -27,14 +27,17 @@ class Table(object):
 
     # Public
 
-    def __init__(self, loader, parser, iterator_class=None):
+    def __init__(self, loader, parser, iterator_class=None, row_class=None):
 
         # Default values
         if iterator_class is None:
             iterator_class = Iterator
+        if row_class is None:
+            row_class = Row
 
         # Set attributes
         self.__iterator_class = iterator_class
+        self.__row_class = row_class
         self.__loader = loader
         self.__parser = parser
         self.__processors = []
@@ -62,7 +65,15 @@ class Table(object):
 
         # Get the next row
         self.__iterator.__next__()
-        row = Row(self.__iterator.headers, self.__iterator.values)
+        if issubclass(self.__row_class, Row):
+            row = self.__row_class(
+                self.__iterator.headers, self.__iterator.values)
+        elif issubclass(self.__row_class, dict):
+            if self.__iterator.headers is None:
+                raise ValueError('Headers are required for dict row class')
+            row = dict(zip(self.__iterator.headers, self.__iterator.values))
+        else:
+            raise TypeError('Row class should be tabulator.Row or dict')
 
         return row
 

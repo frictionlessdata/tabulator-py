@@ -248,6 +248,18 @@ class Test_topen(unittest.TestCase):
         assert table.headers == ('id', 'name')
         assert table.read() == [('1', 'english'), ('2', '中国人')]
 
+    def test_headers_row_class_dict(self):
+
+        # Get table
+        source = [['id', 'name'], ['1', 'english'], ('2', '中国人')]
+        table = topen(source, with_headers=True, row_class=dict)
+
+        # Make assertions
+        assert table.headers == ('id', 'name')
+        assert table.read() == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
+
     # It works for Python 2 but values convertion differs
     @pytest.mark.skipif(sys.version_info < (3,3), reason='requires python 3.3')
     def test_convert(self):
