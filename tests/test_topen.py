@@ -9,7 +9,6 @@ import os
 import sys
 import pytest
 import unittest
-
 from tabulator import topen, parsers, processors
 
 
@@ -34,16 +33,6 @@ class Test_topen(unittest.TestCase):
         # Get table
         table = topen(FPATH % 'table.csv',
                 parser_options={'constructor': parsers.CSV})
-
-        # Make assertions
-        assert table.headers is None
-        assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
-
-    # BACKWARD-COMPATIBILITY (before v0.5)
-    def test_file_csv_parser_class(self):
-
-        # Get table
-        table = topen(FPATH % 'table.csv', parser_class=parsers.CSV)
 
         # Make assertions
         assert table.headers is None

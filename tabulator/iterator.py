@@ -149,11 +149,6 @@ class Iterator(object):
     @values.setter
     def values(self, values):
         """Set item values.
-
-        Parameters
-        ----------
-        values: tuple
-
         """
         self.__values = values
 
@@ -166,11 +161,6 @@ class Iterator(object):
     @headers.setter
     def headers(self, headers):
         """Set item headers.
-
-        Parameters
-        ----------
-        headers: tuple
-
         """
         if self.__count != 0:
             message = 'Headers could be set only before first item is emited.'

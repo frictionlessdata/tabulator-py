@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 import io
 import os
 import unittest
-
 from tabulator import helpers
 
 
@@ -67,6 +66,7 @@ class Test_detect_encoding(unittest.TestCase):
     def test_not_so_long(self):
         bytes = io.BytesIO(b'A\n' * 999 + b'\xff\xff')
         self.assertEqual(helpers.detect_encoding(bytes), 'windows-1252')
+
 
 class Test_reset_stream(unittest.TestCase):
 

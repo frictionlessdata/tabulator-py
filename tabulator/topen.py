@@ -15,24 +15,17 @@ from . import helpers
 # Module API
 
 def topen(source,
-          with_headers=False,
-          processors=None,
           scheme=None,
           format=None,
+          encoding=None,
           loader_options=None,
           parser_options=None,
-          # BACKWARD-COMPATIBILITY (before v0.5)
-          loader_class=None,
-          parser_class=None,
-          encoding=None):
-    """Open table from source with scheme, encoding and format.
-
-    Function `topen` is a wrapper around `Table` interface.
+          processors=None,
+          with_headers=False):
+    """Open table from source.
 
     Args:
-        source (str): path of contents
-        with_headers (bool): extract headers
-        processors (list): processors to add to the pipeline
+        source (str): table source
         scheme (str):
             scheme of source:
                 - file (default)
@@ -52,6 +45,11 @@ def topen(source,
                 - xls
                 - xlsx
                 - native
+        encoding (str):
+            encoding of source:
+                - None (detect)
+                - utf-8
+                - <encodings>
         loader_options (dict):
             loader options:
                 `constructor`: constructor returning `loaders.API` instance
@@ -61,6 +59,8 @@ def topen(source,
             parser options:
                 `constructor`: constructor returning `parsers.API` instance
                 <backend options>
+        processors (list): processors to add to the pipeline
+        with_headers (bool): extract headers
 
     Returns:
         table (Table): opened table instance
@@ -72,14 +72,6 @@ def topen(source,
     if parser_options is None:
         parser_options = {}
 
-    # BACKWARD-COMPATIBILITY (before v0.5)
-    if loader_class is not None:
-        loader_options['constructor'] = loader_class
-    if parser_class is not None:
-        parser_options['constructor'] = parser_class
-    if encoding is not None:
-        loader_options['encoding'] = encoding
-
     # Get loader
     loader_constructor = loader_options.pop('constructor', None)
     if loader_constructor is None:
@@ -89,7 +81,7 @@ def topen(source,
             message = 'Scheme "%s" is not supported' % scheme
             raise errors.Error(message)
         loader_constructor = _LOADERS[scheme]
-    loader = loader_constructor(source, **loader_options)
+    loader = loader_constructor(**loader_options)
 
     # Get parser
     parser_constructor = parser_options.pop('constructor', None)
@@ -103,7 +95,7 @@ def topen(source,
     parser = parser_constructor(**parser_options)
 
     # Initiate and open table
-    table = Table(loader=loader, parser=parser)
+    table = Table(source, encoding, loader=loader, parser=parser)
     table.open()
 
     # Add headers processor

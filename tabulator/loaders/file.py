@@ -18,16 +18,13 @@ class FileLoader(api.Loader):
 
     # Public
 
-    def __init__(self, source, encoding=None, **options):
-        self.__source = source
-        self.__encoding = encoding
+    def __init__(self, **options):
         self.__options = options
 
-    def load(self, mode):
+    def load(self, source, encoding, mode):
 
         # Prepare source
         scheme = 'file://'
-        source = self.__source
         if source.startswith(scheme):
             source = source.replace(scheme, '', 1)
 
@@ -35,7 +32,6 @@ class FileLoader(api.Loader):
         bytes = io.open(source, 'rb')
 
         # Prepare encoding
-        encoding = self.__encoding
         if encoding is None:
             encoding = helpers.detect_encoding(bytes)
 
@@ -48,11 +44,3 @@ class FileLoader(api.Loader):
         else:
             message = 'Mode %s is not supported' % mode
             raise errors.Error(message)
-
-    @property
-    def source(self):
-        return self.__source
-
-    @property
-    def encoding(self):
-        return self.__encoding

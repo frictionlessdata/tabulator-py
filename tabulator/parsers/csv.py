@@ -26,27 +26,27 @@ class CSVParser(api.Parser):
         self.__chars = None
         self.__items = None
 
-    def open(self, loader):
+    @property
+    def closed(self):
+        return self.__chars is None or self.__chars.closed
+
+    def open(self, source, encoding, loader):
         self.close()
         self.__loader = loader
-        self.__chars = loader.load(mode='t')
+        self.__chars = loader.load(source, encoding, mode='t')
         self.reset()
 
     def close(self):
         if not self.closed:
             self.__chars.close()
 
-    @property
-    def closed(self):
-        return self.__chars is None or self.__chars.closed
+    def reset(self):
+        helpers.reset_stream(self.__chars)
+        self.__items = self.__emit_items()
 
     @property
     def items(self):
         return self.__items
-
-    def reset(self):
-        helpers.reset_stream(self.__chars)
-        self.__items = self.__emit_items()
 
     # Private
 

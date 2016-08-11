@@ -8,7 +8,6 @@ import io
 import os
 import unittest
 from mock import Mock
-
 from tabulator import parsers
 
 
@@ -19,6 +18,7 @@ class TestTSV(unittest.TestCase):
     def setUp(self):
         basedir = os.path.join(os.path.dirname(__file__), '..', '..')
         self.source = os.path.join(basedir, 'data', 'table.tsv')
+        self.encoding = None
         self.loader = Mock()
         self.loader.load = Mock(return_value=io.open(self.source))
         self.parser = parsers.TSV()
@@ -28,7 +28,7 @@ class TestTSV(unittest.TestCase):
     def test(self):
 
         self.assertTrue(self.parser.closed)
-        self.parser.open(self.loader)
+        self.parser.open(self.source, self.encoding, self.loader)
         self.assertFalse(self.parser.closed)
 
         self.assertEqual(list(self.parser.items), [

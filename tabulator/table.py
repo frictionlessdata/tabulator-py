@@ -16,6 +16,8 @@ class Table(object):
     NOTE: constructor is not a part of public API
 
     Args:
+        source (str): table source
+        encoding (str): encoding of source
         loader (loaders.API): table loader
         parser (parsers.API): table parser
 
@@ -23,7 +25,9 @@ class Table(object):
 
     # Public
 
-    def __init__(self, loader, parser):
+    def __init__(self, source, encoding, loader, parser):
+        self.__source = source
+        self.__encoding = encoding
         self.__loader = loader
         self.__parser = parser
         self.__processors = []
@@ -61,16 +65,11 @@ class Table(object):
 
         return row
 
-    def add_processor(self, processor):
-        """Add processor to pipeline.
-
-        Parameters
-        ----------
-        processor: `processors.API`
-            Processor to add to pipeline.
-
+    @property
+    def closed(self):
+        """Return true if table is closed.
         """
-        self.__processors.append(processor)
+        return self.__parser.closed or self.__iterator is None
 
     def open(self):
         """Open table to iterate over it.
@@ -78,7 +77,7 @@ class Table(object):
 
         # Open parser, create iterator
         if self.closed:
-            self.__parser.open(self.__loader)
+            self.__parser.open(self.__source, self.__encoding, self.__loader)
             self.__iterator = Iterator(self.__parser.items, self.__processors)
 
         return self
@@ -91,12 +90,6 @@ class Table(object):
         if not self.closed:
             self.__parser.close()
             self.__iterator = None
-
-    @property
-    def closed(self):
-        """Return true if table is closed.
-        """
-        return self.__parser.closed or self.__iterator is None
 
     def reset(self):
         """Reset table pointer to the first row.
@@ -121,6 +114,12 @@ class Table(object):
         return self.__iterator.headers
 
     def iter(self, keyed=False):
+        """Return rows iterator.
+
+        Args:
+            keyed (bool): if true return keyed rows iterator
+
+        """
         # Temporal sulution untile main iter
         # logic will be moved here
         self.__keyed = keyed
@@ -133,12 +132,6 @@ class Table(object):
 
     def read(self, limit=None):
         """Return full table with row limit.
-
-        Parameters
-        ----------
-        limit: int
-            Rows limit to return.
-
         """
 
         # Collect rows
@@ -150,6 +143,15 @@ class Table(object):
             rows.append(row)
 
         return rows
+
+    def add_processor(self, processor):
+        """Add processor to pipeline.
+
+        Args:
+            processor (processors.API): processor to add to pipeline
+
+        """
+        self.__processors.append(processor)
 
     # Private
 

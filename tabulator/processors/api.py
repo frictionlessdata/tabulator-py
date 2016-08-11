@@ -19,10 +19,8 @@ class Processor(object):
     can update `Iterator` instance to change
     rows emitted by `Table` instance.
 
-    Parameters
-    ----------
-    options: dict
-        Processing options.
+    Args:
+        options(dict): processing options
 
     """
 
@@ -34,10 +32,9 @@ class Processor(object):
         This method will be called if
         iterator.exception == None.
 
-        Parameters
-        ----------
-        iterator: `Iterator`
-            Table iterator.
+        Args:
+            iterator (Iterator): table iterator
+
         """
         pass  # pragma: no cover
 
@@ -47,9 +44,8 @@ class Processor(object):
         This method will be called if
         iterator.exception != None.
 
-        Parameters
-        ----------
-        iterator: `Iterator`
-            Table iterator.
+        Args:
+            iterator (iterator): table iterator
+
         """
         pass  # pragma: no cover

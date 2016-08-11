@@ -20,21 +20,17 @@ class TextLoader(api.Loader):
 
     # Public
 
-    def __init__(self, source, encoding=None, **options):
-        self.__source = source
-        self.__encoding = encoding
+    def __init__(self, **options):
         self.__options = options
 
-    def load(self, mode):
+    def load(self, source, encoding, mode):
 
         # Prepare source
         scheme = 'text://'
-        source = self.__source
         if source.startswith(scheme):
             source = source.replace(scheme, '', 1)
 
         # Prepare encoding
-        encoding = self.__encoding
         if encoding is None:
             encoding = self.DEFAULT_ENCODING
 
@@ -52,11 +48,3 @@ class TextLoader(api.Loader):
         else:
             message = 'Mode %s is not supported' % mode
             raise errors.Error(message)
-
-    @property
-    def source(self):
-        return self.__source
-
-    @property
-    def encoding(self):
-        return self.__encoding

@@ -18,32 +18,32 @@ class NativeParser(api.Parser):
 
     def __init__(self, **options):
         self.__options = options
-        self.__loader = None
+        self.__source = None
         self.__items = None
-
-    def open(self, loader):
-        self.close()
-        self.__loader = loader
-        self.reset()
-
-    def close(self):
-        pass
 
     @property
     def closed(self):
         return False
 
-    @property
-    def items(self):
-        return self.__items
+    def open(self, source, encoding, loader):
+        self.close()
+        self.__source = source
+        self.reset()
+
+    def close(self):
+        pass
 
     def reset(self):
         self.__items = self.__emit_items()
 
+    @property
+    def items(self):
+        return self.__items
+
     # Private
 
     def __emit_items(self):
-        items = self.__loader.source
+        items = self.__source
         for item in items:
             if isinstance(item, (tuple, list)):
                 yield (None, tuple(item))

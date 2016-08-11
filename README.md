@@ -62,8 +62,8 @@ Below all parts of Tabulator are presented:
 ```python
 from tabulator import topen, processors, loaders, parsers
 
-table = topen('path.csv',
-        loader_options={'constructor': loaders.File, encoding': 'utf-8'},
+table = topen('path.csv', encoding': 'utf-8',
+        loader_options={'constructor': loaders.File},
         parser_options={'constructor': parsers.CSV, delimeter': ',', quotechar: '|'})
 table.add_processor(processors.Headers(skip=1))
 headers = table.headers
@@ -147,7 +147,7 @@ class MyProcessor(processors.API):
 ## Changelog
 
 - 0.5.0
-  - BREAKING CHANGE: added `loaders.API.source` abstract property
+  - BREAKING CHANGE: updated `loaders.API` and `parsers.API`
   - BREAKING CHANGE: moved topen `loader_class` argument to `loader_options` argument as `constructor` key
   - BREAKING CHANGE: moved topen `parser_class` argument to `parser_options` argument as `constructor` key
   - BREAKING CHANGE: removed topen `table_class` argument

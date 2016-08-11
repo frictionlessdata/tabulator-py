@@ -14,10 +14,8 @@ from abc import ABCMeta, abstractmethod
 class Parser(object):
     """Parser representation.
 
-    Parameters
-    ----------
-    options: dict
-        Parser options.
+    Args:
+        options(dict): parser options
 
     """
 
@@ -27,17 +25,24 @@ class Parser(object):
     def __init__(self, **options):
         pass  # pragma: no cover
 
+    @property
     @abstractmethod
-    def open(self, loader):
+    def closed(self):
+        """Return if underlaynig stream is closed.
+        """
+        pass  # pragma: no cover
+
+    @abstractmethod
+    def open(self, source, encoding, loader):
         """Open underlaying stream.
 
         Parser gets byte or text stream from loader
         to start emit items from this stream.
 
-        Parameters
-        ----------
-        loader: `Loader`
-            Loader instance.
+        Args:
+            source (str): table source
+            encoding (str): encoding of source
+            loader (Loader): loader instance
 
         """
         pass  # pragma: no cover
@@ -48,10 +53,13 @@ class Parser(object):
         """
         pass  # pragma: no cover
 
-    @property
     @abstractmethod
-    def closed(self):
-        """Return if underlaynig stream is closed.
+    def reset(self):
+        """Reset items and underlaying stream.
+
+        After reset call iterations over items will
+        start from scratch.
+
         """
         pass  # pragma: no cover
 
@@ -63,20 +71,8 @@ class Parser(object):
         Emit from parsed underlaying stream
         keys, values pairs.
 
-        Yields
-        ------
-        (keys, values): tuple
-            Keys, values pairs.
-
-        """
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def reset(self):
-        """Reset items and underlaying stream.
-
-        After reset call iterations over items will
-        start from scratch.
+        Yields:
+            (keys, values) (tuple): keys, values pairs
 
         """
         pass  # pragma: no cover

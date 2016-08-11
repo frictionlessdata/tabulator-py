@@ -18,25 +18,20 @@ class StreamLoader(api.Loader):
 
     # Public
 
-    def __init__(self, source, encoding=None, **options):
+    def __init__(self, **options):
+        self.__options = options
+
+    def load(self, source, encoding, mode):
 
         # Raise if in text mode
         if hasattr(source, 'encoding'):
             message = 'Only byte streams are supported.'
             raise errors.Error(message)
 
-        # Set attributes
-        self.__source = source
-        self.__encoding = encoding
-        self.__options = options
-
-    def load(self, mode):
-
         # Prepare bytes
-        bytes = self.__source
+        bytes = source
 
         # Prepare encoding
-        encoding = self.__encoding
         if encoding is None:
             encoding = helpers.detect_encoding(bytes)
 
@@ -49,11 +44,3 @@ class StreamLoader(api.Loader):
         else:
             message = 'Mode %s is not supported' % mode
             raise errors.Error(message)
-
-    @property
-    def source(self):
-        return self.__source
-
-    @property
-    def encoding(self):
-        return self.__encoding
