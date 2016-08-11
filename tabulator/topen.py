@@ -21,7 +21,10 @@ def topen(source,
           loader_options=None,
           parser_options=None,
           processors=None,
-          with_headers=False):
+          with_headers=False,
+          # BACKWARD-COMPATIBILITY (before v0.5)
+          loader_class=None,
+          parser_class=None):
     """Open table from source.
 
     Args:
@@ -71,6 +74,12 @@ def topen(source,
         loader_options = {}
     if parser_options is None:
         parser_options = {}
+
+    # BACKWARD-COMPATIBILITY (before v0.5)
+    if loader_class is not None:
+        loader_options['constructor'] = loader_class
+    if parser_class is not None:
+        parser_options['constructor'] = parser_class
 
     # Get loader
     loader_constructor = loader_options.pop('constructor', None)
