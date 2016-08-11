@@ -24,7 +24,7 @@ Fast access to the table with `topen` (stands for `table open`) function:
 ```python
 from tabulator import topen, processors
 
-with topen('path.csv', with_headers=True) as table:
+with topen('path.csv', extract_headers=True) as table:
     for row in table:
         print(row)  # will print row tuple
 ```
@@ -50,7 +50,7 @@ with `limit` of output rows as parameter.
 - table pointer can be set to start via `reset` method.
 
 In the example above we use `processors.Headers` to extract headers
-from the table (via `with_headers=True` shortcut). Processors is a powerfull
+from the table (via `extract_headers=True` shortcut). Processors is a powerfull
 Tabulator concept. Parsed data goes thru pipeline of processors to be updated before
 returning as table row.
 
@@ -147,16 +147,17 @@ class MyProcessor(processors.API):
 ## Changelog
 
 - 0.5.0
-  - BREAKING CHANGE: updated `loaders.API` and `parsers.API`
-  - BREAKING CHANGE: moved topen `loader_class` argument to `loader_options` argument as `constructor` key
-  - BREAKING CHANGE: moved topen `parser_class` argument to `parser_options` argument as `constructor` key
-  - BREAKING CHANGE: removed topen `table_class` argument
-  - BREAKING CHANGE: removed topen `iterator_class` argument
-  - BREAKING CHANGE: removed topen `row_class` argument
-  - BREAKING CHANGE: removed `processors.Schema`
-  - BREAKING CHANGE: removed `Row`
-  - added `Table.iter(keyed=False)`
-  - added `processors.Convert`
+  - BREAKING CHANGE: updated loaders.API and parsers.API
+  - BREAKING CHANGE: renamed topen argument with_headers to extract_headers
+  - BREAKING CHANGE: moved topen loader_class argument to loader_options argument as constructor key
+  - BREAKING CHANGE: moved topen parser_class argument to parser_options argument as constructor key
+  - BREAKING CHANGE: removed topen table_class argument
+  - BREAKING CHANGE: removed topen iterator_class argument
+  - BREAKING CHANGE: removed topen row_class argument
+  - BREAKING CHANGE: removed processors.Schema
+  - BREAKING CHANGE: removed Row
+  - added Table.iter(keyed=False)
+  - added processors.Convert
 
 ## Contributing
 

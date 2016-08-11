@@ -210,6 +210,18 @@ class Test_topen(unittest.TestCase):
     def test_headers(self):
 
         # Get table
+        table = topen(FPATH % 'table.csv', extract_headers=True)
+
+        # Make assertions
+        assert table.headers == ('id', 'name')
+        assert list(table.iter(keyed=True)) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
+
+    # BACKWARD-COMPATIBILITY (before v0.5)
+    def test_headers(self):
+
+        # Get table
         table = topen(FPATH % 'table.csv', with_headers=True)
 
         # Make assertions
@@ -221,7 +233,7 @@ class Test_topen(unittest.TestCase):
     def test_headers_via_processors_param(self):
 
         # Get results
-        table = topen(FPATH % 'table.csv', with_headers=True,
+        table = topen(FPATH % 'table.csv', extract_headers=True,
             processors=[processors.Headers()])
 
         # Make assertions
@@ -236,7 +248,7 @@ class Test_topen(unittest.TestCase):
         source = ('text://['
             '{"id": 1, "name": "english"},'
             '{"id": 2, "value": "中国人"}]')
-        table = topen(source, with_headers=True, format='json')
+        table = topen(source, extract_headers=True, format='json')
 
         # Make assertions
         assert table.headers == ('id', 'name')
@@ -248,7 +260,7 @@ class Test_topen(unittest.TestCase):
 
         # Get table
         source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
-        table = topen(source, with_headers=True)
+        table = topen(source, extract_headers=True)
 
         # Make assertions
         assert table.headers == ('id', 'name')
@@ -258,7 +270,7 @@ class Test_topen(unittest.TestCase):
 
         # Get table
         source = [['id', 'name'], ['1', 'english'], ('2', '中国人')]
-        table = topen(source, with_headers=True)
+        table = topen(source, extract_headers=True)
 
         # Make assertions
         assert table.headers == ('id', 'name')
@@ -272,7 +284,7 @@ class Test_topen(unittest.TestCase):
 
         # Get table
         table = topen(FPATH % 'table.csv',
-            with_headers=True, processors=[processors.Convert()])
+            extract_headers=True, processors=[processors.Convert()])
 
         # Make assertions
         assert table.headers == ('id', 'name')
@@ -284,7 +296,7 @@ class Test_topen(unittest.TestCase):
         def converter(values):
             return [float(values[0]), values[1]]
         table = topen(FPATH % 'table.csv',
-            with_headers=True, processors=[processors.Convert(converter)])
+            extract_headers=True, processors=[processors.Convert(converter)])
 
         # Make assertions
         assert table.headers == ('id', 'name')
@@ -295,7 +307,7 @@ class Test_topen(unittest.TestCase):
     def test_reset(self):
 
         # Get results
-        with topen(FPATH % 'table.csv', with_headers=True) as table:
+        with topen(FPATH % 'table.csv', extract_headers=True) as table:
             headers1 = table.headers
             contents1 = table.read()
             table.reset()
