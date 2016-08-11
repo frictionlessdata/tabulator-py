@@ -146,6 +146,7 @@ class MyProcessor(processors.API):
 
 ## Changelog
 
+```
 - 0.5.0
   - BREAKING CHANGE: updated loaders.API and parsers.API
   - BREAKING CHANGE: renamed topen argument with_headers to extract_headers
@@ -158,6 +159,7 @@ class MyProcessor(processors.API):
   - BREAKING CHANGE: removed Row
   - added Table.iter(keyed=False)
   - added processors.Convert
+```
 
 ## Contributing
 
