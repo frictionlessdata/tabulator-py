@@ -20,11 +20,12 @@ def topen(source,
           encoding=None,
           loader_options=None,
           parser_options=None,
+          extract_headers=False,
           processors=None,
-          with_headers=False,
           # BACKWARD-COMPATIBILITY (before v0.5)
           loader_class=None,
-          parser_class=None):
+          parser_class=None,
+          with_headers=False):
     """Open table from source.
 
     Args:
@@ -62,8 +63,8 @@ def topen(source,
             parser options:
                 `constructor`: constructor returning `parsers.API` instance
                 <backend options>
+        extract_headers (bool): extract table headers
         processors (list): processors to add to the pipeline
-        with_headers (bool): extract headers
 
     Returns:
         table (Table): opened table instance
@@ -80,6 +81,7 @@ def topen(source,
         loader_options['constructor'] = loader_class
     if parser_class is not None:
         parser_options['constructor'] = parser_class
+    extract_headers = extract_headers or with_headers
 
     # Get loader
     loader_constructor = loader_options.pop('constructor', None)
@@ -108,7 +110,7 @@ def topen(source,
     table.open()
 
     # Add headers processor
-    if with_headers:
+    if extract_headers:
         table.add_processor(Headers())
 
     # Add user processors
