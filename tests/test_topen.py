@@ -190,53 +190,40 @@ class Test_topen(unittest.TestCase):
 
     def test_headers(self):
 
-        # Get results
-        with topen(FPATH % 'table.csv', with_headers=True) as table:
-            headers = table.headers
-            contents = table.read()
+        # Get table
+        table = topen(FPATH % 'table.csv', with_headers=True)
 
         # Make assertions
-        assert headers == ('id', 'name')
-        assert contents == [('1', 'english'), ('2', '中国人')]
-        assert contents[0].get('id') == '1'
-        assert contents[0].get('name') == 'english'
-        assert contents[1].get('id') == '2'
-        assert contents[1].get('name') == '中国人'
+        assert table.headers == ('id', 'name')
+        assert list(table.iter(keyed=True)) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
 
     def test_headers_via_processors_param(self):
 
         # Get results
-        with topen(FPATH % 'table.csv',
-                   with_headers=True,
-                   processors=[processors.Headers()]) as table:
-            headers = table.headers
-            contents = table.read()
+        table = topen(FPATH % 'table.csv', with_headers=True,
+            processors=[processors.Headers()])
 
         # Make assertions
-        assert headers == ('id', 'name')
-        assert contents == [('1', 'english'), ('2', '中国人')]
-        assert contents[0].get('id') == '1'
-        assert contents[0].get('name') == 'english'
-        assert contents[1].get('id') == '2'
-        assert contents[1].get('name') == '中国人'
+        assert table.headers == ('id', 'name')
+        assert list(table.iter(keyed=True)) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
 
     def test_headers_json(self):
 
-        # Get results
+        # Get table
         source = ('text://['
-            '{"country": "China", "value": "中国"},'
-            '{"country": "Brazil", "value": "Brazil"}]')
-        with topen(source, with_headers=True, format='json') as table:
-            headers = table.headers
-            contents = table.read()
+            '{"id": 1, "name": "english"},'
+            '{"id": 2, "value": "中国人"}]')
+        table = topen(source, with_headers=True, format='json')
 
         # Make assertions
-        assert headers == ('country', 'value')
-        assert contents == [('China', '中国'), ('Brazil', 'Brazil')]
-        assert contents[0].get('country') == 'China'
-        assert contents[0].get('value') == '中国'
-        assert contents[1].get('country') == 'Brazil'
-        assert contents[1].get('value') == 'Brazil'
+        assert table.headers == ('id', 'name')
+        assert list(table.iter(keyed=True)) == [
+            {'id': 1, 'name': 'english'},
+            {'id': 2, 'name': '中国人'}]
 
     def test_headers_native(self):
 

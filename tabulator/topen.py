@@ -4,7 +4,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .row import Row
 from .table import Table
 from .iterator import Iterator
 from .processors import Headers
@@ -21,7 +20,7 @@ def topen(source,
           scheme=None, format=None, encoding=None,
           loader_options=None, parser_options=None,
           loader_class=None, parser_class=None,
-          table_class=None, iterator_class=None, row_class=None):
+          table_class=None, iterator_class=None):
     """Open table from source with scheme, encoding and format.
 
     Function `topen` is a wrapper around `Table` interface.
@@ -70,8 +69,6 @@ def topen(source,
         Table class.
     iterator_class: type
         Iterator class.
-    row_class: type
-        Row class.
 
     Returns
     -------
@@ -88,8 +85,6 @@ def topen(source,
         table_class = Table
     if iterator_class is None:
         iterator_class = Iterator
-    if row_class is None:
-        row_class = Row
 
     # Get loader
     if loader_class is None:
@@ -115,8 +110,7 @@ def topen(source,
     table = table_class(
             loader=loader,
             parser=parser,
-            iterator_class=iterator_class,
-            row_class=row_class)
+            iterator_class=iterator_class)
     table.open()
 
     # Add headers processor

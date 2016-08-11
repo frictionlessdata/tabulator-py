@@ -4,7 +4,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .row import Row
 from .iterator import Iterator
 from . import errors
 
@@ -27,22 +26,20 @@ class Table(object):
 
     # Public
 
-    def __init__(self, loader, parser, iterator_class=None, row_class=None):
+    def __init__(self, loader, parser, iterator_class=None):
 
         # Default values
         if iterator_class is None:
             iterator_class = Iterator
-        if row_class is None:
-            row_class = Row
 
         # Set attributes
         self.__iterator_class = iterator_class
-        self.__row_class = row_class
         self.__loader = loader
         self.__parser = parser
         self.__processors = []
         self.__iterator = None
         self.__headers = None
+        self.__keyed = False
 
     def __enter__(self):
         """Enter context manager by opening table.
@@ -65,15 +62,12 @@ class Table(object):
 
         # Get the next row
         self.__iterator.__next__()
-        if issubclass(self.__row_class, Row):
-            row = self.__row_class(
-                self.__iterator.headers, self.__iterator.values)
-        elif issubclass(self.__row_class, dict):
+        if self.__keyed:
             if self.__iterator.headers is None:
-                raise ValueError('Headers are required for dict row class')
+                raise ValueError('Headers are required for keyed output')
             row = dict(zip(self.__iterator.headers, self.__iterator.values))
         else:
-            raise TypeError('Row class should be tabulator.Row or dict')
+            row = tuple(self.__iterator.values)
 
         return row
 
@@ -141,9 +135,7 @@ class Table(object):
     def iter(self, keyed=False):
         # Temporal sulution untile main iter
         # logic will be moved here
-        self.__row_class = tuple
-        if keyed == True:
-            self.__row_class = dict
+        self.__keyed = keyed
         return self
 
     def readrow(self):
