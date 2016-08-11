@@ -98,11 +98,11 @@ with topen(source, with_headers=True) as table:
         print(row)
 
 
-print('\nKeyed rows with row_class=dict:')
+print('\nIter with keyed rows representation:')
 source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
-with topen(source, with_headers=True, row_class=dict) as table:
+with topen(source, with_headers=True) as table:
     print(table.headers)
-    for row in table:
+    for row in table.iter(keyed=True):
         print(row)
 
 

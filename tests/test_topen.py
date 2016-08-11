@@ -248,15 +248,15 @@ class Test_topen(unittest.TestCase):
         assert table.headers == ('id', 'name')
         assert table.read() == [('1', 'english'), ('2', '中国人')]
 
-    def test_headers_row_class_dict(self):
+    def test_headers_iter_keyed(self):
 
         # Get table
         source = [['id', 'name'], ['1', 'english'], ('2', '中国人')]
-        table = topen(source, with_headers=True, row_class=dict)
+        table = topen(source, with_headers=True)
 
         # Make assertions
         assert table.headers == ('id', 'name')
-        assert table.read() == [
+        assert list(table.iter(keyed=True)) == [
             {'id': '1', 'name': 'english'},
             {'id': '2', 'name': '中国人'}]
 

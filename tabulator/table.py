@@ -115,6 +115,18 @@ class Table(object):
         """
         return self.__parser.closed or self.__iterator is None
 
+    def reset(self):
+        """Reset table pointer to the first row.
+        """
+
+        # Check not closed
+        self.__require_not_closed()
+
+        # Reset parser, recreate iterator
+        self.__parser.reset()
+        self.__iterator = self.__iterator_class(
+                self.__parser.items, self.__processors)
+
     @property
     def headers(self):
         """Return table headers.
@@ -125,6 +137,14 @@ class Table(object):
             self.__iterator.__next__(lookahead=True)
 
         return self.__iterator.headers
+
+    def iter(self, keyed=False):
+        # Temporal sulution untile main iter
+        # logic will be moved here
+        self.__row_class = tuple
+        if keyed == True:
+            self.__row_class = dict
+        return self
 
     def readrow(self):
         """Return the next row from the table.
@@ -150,18 +170,6 @@ class Table(object):
             rows.append(row)
 
         return rows
-
-    def reset(self):
-        """Reset table pointer to the first row.
-        """
-
-        # Check not closed
-        self.__require_not_closed()
-
-        # Reset parser, recreate iterator
-        self.__parser.reset()
-        self.__iterator = self.__iterator_class(
-                self.__parser.items, self.__processors)
 
     # Private
 
