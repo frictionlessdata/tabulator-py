@@ -43,7 +43,6 @@ to use encoding of choice to open the table.
 Function `topen` returns `Table` instance. We use context manager
 to call `table.open()` on enter and `table.close()` when we exit:
 - table can be iterated like file-like object returning row by row
-- table can be read row by bow using `readrow` method (it returns row tuple)
 - table can be read into memory using `read` function (return list or row tuples)
 with `limit` of output rows as parameter.
 - headers can be accessed via `headers` property

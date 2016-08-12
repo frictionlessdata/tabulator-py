@@ -125,11 +125,6 @@ class Table(object):
         self.__keyed = keyed
         return self
 
-    def readrow(self):
-        """Return the next row from the table.
-        """
-        return next(self)
-
     def read(self, limit=None):
         """Return full table with row limit.
         """
