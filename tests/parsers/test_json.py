@@ -23,13 +23,13 @@ def test_json_parser():
     parser.open(source, encoding, loader)
     assert not parser.closed
 
-    assert list(parser.items) == [
-        (('id', 'name'), (1, 'english')),
-        (('id', 'name'), (2, '中国人'))]
+    assert list(parser.extended_rows) == [
+        (0, ('id', 'name'), (1, 'english')),
+        (1, ('id', 'name'), (2, '中国人'))]
 
-    assert len(list(parser.items)) == 0
+    assert len(list(parser.extended_rows)) == 0
     parser.reset()
-    assert len(list(parser.items)) == 2
+    assert len(list(parser.extended_rows)) == 2
 
     parser.close()
     assert parser.closed

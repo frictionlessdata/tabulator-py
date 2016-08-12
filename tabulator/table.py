@@ -78,7 +78,8 @@ class Table(object):
         # Open parser, create iterator
         if self.closed:
             self.__parser.open(self.__source, self.__encoding, self.__loader)
-            self.__iterator = Iterator(self.__parser.items, self.__processors)
+            self.__iterator = Iterator(
+                self.__parser.extended_rows, self.__processors)
 
         return self
 
@@ -100,7 +101,8 @@ class Table(object):
 
         # Reset parser, recreate iterator
         self.__parser.reset()
-        self.__iterator = Iterator(self.__parser.items, self.__processors)
+        self.__iterator = Iterator(
+            self.__parser.extended_rows, self.__processors)
 
     @property
     def headers(self):
@@ -124,11 +126,6 @@ class Table(object):
         # logic will be moved here
         self.__keyed = keyed
         return self
-
-    def readrow(self):
-        """Return the next row from the table.
-        """
-        return next(self)
 
     def read(self, limit=None):
         """Return full table with row limit.

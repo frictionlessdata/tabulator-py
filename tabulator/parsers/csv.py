@@ -21,10 +21,10 @@ class CSVParser(api.Parser):
     # Public
 
     def __init__(self, **options):
+        self.__extended_rows = None
         self.__options = options
         self.__loader = None
         self.__chars = None
-        self.__items = None
 
     @property
     def closed(self):
@@ -42,30 +42,30 @@ class CSVParser(api.Parser):
 
     def reset(self):
         helpers.reset_stream(self.__chars)
-        self.__items = self.__emit_items()
+        self.__extended_rows = self.__iter_extended_rows()
 
     @property
-    def items(self):
-        return self.__items
+    def extended_rows(self):
+        return self.__extended_rows
 
     # Private
 
-    def __emit_items(self):
+    def __iter_extended_rows(self):
 
         # For PY2 encode/decode
         if six.PY2:
             # Reader requires utf-8 encoded stream
             bytes = iterencode(self.__chars, 'utf-8')
             items = csv.reader(bytes, **self.__options)
-            for item in items:
+            for index, item in enumerate(items):
                 values = []
                 for value in item:
                     value = value.decode('utf-8')
                     values.append(value)
-                yield (None, tuple(values))
+                yield (index, None, tuple(values))
 
         # For PY3 use chars
         else:
             items = csv.reader(self.__chars, **self.__options)
-            for item in items:
-                yield (None, tuple(item))
+            for index, item in enumerate(items):
+                yield (index, None, tuple(item))

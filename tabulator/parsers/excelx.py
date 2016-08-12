@@ -21,7 +21,7 @@ class ExcelxParser(api.Parser):
     def __init__(self, sheet_index=0):
         self.__sheet_index = sheet_index
         self.__bytes = None
-        self.__items = None
+        self.__extended_rows = None
 
     @property
     def closed(self):
@@ -41,14 +41,14 @@ class ExcelxParser(api.Parser):
 
     def reset(self):
         helpers.reset_stream(self.__bytes)
-        self.__items = self.__emit_items()
+        self.__extended_rows = self.__iter_extended_rows()
 
     @property
-    def items(self):
-        return self.__items
+    def extended_rows(self):
+        return self.__extended_rows
 
     # Private
 
-    def __emit_items(self):
-        for row in self.__sheet.rows:
-            yield (None, tuple(cell.value for cell in row))
+    def __iter_extended_rows(self):
+        for index, row in enumerate(self.__sheet.rows):
+            yield (index, None, tuple(cell.value for cell in row))
