@@ -22,10 +22,10 @@ class TSVParser(api.Parser):
     # Public
 
     def __init__(self, **options):
+        self.__extended_rows = None
         self.__options = options
         self.__loader = None
         self.__chars = None
-        self.__items = None
 
     @property
     def closed(self):
@@ -43,15 +43,15 @@ class TSVParser(api.Parser):
 
     def reset(self):
         helpers.reset_stream(self.__chars)
-        self.__items = self.__emit_items()
+        self.__extended_rows = self.__iter_extended_rows()
 
     @property
-    def items(self):
-        return self.__items
+    def extended_rows(self):
+        return self.__extended_rows
 
     # Private
 
-    def __emit_items(self):
+    def __iter_extended_rows(self):
         items = tsv.un(self.__chars)
-        for item in items:
-            yield (None, tuple(item))
+        for index, item in enumerate(items):
+            yield (index, None, tuple(item))

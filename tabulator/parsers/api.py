@@ -65,14 +65,13 @@ class Parser(object):
 
     @property
     @abstractmethod
-    def items(self):
-        """Items generator.
+    def extended_rows(self):
+        """iterator: Extended rows.
 
-        Emit from parsed underlaying stream
-        keys, values pairs.
+        Extended rows iterator from parsed underlaying stream.
 
         Yields:
-            (keys, values) (tuple): keys, values pairs
+            (index, headers, values) (tuple): extended row
 
         """
         pass  # pragma: no cover

@@ -23,15 +23,15 @@ def test_tsv_parser():
     parser.open(source, encoding, loader)
     assert not parser.closed
 
-    assert list(parser.items) == [
-        (None, ('id', 'name')),
-        (None, ('1', 'english')),
-        (None, ('2', '中国人')),
-        (None, ('3', None))]
+    assert list(parser.extended_rows) == [
+        (0, None, ('id', 'name')),
+        (1, None, ('1', 'english')),
+        (2, None, ('2', '中国人')),
+        (3, None, ('3', None))]
 
-    assert len(list(parser.items)) == 0
+    assert len(list(parser.extended_rows)) == 0
     parser.reset()
-    assert len(list(parser.items)) == 4
+    assert len(list(parser.extended_rows)) == 4
 
     parser.close()
     assert parser.closed

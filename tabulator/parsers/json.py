@@ -19,9 +19,9 @@ class JSONParser(api.Parser):
     # Public
 
     def __init__(self, path=None):
+        self.__extended_rows = None
         self.__path = path
         self.__chars = None
-        self.__items = None
 
     @property
     def closed(self):
@@ -39,29 +39,29 @@ class JSONParser(api.Parser):
 
     def reset(self):
         helpers.reset_stream(self.__chars)
-        self.__items = self.__emit_items()
+        self.__extended_rows = self.__iter_extended_rows()
 
     @property
-    def items(self):
-        return self.__items
+    def extended_rows(self):
+        return self.__extended_rows
 
     # Private
 
-    def __emit_items(self):
+    def __iter_extended_rows(self):
         prefix = 'item'
         if self.__path is not None:
             prefix = '%s.item' % self.__path
         items = ijson.items(self.__chars, prefix)
-        for item in items:
+        for index, item in enumerate(items):
             if isinstance(item, (tuple, list)):
-                yield (None, tuple(item))
+                yield (index, None, tuple(item))
             elif isinstance(item, dict):
                 keys = []
                 values = []
                 for key in sorted(item.keys()):
                     keys.append(key)
                     values.append(item[key])
-                yield (tuple(keys), tuple(values))
+                yield (index, tuple(keys), tuple(values))
             else:
                 message = 'JSON item has to be list or dict'
                 raise errors.Error(message)

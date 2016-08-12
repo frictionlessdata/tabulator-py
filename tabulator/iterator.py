@@ -18,8 +18,8 @@ class Iterator(object):
 
     # Public
 
-    def __init__(self, items, processors):
-        self.__items = items
+    def __init__(self, extended_rows, processors):
+        self.__extended_rows = extended_rows
         self.__processors = processors
         self.__index = None
         self.__count = 0
@@ -57,9 +57,9 @@ class Iterator(object):
         self.__is_stop = False
         self.__is_skip = False
 
-        # Get next keys, values from items
+        # Get next keys, values from extended_rows
         try:
-            self.__keys, self.__values = next(self.__items)
+            _, self.__keys, self.__values = next(self.__extended_rows)
         except StopIteration:
             raise
         except Exception as exception:
