@@ -99,7 +99,7 @@ class Table(object):
 
         """
         extended_rows = self.__parser.extended_rows
-        for middleware in reversed(self.__post_parse):
+        for middleware in self.__post_parse:
             extended_rows = middleware(extended_rows)
         for number, headers, row in extended_rows:
             if headers is None:

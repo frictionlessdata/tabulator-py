@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import os
 import re
+import ast
 import six
 from functools import partial
 from six.moves.urllib.parse import urlparse
@@ -103,9 +104,9 @@ def convert_row(row):
     result = []
     for value in row:
         try:
-            if isinstance(value, str):
+            if isinstance(value, six.string_types):
                 value = ast.literal_eval(value)
-        except Exception:
+        except Exception as exception:
             pass
         result.append(value)
     return result

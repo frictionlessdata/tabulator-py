@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import io
 import sys
 import pytest
-from tabulator import topen, parsers
+from tabulator import topen, parsers, middlewares
 
 
 # Constants
@@ -307,3 +307,20 @@ def test_reset():
     assert contents1 == [['1', 'english'], ['2', '中国人']]
     assert headers1 == headers2
     assert contents1 == contents2
+
+
+# Tests [middlewares]
+
+
+def test_middleware_chain():
+
+    # Get table
+    source = [['id', 'name'], ['#1', 'english'], [], ['2', '中国人']]
+    table = topen(source, headers='row1', post_parse=[
+        middlewares.skip_comments,
+        middlewares.skip_blank,
+        middlewares.convert])
+
+    # Make assertions
+    assert table.headers == ['id', 'name']
+    assert table.read() == [[2, '中国人']]
