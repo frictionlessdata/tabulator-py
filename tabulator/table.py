@@ -125,9 +125,9 @@ class Table(object):
         result = []
         rows = self.iter(keyed=keyed, extended=extended)
         for count, row in enumerate(rows, start=1):
+            result.append(row)
             if count == limit:
                 break
-            result.append(row)
         return result
 
     # Private
