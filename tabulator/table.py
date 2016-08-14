@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import six
 from .iterator import Iterator
 from . import errors
 
@@ -17,6 +18,7 @@ class Table(object):
 
     Args:
         source (str): table source
+        headers (list/str): headers list/pointer
         encoding (str): encoding of source
         loader (loaders.API): table loader
         parser (parsers.API): table parser
@@ -25,15 +27,13 @@ class Table(object):
 
     # Public
 
-    def __init__(self, source, encoding, loader, parser):
+    def __init__(self, source, headers, encoding, loader, parser):
         self.__source = source
+        self.__headers = headers
         self.__encoding = encoding
         self.__loader = loader
         self.__parser = parser
-        self.__processors = []
-        self.__iterator = None
-        self.__headers = None
-        self.__keyed = False
+        self.__extracted_headers = None
 
     def __enter__(self):
         """Enter context manager by opening table.
@@ -47,119 +47,97 @@ class Table(object):
         self.close()
 
     def __iter__(self):
-        return self
-
-    def __next__(self):
-
-        # Check not closed
-        self.__require_not_closed()
-
-        # Get the next row
-        self.__iterator.__next__()
-        if self.__keyed:
-            if self.__iterator.headers is None:
-                raise ValueError('Headers are required for keyed output')
-            row = dict(zip(self.__iterator.headers, self.__iterator.values))
-        else:
-            row = tuple(self.__iterator.values)
-
-        return row
+        """Return rows iterator.
+        """
+        return self.iter()
 
     @property
     def closed(self):
         """Return true if table is closed.
         """
-        return self.__parser.closed or self.__iterator is None
+        return self.__parser.closed
 
     def open(self):
         """Open table to iterate over it.
         """
-
-        # Open parser, create iterator
-        if self.closed:
-            self.__parser.open(self.__source, self.__encoding, self.__loader)
-            self.__iterator = Iterator(
-                self.__parser.extended_rows, self.__processors)
-
+        # Here could be moved detect_encoding and detect_html
+        # We could cache rows for detections and full headers support
+        self.__parser.open(self.__source, self.__encoding, self.__loader)
+        self.__extract_headers()
         return self
 
     def close(self):
         """Close table by closing underlaying stream.
         """
-
-        # Close parser, remove iterator
-        if not self.closed:
-            self.__parser.close()
-            self.__iterator = None
+        self.__parser.close()
 
     def reset(self):
         """Reset table pointer to the first row.
         """
-
-        # Check not closed
-        self.__require_not_closed()
-
-        # Reset parser, recreate iterator
         self.__parser.reset()
-        self.__iterator = Iterator(
-            self.__parser.extended_rows, self.__processors)
+        self.__extract_headers()
 
     @property
     def headers(self):
         """Return table headers.
+
+        If source is keyed and headers are not provided by user
+        this property will be None because for keyed sources
+        headers could differ across rows.
+
         """
+        return self.__extracted_headers
 
-        # Retrieve headers
-        if self.__iterator.count == 0:
-            self.__iterator.__next__(lookahead=True)
-
-        return self.__iterator.headers
-
-    def iter(self, keyed=False):
+    def iter(self, keyed=False, extended=False):
         """Return rows iterator.
 
         Args:
-            keyed (bool): if true return keyed rows iterator
+            keyed (bool): yield keyed rows
+            extended (bool): yield extended rows
+
+        Yields:
+            mixed[]/mixed{}: row/keyed row/extended row
 
         """
-        # Temporal sulution untile main iter
-        # logic will be moved here
-        self.__keyed = keyed
-        return self
+        for number, headers, row in self.__parser.extended_rows:
+            if headers is None:
+                headers = self.headers
+            if extended:
+                yield (number, headers, row)
+            elif keyed:
+                yield dict(zip(headers, row))
+            else:
+                yield row
 
-    def read(self, limit=None):
-        """Return full table with row limit.
-        """
-
-        # Collect rows
-        rows = []
-        for count, row in enumerate(self, start=1):
-            if limit is not None:
-                if count > limit:
-                    break
-            rows.append(row)
-
-        return rows
-
-    def add_processor(self, processor):
-        """Add processor to pipeline.
+    def read(self, keyed=False, extended=False, limit=None):
+        """Return table rows with count limit.
 
         Args:
-            processor (processors.API): processor to add to pipeline
+            keyed (bool): return keyed rows
+            extended (bool): return extended rows
+            limit (int): rows count limit
 
+        Returns:
+            list: rows/keyed rows/extended rows
         """
-        self.__processors.append(processor)
+        result = []
+        rows = self.iter(keyed=keyed, extended=extended)
+        for count, row in enumerate(rows, start=1):
+            if count == limit:
+                break
+            result.append(row)
+        return result
 
     # Private
 
-    def __require_not_closed(self):
-
-        # Raise error
-        if self.closed:
-            message = (
-               'Table have to be opened by `table.open()` before '
-               'iteration interface will be available.')
-            raise errors.Error(message)
-
-    # Python2 support
-    next = __next__
+    def __extract_headers(self):
+        # There could be a cleaner way to work with headers
+        # But extraction def should be on open and reset
+        self.__extracted_headers = self.__headers
+        # We've got headers pointer like `row1` (validate)
+        if isinstance(self.__extracted_headers, six.string_types):
+            pointer = int(self.__extracted_headers.replace('row', ''))
+            for number, headers, row in self.__parser.extended_rows:
+                if number == pointer:
+                    self.__extracted_headers = row
+                    break

@@ -227,7 +227,7 @@ def test_native_keyed():
 def test_headers():
 
     # Get table
-    table = topen('data/table.csv', extract_headers=True)
+    table = topen('data/table.csv', headers='row1')
 
     # Make assertions
     assert table.headers == ('id', 'name')
@@ -237,7 +237,7 @@ def test_headers():
 
 
 # BACKWARD-COMPATIBILITY (before v0.5)
-def test_headers():
+def test_headers_with_headers():
 
     # Get table
     table = topen('data/table.csv', with_headers=True)
@@ -249,11 +249,11 @@ def test_headers():
         {'id': '2', 'name': '中国人'}]
 
 
-def test_headers_via_processors_param():
+def test_headers_native():
 
-    # Get results
-    table = topen('data/table.csv', extract_headers=True,
-        processors=[processors.Headers()])
+    # Get table
+    source = [[], ['id', 'name'], ['1', 'english'], ('2', '中国人')]
+    table = topen(source, headers='row2')
 
     # Make assertions
     assert table.headers == ('id', 'name')
@@ -262,69 +262,32 @@ def test_headers_via_processors_param():
         {'id': '2', 'name': '中国人'}]
 
 
-def test_headers_json():
+def test_headers_json_keyed():
 
     # Get table
     source = ('text://['
         '{"id": 1, "name": "english"},'
-        '{"id": 2, "value": "中国人"}]')
-    table = topen(source, extract_headers=True, format='json')
+        '{"id": 2, "name": "中国人"}]')
+    table = topen(source, format='json')
 
     # Make assertions
-    assert table.headers == ('id', 'name')
+    assert table.headers == None
     assert list(table.iter(keyed=True)) == [
         {'id': 1, 'name': 'english'},
         {'id': 2, 'name': '中国人'}]
 
 
-def test_headers_native():
+def test_headers_native_keyed():
 
     # Get table
     source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
-    table = topen(source, extract_headers=True)
+    table = topen(source)
 
     # Make assertions
-    assert table.headers == ('id', 'name')
-    assert table.read() == [('1', 'english'), ('2', '中国人')]
-
-
-def test_headers_iter_keyed():
-
-    # Get table
-    source = [['id', 'name'], ['1', 'english'], ('2', '中国人')]
-    table = topen(source, extract_headers=True)
-
-    # Make assertions
-    assert table.headers == ('id', 'name')
+    assert table.headers == None
     assert list(table.iter(keyed=True)) == [
         {'id': '1', 'name': 'english'},
         {'id': '2', 'name': '中国人'}]
-
-
-# It works for Python 2 but values convertion differs
-@pytest.mark.skipif(sys.version_info < (3,3), reason='requires python 3.3')
-def test_convert():
-
-    # Get table
-    table = topen('data/table.csv',
-        extract_headers=True, processors=[processors.Convert()])
-
-    # Make assertions
-    assert table.headers == ('id', 'name')
-    assert table.read() == [(1, 'english'), (2, '中国人')]
-
-
-def test_convert_custom():
-
-    # Get table
-    def converter(values):
-        return [float(values[0]), values[1]]
-    table = topen('data/table.csv',
-        extract_headers=True, processors=[processors.Convert(converter)])
-
-    # Make assertions
-    assert table.headers == ('id', 'name')
-    assert table.read() == [(1.0, 'english'), (2.0, '中国人')]
 
 
 # Tests [reset]
@@ -332,7 +295,7 @@ def test_convert_custom():
 def test_reset():
 
     # Get results
-    with topen('data/table.csv', extract_headers=True) as table:
+    with topen('data/table.csv', headers='row1') as table:
         headers1 = table.headers
         contents1 = table.read()
         table.reset()

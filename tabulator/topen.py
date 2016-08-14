@@ -15,13 +15,12 @@ from . import helpers
 # Module API
 
 def topen(source,
+          headers=None,
           scheme=None,
           format=None,
           encoding=None,
           loader_options=None,
           parser_options=None,
-          extract_headers=False,
-          processors=None,
           # BACKWARD-COMPATIBILITY (before v0.5)
           loader_class=None,
           parser_class=None,
@@ -30,6 +29,10 @@ def topen(source,
 
     Args:
         source (str): table source
+        headers (list/str):
+            headers list or pointer:
+                - list of headers
+                - row pointer like `row1` to extract headers
         scheme (str):
             scheme of source:
                 - file (default)
@@ -63,8 +66,6 @@ def topen(source,
             parser options:
                 `constructor`: constructor returning `parsers.API` instance
                 <backend options>
-        extract_headers (bool): extract table headers
-        processors (list): processors to add to the pipeline
 
     Returns:
         table (Table): opened table instance
@@ -81,7 +82,8 @@ def topen(source,
         loader_options['constructor'] = loader_class
     if parser_class is not None:
         parser_options['constructor'] = parser_class
-    extract_headers = extract_headers or with_headers
+    if with_headers:
+        headers = 'row1'
 
     # Get loader
     loader_constructor = loader_options.pop('constructor', None)
@@ -106,17 +108,8 @@ def topen(source,
     parser = parser_constructor(**parser_options)
 
     # Initiate and open table
-    table = Table(source, encoding, loader=loader, parser=parser)
+    table = Table(source, headers, encoding, loader=loader, parser=parser)
     table.open()
-
-    # Add headers processor
-    if extract_headers:
-        table.add_processor(Headers())
-
-    # Add user processors
-    if processors is not None:
-        for processor in processors:
-            table.add_processor(processor)
 
     return table
 
