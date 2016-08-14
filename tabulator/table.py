@@ -25,12 +25,13 @@ class Table(object):
 
     # Public
 
-    def __init__(self, source, headers, encoding, loader, parser):
+    def __init__(self, source, headers, encoding, loader, parser, post_parse):
         self.__source = source
         self.__headers = headers
         self.__encoding = encoding
         self.__loader = loader
         self.__parser = parser
+        self.__post_parse = post_parse
         self.__extracted_headers = None
 
     def __enter__(self):
@@ -97,7 +98,10 @@ class Table(object):
             mixed[]/mixed{}: row/keyed row/extended row
 
         """
-        for number, headers, row in self.__parser.extended_rows:
+        extended_rows = self.__parser.extended_rows
+        for middleware in reversed(self.__post_parse):
+            extended_rows = middleware(extended_rows)
+        for number, headers, row in extended_rows:
             if headers is None:
                 headers = self.headers
             if extended:

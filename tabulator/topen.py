@@ -20,6 +20,7 @@ def topen(source,
           encoding=None,
           loader_options=None,
           parser_options=None,
+          post_parse=None,
           # BACKWARD-COMPATIBILITY (before v0.5)
           loader_class=None,
           parser_class=None,
@@ -65,6 +66,7 @@ def topen(source,
             parser options:
                 `constructor`: constructor returning `parsers.API` instance
                 <backend options>
+        post_parse (generator[]): post parse processing middlewares (hooks)
 
     Returns:
         table (Table): opened table instance
@@ -75,6 +77,8 @@ def topen(source,
         loader_options = {}
     if parser_options is None:
         parser_options = {}
+    if post_parse is None:
+        post_parse = []
 
     # BACKWARD-COMPATIBILITY (before v0.5)
     if loader_class is not None:
@@ -107,7 +111,8 @@ def topen(source,
     parser = parser_constructor(**parser_options)
 
     # Initiate and open table
-    table = Table(source, headers, encoding, loader=loader, parser=parser)
+    table = Table(source, headers, encoding,
+        loader=loader, parser=parser, post_parse=post_parse)
     table.open()
 
     return table
