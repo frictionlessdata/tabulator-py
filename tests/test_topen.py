@@ -24,7 +24,7 @@ def test_file_csv():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 def test_file_csv_parser_options():
@@ -35,7 +35,7 @@ def test_file_csv_parser_options():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 # BACKWARD-COMPATIBILITY (before v0.5)
@@ -46,7 +46,7 @@ def test_file_csv_parser_class():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 def test_file_json_dicts():
@@ -56,7 +56,7 @@ def test_file_json_dicts():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [(1, 'english'), (2, '中国人')]
+    assert table.read() == [[1, 'english'], [2, '中国人']]
 
 
 def test_file_json_lists():
@@ -66,7 +66,7 @@ def test_file_json_lists():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), (1, 'english'), (2, '中国人')]
+    assert table.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
 def test_file_xls():
@@ -76,7 +76,7 @@ def test_file_xls():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
+    assert table.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
 def test_stream_csv():
@@ -87,7 +87,7 @@ def test_stream_csv():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 def test_stream_xlsx():
@@ -98,7 +98,7 @@ def test_stream_xlsx():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
+    assert table.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
 def test_text_csv():
@@ -109,7 +109,7 @@ def test_text_csv():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 def test_text_json_dicts():
@@ -120,7 +120,7 @@ def test_text_json_dicts():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [(1, 'english'), (2, '中国人')]
+    assert table.read() == [[1, 'english'], [2, '中国人']]
 
 
 def test_text_json_lists():
@@ -131,7 +131,7 @@ def test_text_json_lists():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), (1, 'english'), (2, '中国人')]
+    assert table.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
 def test_web_csv():
@@ -141,7 +141,7 @@ def test_web_csv():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 def test_web_json_dicts():
@@ -151,7 +151,7 @@ def test_web_json_dicts():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [(1, 'english'), (2, '中国人')]
+    assert table.read() == [[1, 'english'], [2, '中国人']]
 
 
 def test_web_json_lists():
@@ -161,7 +161,7 @@ def test_web_json_lists():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), (1, 'english'), (2, '中国人')]
+    assert table.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
 def test_web_excel():
@@ -171,29 +171,29 @@ def test_web_excel():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), (1.0, 'english'), (2.0, '中国人')]
+    assert table.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
 def test_native():
 
     # Get table
-    source = [['id', 'name'], ['1', 'english'], ('2', '中国人')]
+    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
     table = topen(source)
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 def test_native_iterator():
 
     # Get table
-    source = iter([['id', 'name'], ['1', 'english'], ('2', '中国人')])
+    source = iter([['id', 'name'], ['1', 'english'], ['2', '中国人']])
     table = topen(source)
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 def test_native_generator():
@@ -202,13 +202,13 @@ def test_native_generator():
     def generator():
         yield ['id', 'name']
         yield ['1', 'english']
-        yield ('2', '中国人')
+        yield ['2', '中国人']
     source = generator()
     table = topen(source)
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('id', 'name'), ('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 def test_native_keyed():
@@ -219,7 +219,7 @@ def test_native_keyed():
 
     # Make assertions
     assert table.headers is None
-    assert table.read() == [('1', 'english'), ('2', '中国人')]
+    assert table.read() == [['1', 'english'], ['2', '中国人']]
 
 
 # Tests [headers]
@@ -230,7 +230,7 @@ def test_headers():
     table = topen('data/table.csv', headers='row1')
 
     # Make assertions
-    assert table.headers == ('id', 'name')
+    assert table.headers == ['id', 'name']
     assert list(table.iter(keyed=True)) == [
         {'id': '1', 'name': 'english'},
         {'id': '2', 'name': '中国人'}]
@@ -243,7 +243,7 @@ def test_headers_with_headers_argument():
     table = topen('data/table.csv', with_headers=True)
 
     # Make assertions
-    assert table.headers == ('id', 'name')
+    assert table.headers == ['id', 'name']
     assert list(table.iter(keyed=True)) == [
         {'id': '1', 'name': 'english'},
         {'id': '2', 'name': '中国人'}]
@@ -252,14 +252,14 @@ def test_headers_with_headers_argument():
 def test_headers_native():
 
     # Get table
-    source = [[], ['id', 'name'], ['1', 'english'], ('2', '中国人')]
+    source = [[], ['id', 'name'], ['1', 'english'], ['2', '中国人']]
     table = topen(source, headers='row2')
 
     # Make assertions
-    assert table.headers == ('id', 'name')
+    assert table.headers == ['id', 'name']
     assert table.read(extended=True) == [
-        (3, ('id', 'name'), ('1', 'english')),
-        (4, ('id', 'name'), ('2', '中国人'))]
+        (3, ['id', 'name'], ['1', 'english']),
+        (4, ['id', 'name'], ['2', '中国人'])]
 
 
 def test_headers_json_keyed():
@@ -303,7 +303,7 @@ def test_reset():
         contents2 = table.read()
 
     # Make assertions
-    assert headers1 == ('id', 'name')
-    assert contents1 == [('1', 'english'), ('2', '中国人')]
+    assert headers1 == ['id', 'name']
+    assert contents1 == [['1', 'english'], ['2', '中国人']]
     assert headers1 == headers2
     assert contents1 == contents2

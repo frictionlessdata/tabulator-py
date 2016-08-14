@@ -53,4 +53,4 @@ class TSVParser(api.Parser):
     def __iter_extended_rows(self):
         items = tsv.un(self.__chars)
         for number, item in enumerate(items, start=1):
-            yield (number, None, tuple(item))
+            yield (number, None, list(item))

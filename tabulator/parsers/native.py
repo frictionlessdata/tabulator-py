@@ -46,14 +46,14 @@ class NativeParser(api.Parser):
         items = self.__source
         for number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
-                yield (number, None, tuple(item))
+                yield (number, None, list(item))
             elif isinstance(item, dict):
                 keys = []
                 values = []
                 for key in sorted(item.keys()):
                     keys.append(key)
                     values.append(item[key])
-                yield (number, tuple(keys), tuple(values))
+                yield (number, list(keys), list(values))
             else:
                 message = 'Native item has to be tuple, list or dict'
                 raise exceptions.TabulatorException(message)

@@ -50,4 +50,4 @@ class ExcelxParser(api.Parser):
 
     def __iter_extended_rows(self):
         for number, row in enumerate(self.__sheet.rows, start=1):
-            yield (number, None, tuple(cell.value for cell in row))
+            yield (number, None, list(cell.value for cell in row))

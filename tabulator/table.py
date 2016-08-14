@@ -77,7 +77,7 @@ class Table(object):
 
     @property
     def headers(self):
-        """Return table headers.
+        """list: table headers
 
         If source is keyed and headers are not provided by user
         this property will be None because for keyed sources

@@ -52,4 +52,4 @@ class ExcelParser(api.Parser):
 
     def __iter_extended_rows(self):
         for number in range(1, self.__sheet.nrows+1):
-            yield (number, None, tuple(self.__sheet.row_values(number - 1)))
+            yield (number, None, list(self.__sheet.row_values(number - 1)))

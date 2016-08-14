@@ -24,10 +24,10 @@ def test_tsv_parser():
     assert not parser.closed
 
     assert list(parser.extended_rows) == [
-        (1, None, ('id', 'name')),
-        (2, None, ('1', 'english')),
-        (3, None, ('2', '中国人')),
-        (4, None, ('3', None))]
+        (1, None, ['id', 'name']),
+        (2, None, ['1', 'english']),
+        (3, None, ['2', '中国人']),
+        (4, None, ['3', None])]
 
     assert len(list(parser.extended_rows)) == 0
     parser.reset()

@@ -54,14 +54,14 @@ class JSONParser(api.Parser):
         items = ijson.items(self.__chars, prefix)
         for number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
-                yield (number, None, tuple(item))
+                yield (number, None, list(item))
             elif isinstance(item, dict):
                 keys = []
                 values = []
                 for key in sorted(item.keys()):
                     keys.append(key)
                     values.append(item[key])
-                yield (number, tuple(keys), tuple(values))
+                yield (number, list(keys), list(values))
             else:
                 message = 'JSON item has to be list or dict'
                 raise exception.TabulatorException(message)

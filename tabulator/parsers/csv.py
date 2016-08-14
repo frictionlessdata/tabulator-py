@@ -61,10 +61,10 @@ class CSVParser(api.Parser):
                 for value in item:
                     value = value.decode('utf-8')
                     values.append(value)
-                yield (number, None, tuple(values))
+                yield (number, None, list(values))
 
         # For PY3 use chars
         else:
             items = csv.reader(self.__chars, **self.__options)
             for number, item in enumerate(items, start=1):
-                yield (number, None, tuple(item))
+                yield (number, None, list(item))
