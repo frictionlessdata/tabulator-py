@@ -111,7 +111,8 @@ def topen(source,
     parser = parser_constructor(**parser_options)
 
     # Initiate and open table
-    table = Table(source, headers, encoding,
+    table = Table(
+        source, headers, encoding,
         loader=loader, parser=parser, post_parse=post_parse)
     table.open()
 
