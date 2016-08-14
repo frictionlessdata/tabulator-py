@@ -98,12 +98,10 @@ class Table(object):
             mixed[]/mixed{}: row/keyed row/extended row
 
         """
-        extended_rows = self.__parser.extended_rows
+        extended_rows = self.__iter_exteneded_rows()
         for middleware in self.__post_parse:
             extended_rows = middleware(extended_rows)
         for number, headers, row in extended_rows:
-            if headers is None:
-                headers = self.headers
             if extended:
                 yield (number, headers, row)
             elif keyed:
@@ -143,3 +141,9 @@ class Table(object):
                 if number == pointer:
                     self.__extracted_headers = row
                     break
+
+    def __iter_exteneded_rows(self):
+        for number, headers, row in self.__parser.extended_rows:
+            if headers is None:
+                headers = self.headers
+            yield (number, headers, row)
