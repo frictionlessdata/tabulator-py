@@ -106,7 +106,7 @@ def convert_row(row):
         try:
             if isinstance(value, six.string_types):
                 value = ast.literal_eval(value)
-        except Exception as exception:
+        except Exception:
             pass
         result.append(value)
     return result
