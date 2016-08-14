@@ -12,8 +12,7 @@ from tabulator import topen, parsers, processors
 
 # Constants
 
-FPATH = 'data/%s'
-WPATH = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/data/%s'
+BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 
 # Tests [loaders/parsers]
@@ -21,7 +20,7 @@ WPATH = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/data/%s'
 def test_file_csv():
 
     # Get table
-    table = topen(FPATH % 'table.csv')
+    table = topen('data/table.csv')
 
     # Make assertions
     assert table.headers is None
@@ -31,7 +30,7 @@ def test_file_csv():
 def test_file_csv_parser_options():
 
     # Get table
-    table = topen(FPATH % 'table.csv',
+    table = topen('data/table.csv',
             parser_options={'constructor': parsers.CSV})
 
     # Make assertions
@@ -43,7 +42,7 @@ def test_file_csv_parser_options():
 def test_file_csv_parser_class():
 
     # Get table
-    table = topen(FPATH % 'table.csv', parser_class=parsers.CSV)
+    table = topen('data/table.csv', parser_class=parsers.CSV)
 
     # Make assertions
     assert table.headers is None
@@ -53,7 +52,7 @@ def test_file_csv_parser_class():
 def test_file_json_dicts():
 
     # Get table
-    table = topen(FPATH % 'table-dicts.json')
+    table = topen('data/table-dicts.json')
 
     # Make assertions
     assert table.headers is None
@@ -63,7 +62,7 @@ def test_file_json_dicts():
 def test_file_json_lists():
 
     # Get table
-    table = topen(FPATH % 'table-lists.json')
+    table = topen('data/table-lists.json')
 
     # Make assertions
     assert table.headers is None
@@ -73,7 +72,7 @@ def test_file_json_lists():
 def test_file_xls():
 
     # Get table
-    table = topen(FPATH % 'table.xls')
+    table = topen('data/table.xls')
 
     # Make assertions
     assert table.headers is None
@@ -83,7 +82,7 @@ def test_file_xls():
 def test_stream_csv():
 
     # Get table
-    source = io.open(FPATH % 'table.csv', mode='rb')
+    source = io.open('data/table.csv', mode='rb')
     table = topen(source, format='csv')
 
     # Make assertions
@@ -94,7 +93,7 @@ def test_stream_csv():
 def test_stream_xlsx():
 
     # Get table
-    source = io.open(FPATH % 'table.xlsx', mode='rb')
+    source = io.open('data/table.xlsx', mode='rb')
     table = topen(source, format='xlsx')
 
     # Make assertions
@@ -138,7 +137,7 @@ def test_text_json_lists():
 def test_web_csv():
 
     # Get table
-    table = topen(WPATH % 'table.csv')
+    table = topen(BASE_URL % 'data/table.csv')
 
     # Make assertions
     assert table.headers is None
@@ -148,7 +147,7 @@ def test_web_csv():
 def test_web_json_dicts():
 
     # Get table
-    table = topen(WPATH % 'table-dicts.json')
+    table = topen(BASE_URL % 'data/table-dicts.json')
 
     # Make assertions
     assert table.headers is None
@@ -158,7 +157,7 @@ def test_web_json_dicts():
 def test_web_json_lists():
 
     # Get table
-    table = topen(WPATH % 'table-lists.json')
+    table = topen(BASE_URL % 'data/table-lists.json')
 
     # Make assertions
     assert table.headers is None
@@ -168,7 +167,7 @@ def test_web_json_lists():
 def test_web_excel():
 
     # Get table
-    table = topen(WPATH % 'table.xls')
+    table = topen(BASE_URL % 'data/table.xls')
 
     # Make assertions
     assert table.headers is None
@@ -228,7 +227,7 @@ def test_native_keyed():
 def test_headers():
 
     # Get table
-    table = topen(FPATH % 'table.csv', extract_headers=True)
+    table = topen('data/table.csv', extract_headers=True)
 
     # Make assertions
     assert table.headers == ('id', 'name')
@@ -241,7 +240,7 @@ def test_headers():
 def test_headers():
 
     # Get table
-    table = topen(FPATH % 'table.csv', with_headers=True)
+    table = topen('data/table.csv', with_headers=True)
 
     # Make assertions
     assert table.headers == ('id', 'name')
@@ -253,7 +252,7 @@ def test_headers():
 def test_headers_via_processors_param():
 
     # Get results
-    table = topen(FPATH % 'table.csv', extract_headers=True,
+    table = topen('data/table.csv', extract_headers=True,
         processors=[processors.Headers()])
 
     # Make assertions
@@ -307,7 +306,7 @@ def test_headers_iter_keyed():
 def test_convert():
 
     # Get table
-    table = topen(FPATH % 'table.csv',
+    table = topen('data/table.csv',
         extract_headers=True, processors=[processors.Convert()])
 
     # Make assertions
@@ -320,7 +319,7 @@ def test_convert_custom():
     # Get table
     def converter(values):
         return [float(values[0]), values[1]]
-    table = topen(FPATH % 'table.csv',
+    table = topen('data/table.csv',
         extract_headers=True, processors=[processors.Convert(converter)])
 
     # Make assertions
@@ -333,7 +332,7 @@ def test_convert_custom():
 def test_reset():
 
     # Get results
-    with topen(FPATH % 'table.csv', extract_headers=True) as table:
+    with topen('data/table.csv', extract_headers=True) as table:
         headers1 = table.headers
         contents1 = table.read()
         table.reset()
