@@ -99,8 +99,8 @@ class Table(object):
 
         """
         extended_rows = self.__iter_exteneded_rows()
-        for middleware in self.__post_parse:
-            extended_rows = middleware(extended_rows)
+        for processor in self.__post_parse:
+            extended_rows = processor(extended_rows)
         for number, headers, row in extended_rows:
             if extended:
                 yield (number, headers, row)

@@ -66,7 +66,7 @@ def topen(source,
             parser options:
                 `constructor`: constructor returning `parsers.API` instance
                 <backend options>
-        post_parse (generator[]): post parse processing middlewares (hooks)
+        post_parse (generator[]): post parse processors (hooks)
 
     Returns:
         table (Table): opened table instance
