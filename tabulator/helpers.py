@@ -7,8 +7,9 @@ from __future__ import unicode_literals
 import os
 import re
 import six
-from chardet.universaldetector import UniversalDetector
+from functools import partial
 from six.moves.urllib.parse import urlparse
+from chardet.universaldetector import UniversalDetector
 from . import exceptions
 
 
@@ -94,3 +95,24 @@ def reset_stream(stream):
         except Exception:
             message = 'Stream is not seekable.'
             raise exceptions.TabulatorException(message)
+
+
+def convert_row(row):
+    """Convert row values to python objects.
+    """
+    result = []
+    for value in row:
+        try:
+            if isinstance(value, str):
+                value = ast.literal_eval(value)
+        except Exception:
+            pass
+        result.append(value)
+    return result
+
+
+def bindify(function):
+    """Add bind method to function.
+    """
+    function.bind = partial(partial, function)
+    return function

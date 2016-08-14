@@ -7,3 +7,4 @@ from __future__ import unicode_literals
 from .table import Table
 from .topen import topen
 from . import exceptions
+from . import middlewares
