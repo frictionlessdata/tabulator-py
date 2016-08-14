@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .. import errors
+from .. import exceptions
 from . import api
 
 
@@ -20,4 +20,5 @@ class NativeLoader(api.Loader):
         self.__options = options
 
     def load(self, source, encoding, mode):
-        raise errors.Error('NativeLoader doesn\'t support load method')
+        message = 'NativeLoader doesn\'t support load method'
+        raise exceptions.TabulatorException(message)

@@ -8,8 +8,8 @@ import io
 import six
 from requests.utils import requote_uri
 from six.moves.urllib.request import urlopen
-
-from .. import errors, helpers
+from .. import exceptions
+from .. import helpers
 from . import api
 
 
@@ -56,7 +56,7 @@ class WebLoader(api.Loader):
             return chars
         else:
             message = 'Mode %s is not supported' % mode
-            raise errors.Error(message)
+            raise exceptions.TabulatorException(message)
 
 
 # Internal

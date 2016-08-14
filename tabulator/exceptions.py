@@ -7,10 +7,7 @@ from __future__ import unicode_literals
 
 # Module API
 
-class Error(Exception):
-    """Base Tabulator error.
+class TabulatorException(Exception):
+    """Base Tabulator exception.
     """
-
-    # Public
-
-    pass  # pragma: no cover
+    pass

@@ -5,8 +5,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
-
-from .. import errors, helpers
+from .. import exceptions
+from .. import helpers
 from . import api
 
 
@@ -43,4 +43,4 @@ class FileLoader(api.Loader):
             return chars
         else:
             message = 'Mode %s is not supported' % mode
-            raise errors.Error(message)
+            raise exceptions.TabulatorException(message)

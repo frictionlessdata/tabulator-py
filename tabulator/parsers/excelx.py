@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import openpyxl
-
 from .. import helpers
 from . import api
 

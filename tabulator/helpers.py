@@ -9,7 +9,7 @@ import re
 import six
 from chardet.universaldetector import UniversalDetector
 from six.moves.urllib.parse import urlparse
-from . import errors
+from . import exceptions
 
 
 # Module API
@@ -91,7 +91,6 @@ def reset_stream(stream):
     if position != 0:
         try:
             stream.seek(0)
-        except Exception as e:
-            print(e)
+        except Exception:
             message = 'Stream is not seekable.'
-            raise errors.Error(message)
+            raise exceptions.TabulatorException(message)

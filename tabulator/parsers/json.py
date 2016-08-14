@@ -5,8 +5,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import ijson
-
-from .. import helpers, errors
+from .. import exceptions
+from .. import helpers
 from . import api
 
 
@@ -64,4 +64,4 @@ class JSONParser(api.Parser):
                 yield (number, tuple(keys), tuple(values))
             else:
                 message = 'JSON item has to be list or dict'
-                raise errors.Error(message)
+                raise exception.TabulatorException(message)

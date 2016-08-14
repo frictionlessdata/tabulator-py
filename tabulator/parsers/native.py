@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .. import errors
+from .. import exceptions
 from . import api
 
 
@@ -55,4 +55,5 @@ class NativeParser(api.Parser):
                     values.append(item[key])
                 yield (number, tuple(keys), tuple(values))
             else:
-                raise errors.Error('Native item has to be tuple, list or dict')
+                message = 'Native item has to be tuple, list or dict'
+                raise exceptions.TabulatorException(message)

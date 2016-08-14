@@ -5,10 +5,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .table import Table
+from . import exceptions
+from . import helpers
 from . import loaders
 from . import parsers
-from . import errors
-from . import helpers
 
 
 # Module API
@@ -91,7 +91,7 @@ def topen(source,
             scheme = helpers.detect_scheme(source) or _DEFAULT_SCHEME
         if scheme not in _LOADERS:
             message = 'Scheme "%s" is not supported' % scheme
-            raise errors.Error(message)
+            raise exceptions.TabulatorException(message)
         loader_constructor = _LOADERS[scheme]
     loader = loader_constructor(**loader_options)
 
@@ -102,7 +102,7 @@ def topen(source,
             format = helpers.detect_format(source)
         if format not in _PARSERS:
             message = 'Format "%s" is not supported' % format
-            raise errors.Error(message)
+            raise exceptions.TabulatorException(message)
         parser_constructor = _PARSERS[format]
     parser = parser_constructor(**parser_options)
 
