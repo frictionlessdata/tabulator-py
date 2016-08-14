@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .table import Table
-from .processors import Headers
 from . import loaders
 from . import parsers
 from . import errors

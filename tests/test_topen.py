@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import io
 import sys
 import pytest
-from tabulator import topen, parsers, processors
+from tabulator import topen, parsers
 
 
 # Constants
