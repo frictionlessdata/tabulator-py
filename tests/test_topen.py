@@ -222,7 +222,7 @@ def test_native_keyed():
     assert table.read() == [('1', 'english'), ('2', '中国人')]
 
 
-# Tests [processors]
+# Tests [headers]
 
 def test_headers():
 
@@ -237,7 +237,7 @@ def test_headers():
 
 
 # BACKWARD-COMPATIBILITY (before v0.5)
-def test_headers_with_headers():
+def test_headers_with_headers_argument():
 
     # Get table
     table = topen('data/table.csv', with_headers=True)
@@ -257,9 +257,9 @@ def test_headers_native():
 
     # Make assertions
     assert table.headers == ('id', 'name')
-    assert list(table.iter(keyed=True)) == [
-        {'id': '1', 'name': 'english'},
-        {'id': '2', 'name': '中国人'}]
+    assert table.read(extended=True) == [
+        (3, ('id', 'name'), ('1', 'english')),
+        (4, ('id', 'name'), ('2', '中国人'))]
 
 
 def test_headers_json_keyed():
