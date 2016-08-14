@@ -71,7 +71,7 @@ class Parser(object):
         Extended rows iterator from parsed underlaying stream.
 
         Yields:
-            (index, headers, values) (tuple): extended row
+            (number, headers, values) (tuple): extended row
 
         """
         pass  # pragma: no cover

@@ -24,9 +24,9 @@ def test_excel_parser():
     assert not parser.closed
 
     assert list(parser.extended_rows) == [
-        (0, None, ('id', 'name')),
-        (1, None, (1.0, 'english')),
-        (2, None, (2.0, '中国人'))]
+        (1, None, ('id', 'name')),
+        (2, None, (1.0, 'english')),
+        (3, None, (2.0, '中国人'))]
 
     assert len(list(parser.extended_rows)) == 0
     parser.reset()

@@ -44,15 +44,15 @@ class NativeParser(api.Parser):
 
     def __iter_extended_rows(self):
         items = self.__source
-        for index, item in enumerate(items):
+        for number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
-                yield (index, None, tuple(item))
+                yield (number, None, tuple(item))
             elif isinstance(item, dict):
                 keys = []
                 values = []
                 for key in sorted(item.keys()):
                     keys.append(key)
                     values.append(item[key])
-                yield (index, tuple(keys), tuple(values))
+                yield (number, tuple(keys), tuple(values))
             else:
                 raise errors.Error('Native item has to be tuple, list or dict')
