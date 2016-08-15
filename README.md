@@ -17,14 +17,14 @@ To get started (under development):
 $ pip install tabulator
 ```
 
-### Simple interface
+### Quick Start
 
 Fast access to the table with `topen` (stands for `table open`) function:
 
 ```python
 from tabulator import topen, processors
 
-with topen('path.csv', extract_headers=True) as table:
+with topen('path.csv', headers='row1') as table:
     for row in table:
         print(row)  # will print row tuple
 ```
@@ -37,111 +37,54 @@ For the most use cases `topen` function is enough. It takes the
 ```
 and uses corresponding `Loader` and `Parser` to open and start to iterate
 over the table. Also user can pass `scheme` and `format` explicitly
-as function arguments. The last `topen` argument is `encoding` - user can force Tabulator
-to use encoding of choice to open the table.
+as function arguments. User can force Tabulator to use encoding of choice
+to open the table passing `encoding` argument.
 
 Function `topen` returns `Table` instance. We use context manager
 to call `table.open()` on enter and `table.close()` when we exit:
 - table can be iterated like file-like object returning row by row
+- table can be used for manual iterating with `table.iter(keye/extended=False)`
 - table can be read into memory using `read` function (return list or row tuples)
 with `limit` of output rows as parameter.
 - headers can be accessed via `headers` property
+- rows sample can be accessed via `samle` property
 - table pointer can be set to start via `reset` method.
 
-In the example above we use `processors.Headers` to extract headers
-from the table (via `extract_headers=True` shortcut). Processors is a powerfull
-Tabulator concept. Parsed data goes thru pipeline of processors to be updated before
-returning as table row.
-
-### Advanced interface
+### Advanced Usage
 
 To get full control over the process you can use more parameters.
-Below all parts of Tabulator are presented:
+Below the more expanded example is presented:
 
 ```python
-from tabulator import topen, processors, loaders, parsers
+from tabulator import topen, loaders, parsers, processors
 
-table = topen('path.csv', encoding='utf-8',
+def skip_odd_rows(extended_rows):
+    for number, headers, row in extended_rows:
+        if number % 2:
+            yield (number, headers, row)
+
+table = topen('path.csv', headers='row1', encoding='utf-8', sample_size=1000,
+        post_parse=[processors.skip_blank_rows, skip_odd_rows]
         loader_options={'constructor': loaders.File},
         parser_options={'constructor': parsers.CSV, delimeter': ',', quotechar: '|'})
-table.add_processor(processors.Headers(skip=1))
-headers = table.headers
-contents = table.read(limit=10)
-print(headers, contents)
+print(table.samle)  # will print sample
+print(table.headers)  # will print headers list
+print(table.read(limit=10))  # will print 10 rows
 table.reset()
 for keyed_row in table.iter(keyed=True):
     print keyed_row  # will print row dict
+for extended_row in table.iter(extended=True):
+    print extended_row  # will print (number, headers, row) list
 table.close()
 ```
 
-## Design Overview
+## Documentation
 
-Tabulator uses modular architecture to be fully extensible and flexible.
-It uses loosely coupled modules like `Loader`, `Parser` and `Processor`
-to provide clear data flow.
+See docstrings - https://github.com/frictionlessdata/tabulator-py/tree/master/tabulator
 
-![diagram](files/diagram.png)
+## Changelog
 
-## Tutorials
-
-###How to Write a Processor
-
-Processors is an essential Tabulator concept. Items emitted by loader-parser are processed by pipeline of processors added by user.
-
-On every iteration every processor gets an `iterator` instance in a `process` call to modify the iteration headers or values, call skip, stop etc. A processor doesn't have to return anything:
-
-```python
-from tabulator import processors
-
-class MyProcessor(processors.API):
-
-    def process(self, iterator):
-        # work with iterator
-
-    def handle(self, iterator):
-        # will be called on exception
-```
-
-Let's explore the iterator interface:
-
-```
-Iterator
-    + skip()
-    + stop()
-    + index
-    + count
-    + keys
-    + values [writable]
-    + headers [writable before any data is emitted]
-    + exception
-```
-
-Having this knowledge we can simply to write a processor to do the following things:
-
-- skip any odd items
-- process only 5 items
-- multiply by two the second column values
-
-```python
-from tabulator import processors
-
-class MyProcessor(processors.API):
-
-    def process(self, iterator):
-        # Skip
-        if iterator.index % 2 == 0:
-            iterator.skip()
-        # Stop
-        if iterator.index == 4:
-            iterator.stop()
-        # Multiply
-        values = list(iterator.values)
-        values[1] *= 2
-        iterator.values = tuple(values)
-
-    def handle(self, iterator):
-        # will be called on exception
-```
+See releases - https://github.com/frictionlessdata/tabulator-py/releases
 
 ## Contributing
 
