@@ -38,7 +38,7 @@ def test_file_csv_parser_options():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-# BACKWARD-COMPATIBILITY (before v0.5)
+# DEPRECATED [v0.5-v1)
 def test_file_csv_parser_class():
 
     # Get table
@@ -236,7 +236,7 @@ def test_headers():
         {'id': '2', 'name': '中国人'}]
 
 
-# BACKWARD-COMPATIBILITY (before v0.5)
+# DEPRECATED [v0.5-v1)
 def test_headers_with_headers_argument():
 
     # Get table

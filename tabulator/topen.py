@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import warnings
 from .table import Table
 from . import exceptions
 from . import helpers
@@ -21,7 +22,7 @@ def topen(source,
           loader_options=None,
           parser_options=None,
           post_parse=None,
-          # BACKWARD-COMPATIBILITY (before v0.5)
+          # DEPRECATED [v0.5-v1)
           loader_class=None,
           parser_class=None,
           with_headers=False,
@@ -81,12 +82,22 @@ def topen(source,
     if post_parse is None:
         post_parse = []
 
-    # BACKWARD-COMPATIBILITY (before v0.5)
+    # DEPRECATED [v0.5-v1)
     if loader_class is not None:
+        message = 'Argument "loaders_class" is deprecated [v0.5-v1)'
+        warnings.warn(message, UserWarning)
         loader_options['constructor'] = loader_class
     if parser_class is not None:
+        message = 'Argument "parser_class" is deprecated [v0.5-v1)'
+        warnings.warn(message, UserWarning)
         parser_options['constructor'] = parser_class
-    if with_headers or extract_headers:
+    if with_headers:
+        message = 'Argument "with_headers" is deprecated [v0.5-v1)'
+        warnings.warn(message, UserWarning)
+        headers = 'row1'
+    if extract_headers:
+        message = 'Argument "extract_headers" is deprecated [v0.5-v1)'
+        warnings.warn(message, UserWarning)
         headers = 'row1'
 
     # Get loader
