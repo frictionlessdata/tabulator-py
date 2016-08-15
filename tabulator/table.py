@@ -21,7 +21,7 @@ class Table(object):
     # Public
 
     def __init__(self, source, headers, encoding,
-            post_parse, sample_size, loader, parser):
+                 post_parse, sample_size, loader, parser):
 
         # Set attributes
         self.__source = source
@@ -186,7 +186,6 @@ class Table(object):
         # Remove headers from sample
         if not keyed_source:
             self.__sample = self.__sample[self.__headers_row:]
-
 
     def __iter_exteneded_rows(self):
 
