@@ -195,7 +195,7 @@ class Table(object):
                 headers = self.__headers_list
             yield (number, headers, row)
 
-        # Iter following from parser adding headers
+        # Iter following rows from parser adding headers
         for number, headers, row in self.__parser.extended_rows:
             if headers is None:
                 headers = self.__headers_list
