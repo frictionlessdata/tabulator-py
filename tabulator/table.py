@@ -48,13 +48,15 @@ class Table(object):
     def __enter__(self):
         """Enter context manager by opening table.
         """
-        self.open()
+        if self.closed:
+            self.open()
         return self
 
     def __exit__(self, type, value, traceback):
         """Exit context manager by closing table.
         """
-        self.close()
+        if not self.closed:
+            self.close()
 
     def __iter__(self):
         """Return rows iterator.

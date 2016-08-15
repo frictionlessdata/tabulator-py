@@ -261,6 +261,19 @@ def test_headers_with_headers_argument():
         {'id': '2', 'name': '中国人'}]
 
 
+def test_headers_stream_context_manager():
+
+    # Get source
+    source = io.open('data/table.csv', mode='rb')
+
+    # Make assertions
+    with topen(source, headers='row1', format='csv') as table:
+        assert table.headers == ['id', 'name']
+        assert table.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
 def test_headers_native():
 
     # Get table

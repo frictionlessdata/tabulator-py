@@ -58,11 +58,11 @@ with topen(source, headers='row1') as table:
 
 
 # print('\nLoad from stream scheme:')
-# source = io.open('data/table.csv', mode='rb')
-# with topen(source, headers='row1', format='csv') as table:
-    # print(table.headers)
-    # for row in table:
-        # print(row)
+source = io.open('data/table.csv', mode='rb')
+with topen(source, headers='row1', format='csv') as table:
+    print(table.headers)
+    for row in table:
+        print(row)
 
 
 print('\nLoad from text scheme:')
