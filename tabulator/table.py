@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+from . import helpers
 from . import exceptions
 
 
@@ -148,19 +149,32 @@ class Table(object):
 
         # Extract sample
         self.__sample = []
+        keyed_source = False
         if self.__sample_size:
             for _ in range(self.__sample_size):
                 try:
-                    self.__sample.append(next(self.__parser.extended_rows))
+                    (number, headers, row) = next(self.__parser.extended_rows)
+                    if headers is not None:
+                        keyed_source = True
+                    self.__sample.append((number, headers, row))
                 except StopIteration:
                     break
 
+        # Detect html content
+        if not keyed_source:
+            text = ''
+            for number, headers, row in self.__sample:
+                for value in row:
+                    if isinstance(value, six.string_types):
+                        text += value
+            html_source = helpers.detect_html(text)
+            if html_source:
+                msg = 'Source has been detected as HTML (not supported)'
+                raise exceptions.TabulatorException(msg)
+
         # Extract headers
-        keyed_source = False
         if self.__headers_row:
             for number, headers, row in self.__sample:
-                if headers is not None:
-                    keyed_source = True
                 if number == self.__headers_row:
                     if keyed_source:
                         self.__headers_list = headers
@@ -170,6 +184,7 @@ class Table(object):
         # Remove headers from sample
         if not keyed_source:
             self.__sample = self.__sample[self.__headers_row:]
+
 
     def __iter_exteneded_rows(self):
 

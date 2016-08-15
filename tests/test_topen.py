@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import io
 import sys
 import pytest
-from tabulator import topen, parsers, processors
+from tabulator import topen, parsers, exceptions, processors
 
 
 # Constants
@@ -316,6 +316,18 @@ def test_sample():
     assert table.sample == [
         (2, None, ['1', 'english']),
         (3, None, ['2', '中国人'])]
+
+
+# Tests [html content]
+
+
+def test_html_content():
+
+    # Check raises
+    source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
+    with pytest.raises(exceptions.TabulatorException) as excinfo:
+        table = topen(source, headers='row1')
+    assert 'HTML' in str(excinfo.value)
 
 
 # Tests [reset]

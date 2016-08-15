@@ -8,6 +8,7 @@ import os
 import re
 import ast
 import six
+from bs4 import BeautifulSoup
 from functools import partial
 from six.moves.urllib.parse import urlparse
 from chardet.universaldetector import UniversalDetector
@@ -79,6 +80,12 @@ def detect_encoding(bytes):
     if encoding == 'ascii':
         encoding = 'utf-8'
     return encoding
+
+
+def detect_html(text):
+    """Detect if text is HTML.
+    """
+    return bool(BeautifulSoup(text, 'html.parser').find())
 
 
 def reset_stream(stream):
