@@ -72,8 +72,6 @@ class Table(object):
     def open(self):
         """Open table to iterate over it.
         """
-        # Here could be moved detect_encoding and detect_html
-        # We could cache rows for detections and full headers support
         self.__parser.open(self.__source, self.__encoding, self.__loader)
         self.__prepare_table()
         return self
