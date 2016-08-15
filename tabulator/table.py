@@ -98,7 +98,7 @@ class Table(object):
 
     @property
     def sample(self):
-        """tuple[]: sample of extended rows.
+        """list[]: sample of rows
         """
         return [row for _, _, row in self.__sample_extended_rows]
 
