@@ -317,9 +317,9 @@ def test_processors_chain():
     # Get table
     source = [['id', 'name'], ['#1', 'english'], [], ['2', '中国人']]
     table = topen(source, headers='row1', post_parse=[
-        processors.skip_comments,
-        processors.skip_blank,
-        processors.convert])
+        processors.skip_commented_rows,
+        processors.skip_blank_rows,
+        processors.convert_rows])
 
     # Make assertions
     assert table.headers == ['id', 'name']

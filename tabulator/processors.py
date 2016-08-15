@@ -10,15 +10,16 @@ from . import helpers
 # Module API
 
 @helpers.bindify
-def skip_comments(extended_rows, mark='#'):
+def skip_commented_rows(extended_rows, comment_mark='#'):
     for number, headers, row in extended_rows:
-        if row and hasattr(row[0], 'startswith') and row[0].startswith(mark):
+        if (row and hasattr(row[0], 'startswith') and
+                row[0].startswith(comment_mark)):
             continue
         yield (number, headers, row)
 
 
 @helpers.bindify
-def skip_blank(extended_rows):
+def skip_blank_rows(extended_rows):
     for number, headers, row in extended_rows:
         if not row:
             continue
@@ -26,7 +27,7 @@ def skip_blank(extended_rows):
 
 
 @helpers.bindify
-def convert(extended_rows, converter=None):
+def convert_rows(extended_rows, converter=None):
     if converter is None:
         converter = helpers.convert_row
     for number, headers, row in extended_rows:
