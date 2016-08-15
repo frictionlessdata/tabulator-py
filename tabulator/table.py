@@ -31,11 +31,11 @@ class Table(object):
         self.__sample_size = sample_size
         self.__loader = loader
         self.__parser = parser
-        self.__sample = []
 
-        # Prepare for headers
+        # Internal state
         self.__headers_row = None
         self.__headers_list = None
+        self.__sample_extended_rows = []
         if isinstance(headers, (tuple, list)):
             self.__headers_list = list(headers)
         elif isinstance(headers, six.string_types):
@@ -100,7 +100,7 @@ class Table(object):
     def sample(self):
         """tuple[]: sample of extended rows.
         """
-        return self.__sample
+        return [row for _, _, row in self.__sample_extended_rows]
 
     def iter(self, keyed=False, extended=False):
         """Return rows iterator.
@@ -148,7 +148,7 @@ class Table(object):
     def __prepare_table(self):
 
         # Extract sample
-        self.__sample = []
+        self.__sample_extended_rows = []
         keyed_source = False
         if self.__sample_size:
             for _ in range(self.__sample_size):
@@ -156,14 +156,14 @@ class Table(object):
                     (number, headers, row) = next(self.__parser.extended_rows)
                     if headers is not None:
                         keyed_source = True
-                    self.__sample.append((number, headers, row))
+                    self.__sample_extended_rows.append((number, headers, row))
                 except StopIteration:
                     break
 
         # Detect html content
         if not keyed_source:
             text = ''
-            for number, headers, row in self.__sample:
+            for number, headers, row in self.__sample_extended_rows:
                 for value in row:
                     if isinstance(value, six.string_types):
                         text += value
@@ -174,7 +174,7 @@ class Table(object):
 
         # Extract headers
         if self.__headers_row:
-            for number, headers, row in self.__sample:
+            for number, headers, row in self.__sample_extended_rows:
                 if number == self.__headers_row:
                     if keyed_source:
                         self.__headers_list = headers
@@ -183,13 +183,14 @@ class Table(object):
 
         # Remove headers from sample
         if not keyed_source:
-            self.__sample = self.__sample[self.__headers_row:]
+            self.__sample_extended_rows = self.__sample_extended_rows[
+                self.__headers_row:]
 
     def __iter_exteneded_rows(self):
 
         # Iter from sample adding headers
-        while self.__sample:
-            number, headers, row = self.__sample.pop(0)
+        while self.__sample_extended_rows:
+            number, headers, row = self.__sample_extended_rows.pop(0)
             if headers is None:
                 headers = self.__headers_list
             yield (number, headers, row)

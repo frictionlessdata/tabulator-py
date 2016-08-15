@@ -326,9 +326,7 @@ def test_sample():
 
     # Make assertions
     assert table.headers == ['id', 'name']
-    assert table.sample == [
-        (2, None, ['1', 'english']),
-        (3, None, ['2', '中国人'])]
+    assert table.sample == [['1', 'english'], ['2', '中国人']]
 
 
 # Tests [html content]
