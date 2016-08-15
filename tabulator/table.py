@@ -25,13 +25,13 @@ class Table(object):
 
     # Public
 
-    def __init__(self, source, headers, encoding, loader, parser, post_parse):
+    def __init__(self, source, headers, encoding, post_parse, loader, parser):
         self.__source = source
         self.__headers = headers
         self.__encoding = encoding
+        self.__post_parse = post_parse
         self.__loader = loader
         self.__parser = parser
-        self.__post_parse = post_parse
         self.__extracted_headers = None
 
     def __enter__(self):
