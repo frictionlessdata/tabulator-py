@@ -80,11 +80,15 @@ table.close()
 
 ## Documentation
 
-See docstrings - https://github.com/frictionlessdata/tabulator-py/tree/master/tabulator
+Please read our docstrings:
+
+[Docstrings](https://github.com/frictionlessdata/tabulator-py/tree/master/tabulator)
 
 ## Changelog
 
-See releases - https://github.com/frictionlessdata/tabulator-py/releases
+Please read our releases:
+
+[Releases](https://github.com/frictionlessdata/tabulator-py/releases)
 
 ## Contributing
 
