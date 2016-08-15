@@ -100,7 +100,10 @@ class Table(object):
     def sample(self):
         """list[]: sample of rows
         """
-        return [row for _, _, row in self.__sample_extended_rows]
+        sample = []
+        for number, headers, row in self.__sample_extended_rows:
+            sample.append(row)
+        return sample
 
     def iter(self, keyed=False, extended=False):
         """Return rows iterator.
