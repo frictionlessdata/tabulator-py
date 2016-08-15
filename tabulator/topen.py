@@ -24,7 +24,8 @@ def topen(source,
           # BACKWARD-COMPATIBILITY (before v0.5)
           loader_class=None,
           parser_class=None,
-          with_headers=False):
+          with_headers=False,
+          extract_headers=False):
     """Open table from source.
 
     Args:
@@ -85,7 +86,7 @@ def topen(source,
         loader_options['constructor'] = loader_class
     if parser_class is not None:
         parser_options['constructor'] = parser_class
-    if with_headers:
+    if with_headers or extract_headers:
         headers = 'row1'
 
     # Get loader
