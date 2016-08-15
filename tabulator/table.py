@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+from . import exceptions
 
 
 # Module API
@@ -14,25 +15,34 @@ class Table(object):
 
     NOTE: constructor is not a part of public API
 
-    Args:
-        source (str): table source
-        headers (list/str): headers list/pointer
-        encoding (str): encoding of source
-        loader (loaders.API): table loader
-        parser (parsers.API): table parser
-
     """
 
     # Public
 
-    def __init__(self, source, headers, encoding, post_parse, loader, parser):
+    def __init__(self, source, headers, encoding,
+            post_parse, sample_size, loader, parser):
+
+        # Set attributes
         self.__source = source
         self.__headers = headers
         self.__encoding = encoding
         self.__post_parse = post_parse
+        self.__sample_size = sample_size
         self.__loader = loader
         self.__parser = parser
-        self.__extracted_headers = None
+        self.__sample = []
+
+        # Prepare for headers
+        self.__headers_row = None
+        self.__headers_list = None
+        if isinstance(headers, (tuple, list)):
+            self.__headers_list = list(headers)
+        elif isinstance(headers, six.string_types):
+            self.__headers_row = int(headers.replace('row', ''))
+            if self.__headers_row > sample_size:
+                msg = 'Headers row (%s) can\'t be more than sample_size (%s)'
+                msg = msg % (self.__headers_row, sample_size)
+                raise exceptions.TabulatorException(msg)
 
     def __enter__(self):
         """Enter context manager by opening table.
@@ -62,7 +72,7 @@ class Table(object):
         # Here could be moved detect_encoding and detect_html
         # We could cache rows for detections and full headers support
         self.__parser.open(self.__source, self.__encoding, self.__loader)
-        self.__extract_headers()
+        self.__prepare_table()
         return self
 
     def close(self):
@@ -74,18 +84,22 @@ class Table(object):
         """Reset table pointer to the first row.
         """
         self.__parser.reset()
-        self.__extract_headers()
+        self.__prepare_table()
 
     @property
     def headers(self):
-        """list: table headers
-
-        If source is keyed and headers are not provided by user
-        this property will be None because for keyed sources
-        headers could differ across rows.
-
+        """None/list: table headers
         """
-        return self.__extracted_headers
+        if not self.__sample_size:
+            message = 'Headers can\'t be extracted when sample_size=0'
+            raise exceptions.TabulatorException(message)
+        return self.__headers_list
+
+    @property
+    def sample(self):
+        """tuple[]: sample of extended rows.
+        """
+        return self.__sample
 
     def iter(self, keyed=False, extended=False):
         """Return rows iterator.
@@ -130,20 +144,44 @@ class Table(object):
 
     # Private
 
-    def __extract_headers(self):
-        # There could be a cleaner way to work with headers
-        # But extraction def should be on open and reset
-        self.__extracted_headers = self.__headers
-        # We've got headers pointer like `row1` (validate)
-        if isinstance(self.__extracted_headers, six.string_types):
-            pointer = int(self.__extracted_headers.replace('row', ''))
-            for number, headers, row in self.__parser.extended_rows:
-                if number == pointer:
-                    self.__extracted_headers = row
+    def __prepare_table(self):
+
+        # Extract sample
+        self.__sample = []
+        if self.__sample_size:
+            for _ in range(self.__sample_size):
+                try:
+                    self.__sample.append(next(self.__parser.extended_rows))
+                except StopIteration:
                     break
 
+        # Extract headers
+        keyed_source = False
+        if self.__headers_row:
+            for number, headers, row in self.__sample:
+                if headers is not None:
+                    keyed_source = True
+                if number == self.__headers_row:
+                    if keyed_source:
+                        self.__headers_list = headers
+                    else:
+                        self.__headers_list = row
+
+        # Remove headers from sample
+        if not keyed_source:
+            self.__sample = self.__sample[self.__headers_row:]
+
     def __iter_exteneded_rows(self):
+
+        # Iter from sample adding headers
+        while self.__sample:
+            number, headers, row = self.__sample.pop(0)
+            if headers is None:
+                headers = self.__headers_list
+            yield (number, headers, row)
+
+        # Iter following from parser adding headers
         for number, headers, row in self.__parser.extended_rows:
             if headers is None:
-                headers = self.headers
+                headers = self.__headers_list
             yield (number, headers, row)

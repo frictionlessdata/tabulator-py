@@ -235,6 +235,18 @@ def test_headers():
         {'id': '1', 'name': 'english'},
         {'id': '2', 'name': '中国人'}]
 
+def test_headers_user_set():
+
+    # Get table
+    source = [['1', 'english'], ['2', '中国人']]
+    table = topen(source, headers=['id', 'name'])
+
+    # Make assertions
+    assert table.headers == ['id', 'name']
+    assert list(table.iter(keyed=True)) == [
+        {'id': '1', 'name': 'english'},
+        {'id': '2', 'name': '中国人'}]
+
 
 # DEPRECATED [v0.5-v1)
 def test_headers_with_headers_argument():
@@ -268,10 +280,10 @@ def test_headers_json_keyed():
     source = ('text://['
         '{"id": 1, "name": "english"},'
         '{"id": 2, "name": "中国人"}]')
-    table = topen(source, format='json')
+    table = topen(source, headers='row1', format='json')
 
     # Make assertions
-    assert table.headers == None
+    assert table.headers == ['id', 'name']
     assert list(table.iter(keyed=True)) == [
         {'id': 1, 'name': 'english'},
         {'id': 2, 'name': '中国人'}]
@@ -281,13 +293,29 @@ def test_headers_native_keyed():
 
     # Get table
     source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
-    table = topen(source)
+    table = topen(source, headers='row1')
 
     # Make assertions
-    assert table.headers == None
+    assert table.headers == ['id', 'name']
     assert list(table.iter(keyed=True)) == [
         {'id': '1', 'name': 'english'},
         {'id': '2', 'name': '中国人'}]
+
+
+# Tests [sample]
+
+
+def test_sample():
+
+    # Get table
+    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    table = topen(source, headers='row1')
+
+    # Make assertions
+    assert table.headers == ['id', 'name']
+    assert table.sample == [
+        (2, None, ['1', 'english']),
+        (3, None, ['2', '中国人'])]
 
 
 # Tests [reset]

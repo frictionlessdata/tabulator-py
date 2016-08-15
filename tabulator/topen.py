@@ -20,6 +20,7 @@ def topen(source,
           format=None,
           encoding=None,
           post_parse=None,
+          sample_size=None,
           loader_options=None,
           parser_options=None,
           # DEPRECATED [v0.5-v1)
@@ -33,8 +34,11 @@ def topen(source,
         source (str): table source
         headers (list/str):
             headers list or pointer:
-                - list of headers
-                - row pointer like `row1` to extract headers
+                - list of headers for setting by user
+                - row pointer like `row3` to extract headers.
+                  For plain source headers row and all rows
+                  before will be removed. For keyed source no rows
+                  will be removed.
         scheme (str):
             scheme of source:
                 - file (default)
@@ -59,16 +63,21 @@ def topen(source,
                 - None (detect)
                 - utf-8
                 - <encodings>
+        post_parse (generator[]): post parse processors (hooks). Signature
+            to follow is "processor(extended_rows)" which should yield
+            one extended row (number, headers, row) per yield instruction.
+        sample_size (int): rows count for table.sample. Set to "0" to prevent
+            any parsing activities before actual table.iter call. In this case
+            headers will not be extracted from the source.
         loader_options (dict):
             loader options:
-                `constructor`: constructor returning `loaders.API` instance
-                `encoding`: encoding of source
-                <backend options>
+                - `constructor`: constructor returning `loaders.API` instance
+                - `encoding`: encoding of source
+                - <backend options>
         parser_options (dict):
             parser options:
-                `constructor`: constructor returning `parsers.API` instance
-                <backend options>
-        post_parse (generator[]): post parse processors (hooks)
+                - `constructor`: constructor returning `parsers.API` instance
+                - <backend options>
 
     Returns:
         table (Table): opened table instance
@@ -81,6 +90,8 @@ def topen(source,
         parser_options = {}
     if post_parse is None:
         post_parse = []
+    if sample_size is None:
+        sample_size = _DEFAULT_SAMPLE_SIZE
 
     # DEPRECATED [v0.5-v1)
     if loader_class is not None:
@@ -125,7 +136,10 @@ def topen(source,
     # Initiate and open table
     table = Table(
         source, headers, encoding,
-        loader=loader, parser=parser, post_parse=post_parse)
+        post_parse=post_parse,
+        sample_size=sample_size,
+        loader=loader,
+        parser=parser)
     table.open()
 
     return table
@@ -134,6 +148,7 @@ def topen(source,
 # Internal
 
 _DEFAULT_SCHEME = 'file'
+_DEFAULT_SAMPLE_SIZE = 100
 
 _LOADERS = {
     'file': loaders.File,
