@@ -43,4 +43,4 @@ class FileLoader(api.Loader):
             return chars
         else:
             message = 'Mode %s is not supported' % mode
-            raise exceptions.TabulatorException(message)
+            raise exceptions.LoadingError(message)

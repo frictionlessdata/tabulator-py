@@ -21,4 +21,4 @@ class NativeLoader(api.Loader):
 
     def load(self, source, encoding, mode):
         message = 'NativeLoader doesn\'t support load method'
-        raise exceptions.TabulatorException(message)
+        raise exceptions.LoadingError(message)

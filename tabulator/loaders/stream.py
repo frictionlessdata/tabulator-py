@@ -26,7 +26,7 @@ class StreamLoader(api.Loader):
         # Raise if in text mode
         if hasattr(source, 'encoding'):
             message = 'Only byte streams are supported.'
-            raise exceptions.TabulatorException(message)
+            raise exceptions.LoadingError(message)
 
         # Prepare bytes
         bytes = source
@@ -43,4 +43,4 @@ class StreamLoader(api.Loader):
             return chars
         else:
             message = 'Mode %s is not supported' % mode
-            raise exceptions.TabulatorException(message)
+            raise exceptions.LoadingError(message)

@@ -95,7 +95,7 @@ def topen(source,
             scheme = helpers.detect_scheme(source) or _DEFAULT_SCHEME
         if scheme not in _LOADERS:
             message = 'Scheme "%s" is not supported' % scheme
-            raise exceptions.TabulatorException(message)
+            raise exceptions.LoadingError(message)
         loader_constructor = _LOADERS[scheme]
     loader = loader_constructor(**loader_options)
 
@@ -106,7 +106,7 @@ def topen(source,
             format = helpers.detect_format(source)
         if format not in _PARSERS:
             message = 'Format "%s" is not supported' % format
-            raise exceptions.TabulatorException(message)
+            raise exceptions.ParsingError(message)
         parser_constructor = _PARSERS[format]
     parser = parser_constructor(**parser_options)
 

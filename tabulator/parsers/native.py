@@ -56,4 +56,4 @@ class NativeParser(api.Parser):
                 yield (number, list(keys), list(values))
             else:
                 message = 'Native item has to be tuple, list or dict'
-                raise exceptions.TabulatorException(message)
+                raise exceptions.ParsingError(message)

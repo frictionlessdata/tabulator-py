@@ -11,3 +11,15 @@ class TabulatorException(Exception):
     """Base Tabulator exception.
     """
     pass
+
+
+class ParsingError(TabulatorException):
+    """Base parsing error.
+    """
+    pass
+
+
+class LoadingError(TabulatorException):
+    """Base loading error.
+    """
+    pass

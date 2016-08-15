@@ -95,7 +95,7 @@ def reset_stream(stream):
             stream.seek(0)
         except Exception:
             message = 'Stream is not seekable.'
-            raise exceptions.TabulatorException(message)
+            raise exceptions.LoadingError(message)
 
 
 def convert_row(row):
