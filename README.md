@@ -58,7 +58,7 @@ Below the more expanded example is presented:
 ```python
 from tabulator import topen, loaders, parsers, processors
 
-def skip_odd_rows(extended_rows):
+def skip_even_rows(extended_rows):
     for number, headers, row in extended_rows:
         if number % 2:
             yield (number, headers, row)
