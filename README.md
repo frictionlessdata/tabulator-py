@@ -78,22 +78,10 @@ for extended_row in table.iter(extended=True):
 table.close()
 ```
 
-## Documentation
+## Read more
 
-Please read our docstrings:
-
-[Docstrings](https://github.com/frictionlessdata/tabulator-py/tree/master/tabulator)
-
-## Changelog
-
-Please read our releases:
-
-[Releases](https://github.com/frictionlessdata/tabulator-py/releases)
-
-## Contributing
-
-Please read the contribution guideline:
-
-[How to Contribute](CONTRIBUTING.md)
+- [Documentation](https://github.com/frictionlessdata/tabulator-py/tree/master/tabulator)
+- [Changelog](https://github.com/frictionlessdata/tabulator-py/releases)
+- [Contribute](CONTRIBUTING.md)
 
 Thanks!
