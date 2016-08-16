@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 import csv
 import six
 from codecs import iterencode
-
 from .. import helpers
 from . import api
 
@@ -57,15 +56,15 @@ class CSVParser(api.Parser):
             # Reader requires utf-8 encoded stream
             bytes = iterencode(self.__chars, 'utf-8')
             items = csv.reader(bytes, **self.__options)
-            for index, item in enumerate(items):
+            for number, item in enumerate(items, start=1):
                 values = []
                 for value in item:
                     value = value.decode('utf-8')
                     values.append(value)
-                yield (index, None, tuple(values))
+                yield (number, None, list(values))
 
         # For PY3 use chars
         else:
             items = csv.reader(self.__chars, **self.__options)
-            for index, item in enumerate(items):
-                yield (index, None, tuple(item))
+            for number, item in enumerate(items, start=1):
+                yield (number, None, list(item))

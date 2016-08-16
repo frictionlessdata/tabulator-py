@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .. import errors
+from .. import exceptions
 from . import api
 
 
@@ -44,15 +44,16 @@ class NativeParser(api.Parser):
 
     def __iter_extended_rows(self):
         items = self.__source
-        for index, item in enumerate(items):
+        for number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
-                yield (index, None, tuple(item))
+                yield (number, None, list(item))
             elif isinstance(item, dict):
                 keys = []
                 values = []
                 for key in sorted(item.keys()):
                     keys.append(key)
                     values.append(item[key])
-                yield (index, tuple(keys), tuple(values))
+                yield (number, list(keys), list(values))
             else:
-                raise errors.Error('Native item has to be tuple, list or dict')
+                message = 'Native item has to be tuple, list or dict'
+                raise exceptions.ParsingError(message)

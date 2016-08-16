@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import openpyxl
-
 from .. import helpers
 from . import api
 
@@ -50,5 +49,5 @@ class ExcelxParser(api.Parser):
     # Private
 
     def __iter_extended_rows(self):
-        for index, row in enumerate(self.__sheet.rows):
-            yield (index, None, tuple(cell.value for cell in row))
+        for number, row in enumerate(self.__sheet.rows, start=1):
+            yield (number, None, list(cell.value for cell in row))

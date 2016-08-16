@@ -27,6 +27,7 @@ INSTALL_REQUIRES = [
     'openpyxl>=2.0',
     'requests>=2.8',
     'linear-tsv>=0.99.1',
+    'beautifulsoup4>=4.4',
 ]
 TESTS_REQUIRE = [
     'pylama',

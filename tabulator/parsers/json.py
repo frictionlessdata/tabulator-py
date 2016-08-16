@@ -5,8 +5,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import ijson
-
-from .. import helpers, errors
+from .. import exceptions
+from .. import helpers
 from . import api
 
 
@@ -52,16 +52,16 @@ class JSONParser(api.Parser):
         if self.__path is not None:
             prefix = '%s.item' % self.__path
         items = ijson.items(self.__chars, prefix)
-        for index, item in enumerate(items):
+        for number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
-                yield (index, None, tuple(item))
+                yield (number, None, list(item))
             elif isinstance(item, dict):
                 keys = []
                 values = []
                 for key in sorted(item.keys()):
                     keys.append(key)
                     values.append(item[key])
-                yield (index, tuple(keys), tuple(values))
+                yield (number, list(keys), list(values))
             else:
                 message = 'JSON item has to be list or dict'
-                raise errors.Error(message)
+                raise exceptions.ParsingError(message)

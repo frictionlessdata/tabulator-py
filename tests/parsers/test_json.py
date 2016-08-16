@@ -24,8 +24,8 @@ def test_json_parser():
     assert not parser.closed
 
     assert list(parser.extended_rows) == [
-        (0, ('id', 'name'), (1, 'english')),
-        (1, ('id', 'name'), (2, '中国人'))]
+        (1, ['id', 'name'], [1, 'english']),
+        (2, ['id', 'name'], [2, '中国人'])]
 
     assert len(list(parser.extended_rows)) == 0
     parser.reset()

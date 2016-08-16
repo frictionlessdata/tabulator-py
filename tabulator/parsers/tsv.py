@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import tsv
-
 from .. import helpers
 from . import api
 
@@ -53,5 +52,5 @@ class TSVParser(api.Parser):
 
     def __iter_extended_rows(self):
         items = tsv.un(self.__chars)
-        for index, item in enumerate(items):
-            yield (index, None, tuple(item))
+        for number, item in enumerate(items, start=1):
+            yield (number, None, list(item))

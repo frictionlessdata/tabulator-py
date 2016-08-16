@@ -6,10 +6,13 @@ from __future__ import unicode_literals
 
 import os
 import re
+import ast
 import six
-from chardet.universaldetector import UniversalDetector
+from bs4 import BeautifulSoup
+from functools import partial
 from six.moves.urllib.parse import urlparse
-from . import errors
+from chardet.universaldetector import UniversalDetector
+from . import exceptions
 
 
 # Module API
@@ -79,6 +82,12 @@ def detect_encoding(bytes):
     return encoding
 
 
+def detect_html(text):
+    """Detect if text is HTML.
+    """
+    return bool(BeautifulSoup(text, 'html.parser').find())
+
+
 def reset_stream(stream):
     """Reset stream pointer to the first element.
 
@@ -91,7 +100,27 @@ def reset_stream(stream):
     if position != 0:
         try:
             stream.seek(0)
-        except Exception as e:
-            print(e)
+        except Exception:
             message = 'Stream is not seekable.'
-            raise errors.Error(message)
+            raise exceptions.LoadingError(message)
+
+
+def convert_row(row):
+    """Convert row values to python objects.
+    """
+    result = []
+    for value in row:
+        try:
+            if isinstance(value, six.string_types):
+                value = ast.literal_eval(value)
+        except Exception:
+            pass
+        result.append(value)
+    return result
+
+
+def bindify(function):
+    """Add bind method to function.
+    """
+    function.bind = partial(partial, function)
+    return function
