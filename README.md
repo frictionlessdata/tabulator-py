@@ -64,7 +64,7 @@ def skip_even_rows(extended_rows):
             yield (number, headers, row)
 
 table = topen('path.csv', headers='row1', encoding='utf-8', sample_size=1000,
-        post_parse=[processors.skip_blank_rows, skip_odd_rows]
+        post_parse=[processors.skip_blank_rows, skip_even_rows]
         loader_options={'constructor': loaders.File},
         parser_options={'constructor': parsers.CSV, delimeter': ',', quotechar: '|'})
 print(table.samle)  # will print sample
