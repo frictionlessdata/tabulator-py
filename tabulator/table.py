@@ -91,9 +91,6 @@ class Table(object):
     def headers(self):
         """None/list: table headers
         """
-        if not self.__sample_size:
-            message = 'Headers can\'t be extracted when sample_size=0'
-            raise exceptions.TabulatorException(message)
         return self.__headers_list
 
     @property
