@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import six
 import warnings
 from .stream import Stream
 from . import exceptions
@@ -84,10 +85,6 @@ def topen(source,
 
     """
 
-    # DEPRECATED [v0.6-v1)
-    message = 'Function "topen" is deprecated [v0.6-v1)'
-    warnings.warn(message, UserWarning)
-
     # DEPRECATED [v0.5-v1)
     if loader_options is None:
         loader_options = {}
@@ -109,6 +106,22 @@ def topen(source,
         message = 'Argument "extract_headers" is deprecated [v0.5-v1)'
         warnings.warn(message, UserWarning)
         headers = 'row1'
+
+    # DEPRECATED [v0.6-v1)
+    message = 'Function "topen" is deprecated [v0.6-v1)'
+    warnings.warn(message, UserWarning)
+    if 'constructor' in loader_options:
+        message = 'Argument "constructor" is deprecated [v0.6-v1)'
+        warnings.warn(message, UserWarning)
+        loader_options.pop('constructor', None)
+    if 'constructor' in parser_options:
+        message = 'Argument "constructor" is deprecated [v0.6-v1)'
+        warnings.warn(message, UserWarning)
+        parser_options.pop('constructor', None)
+    if isinstance(headers, six.string_types):
+        message = 'Headers like "row1" is deprecated [v0.6-v1)'
+        warnings.warn(message, UserWarning)
+        headers = int(headers.replace('row', ''))
 
     # Initiate and open stream
     stream = Stream(

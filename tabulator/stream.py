@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+import warnings
 from . import helpers
 from . import exceptions
 
@@ -89,26 +90,20 @@ class Stream(object):
             sample_size = helpers.DEFAULT_SAMPLE_SIZE
 
         # Get loader
-        loader_constructor = loader_options.pop('constructor', None)
-        if loader_constructor is None:
-            if scheme is None:
-                scheme = helpers.detect_scheme(source) or helpers.DEFAULT_SCHEME
-            if scheme not in helpers.LOADERS:
-                message = 'Scheme "%s" is not supported' % scheme
-                raise exceptions.LoadingError(message)
-            loader_constructor = helpers.LOADERS[scheme]
-        loader = loader_constructor(**loader_options)
+        if scheme is None:
+            scheme = helpers.detect_scheme(source) or helpers.DEFAULT_SCHEME
+        if scheme not in helpers.LOADERS:
+            message = 'Scheme "%s" is not supported' % scheme
+            raise exceptions.LoadingError(message)
+        loader = helpers.LOADERS[scheme](**loader_options)
 
         # Get parser
-        parser_constructor = parser_options.pop('constructor', None)
-        if parser_constructor is None:
-            if format is None:
-                format = helpers.detect_format(source)
-            if format not in helpers.PARSERS:
-                message = 'Format "%s" is not supported' % format
-                raise exceptions.ParsingError(message)
-            parser_constructor = helpers.PARSERS[format]
-        parser = parser_constructor(**parser_options)
+        if format is None:
+            format = helpers.detect_format(source)
+        if format not in helpers.PARSERS:
+            message = 'Format "%s" is not supported' % format
+            raise exceptions.ParsingError(message)
+        parser = helpers.PARSERS[format](**parser_options)
 
         # Set attributes
         self.__source = source
@@ -125,9 +120,9 @@ class Stream(object):
         self.__sample_extended_rows = []
         if isinstance(headers, (tuple, list)):
             self.__headers_list = list(headers)
-        elif isinstance(headers, six.string_types):
-            self.__headers_row = int(headers.replace('row', ''))
-            if self.__headers_row > sample_size:
+        elif isinstance(headers, int):
+            self.__headers_row = headers
+            if headers > sample_size:
                 msg = 'Headers row (%s) can\'t be more than sample_size (%s)'
                 msg = msg % (self.__headers_row, sample_size)
                 raise exceptions.TabulatorException(msg)
