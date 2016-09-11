@@ -6,10 +6,8 @@ from __future__ import unicode_literals
 
 import os
 import re
-import ast
 import six
 from bs4 import BeautifulSoup
-from functools import partial
 from six.moves.urllib.parse import urlparse
 from chardet.universaldetector import UniversalDetector
 from . import loaders
@@ -47,6 +45,7 @@ PARSERS = {
 WRITERS = {
     'csv': writers.CSV,
 }
+
 
 def detect_scheme(source):
     """Detect scheme by source.
