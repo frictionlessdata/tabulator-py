@@ -5,13 +5,13 @@
 [![PyPi](https://img.shields.io/pypi/v/tabulator.svg)](https://pypi.python.org/pypi/tabulator)
 [![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
 
-A utility library that provides a consistent interface for reading tabular data.
+A utility library that provides a consistent interface for reading and writing tabular data.
 
 ## Getting Started
 
 ### Installation
 
-To get started (under development):
+To get started:
 
 ```
 $ pip install tabulator
@@ -19,36 +19,35 @@ $ pip install tabulator
 
 ### Quick Start
 
-Fast access to the table with `topen` (stands for `table open`) function:
+Open tabular stream from csv source:
 
 ```python
-from tabulator import topen, processors
+from tabulator import Stream
 
-with topen('path.csv', headers='row1') as table:
-    for row in table:
-        print(row)  # will print row tuple
+with Stream('path.csv', headers=1) as stream:
+    for row in stream:
+        print(row)  # will print row values list
 ```
 
-For the most use cases `topen` function is enough. It takes the
-`source` argument:
+`Stream` takes the `source` argument:
 
 ```
 <scheme>://path/to/file.<format>
 ```
 and uses corresponding `Loader` and `Parser` to open and start to iterate
-over the table. Also user can pass `scheme` and `format` explicitly
-as function arguments. User can force Tabulator to use encoding of choice
+over the tabular stream. Also user can pass `scheme` and `format` explicitly
+as constructor arguments. User can force Tabulator to use encoding of choice
 to open the table passing `encoding` argument.
 
-Function `topen` returns `Table` instance. We use context manager
-to call `table.open()` on enter and `table.close()` when we exit:
-- table can be iterated like file-like object returning row by row
-- table can be used for manual iterating with `table.iter(keye/extended=False)`
-- table can be read into memory using `read` function (return list or row tuples)
-with `limit` of output rows as parameter.
+In this example we use context manager to call `stream.open()` on enter
+and `stream.close()` when we exit:
+- stream can be iterated like file-like object returning row by row
+- stream can be used for manual iterating with `iter` function
+- stream can be read into memory using `read` function with row count `limit`
 - headers can be accessed via `headers` property
-- rows sample can be accessed via `samle` property
-- table pointer can be set to start via `reset` method.
+- rows sample can be accessed via `sample` property
+- stream pointer can be set to start via `reset` method
+- `iter/read` get `keyed/extended` arguments to customize row output
 
 ### Advanced Usage
 
@@ -56,31 +55,31 @@ To get full control over the process you can use more parameters.
 Below the more expanded example is presented:
 
 ```python
-from tabulator import topen, loaders, parsers, processors
+from tabulator import Stream
 
 def skip_even_rows(extended_rows):
     for number, headers, row in extended_rows:
         if number % 2:
             yield (number, headers, row)
 
-table = topen('path.csv', headers='row1', encoding='utf-8', sample_size=1000,
-        post_parse=[processors.skip_blank_rows, skip_even_rows]
-        loader_options={'constructor': loaders.File},
-        parser_options={'constructor': parsers.CSV, delimeter': ',', quotechar: '|'})
-print(table.samle)  # will print sample
-print(table.headers)  # will print headers list
-print(table.read(limit=10))  # will print 10 rows
-table.reset()
-for keyed_row in table.iter(keyed=True):
+stream = Stream('path.csv',
+    headers=1, encoding='utf-8', sample_size=1000,
+    post_parse=[skip_even_rows], parser_options={delimeter': ',', quotechar: '|'})
+stream.open()
+print(stream.sample)  # will print sample
+print(stream.headers)  # will print headers list
+print(stream.read(limit=10))  # will print 10 rows
+stream.reset()
+for keyed_row in stream.iter(keyed=True):
     print keyed_row  # will print row dict
-for extended_row in table.iter(extended=True):
+for extended_row in stream.iter(extended=True):
     print extended_row  # will print (number, headers, row) list
-table.close()
+stream.close()
 ```
 
 ## Read more
 
-- [Documentation](https://github.com/frictionlessdata/tabulator-py/tree/master/tabulator)
+- [Docstrings](https://github.com/frictionlessdata/tabulator-py/tree/master/tabulator)
 - [Changelog](https://github.com/frictionlessdata/tabulator-py/releases)
 - [Contribute](CONTRIBUTING.md)
 
