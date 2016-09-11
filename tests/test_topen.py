@@ -5,9 +5,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import ast
 import sys
+import six
 import pytest
-from tabulator import topen, parsers, exceptions, processors
+from tabulator import topen, parsers, exceptions
 
 
 # Constants
@@ -362,15 +364,38 @@ def test_reset():
 
 # Tests [processors]
 
-
 def test_processors_chain():
+
+    # Processors
+    def skip_commented_rows(extended_rows):
+        for number, headers, row in extended_rows:
+            if (row and hasattr(row[0], 'startswith') and
+                    row[0].startswith('#')):
+                continue
+            yield (number, headers, row)
+    def skip_blank_rows(extended_rows):
+        for number, headers, row in extended_rows:
+            if not row:
+                continue
+            yield (number, headers, row)
+    def convert_rows(extended_rows):
+        for number, headers, row in extended_rows:
+            crow = []
+            for value in row:
+                try:
+                    if isinstance(value, six.string_types):
+                        value = ast.literal_eval(value)
+                except Exception:
+                    pass
+                crow.append(value)
+            yield (number, headers, crow)
 
     # Get table
     source = [['id', 'name'], ['#1', 'english'], [], ['2', '中国人']]
     table = topen(source, headers='row1', post_parse=[
-        processors.skip_commented_rows,
-        processors.skip_blank_rows,
-        processors.convert_rows])
+        skip_commented_rows,
+        skip_blank_rows,
+        convert_rows])
 
     # Make assertions
     assert table.headers == ['id', 'name']
