@@ -364,6 +364,28 @@ def test_reset():
 
 # Tests [processors]
 
+def test_processors_headers():
+
+    # Processors
+    def extract_headers(extended_rows):
+        headers = None
+        for number, _, row in extended_rows:
+            if number == 1:
+                headers = row
+                continue
+            yield (number - 1, headers, row)
+
+    # Get table
+    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    table = topen(source, post_parse=[extract_headers])
+
+    # Make assertions
+    assert table.headers == None
+    assert table.read(extended=True) == [
+        (1, ['id', 'name'], ['1', 'english']),
+        (2, ['id', 'name'], ['2', '中国人'])]
+
+
 def test_processors_chain():
 
     # Processors
