@@ -21,6 +21,7 @@ from . import exceptions
 # Module API
 
 DEFAULT_SCHEME = 'file'
+DEFAULT_ENCODING = 'utf-8'
 DEFAULT_SAMPLE_SIZE = 100
 
 LOADERS = {
@@ -89,10 +90,10 @@ def detect_format(source):
 def detect_encoding(bytes):
     """Detect encoding of a byte stream.
     """
-    CHARSET_DETECTION_MAX_LINES = 1000
-    CHARSET_DETECTION_MIN_CONFIDENCE = 0.5
+    CHARDET_DETECTION_MAX_LINES = 1000
+    CHARDET_DETECTION_MIN_CONFIDENCE = 0.5
     detector = UniversalDetector()
-    num_lines = CHARSET_DETECTION_MAX_LINES
+    num_lines = CHARDET_DETECTION_MAX_LINES
     while num_lines > 0:
         line = bytes.readline()
         detector.feed(line)
@@ -104,11 +105,11 @@ def detect_encoding(bytes):
     confidence = detector.result['confidence']
     encoding = detector.result['encoding']
     # Do not use if not confident
-    if confidence < CHARSET_DETECTION_MIN_CONFIDENCE:
-        encoding = 'utf-8'
+    if confidence < CHARDET_DETECTION_MIN_CONFIDENCE:
+        encoding = DEFAULT_ENCODING
     # Default to utf-8 for safety
     if encoding == 'ascii':
-        encoding = 'utf-8'
+        encoding = DEFAULT_ENCODING
     return encoding
 
 
@@ -133,3 +134,15 @@ def reset_stream(stream):
         except Exception:
             message = 'Stream is not seekable.'
             raise exceptions.LoadingError(message)
+
+
+def ensure_dir(path):
+    """Ensure directory exists.
+
+    Args:
+        path(str): dir path
+
+    """
+    dirpath = os.path.dirname(path)
+    if dirpath and not os.path.exists(dirpath):
+        os.makedirs(dirpath)

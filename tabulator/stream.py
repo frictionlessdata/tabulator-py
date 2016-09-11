@@ -233,10 +233,10 @@ class Stream(object):
         if format not in helpers.WRITERS:
             message = 'Format "%s" is not supported' % format
             raise exceptions.WritingError(message)
-        writer_constructor = helpers.LOADERS[scheme]
-        writer = writer_constructor()
-        writer.write(path, format, encoding,
-            stream, stream.headers, **writer_options)
+        if encoding is None:
+            encoding = helpers.DEFAULT_ENCODING
+        writer = helpers.WRITERS[format]()
+        writer.write(path, encoding, self, self.headers, **writer_options)
 
     # Private
 

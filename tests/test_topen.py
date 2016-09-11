@@ -229,6 +229,19 @@ def test_native_keyed():
 def test_headers():
 
     # Get table
+    table = topen('data/table.csv', headers=1)
+
+    # Make assertions
+    assert table.headers == ['id', 'name']
+    assert list(table.iter(keyed=True)) == [
+        {'id': '1', 'name': 'english'},
+        {'id': '2', 'name': '中国人'}]
+
+
+# DEPRECATED [v0.6-v1)
+def test_headers_str():
+
+    # Get table
     table = topen('data/table.csv', headers='row1')
 
     # Make assertions
