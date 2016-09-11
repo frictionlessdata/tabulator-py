@@ -28,6 +28,7 @@ INSTALL_REQUIRES = [
     'requests>=2.8',
     'linear-tsv>=0.99.1',
     'beautifulsoup4>=4.4',
+    'unicodecsv',
 ]
 TESTS_REQUIRE = [
     'pylama',

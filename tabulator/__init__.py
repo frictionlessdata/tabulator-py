@@ -4,7 +4,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from .table import Table
-from .topen import topen
+from .stream import Stream
 from . import exceptions
 from . import processors
+
+# Deprecated
+from .topen import topen
+from .stream import Stream as Table

@@ -23,7 +23,7 @@ class NativeParser(api.Parser):
 
     @property
     def closed(self):
-        return False
+        return True
 
     def open(self, source, encoding, loader):
         self.close()

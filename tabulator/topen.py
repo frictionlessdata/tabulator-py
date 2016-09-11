@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import warnings
-from .table import Table
+from .stream import Stream
 from . import exceptions
 from . import helpers
 from . import loaders
@@ -28,10 +28,10 @@ def topen(source,
           parser_class=None,
           with_headers=False,
           extract_headers=False):
-    """Open table from source.
+    """Open stream from source.
 
     Args:
-        source (str): table source
+        source (str): stream source
         headers (list/str):
             headers list or pointer:
                 - list of headers for setting by user
@@ -66,8 +66,8 @@ def topen(source,
         post_parse (generator[]): post parse processors (hooks). Signature
             to follow is "processor(extended_rows)" which should yield
             one extended row (number, headers, row) per yield instruction.
-        sample_size (int): rows count for table.sample. Set to "0" to prevent
-            any parsing activities before actual table.iter call. In this case
+        sample_size (int): rows count for stream.sample. Set to "0" to prevent
+            any parsing activities before actual stream.iter call. In this case
             headers will not be extracted from the source.
         loader_options (dict):
             loader options:
@@ -80,20 +80,19 @@ def topen(source,
                 - <backend options>
 
     Returns:
-        table (Table): opened table instance
+        stream (Stream): opened stream instance
 
     """
-    # Initiate if None
+
+    # DEPRECATED [v0.6-v1)
+    message = 'Function "topen" is deprecated [v0.6-v1)'
+    warnings.warn(message, UserWarning)
+
+    # DEPRECATED [v0.5-v1)
     if loader_options is None:
         loader_options = {}
     if parser_options is None:
         parser_options = {}
-    if post_parse is None:
-        post_parse = []
-    if sample_size is None:
-        sample_size = _DEFAULT_SAMPLE_SIZE
-
-    # DEPRECATED [v0.5-v1)
     if loader_class is not None:
         message = 'Argument "loaders_class" is deprecated [v0.5-v1)'
         warnings.warn(message, UserWarning)
@@ -111,61 +110,13 @@ def topen(source,
         warnings.warn(message, UserWarning)
         headers = 'row1'
 
-    # Get loader
-    loader_constructor = loader_options.pop('constructor', None)
-    if loader_constructor is None:
-        if scheme is None:
-            scheme = helpers.detect_scheme(source) or _DEFAULT_SCHEME
-        if scheme not in _LOADERS:
-            message = 'Scheme "%s" is not supported' % scheme
-            raise exceptions.LoadingError(message)
-        loader_constructor = _LOADERS[scheme]
-    loader = loader_constructor(**loader_options)
-
-    # Get parser
-    parser_constructor = parser_options.pop('constructor', None)
-    if parser_constructor is None:
-        if format is None:
-            format = helpers.detect_format(source)
-        if format not in _PARSERS:
-            message = 'Format "%s" is not supported' % format
-            raise exceptions.ParsingError(message)
-        parser_constructor = _PARSERS[format]
-    parser = parser_constructor(**parser_options)
-
-    # Initiate and open table
-    table = Table(
-        source, headers, encoding,
+    # Initiate and open stream
+    stream = Stream(
+        source, headers, scheme, format, encoding,
         post_parse=post_parse,
         sample_size=sample_size,
-        loader=loader,
-        parser=parser)
-    table.open()
+        loader_options=loader_options,
+        parser_options=parser_options)
+    stream.open()
 
-    return table
-
-
-# Internal
-
-_DEFAULT_SCHEME = 'file'
-_DEFAULT_SAMPLE_SIZE = 100
-
-_LOADERS = {
-    'file': loaders.File,
-    'stream': loaders.Stream,
-    'text': loaders.Text,
-    'ftp': loaders.Web,
-    'ftps': loaders.Web,
-    'http': loaders.Web,
-    'https': loaders.Web,
-    'native': loaders.Native,
-}
-
-_PARSERS = {
-    'csv': parsers.CSV,
-    'tsv': parsers.TSV,
-    'xls': parsers.Excel,
-    'xlsx': parsers.Excelx,
-    'json': parsers.JSON,
-    'native': parsers.Native,
-}
+    return stream

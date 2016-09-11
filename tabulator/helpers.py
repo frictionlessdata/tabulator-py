@@ -12,10 +12,40 @@ from bs4 import BeautifulSoup
 from functools import partial
 from six.moves.urllib.parse import urlparse
 from chardet.universaldetector import UniversalDetector
+from . import loaders
+from . import parsers
+from . import writers
 from . import exceptions
 
 
 # Module API
+
+DEFAULT_SCHEME = 'file'
+DEFAULT_SAMPLE_SIZE = 100
+
+LOADERS = {
+    'file': loaders.File,
+    'stream': loaders.Stream,
+    'text': loaders.Text,
+    'ftp': loaders.Web,
+    'ftps': loaders.Web,
+    'http': loaders.Web,
+    'https': loaders.Web,
+    'native': loaders.Native,
+}
+
+PARSERS = {
+    'csv': parsers.CSV,
+    'tsv': parsers.TSV,
+    'xls': parsers.Excel,
+    'xlsx': parsers.Excelx,
+    'json': parsers.JSON,
+    'native': parsers.Native,
+}
+
+WRITERS = {
+    'csv': writers.CSV,
+}
 
 def detect_scheme(source):
     """Detect scheme by source.
