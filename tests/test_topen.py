@@ -146,6 +146,20 @@ def test_web_csv():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+def test_web_csv_non_ascii_url():
+
+    # Get table
+    table = topen('http://data.defra.gov.uk/ops/government_procurement_card/over_£500_GPC_apr_2013.csv')
+
+    # Make assertions
+    assert table.sample[0] == [
+        'Entity',
+        'Transaction Posting Date',
+        'Merchant Name',
+        'Amount',
+        'Description']
+
+
 def test_web_json_dicts():
 
     # Get table
