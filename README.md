@@ -34,13 +34,9 @@ with Stream('path.csv', headers=1) as stream:
 ```
 <scheme>://path/to/file.<format>
 ```
-and uses corresponding `Loader` and `Parser` to open and start to iterate
-over the tabular stream. Also user can pass `scheme` and `format` explicitly
-as constructor arguments. User can force Tabulator to use encoding of choice
-to open the table passing `encoding` argument.
+and uses corresponding `Loader` and `Parser` to open and start to iterate over the tabular stream. Also user can pass `scheme` and `format` explicitly as constructor arguments. User can force Tabulator to use encoding of choice to open the table passing `encoding` argument.
 
-In this example we use context manager to call `stream.open()` on enter
-and `stream.close()` when we exit:
+In this example we use context manager to call `stream.open()` on enter and `stream.close()` when we exit:
 - stream can be iterated like file-like object returning row by row
 - stream can be used for manual iterating with `iter` function
 - stream can be read into memory using `read` function with row count `limit`
@@ -52,8 +48,7 @@ and `stream.close()` when we exit:
 
 ### Advanced Usage
 
-To get full control over the process you can use more parameters.
-Below the more expanded example is presented:
+To get full control over the process you can use more parameters.  Below the more expanded example is presented:
 
 ```python
 from tabulator import Stream
