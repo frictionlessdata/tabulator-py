@@ -296,8 +296,7 @@ class Stream(object):
         for number, headers, row in iterator:
             if number > self.__number:
                 self.__number = number
-                if headers is None:
-                    headers = self.__headers
+                headers = self.__headers
                 yield (number, headers, row)
 
 

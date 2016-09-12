@@ -344,6 +344,19 @@ def test_headers_native_keyed():
         {'id': '2', 'name': '中国人'}]
 
 
+def test_headers_native_keyed_headers_is_none():
+
+    # Get table
+    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+    table = topen(source, headers=None)
+
+    # Make assertions
+    assert table.headers == None
+    assert list(table.iter(extended=True)) == [
+        (1, None, ['1', 'english']),
+        (2, None, ['2', '中国人'])]
+
+
 # Tests [sample]
 
 
