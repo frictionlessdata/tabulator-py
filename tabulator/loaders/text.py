@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import io
 from .. import exceptions
+from .. import helpers
 from . import api
 
 
@@ -14,8 +15,6 @@ from . import api
 class TextLoader(api.Loader):
     """Loader to load source from text.
     """
-
-    DEFAULT_ENCODING = 'utf-8'
 
     # Public
 
@@ -31,7 +30,7 @@ class TextLoader(api.Loader):
 
         # Prepare encoding
         if encoding is None:
-            encoding = self.DEFAULT_ENCODING
+            encoding = helpers.DEFAULT_ENCODING
 
         # Prepare bytes
         bytes = io.BufferedRandom(io.BytesIO())

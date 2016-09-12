@@ -5,6 +5,9 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+from . import loaders
+from . import parsers
+from . import writers
 from . import helpers
 from . import exceptions
 
@@ -55,12 +58,10 @@ class Stream(object):
             headers will not be extracted from the source.
         loader_options (dict):
             loader options:
-                - `constructor`: constructor returning `loaders.API` instance
                 - `encoding`: encoding of source
                 - <backend options>
         parser_options (dict):
             parser options:
-                - `constructor`: constructor returning `parsers.API` instance
                 - <backend options>
 
     """
@@ -91,18 +92,18 @@ class Stream(object):
         # Get loader
         if scheme is None:
             scheme = helpers.detect_scheme(source) or helpers.DEFAULT_SCHEME
-        if scheme not in helpers.LOADERS:
+        if scheme not in _LOADERS:
             message = 'Scheme "%s" is not supported' % scheme
             raise exceptions.LoadingError(message)
-        loader = helpers.LOADERS[scheme](**loader_options)
+        loader = _LOADERS[scheme](**loader_options)
 
         # Get parser
         if format is None:
             format = helpers.detect_format(source)
-        if format not in helpers.PARSERS:
+        if format not in _PARSERS:
             message = 'Format "%s" is not supported' % format
             raise exceptions.ParsingError(message)
-        parser = helpers.PARSERS[format](**parser_options)
+        parser = _PARSERS[format](**parser_options)
 
         # Set attributes
         self.__source = source
@@ -227,15 +228,16 @@ class Stream(object):
     def save(self, path, format=None,  encoding=None, **writer_options):
         """Save stream to filesystem.
         """
-        if format is None:
-            format = helpers.detect_format(path)
-        if format not in helpers.WRITERS:
-            message = 'Format "%s" is not supported' % format
-            raise exceptions.WritingError(message)
         if encoding is None:
             encoding = helpers.DEFAULT_ENCODING
-        writer = helpers.WRITERS[format]()
-        writer.write(path, encoding, self, self.headers, **writer_options)
+        if format is None:
+            format = helpers.detect_format(path)
+        if format not in _WRITERS:
+            message = 'Format "%s" is not supported' % format
+            raise exceptions.WritingError(message)
+        extended_rows = self.iter(extended=True)
+        writer = _WRITERS[format]()
+        writer.write(path, encoding, extended_rows, **writer_options)
 
     # Private
 
@@ -294,3 +296,30 @@ class Stream(object):
             if headers is None:
                 headers = self.__headers_list
             yield (number, headers, row)
+
+
+# Internal
+
+_LOADERS = {
+    'file': loaders.File,
+    'stream': loaders.Stream,
+    'text': loaders.Text,
+    'ftp': loaders.Web,
+    'ftps': loaders.Web,
+    'http': loaders.Web,
+    'https': loaders.Web,
+    'native': loaders.Native,
+}
+
+_PARSERS = {
+    'csv': parsers.CSV,
+    'tsv': parsers.TSV,
+    'xls': parsers.Excel,
+    'xlsx': parsers.Excelx,
+    'json': parsers.JSON,
+    'native': parsers.Native,
+}
+
+_WRITERS = {
+    'csv': writers.CSV,
+}

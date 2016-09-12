@@ -18,10 +18,12 @@ class CSVWriter(api.Writer):
 
     # Public
 
-    def write(self, path, encoding, rows, headers, **options):
+    def write(self, path, encoding, extended_rows, **options):
         helpers.ensure_dir(path)
         with io.open(path, 'wb') as file:
             writer = unicodecsv.writer(file, encoding=encoding, **options)
-            writer.writerow(headers)
-            for row in rows:
+            for number, headers, row in extended_rows:
+                if number == 1 and headers:
+                    writer.writerow(headers)
+                    continue
                 writer.writerow(row)
