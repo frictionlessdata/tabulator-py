@@ -493,3 +493,34 @@ def test_processors_chain():
     # Make assertions
     assert table.headers == ['id', 'name']
     assert table.read() == [[2, '中国人']]
+
+
+# Tests [save]
+
+def test_save_csv(tmpdir):
+
+    # Save table
+    path = str(tmpdir.join('table.csv'))
+    table = topen('data/table.csv', headers=1)
+    table.save(path)
+
+    # Open saved table
+    table = topen(path, headers=1)
+
+    # Make assertions
+    assert table.headers == ['id', 'name']
+    assert table.read(extended=True) == [
+        (2, ['id', 'name'], ['1', 'english']),
+        (3, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_save_xls(tmpdir):
+
+    # Save table
+    path = str(tmpdir.join('table.xls'))
+    table = topen('data/table.csv', headers=1)
+
+    # Assert raises
+    with pytest.raises(exceptions.WritingError) as excinfo:
+        table.save(path)
+    assert 'xls' in str(excinfo.value)
