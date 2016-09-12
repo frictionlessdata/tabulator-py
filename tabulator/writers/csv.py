@@ -22,8 +22,8 @@ class CSVWriter(api.Writer):
         helpers.ensure_dir(target)
         with io.open(target, 'wb') as file:
             writer = unicodecsv.writer(file, encoding=encoding, **options)
-            for number, headers, row in extended_rows:
-                if number == 1 and headers:
+            iterator = enumerate(extended_rows, start=1)
+            for output_number, (_, headers, row) in iterator:
+                if output_number == 1 and headers:
                     writer.writerow(headers)
-                    continue
                 writer.writerow(row)
