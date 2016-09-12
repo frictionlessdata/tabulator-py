@@ -18,9 +18,9 @@ class CSVWriter(api.Writer):
 
     # Public
 
-    def write(self, path, encoding, extended_rows, **options):
-        helpers.ensure_dir(path)
-        with io.open(path, 'wb') as file:
+    def write(self, target, encoding, extended_rows, **options):
+        helpers.ensure_dir(target)
+        with io.open(target, 'wb') as file:
             writer = unicodecsv.writer(file, encoding=encoding, **options)
             for number, headers, row in extended_rows:
                 if number == 1 and headers:

@@ -229,19 +229,19 @@ class Stream(object):
                 break
         return result
 
-    def save(self, path, format=None,  encoding=None, **writer_options):
+    def save(self, target, format=None,  encoding=None, **writer_options):
         """Save stream to filesystem.
         """
         if encoding is None:
             encoding = helpers.DEFAULT_ENCODING
         if format is None:
-            format = helpers.detect_format(path)
+            format = helpers.detect_format(target)
         if format not in _WRITERS:
             message = 'Format "%s" is not supported' % format
             raise exceptions.WritingError(message)
         extended_rows = self.iter(extended=True)
         writer = _WRITERS[format]()
-        writer.write(path, encoding, extended_rows, **writer_options)
+        writer.write(target, encoding, extended_rows, **writer_options)
 
     # Private
 

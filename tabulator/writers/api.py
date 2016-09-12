@@ -18,7 +18,7 @@ class Writer(object):
     # Public
 
     @abstractmethod
-    def write(self, path, encoding, extended_rows, **options):
-        """Write tabular data to path.
+    def write(self, target, encoding, extended_rows, **options):
+        """Write tabular data to target.
         """
         pass
