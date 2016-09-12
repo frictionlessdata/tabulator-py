@@ -23,7 +23,7 @@ class CSVWriter(api.Writer):
         with io.open(target, 'wb') as file:
             writer = unicodecsv.writer(file, encoding=encoding, **options)
             iterator = enumerate(extended_rows, start=1)
-            for output_number, (_, headers, row) in iterator:
-                if output_number == 1 and headers:
+            for count, (_, headers, row) in iterator:
+                if count == 1 and headers:
                     writer.writerow(headers)
                 writer.writerow(row)
