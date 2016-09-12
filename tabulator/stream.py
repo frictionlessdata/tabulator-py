@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+from itertools import chain
 from . import loaders
 from . import parsers
 from . import writers
@@ -79,7 +80,7 @@ class Stream(object):
                  loader_options=None,
                  parser_options=None,):
 
-        # Initiate if None
+        # Init parameters
         if loader_options is None:
             loader_options = {}
         if parser_options is None:
@@ -89,43 +90,41 @@ class Stream(object):
         if sample_size is None:
             sample_size = helpers.DEFAULT_SAMPLE_SIZE
 
-        # Get loader
-        if scheme is None:
-            scheme = helpers.detect_scheme(source) or helpers.DEFAULT_SCHEME
-        if scheme not in _LOADERS:
-            message = 'Scheme "%s" is not supported' % scheme
-            raise exceptions.LoadingError(message)
-        loader = _LOADERS[scheme](**loader_options)
-
-        # Get parser
-        if format is None:
-            format = helpers.detect_format(source)
-        if format not in _PARSERS:
-            message = 'Format "%s" is not supported' % format
-            raise exceptions.ParsingError(message)
-        parser = _PARSERS[format](**parser_options)
-
-        # Set attributes
-        self.__source = source
-        self.__headers = headers
-        self.__encoding = encoding
-        self.__post_parse = post_parse
-        self.__sample_size = sample_size
-        self.__loader = loader
-        self.__parser = parser
-
-        # Internal state
-        self.__headers_row = None
-        self.__headers_list = None
-        self.__sample_extended_rows = []
+        # Set headers
+        self.__headers = None
+        self.__headers_row = 0
         if isinstance(headers, (tuple, list)):
-            self.__headers_list = list(headers)
+            self.__headers = list(headers)
         elif isinstance(headers, int):
             self.__headers_row = headers
             if headers > sample_size:
                 msg = 'Headers row (%s) can\'t be more than sample_size (%s)'
                 msg = msg % (self.__headers_row, sample_size)
                 raise exceptions.TabulatorException(msg)
+
+        # Set loader
+        if scheme is None:
+            scheme = helpers.detect_scheme(source) or helpers.DEFAULT_SCHEME
+        if scheme not in _LOADERS:
+            message = 'Scheme "%s" is not supported' % scheme
+            raise exceptions.LoadingError(message)
+        self.__loader = _LOADERS[scheme](**loader_options)
+
+        # Set parser
+        if format is None:
+            format = helpers.detect_format(source)
+        if format not in _PARSERS:
+            message = 'Format "%s" is not supported' % format
+            raise exceptions.ParsingError(message)
+        self.__parser = _PARSERS[format](**parser_options)
+
+        # Set attributes
+        self.__source = source
+        self.__encoding = encoding
+        self.__post_parse = post_parse
+        self.__sample_size = sample_size
+        self.__sample_extended_rows = []
+        self.__number = 0
 
     def __enter__(self):
         """Enter context manager by opening table.
@@ -155,7 +154,9 @@ class Stream(object):
         """Open table to iterate over it.
         """
         self.__parser.open(self.__source, self.__encoding, self.__loader)
-        self.__prepare_table()
+        self.__extract_sample()
+        self.__extract_headers()
+        self.__detect_html()
         return self
 
     def close(self):
@@ -166,14 +167,17 @@ class Stream(object):
     def reset(self):
         """Reset table pointer to the first row.
         """
-        self.__parser.reset()
-        self.__prepare_table()
+        if self.__number > self.__sample_size:
+            self.__parser.reset()
+            self.__extract_sample()
+            self.__extract_headers()
+        self.__number = 0
 
     @property
     def headers(self):
         """None/list: table headers
         """
-        return self.__headers_list
+        return self.__headers
 
     @property
     def sample(self):
@@ -241,61 +245,60 @@ class Stream(object):
 
     # Private
 
-    def __prepare_table(self):
+    def __extract_sample(self):
 
         # Extract sample
         self.__sample_extended_rows = []
-        keyed_source = False
         if self.__sample_size:
             for _ in range(self.__sample_size):
                 try:
-                    (number, headers, row) = next(self.__parser.extended_rows)
-                    if headers is not None:
-                        keyed_source = True
+                    number, headers, row = next(self.__parser.extended_rows)
                     self.__sample_extended_rows.append((number, headers, row))
                 except StopIteration:
                     break
 
-        # Detect html content
-        if not keyed_source:
-            text = ''
-            for number, headers, row in self.__sample_extended_rows:
-                for value in row:
-                    if isinstance(value, six.string_types):
-                        text += value
-            html_source = helpers.detect_html(text)
-            if html_source:
-                msg = 'Source has been detected as HTML (not supported)'
-                raise exceptions.TabulatorException(msg)
+    def __extract_headers(self):
 
         # Extract headers
+        keyed_source = False
         if self.__headers_row:
             for number, headers, row in self.__sample_extended_rows:
                 if number == self.__headers_row:
-                    if keyed_source:
-                        self.__headers_list = headers
+                    if headers is not None:
+                        self.__headers = headers
+                        keyed_source = True
                     else:
-                        self.__headers_list = row
+                        self.__headers = row
+            if not keyed_source:
+                del self.__sample_extended_rows[:self.__headers_row]
 
-        # Remove headers from sample
-        if not keyed_source:
-            self.__sample_extended_rows = self.__sample_extended_rows[
-                self.__headers_row:]
+    def __detect_html(self):
+
+        # Detect html content
+        text = ''
+        for number, headers, row in self.__sample_extended_rows:
+            for value in row:
+                if isinstance(value, six.string_types):
+                    text += value
+        html_source = helpers.detect_html(text)
+        if html_source:
+            msg = 'Source has been detected as HTML (not supported)'
+            raise exceptions.TabulatorException(msg)
 
     def __iter_exteneded_rows(self):
 
-        # Iter from sample adding headers
-        while self.__sample_extended_rows:
-            number, headers, row = self.__sample_extended_rows.pop(0)
-            if headers is None:
-                headers = self.__headers_list
-            yield (number, headers, row)
+        # Prepare iterator
+        iterator = chain(
+            self.__sample_extended_rows,
+            self.__parser.extended_rows)
 
-        # Iter following rows from parser adding headers
-        for number, headers, row in self.__parser.extended_rows:
-            if headers is None:
-                headers = self.__headers_list
-            yield (number, headers, row)
+        # Iter extended rows
+        for number, headers, row in iterator:
+            if number > self.__number:
+                self.__number = number
+                if headers is None:
+                    headers = self.__headers
+                yield (number, headers, row)
 
 
 # Internal

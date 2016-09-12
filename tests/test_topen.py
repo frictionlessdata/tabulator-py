@@ -389,6 +389,37 @@ def test_reset():
     assert contents1 == contents2
 
 
+def test_reset_and_sample_size():
+
+    # Get table
+    table = topen('data/special/long.csv', headers=1, sample_size=3)
+
+    # Make assertions
+    assert table.read(extended=True) == [
+        (2, ['id', 'name'], ['1', 'a']),
+        (3, ['id', 'name'], ['2', 'b']),
+        (4, ['id', 'name'], ['3', 'c']),
+        (5, ['id', 'name'], ['4', 'd']),
+        (6, ['id', 'name'], ['5', 'e']),
+        (7, ['id', 'name'], ['6', 'f'])]
+    assert table.sample == [['1', 'a'], ['2', 'b']]
+    assert table.read() == []
+
+    # Reset table
+    table.reset()
+
+    # Make assertions
+    assert table.read(extended=True, limit=3) == [
+        (2, ['id', 'name'], ['1', 'a']),
+        (3, ['id', 'name'], ['2', 'b']),
+        (4, ['id', 'name'], ['3', 'c'])]
+    assert table.sample == [['1', 'a'], ['2', 'b']]
+    assert table.read(extended=True) == [
+        (5, ['id', 'name'], ['4', 'd']),
+        (6, ['id', 'name'], ['5', 'e']),
+        (7, ['id', 'name'], ['6', 'f'])]
+
+
 # Tests [processors]
 
 def test_processors_headers():
@@ -400,7 +431,7 @@ def test_processors_headers():
             if number == 1:
                 headers = row
                 continue
-            yield (number - 1, headers, row)
+            yield (number, headers, row)
 
     # Get table
     source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
@@ -409,8 +440,8 @@ def test_processors_headers():
     # Make assertions
     assert table.headers == None
     assert table.read(extended=True) == [
-        (1, ['id', 'name'], ['1', 'english']),
-        (2, ['id', 'name'], ['2', '中国人'])]
+        (2, ['id', 'name'], ['1', 'english']),
+        (3, ['id', 'name'], ['2', '中国人'])]
 
 
 def test_processors_chain():
@@ -427,7 +458,7 @@ def test_processors_chain():
             if not row:
                 continue
             yield (number, headers, row)
-    def convert_rows(extended_rows):
+    def cast_rows(extended_rows):
         for number, headers, row in extended_rows:
             crow = []
             for value in row:
@@ -444,7 +475,7 @@ def test_processors_chain():
     table = topen(source, headers='row1', post_parse=[
         skip_commented_rows,
         skip_blank_rows,
-        convert_rows])
+        cast_rows])
 
     # Make assertions
     assert table.headers == ['id', 'name']
