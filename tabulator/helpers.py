@@ -7,8 +7,9 @@ from __future__ import unicode_literals
 import os
 import re
 import six
+import requests.utils
 from bs4 import BeautifulSoup
-from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import urlparse, urlunparse
 from chardet.universaldetector import UniversalDetector
 from . import exceptions
 
@@ -118,3 +119,23 @@ def ensure_dir(path):
     dirpath = os.path.dirname(path)
     if dirpath and not os.path.exists(dirpath):
         os.makedirs(dirpath)
+
+
+def requote_uri(uri):
+    """Requote uri if it contains non-ascii chars, spaces etc.
+
+    Args:
+        uri (str): uri to requote
+
+    """
+    if six.PY2:
+        def url_encode_non_ascii(bytes):
+            pattern = '[\x80-\xFF]'
+            replace = lambda c: ('%%%02x' % ord(c.group(0))).upper()
+            return re.sub(pattern, replace, bytes)
+        parts = urlparse(uri)
+        uri = urlunparse(
+            part.encode('idna') if index == 1
+            else url_encode_non_ascii(part.encode('utf-8'))
+            for index, part in enumerate(parts))
+    return requests.utils.requote_uri(uri)
