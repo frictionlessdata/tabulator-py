@@ -5,7 +5,7 @@
 [![PyPi](https://img.shields.io/pypi/v/tabulator.svg)](https://pypi.python.org/pypi/tabulator)
 [![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
 
-A utility library that provides a consistent interface for reading and writing tabular data.
+Library that provides a consistent interface for reading and writing tabular data.
 
 ## Getting Started
 
@@ -47,7 +47,8 @@ and `stream.close()` when we exit:
 - headers can be accessed via `headers` property
 - rows sample can be accessed via `sample` property
 - stream pointer can be set to start via `reset` method
-- `iter/read` get `keyed/extended` arguments to customize row output
+- stream could be saved to filesystem using `save` method
+- `iter/read` accepts `keyed/extended` arguments to customize row output
 
 ### Advanced Usage
 
@@ -62,7 +63,7 @@ def skip_even_rows(extended_rows):
         if number % 2:
             yield (number, headers, row)
 
-stream = Stream('path.csv',
+stream = Stream('source.csv',
     headers=1, encoding='utf-8', sample_size=1000,
     post_parse=[skip_even_rows], parser_options={delimeter': ',', quotechar: '|'})
 stream.open()
@@ -74,6 +75,8 @@ for keyed_row in stream.iter(keyed=True):
     print keyed_row  # will print row dict
 for extended_row in stream.iter(extended=True):
     print extended_row  # will print (number, headers, row) list
+stream.reset()
+stream.save('target.csv')
 stream.close()
 ```
 

@@ -50,7 +50,7 @@ setup(
     extras_require={'develop': TESTS_REQUIRE},
     zip_safe=False,
     long_description=README,
-    description='A utility library that provides a consistent interface for reading tabular data.',
+    description='Library that provides a consistent interface for reading and writing tabular data.',
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',
     url='https://github.com/frictionlessdata/tabulator-py',
