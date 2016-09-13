@@ -10,7 +10,7 @@ Consistent interface for stream reading and writing tabular data (csv/xls/json/e
 ## Features
 
 - supports various formats: csv/tsv/xls(x)/json/native/etc
-- reads tabular data placed locally or remotely
+- reads tabular data from memory, filesystem or Internet
 - doesn't use memory because of streaming nature
 - processes data via simple user processors
 - saves data using the same interface
