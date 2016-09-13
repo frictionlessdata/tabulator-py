@@ -50,7 +50,7 @@ setup(
     extras_require={'develop': TESTS_REQUIRE},
     zip_safe=False,
     long_description=README,
-    description='Library that provides a consistent interface for reading and writing tabular data.',
+    description='Consistent interface for stream reading and writing tabular data (csv/xls/json/etc)',
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',
     url='https://github.com/frictionlessdata/tabulator-py',

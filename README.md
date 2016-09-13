@@ -5,7 +5,15 @@
 [![PyPi](https://img.shields.io/pypi/v/tabulator.svg)](https://pypi.python.org/pypi/tabulator)
 [![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
 
-Library that provides a consistent interface for reading and writing tabular data.
+Consistent interface for stream reading and writing tabular data (csv/xls/json/etc).
+
+## Features
+
+- supports various formats: csv/tsv/xls(x)/json/native/etc
+- reads tabular data placed locally or remotely
+- doesn't use memory because of streaming nature
+- processes data via simple user processors
+- saves data using the same interface
 
 ## Getting Started
 
@@ -38,13 +46,12 @@ and uses corresponding `Loader` and `Parser` to open and start to iterate over t
 
 In this example we use context manager to call `stream.open()` on enter and `stream.close()` when we exit:
 - stream can be iterated like file-like object returning row by row
-- stream can be used for manual iterating with `iter` function
-- stream can be read into memory using `read` function with row count `limit`
+- stream can be used for manual iterating with `iter(keyed/extended)` function
+- stream can be read into memory using `read(keyed/extended)` function with row count `limit`
 - headers can be accessed via `headers` property
 - rows sample can be accessed via `sample` property
 - stream pointer can be set to start via `reset` method
 - stream could be saved to filesystem using `save` method
-- `iter/read` accepts `keyed/extended` arguments to customize row output
 
 ### Advanced Usage
 
@@ -58,7 +65,7 @@ def skip_even_rows(extended_rows):
         if number % 2:
             yield (number, headers, row)
 
-stream = Stream('source.csv',
+stream = Stream('source.xls',
     headers=1, encoding='utf-8', sample_size=1000,
     post_parse=[skip_even_rows], parser_options={delimeter': ',', quotechar: '|'})
 stream.open()
@@ -69,7 +76,7 @@ stream.reset()
 for keyed_row in stream.iter(keyed=True):
     print keyed_row  # will print row dict
 for extended_row in stream.iter(extended=True):
-    print extended_row  # will print (number, headers, row) list
+    print extended_row  # will print (number, headers, row)
 stream.reset()
 stream.save('target.csv')
 stream.close()
