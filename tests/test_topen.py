@@ -5,9 +5,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import ast
 import sys
+import six
 import pytest
-from tabulator import topen, parsers, exceptions, processors
+from tabulator import topen, parsers, exceptions
 
 
 # Constants
@@ -144,6 +146,20 @@ def test_web_csv():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+def test_web_csv_non_ascii_url():
+
+    # Get table
+    table = topen('http://data.defra.gov.uk/ops/government_procurement_card/over_£500_GPC_apr_2013.csv')
+
+    # Make assertions
+    assert table.sample[0] == [
+        'Entity',
+        'Transaction Posting Date',
+        'Merchant Name',
+        'Amount',
+        'Description']
+
+
 def test_web_json_dicts():
 
     # Get table
@@ -225,6 +241,19 @@ def test_native_keyed():
 # Tests [headers]
 
 def test_headers():
+
+    # Get table
+    table = topen('data/table.csv', headers=1)
+
+    # Make assertions
+    assert table.headers == ['id', 'name']
+    assert list(table.iter(keyed=True)) == [
+        {'id': '1', 'name': 'english'},
+        {'id': '2', 'name': '中国人'}]
+
+
+# DEPRECATED [v0.6-v1)
+def test_headers_str():
 
     # Get table
     table = topen('data/table.csv', headers='row1')
@@ -315,6 +344,19 @@ def test_headers_native_keyed():
         {'id': '2', 'name': '中国人'}]
 
 
+def test_headers_native_keyed_headers_is_none():
+
+    # Get table
+    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+    table = topen(source, headers=None)
+
+    # Make assertions
+    assert table.headers == None
+    assert list(table.iter(extended=True)) == [
+        (1, None, ['1', 'english']),
+        (2, None, ['2', '中国人'])]
+
+
 # Tests [sample]
 
 
@@ -360,18 +402,125 @@ def test_reset():
     assert contents1 == contents2
 
 
+def test_reset_and_sample_size():
+
+    # Get table
+    table = topen('data/special/long.csv', headers=1, sample_size=3)
+
+    # Make assertions
+    assert table.read(extended=True) == [
+        (2, ['id', 'name'], ['1', 'a']),
+        (3, ['id', 'name'], ['2', 'b']),
+        (4, ['id', 'name'], ['3', 'c']),
+        (5, ['id', 'name'], ['4', 'd']),
+        (6, ['id', 'name'], ['5', 'e']),
+        (7, ['id', 'name'], ['6', 'f'])]
+    assert table.sample == [['1', 'a'], ['2', 'b']]
+    assert table.read() == []
+
+    # Reset table
+    table.reset()
+
+    # Make assertions
+    assert table.read(extended=True, limit=3) == [
+        (2, ['id', 'name'], ['1', 'a']),
+        (3, ['id', 'name'], ['2', 'b']),
+        (4, ['id', 'name'], ['3', 'c'])]
+    assert table.sample == [['1', 'a'], ['2', 'b']]
+    assert table.read(extended=True) == [
+        (5, ['id', 'name'], ['4', 'd']),
+        (6, ['id', 'name'], ['5', 'e']),
+        (7, ['id', 'name'], ['6', 'f'])]
+
+
 # Tests [processors]
+
+def test_processors_headers():
+
+    # Processors
+    def extract_headers(extended_rows):
+        headers = None
+        for number, _, row in extended_rows:
+            if number == 1:
+                headers = row
+                continue
+            yield (number, headers, row)
+
+    # Get table
+    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    table = topen(source, post_parse=[extract_headers])
+
+    # Make assertions
+    assert table.headers == None
+    assert table.read(extended=True) == [
+        (2, ['id', 'name'], ['1', 'english']),
+        (3, ['id', 'name'], ['2', '中国人'])]
 
 
 def test_processors_chain():
 
+    # Processors
+    def skip_commented_rows(extended_rows):
+        for number, headers, row in extended_rows:
+            if (row and hasattr(row[0], 'startswith') and
+                    row[0].startswith('#')):
+                continue
+            yield (number, headers, row)
+    def skip_blank_rows(extended_rows):
+        for number, headers, row in extended_rows:
+            if not row:
+                continue
+            yield (number, headers, row)
+    def cast_rows(extended_rows):
+        for number, headers, row in extended_rows:
+            crow = []
+            for value in row:
+                try:
+                    if isinstance(value, six.string_types):
+                        value = ast.literal_eval(value)
+                except Exception:
+                    pass
+                crow.append(value)
+            yield (number, headers, crow)
+
     # Get table
     source = [['id', 'name'], ['#1', 'english'], [], ['2', '中国人']]
     table = topen(source, headers='row1', post_parse=[
-        processors.skip_commented_rows,
-        processors.skip_blank_rows,
-        processors.convert_rows])
+        skip_commented_rows,
+        skip_blank_rows,
+        cast_rows])
 
     # Make assertions
     assert table.headers == ['id', 'name']
     assert table.read() == [[2, '中国人']]
+
+
+# Tests [save]
+
+def test_save_csv(tmpdir):
+
+    # Save table
+    path = str(tmpdir.join('table.csv'))
+    table = topen('data/table.csv', headers=1)
+    table.save(path)
+
+    # Open saved table
+    table = topen(path, headers=1)
+
+    # Make assertions
+    assert table.headers == ['id', 'name']
+    assert table.read(extended=True) == [
+        (2, ['id', 'name'], ['1', 'english']),
+        (3, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_save_xls(tmpdir):
+
+    # Save table
+    path = str(tmpdir.join('table.xls'))
+    table = topen('data/table.csv', headers=1)
+
+    # Assert raises
+    with pytest.raises(exceptions.WritingError) as excinfo:
+        table.save(path)
+    assert 'xls' in str(excinfo.value)

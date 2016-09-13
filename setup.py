@@ -20,14 +20,15 @@ def read(*paths):
 # Prepare
 PACKAGE = 'tabulator'
 INSTALL_REQUIRES = [
-    'six>=1.9',
-    'xlrd>=0.9',
-    'ijson>=2.0',
-    'chardet>=2.0',
-    'openpyxl>=2.0',
-    'requests>=2.8',
-    'linear-tsv>=0.99.1',
-    'beautifulsoup4>=4.4',
+    'six>=1.9,<2.0',
+    'xlrd>=1.0,<2.0',
+    'ijson>=2.0,<3.0',
+    'chardet>=2.0,<3.0',
+    'openpyxl>=2.0,<3.0',
+    'requests>=2.8,<3.0',
+    'beautifulsoup4>=4.4,<5.0',
+    'linear-tsv>=0.99,<0.100',
+    'unicodecsv>=0.14,<0.15',
 ]
 TESTS_REQUIRE = [
     'pylama',
@@ -49,7 +50,7 @@ setup(
     extras_require={'develop': TESTS_REQUIRE},
     zip_safe=False,
     long_description=README,
-    description='A utility library that provides a consistent interface for reading tabular data.',
+    description='Consistent interface for stream reading and writing tabular data (csv/xls/json/etc)',
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',
     url='https://github.com/frictionlessdata/tabulator-py',

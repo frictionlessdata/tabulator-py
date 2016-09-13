@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 
 import io
 import six
-from requests.utils import requote_uri
 from six.moves.urllib.request import urlopen
 from .. import exceptions
 from .. import helpers
@@ -26,8 +25,8 @@ class WebLoader(api.Loader):
 
     def load(self, source, encoding, mode):
 
-        # Requote uri if it contains spaces etc
-        source = requote_uri(source)
+        # Requote uri
+        source = helpers.requote_uri(source)
 
         # Prepare bytes
         if six.PY2:

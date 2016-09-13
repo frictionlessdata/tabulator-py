@@ -71,3 +71,11 @@ def test_reset_stream_seekable():
 def test_reset_stream_not_seekable():
     with pytest.raises(Exception):
         helpers.reset_stream('not_seekable')
+
+
+def test_requote_uri():
+    url = 'http://next.openspending.org/fdp-adapter/convert?url=https%3A%2F%2Fraw.githubusercontent.com%2Fkravets-levko%2Fdata%2Fmaster%2Ftest.xlsx.csv'
+    url1 = 'http://data.defra.gov.uk/ops/government_procurement_card/over_£500_GPC_apr_2013.csv'
+    url2 = 'http://data.defra.gov.uk/ops/government_procurement_card/over_%C2%A3500_GPC_apr_2013.csv'
+    assert helpers.requote_uri(url) == url
+    assert helpers.requote_uri(url1) == url2

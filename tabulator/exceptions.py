@@ -13,13 +13,19 @@ class TabulatorException(Exception):
     pass
 
 
+class LoadingError(TabulatorException):
+    """Base loading error.
+    """
+    pass
+
+
 class ParsingError(TabulatorException):
     """Base parsing error.
     """
     pass
 
 
-class LoadingError(TabulatorException):
-    """Base loading error.
+class WritingError(TabulatorException):
+    """Base writing error.
     """
     pass

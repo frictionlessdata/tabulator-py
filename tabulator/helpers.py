@@ -6,16 +6,20 @@ from __future__ import unicode_literals
 
 import os
 import re
-import ast
 import six
+import requests.utils
 from bs4 import BeautifulSoup
-from functools import partial
-from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import urlparse, urlunparse
 from chardet.universaldetector import UniversalDetector
 from . import exceptions
 
 
 # Module API
+
+DEFAULT_SCHEME = 'file'
+DEFAULT_ENCODING = 'utf-8'
+DEFAULT_SAMPLE_SIZE = 100
+
 
 def detect_scheme(source):
     """Detect scheme by source.
@@ -59,10 +63,10 @@ def detect_format(source):
 def detect_encoding(bytes):
     """Detect encoding of a byte stream.
     """
-    CHARSET_DETECTION_MAX_LINES = 1000
-    CHARSET_DETECTION_MIN_CONFIDENCE = 0.5
+    CHARDET_DETECTION_MAX_LINES = 1000
+    CHARDET_DETECTION_MIN_CONFIDENCE = 0.5
     detector = UniversalDetector()
-    num_lines = CHARSET_DETECTION_MAX_LINES
+    num_lines = CHARDET_DETECTION_MAX_LINES
     while num_lines > 0:
         line = bytes.readline()
         detector.feed(line)
@@ -74,11 +78,11 @@ def detect_encoding(bytes):
     confidence = detector.result['confidence']
     encoding = detector.result['encoding']
     # Do not use if not confident
-    if confidence < CHARSET_DETECTION_MIN_CONFIDENCE:
-        encoding = 'utf-8'
+    if confidence < CHARDET_DETECTION_MIN_CONFIDENCE:
+        encoding = DEFAULT_ENCODING
     # Default to utf-8 for safety
     if encoding == 'ascii':
-        encoding = 'utf-8'
+        encoding = DEFAULT_ENCODING
     return encoding
 
 
@@ -105,22 +109,33 @@ def reset_stream(stream):
             raise exceptions.LoadingError(message)
 
 
-def convert_row(row):
-    """Convert row values to python objects.
+def ensure_dir(path):
+    """Ensure directory exists.
+
+    Args:
+        path(str): dir path
+
     """
-    result = []
-    for value in row:
-        try:
-            if isinstance(value, six.string_types):
-                value = ast.literal_eval(value)
-        except Exception:
-            pass
-        result.append(value)
-    return result
+    dirpath = os.path.dirname(path)
+    if dirpath and not os.path.exists(dirpath):
+        os.makedirs(dirpath)
 
 
-def bindify(function):
-    """Add bind method to function.
+def requote_uri(uri):
+    """Requote uri if it contains non-ascii chars, spaces etc.
+
+    Args:
+        uri (str): uri to requote
+
     """
-    function.bind = partial(partial, function)
-    return function
+    if six.PY2:
+        def url_encode_non_ascii(bytes):
+            pattern = '[\x80-\xFF]'
+            replace = lambda c: ('%%%02x' % ord(c.group(0))).upper()
+            return re.sub(pattern, replace, bytes)
+        parts = urlparse(uri)
+        uri = urlunparse(
+            part.encode('idna') if index == 1
+            else url_encode_non_ascii(part.encode('utf-8'))
+            for index, part in enumerate(parts))
+    return requests.utils.requote_uri(uri)
