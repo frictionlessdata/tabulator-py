@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import six
 from .. import exceptions
 from . import api
 
@@ -26,6 +27,9 @@ class NativeParser(api.Parser):
         return True
 
     def open(self, source, encoding, loader):
+        if hasattr(source, '__next__' if six.PY3 else 'next'):
+            message = 'Only callable returning an iterator is supported'
+            raise exceptions.ParsingError(message)
         self.close()
         self.__source = source
         self.reset()
@@ -44,6 +48,8 @@ class NativeParser(api.Parser):
 
     def __iter_extended_rows(self):
         items = self.__source
+        if not hasattr(items, '__iter__'):
+            items = items()
         for number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
                 yield (number, None, list(item))

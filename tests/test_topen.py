@@ -212,6 +212,19 @@ def test_native_iterator():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+def test_native_iterator():
+
+    # Get table
+    def generator():
+        yield ['id', 'name']
+        yield ['1', 'english']
+        yield ['2', '中国人']
+    with pytest.raises(exceptions.ParsingError) as excinfo:
+        iterator = generator()
+        topen(iterator)
+    assert 'callable' in str(excinfo.value)
+
+
 def test_native_generator():
 
     # Get table
@@ -219,8 +232,7 @@ def test_native_generator():
         yield ['id', 'name']
         yield ['1', 'english']
         yield ['2', '中国人']
-    source = generator()
-    table = topen(source)
+    table = topen(generator)
 
     # Make assertions
     assert table.headers is None
@@ -431,6 +443,26 @@ def test_reset_and_sample_size():
         (5, ['id', 'name'], ['4', 'd']),
         (6, ['id', 'name'], ['5', 'e']),
         (7, ['id', 'name'], ['6', 'f'])]
+
+
+def test_reset_generator():
+
+    # Generator
+    def generator():
+        yield [1]
+        yield [2]
+
+    # Get table
+    table = topen(generator, sample_size=0)
+
+    # Make assertions
+    assert table.read() == [[1], [2]]
+
+    # Reset
+    table.reset()
+
+    # Make assertions
+    assert table.read() == [[1], [2]]
 
 
 # Tests [processors]
