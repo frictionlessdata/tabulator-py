@@ -524,7 +524,21 @@ def test_processors_chain():
 
     # Make assertions
     assert table.headers == ['id', 'name']
-    assert table.read() == [[2, '中国人']]
+
+
+def test_processors_sample():
+
+    # Processors
+    def only_first_row(extended_rows):
+        for number, header, row in extended_rows:
+            if number == 1:
+                yield (number, header, row)
+
+    # Get table
+    table = topen('data/table.csv', post_parse=[only_first_row])
+
+    # Make assertions
+    assert table.sample == [['id', 'name']]
 
 
 # Tests [save]

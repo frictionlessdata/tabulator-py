@@ -20,15 +20,15 @@ def read(*paths):
 # Prepare
 PACKAGE = 'tabulator'
 INSTALL_REQUIRES = [
-    'six>=1.9,<2.0',
-    'xlrd>=1.0,<2.0',
-    'ijson>=2.0,<3.0',
-    'chardet>=2.0,<3.0',
-    'openpyxl>=2.0,<3.0',
-    'requests>=2.8,<3.0',
-    'beautifulsoup4>=4.4,<5.0',
-    'linear-tsv>=0.99,<0.100',
-    'unicodecsv>=0.14,<0.15',
+    'six>=1.9,<2.0a',
+    'xlrd>=1.0,<2.0a',
+    'ijson>=2.0,<3.0a',
+    'chardet>=2.0,<3.0a',
+    'openpyxl>=2.0,<3.0a',
+    'requests>=2.8,<3.0a',
+    'beautifulsoup4>=4.4,<5.0a',
+    'linear-tsv>=0.99,<0.100a',
+    'unicodecsv>=0.14,<0.15a',
 ]
 TESTS_REQUIRE = [
     'pylama',
