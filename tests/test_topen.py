@@ -538,7 +538,7 @@ def test_processors_sample():
     table = topen('data/table.csv', post_parse=[only_first_row])
 
     # Make assertions
-    assert table.sample == ['id', 'name']
+    assert table.sample == [['id', 'name']]
 
 
 # Tests [save]

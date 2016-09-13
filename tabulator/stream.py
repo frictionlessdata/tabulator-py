@@ -184,7 +184,9 @@ class Stream(object):
         """list[]: sample of rows
         """
         sample = []
-        for number, headers, row in self.__sample_extended_rows:
+        iterator = iter(self.__sample_extended_rows)
+        iterator = self.__apply_processors(iterator)
+        for number, headers, row in iterator:
             sample.append(row)
         return sample
 
@@ -199,16 +201,19 @@ class Stream(object):
             mixed[]/mixed{}: row/keyed row/extended row
 
         """
-        extended_rows = self.__iter_exteneded_rows()
-        for processor in self.__post_parse:
-            extended_rows = processor(extended_rows)
-        for number, headers, row in extended_rows:
-            if extended:
-                yield (number, headers, row)
-            elif keyed:
-                yield dict(zip(headers, row))
-            else:
-                yield row
+        iterator = chain(
+            self.__sample_extended_rows,
+            self.__parser.extended_rows)
+        iterator = self.__apply_processors(iterator)
+        for number, headers, row in iterator:
+            if number > self.__number:
+                self.__number = number
+                if extended:
+                    yield (number, headers, row)
+                elif keyed:
+                    yield dict(zip(headers, row))
+                else:
+                    yield row
 
     def read(self, keyed=False, extended=False, limit=None):
         """Return table rows with count limit.
@@ -285,19 +290,17 @@ class Stream(object):
             msg = 'Source has been detected as HTML (not supported)'
             raise exceptions.TabulatorException(msg)
 
-    def __iter_exteneded_rows(self):
+    def __apply_processors(self, iterator):
 
-        # Prepare iterator
-        iterator = chain(
-            self.__sample_extended_rows,
-            self.__parser.extended_rows)
-
-        # Iter extended rows
-        for number, headers, row in iterator:
-            if number > self.__number:
-                self.__number = number
+        # Apply processors to iterator
+        def builtin_processor(extended_rows):
+            for number, headers, row in extended_rows:
                 headers = self.__headers
                 yield (number, headers, row)
+        processors = [builtin_processor] + self.__post_parse
+        for processor in processors:
+            iterator = processor(iterator)
+        return iterator
 
 
 # Internal
