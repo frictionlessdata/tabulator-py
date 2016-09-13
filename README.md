@@ -65,7 +65,7 @@ def skip_even_rows(extended_rows):
         if number % 2:
             yield (number, headers, row)
 
-stream = Stream('source.xls',
+stream = Stream('http://example.com/source.xls',
     headers=1, encoding='utf-8', sample_size=1000,
     post_parse=[skip_even_rows], parser_options={delimeter': ',', quotechar: '|'})
 stream.open()
