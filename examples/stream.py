@@ -100,7 +100,7 @@ with Stream(source) as stream:
 
 print('\nIter with keyed rows representation:')
 source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
-with Stream(source) as stream:
+with Stream(source, headers=1) as stream:
     print(stream.headers)
     for row in stream.iter(keyed=True):
         print(row)
