@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import codecs
 import os
 import re
 import six
@@ -60,9 +61,17 @@ def detect_format(source):
     return format
 
 
-def detect_encoding(bytes):
+def detect_encoding(bytes, encoding=None):
     """Detect encoding of a byte stream.
     """
+    if encoding is not None:
+        if encoding.lower() == 'utf-8':
+            prefix = bytes.read(len(codecs.BOM_UTF8))
+            if prefix == codecs.BOM_UTF8:
+                encoding = 'utf-8-sig'
+            bytes.seek(0)
+        return encoding
+
     CHARDET_DETECTION_MAX_LINES = 1000
     CHARDET_DETECTION_MIN_CONFIDENCE = 0.5
     detector = UniversalDetector()

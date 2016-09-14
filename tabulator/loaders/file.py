@@ -32,8 +32,7 @@ class FileLoader(api.Loader):
         bytes = io.open(source, 'rb')
 
         # Prepare encoding
-        if encoding is None:
-            encoding = helpers.detect_encoding(bytes)
+        encoding = helpers.detect_encoding(bytes, encoding)
 
         # Return or raise
         if mode == 'b':
