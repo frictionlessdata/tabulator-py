@@ -174,6 +174,12 @@ class Stream(object):
         self.__number = 0
 
     @property
+    def post_parse(self):
+        """func[]: processors
+        """
+        return self.__post_parse
+
+    @property
     def headers(self):
         """None/list: table headers
         """
