@@ -541,6 +541,29 @@ def test_processors_sample():
     assert table.sample == [['id', 'name']]
 
 
+def test_processors_updating():
+
+    # Processors
+    def square(extended_rows):
+        for number, header, row in extended_rows:
+            yield (number, header, list(map(lambda v: v**2, row)))
+
+    # Get table
+    table = topen([[1, 2, 3]])
+
+    # Make assertions
+    assert table.sample == [[1, 2, 3]]
+    assert table.read() == [[1, 2, 3]]
+
+    # Append processor and reset
+    table.post_parse.append(square)
+    table.reset()
+
+    # Make assertions
+    assert table.sample == [[1, 4, 9]]
+    assert table.read() == [[1, 4, 9]]
+
+
 # Tests [save]
 
 def test_save_csv(tmpdir):
