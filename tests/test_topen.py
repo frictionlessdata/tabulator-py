@@ -39,6 +39,23 @@ def test_file_csv_parser_options():
     assert table.headers is None
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
+def test_file_csv_with_bom():
+
+    # Get table
+    table = topen('data/special/bom.csv', encoding='utf-8')
+
+    # Make assertions
+    assert table.headers is None
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+    # Get table
+    table = topen('data/special/bom.csv')
+
+    # Make assertions
+    assert table.headers is None
+    assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
 
 # DEPRECATED [v0.5-v1)
 def test_file_csv_parser_class():

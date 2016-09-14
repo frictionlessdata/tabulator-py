@@ -44,8 +44,8 @@ class WebLoader(api.Loader):
                 encoding = response.headers.getparam('charset')
             else:
                 encoding = response.headers.get_content_charset()
-        if encoding is None:
-            encoding = helpers.detect_encoding(bytes)
+
+        encoding = helpers.detect_encoding(bytes, encoding)
 
         # Return or raise
         if mode == 'b':
