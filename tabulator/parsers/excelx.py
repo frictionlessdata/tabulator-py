@@ -49,5 +49,5 @@ class ExcelxParser(api.Parser):
     # Private
 
     def __iter_extended_rows(self):
-        for number, row in enumerate(self.__sheet.rows, start=1):
+        for number, row in enumerate(self.__sheet.iter_rows(), start=1):
             yield (number, None, list(cell.value for cell in row))
