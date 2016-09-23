@@ -3,6 +3,7 @@
 [![Travis](https://img.shields.io/travis/frictionlessdata/tabulator-py/master.svg)](https://travis-ci.org/frictionlessdata/tabulator-py)
 [![Coveralls](http://img.shields.io/coveralls/frictionlessdata/tabulator-py.svg?branch=master)](https://coveralls.io/r/frictionlessdata/tabulator-py?branch=master)
 [![PyPi](https://img.shields.io/pypi/v/tabulator.svg)](https://pypi.python.org/pypi/tabulator)
+[![SemVer](https://img.shields.io/badge/versions-SemVer-brightgreen.svg)](http://semver.org/)
 [![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
 
 Consistent interface for stream reading and writing tabular data (csv/xls/json/etc).
@@ -25,7 +26,7 @@ To get started:
 $ pip install tabulator
 ```
 
-### Quick Start
+### Example
 
 Open tabular stream from csv source:
 
@@ -33,9 +34,14 @@ Open tabular stream from csv source:
 from tabulator import Stream
 
 with Stream('path.csv', headers=1) as stream:
+    print(stream.headers) # will print headers from 1 row
     for row in stream:
         print(row)  # will print row values list
 ```
+
+## Documentation
+
+### Stream
 
 `Stream` takes the `source` argument:
 
@@ -53,9 +59,7 @@ In this example we use context manager to call `stream.open()` on enter and `str
 - stream pointer can be set to start via `reset` method
 - stream could be saved to filesystem using `save` method
 
-### Advanced Usage
-
-To get full control over the process you can use more parameters.  Below the more expanded example is presented:
+Below the more expanded example is presented:
 
 ```python
 from tabulator import Stream
@@ -82,10 +86,14 @@ stream.save('target.csv')
 stream.close()
 ```
 
+### exceptions
+
+The library provides various of exceptions. Please consult with docstrings.
+
 ## Read more
 
 - [Docstrings](https://github.com/frictionlessdata/tabulator-py/tree/master/tabulator)
-- [Changelog](https://github.com/frictionlessdata/tabulator-py/releases)
+- [Changelog](https://github.com/frictionlessdata/tabulator-py/commits/master)
 - [Contribute](CONTRIBUTING.md)
 
 Thanks!
