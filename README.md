@@ -39,8 +39,6 @@ with Stream('path.csv', headers=1) as stream:
         print(row)  # will print row values list
 ```
 
-## Documentation
-
 ### Stream
 
 `Stream` takes the `source` argument:
@@ -86,14 +84,39 @@ stream.save('target.csv')
 stream.close()
 ```
 
-### exceptions
+## API Reference
 
-The library provides various of exceptions. Please consult with docstrings.
+### Snapshot
 
-## Read more
+```
+Stream(source,
+       headers=None,
+       scheme=None,
+       format=None,
+       encoding=None,
+       post_parse=None,
+       sample_size=None,
+       loader_options=None,
+       parser_options=None)
+    closed/open/close/reset
+    headers -> list
+    sample -> rows
+    iter(keyed/extended=False) -> (generator) (keyed/extended)row[]
+    read(keyed/extended=False, limit=None) -> (keyed/extended)row[]
+    save(target, format=None, encoding=None, **writer_options)
+exceptions
+~cli
+```
+
+### Detailed
 
 - [Docstrings](https://github.com/frictionlessdata/tabulator-py/tree/master/tabulator)
 - [Changelog](https://github.com/frictionlessdata/tabulator-py/commits/master)
-- [Contribute](CONTRIBUTING.md)
+
+## Contributing
+
+Please read the contribution guideline:
+
+[How to Contribute](CONTRIBUTING.md)
 
 Thanks!
