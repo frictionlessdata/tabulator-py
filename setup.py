@@ -27,7 +27,7 @@ INSTALL_REQUIRES = [
     'openpyxl>=2.4,<3.0a',
     'requests>=2.8,<3.0a',
     'beautifulsoup4>=4.4,<5.0a',
-    'linear-tsv>=0.99,<0.100a',
+    'linear-tsv>=1.0,<2.0a',
     'unicodecsv>=0.14,<0.15a',
 ]
 TESTS_REQUIRE = [
