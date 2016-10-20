@@ -4,23 +4,20 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import codecs
 import os
 import re
 import six
+import codecs
 import requests.utils
 from bs4 import BeautifulSoup
+from importlib import import_module
 from six.moves.urllib.parse import urlparse, urlunparse
 from chardet.universaldetector import UniversalDetector
 from . import exceptions
+from . import config
 
 
 # Module API
-
-DEFAULT_SCHEME = 'file'
-DEFAULT_ENCODING = 'utf-8'
-DEFAULT_SAMPLE_SIZE = 100
-
 
 def detect_scheme(source):
     """Detect scheme by source.
@@ -71,11 +68,8 @@ def detect_encoding(bytes, encoding=None):
                 encoding = 'utf-8-sig'
             bytes.seek(0)
         return encoding
-
-    CHARDET_DETECTION_MAX_LINES = 1000
-    CHARDET_DETECTION_MIN_CONFIDENCE = 0.5
     detector = UniversalDetector()
-    num_lines = CHARDET_DETECTION_MAX_LINES
+    num_lines = config.ENCODING_DETECTION_MAX_LINES
     while num_lines > 0:
         line = bytes.readline()
         detector.feed(line)
@@ -87,11 +81,11 @@ def detect_encoding(bytes, encoding=None):
     confidence = detector.result['confidence']
     encoding = detector.result['encoding']
     # Do not use if not confident
-    if confidence < CHARDET_DETECTION_MIN_CONFIDENCE:
-        encoding = DEFAULT_ENCODING
+    if confidence < config.ENCODING_DETECTION_MIN_CONFIDENCE:
+        encoding = config.DEFAULT_ENCODING
     # Default to utf-8 for safety
     if encoding == 'ascii':
-        encoding = DEFAULT_ENCODING
+        encoding = config.DEFAULT_ENCODING
     return encoding
 
 
@@ -148,3 +142,16 @@ def requote_uri(uri):
             else url_encode_non_ascii(part.encode('utf-8'))
             for index, part in enumerate(parts))
     return requests.utils.requote_uri(uri)
+
+
+def import_attribute(path):
+    """Import attribute by path.
+
+    Args:
+        path (str): in a form `package.module.attribute`
+
+    """
+    module_name, attribute_name = path.rsplit('.', 1)
+    module = import_module(module_name)
+    attribute = getattr(module, attribute_name)
+    return attribute

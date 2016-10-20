@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import io
 from mock import Mock
-from tabulator import parsers
+from tabulator.parsers.tsv import TSVParser
 
 
 # Tests
@@ -17,7 +17,7 @@ def test_tsv_parser():
     encoding = None
     loader = Mock()
     loader.load = Mock(return_value=io.open(source))
-    parser = parsers.TSV()
+    parser = TSVParser()
 
     assert parser.closed
     parser.open(source, encoding, loader)
