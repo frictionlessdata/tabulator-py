@@ -58,7 +58,7 @@ def detect_format(source):
 def detect_encoding(bytes, encoding=None):
     """Detect encoding of a byte stream.
     """
-    # To impore tabulator import time
+    # To reduce tabulator import time
     from chardet.universaldetector import UniversalDetector
     if encoding is not None:
         if encoding.lower() == 'utf-8':
@@ -91,7 +91,7 @@ def detect_encoding(bytes, encoding=None):
 def detect_html(text):
     """Detect if text is HTML.
     """
-    # To impore tabulator import time
+    # To reduce tabulator import time
     from bs4 import BeautifulSoup
     return bool(BeautifulSoup(text, 'html.parser').find())
 
@@ -132,7 +132,7 @@ def requote_uri(uri):
         uri (str): uri to requote
 
     """
-    # To impore tabulator import time
+    # To reduce tabulator import time
     import requests.utils
     if six.PY2:
         def url_encode_non_ascii(bytes):
