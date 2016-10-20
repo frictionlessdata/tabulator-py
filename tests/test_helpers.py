@@ -79,3 +79,12 @@ def test_requote_uri():
     url2 = 'http://data.defra.gov.uk/ops/government_procurement_card/over_%C2%A3500_GPC_apr_2013.csv'
     assert helpers.requote_uri(url) == url
     assert helpers.requote_uri(url1) == url2
+
+
+def text_import_attribute():
+    assert helpers.import_attribute('tabulator.helpers') == helpers
+
+
+def text_import_attribute_import_error():
+    with pytest.raises(ImportError):
+        helpers.import_attribute('tabulator.bad_name')

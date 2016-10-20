@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import io
 from mock import Mock
-from tabulator import parsers
+from tabulator.parsers.csv import CSVParser
 
 
 # Tests
@@ -17,7 +17,7 @@ def test_csv_parser():
     encoding = None
     loader = Mock()
     loader.load = Mock(return_value=io.open(source, encoding='utf-8'))
-    parser = parsers.CSV()
+    parser = CSVParser()
 
     assert parser.closed
     parser.open(source, encoding, loader)

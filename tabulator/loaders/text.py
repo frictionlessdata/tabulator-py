@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import io
 from .. import exceptions
-from .. import helpers
+from .. import config
 from . import api
 
 
@@ -30,7 +30,7 @@ class TextLoader(api.Loader):
 
         # Prepare encoding
         if encoding is None:
-            encoding = helpers.DEFAULT_ENCODING
+            encoding = config.DEFAULT_ENCODING
 
         # Prepare bytes
         bytes = io.BufferedRandom(io.BytesIO())

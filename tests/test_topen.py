@@ -9,7 +9,8 @@ import ast
 import sys
 import six
 import pytest
-from tabulator import topen, parsers, exceptions
+from tabulator import topen, exceptions
+from tabulator.parsers.csv import CSVParser
 
 
 # Constants
@@ -33,7 +34,7 @@ def test_file_csv_parser_options():
 
     # Get table
     table = topen('data/table.csv',
-            parser_options={'constructor': parsers.CSV})
+            parser_options={'constructor': CSVParser})
 
     # Make assertions
     assert table.headers is None
@@ -56,12 +57,11 @@ def test_file_csv_with_bom():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-
 # DEPRECATED [v0.5-v1)
 def test_file_csv_parser_class():
 
     # Get table
-    table = topen('data/table.csv', parser_class=parsers.CSV)
+    table = topen('data/table.csv', parser_class=CSVParser)
 
     # Make assertions
     assert table.headers is None

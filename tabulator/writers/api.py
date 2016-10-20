@@ -13,12 +13,16 @@ from abc import ABCMeta, abstractmethod
 @add_metaclass(ABCMeta)
 class Writer(object):
     """Writer representation.
+
+    Args:
+        options(dict): writer options
+
     """
 
     # Public
 
     @abstractmethod
-    def write(self, target, encoding, extended_rows, **options):
+    def write(self, target, encoding, extended_rows):
         """Write tabular data to target.
         """
         pass

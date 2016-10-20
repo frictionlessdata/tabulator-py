@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import io
 from mock import Mock
 from tabulator import parsers
+from tabulator.parsers.excel import ExcelParser
 
 
 # Tests
@@ -17,7 +18,7 @@ def test_excel_parser():
     encoding = None
     loader = Mock()
     loader.load = Mock(return_value=io.open(source, 'rb'))
-    parser = parsers.Excel()
+    parser = ExcelParser()
 
     assert parser.closed
     parser.open(source, encoding, loader)

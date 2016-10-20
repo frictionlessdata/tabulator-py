@@ -5,12 +5,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+from copy import copy
 from itertools import chain
-from . import loaders
-from . import parsers
-from . import writers
-from . import helpers
 from . import exceptions
+from . import helpers
+from . import config
 
 
 # Module API
@@ -75,20 +74,10 @@ class Stream(object):
                  scheme=None,
                  format=None,
                  encoding=None,
-                 post_parse=None,
-                 sample_size=None,
-                 loader_options=None,
-                 parser_options=None,):
-
-        # Defaults
-        if loader_options is None:
-            loader_options = {}
-        if parser_options is None:
-            parser_options = {}
-        if post_parse is None:
-            post_parse = []
-        if sample_size is None:
-            sample_size = helpers.DEFAULT_SAMPLE_SIZE
+                 post_parse=[],
+                 sample_size=100,
+                 loader_options={},
+                 parser_options={}):
 
         # Headers
         self.__headers = None
@@ -104,24 +93,26 @@ class Stream(object):
 
         # Loader
         if scheme is None:
-            scheme = helpers.detect_scheme(source) or helpers.DEFAULT_SCHEME
-        if scheme not in _LOADERS:
+            scheme = helpers.detect_scheme(source) or config.DEFAULT_SCHEME
+        if scheme not in config.LOADERS:
             message = 'Scheme "%s" is not supported' % scheme
             raise exceptions.LoadingError(message)
-        self.__loader = _LOADERS[scheme](**loader_options)
+        loader_class = helpers.import_attribute(config.LOADERS[scheme])
+        self.__loader = loader_class(**loader_options)
 
         # Parser
         if format is None:
             format = helpers.detect_format(source)
-        if format not in _PARSERS:
+        if format not in config.PARSERS:
             message = 'Format "%s" is not supported' % format
             raise exceptions.ParsingError(message)
-        self.__parser = _PARSERS[format](**parser_options)
+        parser_class = helpers.import_attribute(config.PARSERS[format])
+        self.__parser = parser_class(**parser_options)
 
         # Attributes
         self.__source = source
         self.__encoding = encoding
-        self.__post_parse = post_parse
+        self.__post_parse = copy(post_parse)
         self.__sample_size = sample_size
         self.__sample_extended_rows = []
         self.__number = 0
@@ -234,19 +225,20 @@ class Stream(object):
                 break
         return result
 
-    def save(self, target, format=None,  encoding=None, **writer_options):
+    def save(self, target, format=None,  encoding=None, **options):
         """Save stream to filesystem.
         """
         if encoding is None:
-            encoding = helpers.DEFAULT_ENCODING
+            encoding = config.DEFAULT_ENCODING
         if format is None:
             format = helpers.detect_format(target)
-        if format not in _WRITERS:
+        if format not in config.WRITERS:
             message = 'Format "%s" is not supported' % format
             raise exceptions.WritingError(message)
         extended_rows = self.iter(extended=True)
-        writer = _WRITERS[format]()
-        writer.write(target, encoding, extended_rows, **writer_options)
+        writer_class = helpers.import_attribute(config.WRITERS[format])
+        writer = writer_class(**options)
+        writer.write(target, encoding, extended_rows)
 
     # Private
 
@@ -301,30 +293,3 @@ class Stream(object):
         for processor in processors:
             iterator = processor(iterator)
         return iterator
-
-
-# Internal
-
-_LOADERS = {
-    'file': loaders.File,
-    'stream': loaders.Stream,
-    'text': loaders.Text,
-    'ftp': loaders.Web,
-    'ftps': loaders.Web,
-    'http': loaders.Web,
-    'https': loaders.Web,
-    'native': loaders.Native,
-}
-
-_PARSERS = {
-    'csv': parsers.CSV,
-    'tsv': parsers.TSV,
-    'xls': parsers.Excel,
-    'xlsx': parsers.Excelx,
-    'json': parsers.JSON,
-    'native': parsers.Native,
-}
-
-_WRITERS = {
-    'csv': writers.CSV,
-}

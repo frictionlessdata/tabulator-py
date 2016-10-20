@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import io
 from mock import Mock
-from tabulator import parsers
+from tabulator.parsers.json import JSONParser
 
 
 # Tests
@@ -17,7 +17,7 @@ def test_json_parser():
     encoding = None
     loader = Mock()
     loader.load = Mock(return_value=io.open(source, 'rb'))
-    parser = parsers.JSON()
+    parser = JSONParser()
 
     assert parser.closed
     parser.open(source, encoding, loader)
