@@ -59,8 +59,11 @@ def detect_format(source):
 def detect_encoding(bytes, encoding=None):
     """Detect encoding of a byte stream.
     """
+
     # To reduce tabulator import time
     from cchardet import Detector
+
+    # Check known prefixes
     if encoding is not None:
         if encoding.lower() == 'utf-8':
             prefix = bytes.read(len(codecs.BOM_UTF8))
@@ -68,24 +71,29 @@ def detect_encoding(bytes, encoding=None):
                 encoding = 'utf-8-sig'
             bytes.seek(0)
         return encoding
+
+    # Detect
+    count = 0
     detector = Detector()
-    num_lines = config.ENCODING_DETECTION_MAX_LINES
-    while num_lines > 0:
-        line = bytes.readline()
-        detector.feed(line)
+    for line in bytes:
         if detector.done:
             break
-        num_lines -= 1
+        count += 1
+        if count >= config.ENCODING_DETECTION_MAX_LINES:
+            break
     detector.close()
     bytes.seek(0)
     confidence = detector.result['confidence']
     encoding = detector.result['encoding']
+
     # Do not use if not confident
     if confidence < config.ENCODING_DETECTION_MIN_CONFIDENCE:
         encoding = config.DEFAULT_ENCODING
+
     # Default to utf-8 for safety
     if encoding == 'ascii':
         encoding = config.DEFAULT_ENCODING
+
     return encoding
 
 
