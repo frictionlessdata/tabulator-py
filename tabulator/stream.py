@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+from copy import copy
 from itertools import chain
 from . import exceptions
 from . import helpers
@@ -73,20 +74,10 @@ class Stream(object):
                  scheme=None,
                  format=None,
                  encoding=None,
-                 post_parse=None,
-                 sample_size=None,
-                 loader_options=None,
-                 parser_options=None,):
-
-        # Defaults
-        if loader_options is None:
-            loader_options = {}
-        if parser_options is None:
-            parser_options = {}
-        if post_parse is None:
-            post_parse = []
-        if sample_size is None:
-            sample_size = config.DEFAULT_SAMPLE_SIZE
+                 post_parse=[],
+                 sample_size=100,
+                 loader_options={},
+                 parser_options={}):
 
         # Headers
         self.__headers = None
@@ -121,7 +112,7 @@ class Stream(object):
         # Attributes
         self.__source = source
         self.__encoding = encoding
-        self.__post_parse = post_parse
+        self.__post_parse = copy(post_parse)
         self.__sample_size = sample_size
         self.__sample_extended_rows = []
         self.__number = 0
