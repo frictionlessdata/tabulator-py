@@ -60,7 +60,7 @@ def detect_encoding(bytes, encoding=None):
     """Detect encoding of a byte stream.
     """
     # To reduce tabulator import time
-    from chardet.universaldetector import UniversalDetector
+    from cchardet import Detector
     if encoding is not None:
         if encoding.lower() == 'utf-8':
             prefix = bytes.read(len(codecs.BOM_UTF8))
@@ -68,7 +68,7 @@ def detect_encoding(bytes, encoding=None):
                 encoding = 'utf-8-sig'
             bytes.seek(0)
         return encoding
-    detector = UniversalDetector()
+    detector = Detector()
     num_lines = config.ENCODING_DETECTION_MAX_LINES
     while num_lines > 0:
         line = bytes.readline()
