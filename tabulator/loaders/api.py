@@ -22,10 +22,6 @@ class Loader(object):
     # Public
 
     @abstractmethod
-    def __init__(self, **options):
-        pass  # pragma: no cover
-
-    @abstractmethod
     def load(self, source, encoding, mode):
         """Return byte/text stream file-like object.
 

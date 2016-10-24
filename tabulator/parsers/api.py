@@ -21,10 +21,6 @@ class Parser(object):
 
     # Public
 
-    @abstractmethod
-    def __init__(self, **options):
-        pass  # pragma: no cover
-
     @property
     @abstractmethod
     def closed(self):
