@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+import warnings
 from copy import copy
 from itertools import chain
 from . import exceptions
