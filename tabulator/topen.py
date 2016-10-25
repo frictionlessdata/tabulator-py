@@ -24,7 +24,7 @@ def topen(source,
           loader_class=None,
           parser_class=None,
           with_headers=False,
-          extract_headers=False):
+          extract_headers=False):  # pragma: no cover
     """Open stream from source.
 
     Args:
