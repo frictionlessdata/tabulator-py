@@ -21,6 +21,11 @@ class CSVParser(api.Parser):
 
     options = [
         'delimiter',
+        'doublequote',
+        'escapechar',
+        'quotechar',
+        'quoting',
+        'skipinitialspace',
     ]
 
     def __init__(self, **options):
