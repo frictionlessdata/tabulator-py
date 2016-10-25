@@ -43,6 +43,11 @@ class Stream(object):
                 - csv
                   options:
                     - delimiter
+                    - doublequote
+                    - escapechar
+                    - quotechar
+                    - quoting
+                    - skipinitialspace
                 - json
                   options:
                     - prefix
