@@ -22,6 +22,18 @@ def test_stream_csv_delimiter():
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 
+def test_stream_excel_sheet():
+    source = 'data/special/sheet2.xls'
+    with Stream(source, sheet=2) as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_excelx_sheet():
+    source = 'data/special/sheet2.xlsx'
+    with Stream(source, sheet=2) as stream:
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
 def test_stream_json_prefix():
     source = '{"root": [["value1", "value2"], ["value3", "value4"]]}'
     with Stream(source, scheme='text', format='json', prefix='root') as stream:
