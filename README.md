@@ -84,6 +84,8 @@ stream.save('target.csv')
 stream.close()
 ```
 
+For the full list of options see - https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/stream.py#L17
+
 ## API Reference
 
 ### Snapshot
@@ -96,14 +98,13 @@ Stream(source,
        encoding=None,
        post_parse=None,
        sample_size=None,
-       loader_options=None,
-       parser_options=None)
+       **options)
     closed/open/close/reset
     headers -> list
     sample -> rows
     iter(keyed/extended=False) -> (generator) (keyed/extended)row[]
     read(keyed/extended=False, limit=None) -> (keyed/extended)row[]
-    save(target, format=None, encoding=None, **writer_options)
+    save(target, format=None, encoding=None, **options)
 exceptions
 ~cli
 ```
