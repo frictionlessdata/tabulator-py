@@ -28,7 +28,7 @@ class CSVWriter(api.Writer):
         # Make bytes
         if six.PY2:
             for key, value in options.items():
-                if not isinstance(value, str):
+                if isinstance(value, six.string_types):
                     options[key] = str(value)
 
         # Set attributes
