@@ -81,10 +81,19 @@ def test_requote_uri():
     assert helpers.requote_uri(url1) == url2
 
 
-def text_import_attribute():
+def test_import_attribute():
     assert helpers.import_attribute('tabulator.helpers') == helpers
 
 
-def text_import_attribute_import_error():
-    with pytest.raises(ImportError):
+def test_import_attribute_import_error():
+    with pytest.raises((ImportError, AttributeError)):
         helpers.import_attribute('tabulator.bad_name')
+
+
+def test_extract_options():
+    class Test(object):
+        def __init__(self, opt1, opt2): pass
+    options = {'opt1': 1, 'opt2': 2, 'opt3': 3}
+    extracted_options = helpers.extract_options(Test, options)
+    assert options == {'opt3': 3}
+    assert extracted_options == {'opt1': 1, 'opt2': 2}

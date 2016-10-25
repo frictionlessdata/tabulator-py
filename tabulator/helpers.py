@@ -8,6 +8,8 @@ import os
 import re
 import six
 import codecs
+import inspect
+from copy import copy
 from importlib import import_module
 from six.moves.urllib.parse import urlparse, urlunparse
 from . import exceptions
@@ -100,6 +102,7 @@ def reset_stream(stream):
     """Reset stream pointer to the first element.
 
     If stream is not seekable raise Exception.
+
     """
     try:
         position = stream.tell()
@@ -114,11 +117,7 @@ def reset_stream(stream):
 
 
 def ensure_dir(path):
-    """Ensure directory exists.
-
-    Args:
-        path(str): dir path
-
+    """Ensure path directory exists.
     """
     dirpath = os.path.dirname(path)
     if dirpath and not os.path.exists(dirpath):
@@ -127,10 +126,6 @@ def ensure_dir(path):
 
 def requote_uri(uri):
     """Requote uri if it contains non-ascii chars, spaces etc.
-
-    Args:
-        uri (str): uri to requote
-
     """
     # To reduce tabulator import time
     import requests.utils
@@ -148,13 +143,21 @@ def requote_uri(uri):
 
 
 def import_attribute(path):
-    """Import attribute by path.
-
-    Args:
-        path (str): in a form `package.module.attribute`
-
+    """Import attribute by path like `package.module.attribute`
     """
     module_name, attribute_name = path.rsplit('.', 1)
     module = import_module(module_name)
     attribute = getattr(module, attribute_name)
     return attribute
+
+
+def extract_options(callable, options):
+    """Return options for callable and remove it from given options in-place.
+    """
+    result = {}
+    spec = inspect.getargspec(callable)
+    for key, value in copy(options).items():
+        if key in spec.args and key != 'self':
+            result[key] = value
+            del options[key]
+    return result
