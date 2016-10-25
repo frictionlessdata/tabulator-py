@@ -18,6 +18,8 @@ class StreamLoader(api.Loader):
 
     # Public
 
+    options = []
+
     def load(self, source, encoding, mode):
 
         # Raise if in text mode

@@ -18,6 +18,8 @@ class TextLoader(api.Loader):
 
     # Public
 
+    options = []
+
     def load(self, source, encoding, mode):
 
         # Prepare source

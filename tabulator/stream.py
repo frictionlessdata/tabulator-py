@@ -112,7 +112,7 @@ class Stream(object):
             message = 'Scheme "%s" is not supported' % scheme
             raise exceptions.LoadingError(message)
         loader_class = helpers.import_attribute(config.LOADERS[scheme])
-        loader_options = helpers.extract_options(loader_class, options)
+        loader_options = helpers.extract_options(options, loader_class.options)
         self.__loader = loader_class(**loader_options)
 
         # Parser
@@ -122,7 +122,7 @@ class Stream(object):
             message = 'Format "%s" is not supported' % format
             raise exceptions.ParsingError(message)
         parser_class = helpers.import_attribute(config.PARSERS[format])
-        parser_options = helpers.extract_options(parser_class, options)
+        parser_options = helpers.extract_options(options, parser_class.options)
         self.__parser = parser_class(**parser_options)
 
         # Check options
@@ -274,7 +274,12 @@ class Stream(object):
             raise exceptions.WritingError(message)
         extended_rows = self.iter(extended=True)
         writer_class = helpers.import_attribute(config.WRITERS[format])
-        writer = writer_class(**options)
+        writer_options = helpers.extract_options(options, writer_class.options)
+        if options:
+            msg = 'Not supported options "%s" for format "%s"'
+            msg = msg % (', '.join(options), format)
+            raise exceptions.TabulatorException(msg)
+        writer = writer_class(**writer_options)
         writer.write(target, encoding, extended_rows)
 
     # Private

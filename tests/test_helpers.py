@@ -91,9 +91,8 @@ def test_import_attribute_import_error():
 
 
 def test_extract_options():
-    class Test(object):
-        def __init__(self, opt1, opt2): pass
+    names = ['opt1', 'opt2']
     options = {'opt1': 1, 'opt2': 2, 'opt3': 3}
-    extracted_options = helpers.extract_options(Test, options)
+    extracted_options = helpers.extract_options(options, names)
     assert options == {'opt3': 3}
     assert extracted_options == {'opt1': 1, 'opt2': 2}

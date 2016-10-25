@@ -19,10 +19,20 @@ class CSVParser(api.Parser):
 
     # Public
 
-    def __init__(self, delimiter=None):
-        self.__options = {}
-        if delimiter is not None:
-            self.__options['delimiter'] = delimiter
+    options = [
+        'delimiter',
+    ]
+
+    def __init__(self, **options):
+
+        # Make bytes
+        if six.PY2:
+            for key, value in options.items():
+                if not isinstance(value, str):
+                    options[key] = str(value)
+
+        # Set attributes
+        self.__options = options
         self.__extended_rows = None
         self.__loader = None
         self.__chars = None

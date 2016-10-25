@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import six
 import unicodecsv
 from .. import helpers
 from . import api
@@ -18,10 +19,20 @@ class CSVWriter(api.Writer):
 
     # Public
 
-    def __init__(self, delimiter=None):
-        self.__options = {}
-        if delimiter is not None:
-            self.__options['delimiter'] = delimiter
+    options = [
+        'delimiter',
+    ]
+
+    def __init__(self, **options):
+
+        # Make bytes
+        if six.PY2:
+            for key, value in options.items():
+                if not isinstance(value, str):
+                    options[key] = str(value)
+
+        # Set attributes
+        self.__options = options
 
     def write(self, target, encoding, extended_rows):
         helpers.ensure_dir(target)

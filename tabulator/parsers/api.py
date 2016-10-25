@@ -22,6 +22,13 @@ class Parser(object):
     # Public
 
     @property
+    # @abstractmethod
+    def options(self):
+        """list: list of available options
+        """
+        pass
+
+    @property
     @abstractmethod
     def closed(self):
         """Return if underlaynig stream is closed.

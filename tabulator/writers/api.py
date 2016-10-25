@@ -21,6 +21,13 @@ class Writer(object):
 
     # Public
 
+    @property
+    # @abstractmethod
+    def options(self):
+        """list: list of available options
+        """
+        pass
+
     @abstractmethod
     def write(self, target, encoding, extended_rows):
         """Write tabular data to target.

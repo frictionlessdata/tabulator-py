@@ -20,6 +20,8 @@ class WebLoader(api.Loader):
 
     # Public
 
+    options = []
+
     def load(self, source, encoding, mode):
 
         # Requote uri

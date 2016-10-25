@@ -18,6 +18,10 @@ class JSONParser(api.Parser):
 
     # Public
 
+    options = [
+        'prefix',
+    ]
+
     def __init__(self, prefix=None):
         self.__prefix = prefix
         self.__extended_rows = None
