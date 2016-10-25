@@ -17,8 +17,8 @@ class ExcelxParser(api.Parser):
 
     # Public
 
-    def __init__(self, sheet_index=0):
-        self.__sheet_index = sheet_index
+    def __init__(self, sheet=0):
+        self.__sheet_index = sheet
         self.__bytes = None
         self.__extended_rows = None
 

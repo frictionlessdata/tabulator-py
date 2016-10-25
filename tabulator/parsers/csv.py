@@ -19,9 +19,11 @@ class CSVParser(api.Parser):
 
     # Public
 
-    def __init__(self, **options):
+    def __init__(self, delimiter=None):
+        self.__options = {}
+        if delimiter is not None:
+            self.__options['delimiter'] = delimiter
         self.__extended_rows = None
-        self.__options = options
         self.__loader = None
         self.__chars = None
 

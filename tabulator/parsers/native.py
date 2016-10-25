@@ -17,9 +17,8 @@ class NativeParser(api.Parser):
 
     # Public
 
-    def __init__(self, **options):
+    def __init__(self):
         self.__extended_rows = None
-        self.__options = options
         self.__source = None
 
     @property

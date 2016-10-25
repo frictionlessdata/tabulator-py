@@ -18,9 +18,9 @@ class JSONParser(api.Parser):
 
     # Public
 
-    def __init__(self, path=None):
+    def __init__(self, prefix=None):
+        self.__prefix = prefix
         self.__extended_rows = None
-        self.__path = path
         self.__chars = None
 
     @property
@@ -48,10 +48,10 @@ class JSONParser(api.Parser):
     # Private
 
     def __iter_extended_rows(self):
-        prefix = 'item'
-        if self.__path is not None:
-            prefix = '%s.item' % self.__path
-        items = ijson.items(self.__chars, prefix)
+        path = 'item'
+        if self.__prefix is not None:
+            path = '%s.item' % self.__prefix
+        items = ijson.items(self.__chars, path)
         for number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
                 yield (number, None, list(item))

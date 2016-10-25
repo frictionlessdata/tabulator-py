@@ -18,8 +18,10 @@ class CSVWriter(api.Writer):
 
     # Public
 
-    def __init__(self, **options):
-        self.__options = options
+    def __init__(self, delimiter=None):
+        self.__options = {}
+        if delimiter is not None:
+            self.__options['delimiter'] = delimiter
 
     def write(self, target, encoding, extended_rows):
         helpers.ensure_dir(target)
