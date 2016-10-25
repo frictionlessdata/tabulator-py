@@ -17,8 +17,8 @@ class ExcelxParser(api.Parser):
 
     # Public
 
-    def __init__(self, sheet=0):
-        self.__sheet_index = sheet
+    def __init__(self, sheet=1):
+        self.__index = sheet-1
         self.__bytes = None
         self.__extended_rows = None
 
@@ -31,7 +31,7 @@ class ExcelxParser(api.Parser):
         self.__loader = loader
         self.__bytes = loader.load(source, encoding, mode='b')
         self.__book = openpyxl.load_workbook(self.__bytes, read_only=True)
-        self.__sheet = self.__book.worksheets[self.__sheet_index]
+        self.__sheet = self.__book.worksheets[self.__index]
         self.reset()
 
     def close(self):

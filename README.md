@@ -69,7 +69,7 @@ def skip_even_rows(extended_rows):
 
 stream = Stream('http://example.com/source.xls',
     headers=1, encoding='utf-8', sample_size=1000,
-    post_parse=[skip_even_rows], parser_options={delimeter': ',', quotechar: '|'})
+    post_parse=[skip_even_rows], sheet=1)
 stream.open()
 print(stream.sample)  # will print sample
 print(stream.headers)  # will print headers list
