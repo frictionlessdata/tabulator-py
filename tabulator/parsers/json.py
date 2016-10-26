@@ -68,4 +68,4 @@ class JSONParser(api.Parser):
                 yield (number, list(keys), list(values))
             else:
                 message = 'JSON item has to be list or dict'
-                raise exceptions.ParsingError(message)
+                raise exceptions.SourceError(message)

@@ -8,7 +8,7 @@ import pytest
 from tabulator import Stream, exceptions
 
 
-# Tests [loader/parser options]
+# Tests [options]
 
 def test_stream_csv_delimiter():
     source = 'value1;value2\nvalue3;value4'
@@ -52,7 +52,43 @@ def test_stream_json_prefix():
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 
-def test_stream_bad_option():
-    with pytest.raises(exceptions.TabulatorException) as excinfo:
-        Stream('', scheme='text', format='csv', bad_option=True)
+# Tests [errors]
+
+def test_stream_source_error():
+    stream = Stream('[1,2]', scheme='text', format='json')
+    with pytest.raises(exceptions.SourceError) as excinfo:
+        stream.open()
+        stream.read()
+
+
+def test_stream_scheme_error():
+    stream = Stream('', scheme='bad_scheme')
+    with pytest.raises(exceptions.SchemeError) as excinfo:
+        stream.open()
+    assert 'bad_scheme' in str(excinfo.value)
+
+
+def test_stream_format_error():
+    stream = Stream('', format='bad_format')
+    with pytest.raises(exceptions.FormatError) as excinfo:
+        stream.open()
+    assert 'bad_format' in str(excinfo.value)
+
+
+def test_stream_options_error():
+    with pytest.raises(exceptions.OptionsError) as excinfo:
+        Stream('', scheme='text', format='csv', bad_option=True).open()
     assert 'bad_option' in str(excinfo.value)
+
+
+def test_stream_io_error():
+    stream = Stream('bad_path.csv')
+    with pytest.raises(exceptions.IOError) as excinfo:
+        stream.open()
+    assert 'bad_path.csv' in str(excinfo.value)
+
+
+def test_stream_http_error():
+    stream = Stream('http://github.com/bad_path.csv')
+    with pytest.raises(exceptions.HTTPError) as excinfo:
+        stream.open()

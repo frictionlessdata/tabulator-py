@@ -25,7 +25,7 @@ class StreamLoader(api.Loader):
         # Raise if in text mode
         if hasattr(source, 'encoding'):
             message = 'Only byte streams are supported.'
-            raise exceptions.LoadingError(message)
+            raise exceptions.SourceError(message)
 
         # Prepare bytes
         bytes = source
@@ -36,9 +36,6 @@ class StreamLoader(api.Loader):
         # Return or raise
         if mode == 'b':
             return bytes
-        elif mode == 't':
+        else:
             chars = io.TextIOWrapper(bytes, encoding)
             return chars
-        else:
-            message = 'Mode %s is not supported' % mode
-            raise exceptions.LoadingError(message)

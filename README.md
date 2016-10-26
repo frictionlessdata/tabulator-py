@@ -8,6 +8,8 @@
 
 Consistent interface for stream reading and writing tabular data (csv/xls/json/etc).
 
+> Release `v0.9` contains changes in `exceptions` module introduced in NOT backward-compatibility manner.
+
 ## Features
 
 - supports various formats: csv/tsv/xls/xlsx/json/ndjson/ods/native/etc
@@ -92,12 +94,12 @@ For the full list of options see - https://github.com/frictionlessdata/tabulator
 
 ```
 Stream(source,
-       headers=None,
        scheme=None,
        format=None,
        encoding=None,
-       post_parse=None,
+       headers=None,
        sample_size=None,
+       post_parse=None,
        **options)
     closed/open/close/reset
     headers -> list

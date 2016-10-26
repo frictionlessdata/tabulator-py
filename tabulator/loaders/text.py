@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
-from .. import exceptions
 from .. import config
 from . import api
 
@@ -39,9 +38,6 @@ class TextLoader(api.Loader):
         # Return or raise
         if mode == 'b':
             return bytes
-        elif mode == 't':
+        else:
             chars = io.TextIOWrapper(bytes, encoding)
             return chars
-        else:
-            message = 'Mode %s is not supported' % mode
-            raise exceptions.LoadingError(message)

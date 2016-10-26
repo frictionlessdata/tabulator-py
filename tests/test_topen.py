@@ -236,7 +236,7 @@ def test_native_iterator():
         yield ['id', 'name']
         yield ['1', 'english']
         yield ['2', '中国人']
-    with pytest.raises(exceptions.ParsingError) as excinfo:
+    with pytest.raises(exceptions.SourceError) as excinfo:
         iterator = generator()
         topen(iterator)
     assert 'callable' in str(excinfo.value)
@@ -407,7 +407,7 @@ def test_html_content():
 
     # Check raises
     source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
-    with pytest.raises(exceptions.TabulatorException) as excinfo:
+    with pytest.raises(exceptions.SourceError) as excinfo:
         table = topen(source, headers='row1')
     assert 'HTML' in str(excinfo.value)
 
@@ -584,6 +584,6 @@ def test_save_xls(tmpdir):
     table = topen('data/table.csv', headers=1)
 
     # Assert raises
-    with pytest.raises(exceptions.WritingError) as excinfo:
+    with pytest.raises(exceptions.FormatError) as excinfo:
         table.save(path)
     assert 'xls' in str(excinfo.value)
