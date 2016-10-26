@@ -21,9 +21,12 @@ class Loader(object):
 
     # Public
 
-    @abstractmethod
-    def __init__(self, **options):
-        pass  # pragma: no cover
+    @property
+    # @abstractmethod
+    def options(self):
+        """list: list of available options
+        """
+        pass
 
     @abstractmethod
     def load(self, source, encoding, mode):
@@ -38,4 +41,4 @@ class Loader(object):
             file-like: file-like object of byte/text stream
 
         """
-        pass  # pragma: no cover
+        pass

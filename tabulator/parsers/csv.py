@@ -19,9 +19,26 @@ class CSVParser(api.Parser):
 
     # Public
 
+    options = [
+        'delimiter',
+        'doublequote',
+        'escapechar',
+        'quotechar',
+        'quoting',
+        'skipinitialspace',
+    ]
+
     def __init__(self, **options):
-        self.__extended_rows = None
+
+        # Make bytes
+        if six.PY2:
+            for key, value in options.items():
+                if isinstance(value, six.string_types):
+                    options[key] = str(value)
+
+        # Set attributes
         self.__options = options
+        self.__extended_rows = None
         self.__loader = None
         self.__chars = None
 

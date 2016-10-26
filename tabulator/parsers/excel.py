@@ -17,8 +17,12 @@ class ExcelParser(api.Parser):
 
     # Public
 
-    def __init__(self, sheet_index=0):
-        self.__sheet_index = sheet_index
+    options = [
+        'sheet',
+    ]
+
+    def __init__(self, sheet=1):
+        self.__index = sheet-1
         self.__bytes = None
         self.__extended_rows = None
 
@@ -33,7 +37,7 @@ class ExcelParser(api.Parser):
         self.__book = xlrd.open_workbook(
                 file_contents=self.__bytes.read(),
                 encoding_override=encoding)
-        self.__sheet = self.__book.sheet_by_index(self.__sheet_index)
+        self.__sheet = self.__book.sheet_by_index(self.__index)
         self.reset()
 
     def close(self):

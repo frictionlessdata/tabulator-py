@@ -16,8 +16,7 @@ class NativeLoader(api.Loader):
 
     # Public
 
-    def __init__(self, **options):
-        self.__options = options
+    options = []
 
     def load(self, source, encoding, mode):
         message = 'NativeLoader doesn\'t support load method'

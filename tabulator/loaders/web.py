@@ -20,8 +20,7 @@ class WebLoader(api.Loader):
 
     # Public
 
-    def __init__(self, **options):
-        self.__options = options
+    options = []
 
     def load(self, source, encoding, mode):
 
@@ -51,7 +50,7 @@ class WebLoader(api.Loader):
         if mode == 'b':
             return bytes
         elif mode == 't':
-            chars = io.TextIOWrapper(bytes, encoding, **self.__options)
+            chars = io.TextIOWrapper(bytes, encoding)
             return chars
         else:
             message = 'Mode %s is not supported' % mode

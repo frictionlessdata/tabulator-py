@@ -20,9 +20,10 @@ class TSVParser(api.Parser):
 
     # Public
 
-    def __init__(self, **options):
+    options = []
+
+    def __init__(self):
         self.__extended_rows = None
-        self.__options = options
         self.__loader = None
         self.__chars = None
 

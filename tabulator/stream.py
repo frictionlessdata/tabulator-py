@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+import warnings
 from copy import copy
 from itertools import chain
 from . import exceptions
@@ -22,29 +23,42 @@ class Stream(object):
         headers (list/str):
             headers list or pointer:
                 - list of headers for setting by user
-                - row pointer like `row3` to extract headers.
+                - row number to extract headers from this row
                   For plain source headers row and all rows
                   before will be removed. For keyed source no rows
                   will be removed.
         scheme (str):
             scheme of source:
                 - file (default)
-                - stream
-                - text
-                - http
-                - https
                 - ftp
                 - ftps
+                - http
+                - https
                 - native
+                - stream
+                - text
         format (str):
             format of source:
                 - None (detect)
                 - csv
-                - tsv
+                  options:
+                    - delimiter
+                    - doublequote
+                    - escapechar
+                    - quotechar
+                    - quoting
+                    - skipinitialspace
                 - json
-                - xls
-                - xlsx
+                  options:
+                    - prefix
                 - native
+                - tsv
+                - xls
+                  options:
+                    - sheet
+                - xlsx
+                  options:
+                    - sheet
         encoding (str):
             encoding of source:
                 - None (detect)
@@ -56,13 +70,6 @@ class Stream(object):
         sample_size (int): rows count for table.sample. Set to "0" to prevent
             any parsing activities before actual table.iter call. In this case
             headers will not be extracted from the source.
-        loader_options (dict):
-            loader options:
-                - `encoding`: encoding of source
-                - <backend options>
-        parser_options (dict):
-            parser options:
-                - <backend options>
 
     """
 
@@ -76,8 +83,20 @@ class Stream(object):
                  encoding=None,
                  post_parse=[],
                  sample_size=100,
+                 # DEPRECATED [v0.8-v1)
                  loader_options={},
-                 parser_options={}):
+                 parser_options={},
+                 **options):
+
+        # DEPRECATED [v0.8-v1)
+        if loader_options:
+            options.update(loader_options)
+            message = 'Use kwargs instead of "loader_options"'
+            warnings.warn(message, UserWarning)
+        if parser_options is None:
+            options.update(parser_options)
+            message = 'Use kwargs instead of "parser_options"'
+            warnings.warn(message, UserWarning)
 
         # Headers
         self.__headers = None
@@ -98,6 +117,7 @@ class Stream(object):
             message = 'Scheme "%s" is not supported' % scheme
             raise exceptions.LoadingError(message)
         loader_class = helpers.import_attribute(config.LOADERS[scheme])
+        loader_options = helpers.extract_options(options, loader_class.options)
         self.__loader = loader_class(**loader_options)
 
         # Parser
@@ -107,9 +127,16 @@ class Stream(object):
             message = 'Format "%s" is not supported' % format
             raise exceptions.ParsingError(message)
         parser_class = helpers.import_attribute(config.PARSERS[format])
+        parser_options = helpers.extract_options(options, parser_class.options)
         self.__parser = parser_class(**parser_options)
 
-        # Attributes
+        # Check options
+        if options:
+            msg = 'Not supported options "%s" for schema "%s" and format "%s"'
+            msg = msg % (', '.join(options), scheme, format)
+            raise exceptions.TabulatorException(msg)
+
+        # Set attributes
         self.__source = source
         self.__encoding = encoding
         self.__post_parse = copy(post_parse)
@@ -216,6 +243,7 @@ class Stream(object):
 
         Returns:
             list: rows/keyed rows/extended rows
+
         """
         result = []
         rows = self.iter(keyed=keyed, extended=extended)
@@ -227,6 +255,20 @@ class Stream(object):
 
     def save(self, target, format=None,  encoding=None, **options):
         """Save stream to filesystem.
+
+        Args:
+            target (str): stream target
+            format (str):
+                saving format:
+                    - None (detect)
+                    - csv
+                      options:
+                        - delimiter
+            encoding (str):
+                saving encoding:
+                    - utf-8 (default)
+                    - <encodings>
+
         """
         if encoding is None:
             encoding = config.DEFAULT_ENCODING
@@ -237,7 +279,12 @@ class Stream(object):
             raise exceptions.WritingError(message)
         extended_rows = self.iter(extended=True)
         writer_class = helpers.import_attribute(config.WRITERS[format])
-        writer = writer_class(**options)
+        writer_options = helpers.extract_options(options, writer_class.options)
+        if options:
+            msg = 'Not supported options "%s" for format "%s"'
+            msg = msg % (', '.join(options), format)
+            raise exceptions.TabulatorException(msg)
+        writer = writer_class(**writer_options)
         writer.write(target, encoding, extended_rows)
 
     # Private

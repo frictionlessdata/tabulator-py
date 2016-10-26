@@ -69,7 +69,7 @@ def skip_even_rows(extended_rows):
 
 stream = Stream('http://example.com/source.xls',
     headers=1, encoding='utf-8', sample_size=1000,
-    post_parse=[skip_even_rows], parser_options={delimeter': ',', quotechar: '|'})
+    post_parse=[skip_even_rows], sheet=1)
 stream.open()
 print(stream.sample)  # will print sample
 print(stream.headers)  # will print headers list
@@ -84,6 +84,8 @@ stream.save('target.csv')
 stream.close()
 ```
 
+For the full list of options see - https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/stream.py#L17
+
 ## API Reference
 
 ### Snapshot
@@ -96,14 +98,13 @@ Stream(source,
        encoding=None,
        post_parse=None,
        sample_size=None,
-       loader_options=None,
-       parser_options=None)
+       **options)
     closed/open/close/reset
     headers -> list
     sample -> rows
     iter(keyed/extended=False) -> (generator) (keyed/extended)row[]
     read(keyed/extended=False, limit=None) -> (keyed/extended)row[]
-    save(target, format=None, encoding=None, **writer_options)
+    save(target, format=None, encoding=None, **options)
 exceptions
 ~cli
 ```
