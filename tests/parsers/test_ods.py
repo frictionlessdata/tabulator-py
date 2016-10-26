@@ -25,16 +25,14 @@ def test_excelx_parser():
     assert not parser.closed
 
     assert list(parser.extended_rows) == [
-        (1, None, ['id', 'name', None]),
-        (2, None, [1.0, 'english', None]),
-        (3, None, [2.0, '中国人', None]),
-        (4, None, [None, None, None]),
-        (5, None, [None, None, None]),
+        (1, None, ['id', 'name']),
+        (2, None, [1.0, 'english']),
+        (3, None, [2.0, '中国人']),
     ]
 
     assert len(list(parser.extended_rows)) == 0
     parser.reset()
-    assert len(list(parser.extended_rows)) == 5
+    assert len(list(parser.extended_rows)) == 3
 
     parser.close()
     assert parser.closed
@@ -42,10 +40,8 @@ def test_excelx_parser():
 
 def test_stream_ods():
     with Stream('data/table.ods', headers=1) as stream:
-        assert stream.headers == ['id', 'name', None]
+        assert stream.headers == ['id', 'name']
         assert stream.read(keyed=True) == [
-            {'id': 1.0, 'name': 'english', None: None},
-            {'id': 2.0, 'name': '中国人', None: None},
-            {'id': None, 'name': None, None: None},
-            {'id': None, 'name': None, None: None},
+            {'id': 1.0, 'name': 'english'},
+            {'id': 2.0, 'name': '中国人'},
         ]
