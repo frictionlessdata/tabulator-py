@@ -94,10 +94,10 @@ For the full list of options see - https://github.com/frictionlessdata/tabulator
 
 ```
 Stream(source,
+       headers=None,
        scheme=None,
        format=None,
        encoding=None,
-       headers=None,
        sample_size=None,
        post_parse=None,
        **options)

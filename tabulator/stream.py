@@ -20,6 +20,13 @@ class Stream(object):
 
     Args:
         source (str): stream source
+        headers (list/str):
+            headers list or pointer:
+                - list of headers for setting by user
+                - row number to extract headers from this row
+                  For plain source headers row and all rows
+                  before will be removed. For keyed source no rows
+                  will be removed.
         scheme (str):
             scheme of source:
                 - file (default)
@@ -57,13 +64,6 @@ class Stream(object):
                 - None (detect)
                 - utf-8
                 - <encodings>
-        headers (list/str):
-            headers list or pointer:
-                - list of headers for setting by user
-                - row number to extract headers from this row
-                  For plain source headers row and all rows
-                  before will be removed. For keyed source no rows
-                  will be removed.
         sample_size (int): rows count for table.sample. Set to "0" to prevent
             any parsing activities before actual table.iter call. In this case
             headers will not be extracted from the source.
@@ -78,10 +78,10 @@ class Stream(object):
 
     def __init__(self,
                  source,
+                 headers=None,
                  scheme=None,
                  format=None,
                  encoding=None,
-                 headers=None,
                  sample_size=100,
                  post_parse=[],
                  # DEPRECATED [v0.8-v1)
