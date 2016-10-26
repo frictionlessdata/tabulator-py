@@ -29,6 +29,7 @@ INSTALL_REQUIRES = [
     'beautifulsoup4>=4.4,<5.0a',
     'linear-tsv>=1.0,<2.0a',
     'unicodecsv>=0.14,<1.0a',
+    'jsonlines>=1.1,<1.2',
 ]
 TESTS_REQUIRE = [
     'pylama',
