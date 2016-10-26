@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import io
 from mock import Mock
+from tabulator import Stream
 from tabulator.parsers.ndjson import NDJSONParser
 
 
@@ -34,3 +35,11 @@ def test_ndjson_parser():
 
     parser.close()
     assert parser.closed
+
+
+def test_stream_ndjson():
+    with Stream('data/table.ndjson', headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(keyed=True) == [
+            {'id': 1, 'name': 'english'},
+            {'id': 2, 'name': '中国人'}]

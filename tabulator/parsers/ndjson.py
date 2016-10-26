@@ -23,8 +23,6 @@ class NDJSONParser(api.Parser):
     options = [
     ]
 
-    # XXX: I would suggest to move this whole boilerplate to api.Parser, most
-    #      of the parsers just duplicates exactly same code.
     def __init__(self, **options):
         self.__options = options
         self.__extended_rows = None
