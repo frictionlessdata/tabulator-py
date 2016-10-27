@@ -96,3 +96,14 @@ def test_extract_options():
     extracted_options = helpers.extract_options(options, names)
     assert options == {'opt3': 3}
     assert extracted_options == {'opt1': 1, 'opt2': 2}
+
+
+@pytest.mark.parametrize('sample', [
+    ('\n\n\t <html>', True),
+    ('<!DOCTYPE html>', True),
+    ('col1,col2\nval1,<html>', False),
+    ('val1,<html>', False),
+])
+def test_detect_html(sample):
+    text, is_html = sample
+    assert helpers.detect_html(text) is is_html
