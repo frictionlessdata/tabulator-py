@@ -8,7 +8,7 @@
 
 Consistent interface for stream reading and writing tabular data (csv/xls/json/etc).
 
-> Release `v0.9` contains changes in `exceptions` module introduced in NOT backward-compatibility manner.
+> Release `v0.10` contains changes in `exceptions` module introduced in NOT backward-compatibility manner.
 
 ## Features
 
