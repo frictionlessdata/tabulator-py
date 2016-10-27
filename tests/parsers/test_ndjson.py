@@ -5,8 +5,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import pytest
+from six import StringIO
 from mock import Mock
-from tabulator import Stream
+
+from tabulator import exceptions, Stream
 from tabulator.parsers.ndjson import NDJSONParser
 
 
@@ -43,3 +46,33 @@ def test_stream_ndjson():
         assert stream.read(keyed=True) == [
             {'id': 1, 'name': 'english'},
             {'id': 2, 'name': '中国人'}]
+
+
+def test_ndjson_list():
+    stream = StringIO(
+        '[1, 2, 3]\n'
+        '[4, 5, 6]\n'
+    )
+
+    parser = NDJSONParser()
+    loader = Mock(load=Mock(return_value=stream))
+    parser.open(None, None, loader)
+
+    assert list(parser.extended_rows) == [
+        (1, None, [1, 2, 3]),
+        (2, None, [4, 5, 6]),
+    ]
+
+
+def test_ndjson_scalar():
+    stream = StringIO(
+        '1\n'
+        '2\n'
+    )
+
+    parser = NDJSONParser()
+    loader = Mock(load=Mock(return_value=stream))
+    parser.open(None, None, loader)
+
+    with pytest.raises(exceptions.SourceError):
+        list(parser.extended_rows)
