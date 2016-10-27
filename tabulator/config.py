@@ -25,6 +25,8 @@ LOADERS = {
 PARSERS = {
     'csv': 'tabulator.parsers.csv.CSVParser',
     'json': 'tabulator.parsers.json.JSONParser',
+    'jsonl': 'tabulator.parsers.ndjson.NDJSONParser',
+    'ndjson': 'tabulator.parsers.ndjson.NDJSONParser',
     'native': 'tabulator.parsers.native.NativeParser',
     'tsv': 'tabulator.parsers.tsv.TSVParser',
     'xls': 'tabulator.parsers.excel.ExcelParser',
