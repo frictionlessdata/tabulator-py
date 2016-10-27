@@ -13,19 +13,49 @@ class TabulatorException(Exception):
     pass
 
 
-class LoadingError(TabulatorException):
-    """Base loading error.
+class SourceError(TabulatorException):
+    """Stream error.
     """
     pass
 
 
-class ParsingError(TabulatorException):
-    """Base parsing error.
+class SchemeError(TabulatorException):
+    """Scheme error.
     """
     pass
 
 
-class WritingError(TabulatorException):
-    """Base writing error.
+class FormatError(TabulatorException):
+    """Format error.
+    """
+    pass
+
+
+class EncodingError(TabulatorException):
+    """Encoding error.
+    """
+    pass
+
+
+class OptionsError(TabulatorException):
+    """Options error.
+    """
+    pass
+
+
+class IOError(TabulatorException):
+    """IO error.
+    """
+    pass
+
+
+class HTTPError(TabulatorException):
+    """HTTP error.
+    """
+    pass
+
+
+class ResetError(TabulatorException):
+    """Reset error.
     """
     pass

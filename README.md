@@ -8,6 +8,8 @@
 
 Consistent interface for stream reading and writing tabular data (csv/xls/json/etc).
 
+> Release `v0.10` contains changes in `exceptions` module introduced in NOT backward-compatibility manner.
+
 ## Features
 
 - supports various formats: csv/tsv/xls/xlsx/json/ndjson/ods/native/etc
@@ -96,8 +98,8 @@ Stream(source,
        scheme=None,
        format=None,
        encoding=None,
-       post_parse=None,
        sample_size=None,
+       post_parse=None,
        **options)
     closed/open/close/reset
     headers -> list

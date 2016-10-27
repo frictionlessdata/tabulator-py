@@ -112,7 +112,7 @@ def reset_stream(stream):
             stream.seek(0)
         except Exception:
             message = 'Stream is not seekable.'
-            raise exceptions.LoadingError(message)
+            raise exceptions.ResetError(message)
 
 
 def ensure_dir(path):

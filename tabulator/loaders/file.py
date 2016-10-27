@@ -28,7 +28,10 @@ class FileLoader(api.Loader):
             source = source.replace(scheme, '', 1)
 
         # Prepare bytes
-        bytes = io.open(source, 'rb')
+        try:
+            bytes = io.open(source, 'rb')
+        except IOError as exception:
+            raise exceptions.IOError(str(exception))
 
         # Prepare encoding
         encoding = helpers.detect_encoding(bytes, encoding)
@@ -36,9 +39,6 @@ class FileLoader(api.Loader):
         # Return or raise
         if mode == 'b':
             return bytes
-        elif mode == 't':
+        else:
             chars = io.TextIOWrapper(bytes, encoding)
             return chars
-        else:
-            message = 'Mode %s is not supported' % mode
-            raise exceptions.LoadingError(message)

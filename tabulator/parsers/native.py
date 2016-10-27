@@ -30,7 +30,7 @@ class NativeParser(api.Parser):
     def open(self, source, encoding, loader):
         if hasattr(source, '__next__' if six.PY3 else 'next'):
             message = 'Only callable returning an iterator is supported'
-            raise exceptions.ParsingError(message)
+            raise exceptions.SourceError(message)
         self.close()
         self.__source = source
         self.reset()
@@ -63,4 +63,4 @@ class NativeParser(api.Parser):
                 yield (number, list(keys), list(values))
             else:
                 message = 'Native item has to be tuple, list or dict'
-                raise exceptions.ParsingError(message)
+                raise exceptions.SourceError(message)

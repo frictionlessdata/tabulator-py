@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import io
 import six
+from six.moves.urllib.error import URLError
 from six.moves.urllib.request import urlopen
 from .. import exceptions
 from .. import helpers
@@ -28,14 +29,17 @@ class WebLoader(api.Loader):
         source = helpers.requote_uri(source)
 
         # Prepare bytes
-        if six.PY2:
-            response = urlopen(source)
-            bytes = io.BufferedRandom(io.BytesIO())
-            bytes.write(response.read())
-            bytes.seek(0)
-        else:
-            bytes = _WebStream(source)
-            response = bytes.response
+        try:
+            if six.PY2:
+                response = urlopen(source)
+                bytes = io.BufferedRandom(io.BytesIO())
+                bytes.write(response.read())
+                bytes.seek(0)
+            else:
+                bytes = _WebStream(source)
+                response = bytes.response
+        except URLError as exception:
+            raise exceptions.HTTPError(str(exception))
 
         # Prepare encoding
         if encoding is None:
@@ -43,18 +47,14 @@ class WebLoader(api.Loader):
                 encoding = response.headers.getparam('charset')
             else:
                 encoding = response.headers.get_content_charset()
-
         encoding = helpers.detect_encoding(bytes, encoding)
 
         # Return or raise
         if mode == 'b':
             return bytes
-        elif mode == 't':
+        else:
             chars = io.TextIOWrapper(bytes, encoding)
             return chars
-        else:
-            message = 'Mode %s is not supported' % mode
-            raise exceptions.LoadingError(message)
 
 
 # Internal
@@ -78,9 +78,7 @@ class _WebStream(object):
         return True
 
     def seek(self, offset):
-        if offset != 0:
-            message = 'Seek support only 0 offset.'
-            raise ValueError(message)
+        assert offset == 0
         self.__response = self.__make_request()
 
     # Private

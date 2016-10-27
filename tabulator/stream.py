@@ -64,12 +64,13 @@ class Stream(object):
                 - None (detect)
                 - utf-8
                 - <encodings>
-        post_parse (generator[]): post parse processors (hooks). Signature
-            to follow is "processor(extended_rows)" which should yield
-            one extended row (number, headers, row) per yield instruction.
         sample_size (int): rows count for table.sample. Set to "0" to prevent
             any parsing activities before actual table.iter call. In this case
             headers will not be extracted from the source.
+        post_parse (generator[]): post parse processors (hooks). Signature
+            to follow is "processor(extended_rows)" which should yield
+            one extended row (number, headers, row) per yield instruction.
+        options (dict): see in the scheme/format section
 
     """
 
@@ -81,8 +82,8 @@ class Stream(object):
                  scheme=None,
                  format=None,
                  encoding=None,
-                 post_parse=[],
                  sample_size=100,
+                 post_parse=[],
                  # DEPRECATED [v0.8-v1)
                  loader_options={},
                  parser_options={},
@@ -98,50 +99,25 @@ class Stream(object):
             message = 'Use kwargs instead of "parser_options"'
             warnings.warn(message, UserWarning)
 
-        # Headers
+        # Set headers
         self.__headers = None
         self.__headers_row = 0
         if isinstance(headers, (tuple, list)):
             self.__headers = list(headers)
         elif isinstance(headers, int):
             self.__headers_row = headers
-            if headers > sample_size:
-                msg = 'Headers row (%s) can\'t be more than sample_size (%s)'
-                msg = msg % (self.__headers_row, sample_size)
-                raise exceptions.TabulatorException(msg)
-
-        # Loader
-        if scheme is None:
-            scheme = helpers.detect_scheme(source) or config.DEFAULT_SCHEME
-        if scheme not in config.LOADERS:
-            message = 'Scheme "%s" is not supported' % scheme
-            raise exceptions.LoadingError(message)
-        loader_class = helpers.import_attribute(config.LOADERS[scheme])
-        loader_options = helpers.extract_options(options, loader_class.options)
-        self.__loader = loader_class(**loader_options)
-
-        # Parser
-        if format is None:
-            format = helpers.detect_format(source)
-        if format not in config.PARSERS:
-            message = 'Format "%s" is not supported' % format
-            raise exceptions.ParsingError(message)
-        parser_class = helpers.import_attribute(config.PARSERS[format])
-        parser_options = helpers.extract_options(options, parser_class.options)
-        self.__parser = parser_class(**parser_options)
-
-        # Check options
-        if options:
-            msg = 'Not supported options "%s" for schema "%s" and format "%s"'
-            msg = msg % (', '.join(options), scheme, format)
-            raise exceptions.TabulatorException(msg)
 
         # Set attributes
         self.__source = source
+        self.__scheme = scheme
+        self.__format = format
         self.__encoding = encoding
         self.__post_parse = copy(post_parse)
         self.__sample_size = sample_size
+        self.__options = options
         self.__sample_extended_rows = []
+        self.__loader = None
+        self.__parser = None
         self.__number = 0
 
     def __enter__(self):
@@ -166,15 +142,51 @@ class Stream(object):
     def closed(self):
         """Return true if table is closed.
         """
-        return self.__parser.closed
+        return not self.__parser or self.__parser.closed
 
     def open(self):
         """Open table to iterate over it.
         """
+
+        # Prepare variables
+        scheme = self.__scheme
+        format = self.__format
+        options = copy(self.__options)
+
+        # Initiate loader
+        if scheme is None:
+            scheme = helpers.detect_scheme(self.__source)
+            if not scheme:
+                scheme = config.DEFAULT_SCHEME
+        if scheme not in config.LOADERS:
+            message = 'Scheme "%s" is not supported' % scheme
+            raise exceptions.SchemeError(message)
+        loader_class = helpers.import_attribute(config.LOADERS[scheme])
+        loader_options = helpers.extract_options(options, loader_class.options)
+        self.__loader = loader_class(**loader_options)
+
+        # Initiate parser
+        if format is None:
+            format = helpers.detect_format(self.__source)
+        if format not in config.PARSERS:
+            message = 'Format "%s" is not supported' % format
+            raise exceptions.FormatError(message)
+        parser_class = helpers.import_attribute(config.PARSERS[format])
+        parser_options = helpers.extract_options(options, parser_class.options)
+        self.__parser = parser_class(**parser_options)
+
+        # Bad options
+        if options:
+            msg = 'Not supported options "%s" for scheme "%s" and format "%s"'
+            msg = msg % (', '.join(options), scheme, format)
+            raise exceptions.OptionsError(msg)
+
+        # Open and setup
         self.__parser.open(self.__source, self.__encoding, self.__loader)
         self.__extract_sample()
         self.__extract_headers()
         self.__detect_html()
+
         return self
 
     def close(self):
@@ -276,14 +288,14 @@ class Stream(object):
             format = helpers.detect_format(target)
         if format not in config.WRITERS:
             message = 'Format "%s" is not supported' % format
-            raise exceptions.WritingError(message)
+            raise exceptions.FormatError(message)
         extended_rows = self.iter(extended=True)
         writer_class = helpers.import_attribute(config.WRITERS[format])
         writer_options = helpers.extract_options(options, writer_class.options)
         if options:
             msg = 'Not supported options "%s" for format "%s"'
             msg = msg % (', '.join(options), format)
-            raise exceptions.TabulatorException(msg)
+            raise exceptions.OptionsError(msg)
         writer = writer_class(**writer_options)
         writer.write(target, encoding, extended_rows)
 
@@ -306,6 +318,10 @@ class Stream(object):
         # Extract headers
         keyed_source = False
         if self.__headers_row:
+            if self.__headers_row > self.__sample_size:
+                msg = 'Headers row (%s) can\'t be more than sample_size (%s)'
+                msg = msg % (self.__headers_row, self.__sample_size)
+                raise exceptions.OptionsError(msg)
             for number, headers, row in self.__sample_extended_rows:
                 if number == self.__headers_row:
                     if headers is not None:
@@ -327,7 +343,7 @@ class Stream(object):
         html_source = helpers.detect_html(text)
         if html_source:
             msg = 'Source has been detected as HTML (not supported)'
-            raise exceptions.TabulatorException(msg)
+            raise exceptions.SourceError(msg)
 
     def __apply_processors(self, iterator):
 

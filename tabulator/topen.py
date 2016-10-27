@@ -121,7 +121,11 @@ def topen(source,
 
     # Initiate and open stream
     stream = Stream(
-        source, headers, scheme, format, encoding,
+        source,
+        headers=headers,
+        scheme=scheme,
+        format=format,
+        encoding=encoding,
         post_parse=post_parse,
         sample_size=sample_size,
         loader_options=loader_options,
