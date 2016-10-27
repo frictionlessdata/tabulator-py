@@ -31,6 +31,7 @@ PARSERS = {
     'tsv': 'tabulator.parsers.tsv.TSVParser',
     'xls': 'tabulator.parsers.excel.ExcelParser',
     'xlsx': 'tabulator.parsers.excelx.ExcelxParser',
+    'ods': 'tabulator.parsers.ods.ODSParser',
 }
 
 WRITERS = {

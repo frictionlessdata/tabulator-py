@@ -30,6 +30,8 @@ INSTALL_REQUIRES = [
     'linear-tsv>=1.0,<2.0a',
     'unicodecsv>=0.14,<1.0a',
     'jsonlines>=1.1,<1.2',
+    'ezodf>=0.3,<0.4',
+    'lxml',  # required by ezodf
 ]
 TESTS_REQUIRE = [
     'pylama',
