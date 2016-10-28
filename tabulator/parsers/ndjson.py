@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import jsonlines
 
+from .. import exceptions
 from .. import helpers
 from . import api
 
@@ -56,5 +57,12 @@ class NDJSONParser(api.Parser):
     def __iter_extended_rows(self):
         rows = jsonlines.Reader(self.__chars)
         for number, row in enumerate(rows, start=1):
-            keys, values = zip(*sorted(row.items()))
-            yield number, list(keys), list(values)
+            if isinstance(row, (tuple, list)):
+                yield number, None, list(row)
+            elif isinstance(row, dict):
+                keys, values = zip(*sorted(row.items()))
+                yield number, list(keys), list(values)
+            else:
+                raise exceptions.SourceError(
+                    "JSON item has to be list or dict"
+                )
