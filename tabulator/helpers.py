@@ -89,12 +89,13 @@ def detect_encoding(bytes, encoding=None):
     return encoding
 
 
+detect_html_re = re.compile('\s*<(!doctype|html)', re.IGNORECASE)
+
+
 def detect_html(text):
     """Detect if text is HTML.
     """
-    # To reduce tabulator import time
-    from bs4 import BeautifulSoup
-    return bool(BeautifulSoup(text, 'html.parser').find())
+    return bool(detect_html_re.match(text))
 
 
 def reset_stream(stream):
