@@ -23,14 +23,14 @@ INSTALL_REQUIRES = [
     'six>=1.9,<2.0a',
     'xlrd>=1.0,<2.0a',
     'ijson>=2.0,<3.0a',
-    'chardet>=2.0,<3.0a',
+    'cchardet>=1.0,<2.0a',
     'openpyxl>=2.4,<3.0a',
     'requests>=2.8,<3.0a',
     'linear-tsv>=1.0,<2.0a',
     'unicodecsv>=0.14,<1.0a',
-    'jsonlines>=1.1,<1.2',
-    'ezodf>=0.3,<0.4',
-    'lxml',  # required by ezodf
+    'jsonlines>=1.1,<2.0a',
+    'ezodf>=0.3,<1.0a',
+    'lxml>=3.0,<4.0a',  # required by ezodf
 ]
 TESTS_REQUIRE = [
     'pylama',

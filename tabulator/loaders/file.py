@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import io
 from .. import exceptions
 from .. import helpers
+from .. import config
 from . import api
 
 
@@ -30,11 +31,13 @@ class FileLoader(api.Loader):
         # Prepare bytes
         try:
             bytes = io.open(source, 'rb')
+            sample = bytes.read(config.BYTES_SAMPLE_SIZE)
+            bytes.seek(0)
         except IOError as exception:
             raise exceptions.IOError(str(exception))
 
         # Prepare encoding
-        encoding = helpers.detect_encoding(bytes, encoding)
+        encoding = helpers.detect_encoding(sample, encoding)
 
         # Return or raise
         if mode == 'b':

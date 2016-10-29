@@ -56,46 +56,35 @@ def detect_format(source):
     return format
 
 
-def detect_encoding(bytes, encoding=None):
-    """Detect encoding of a byte stream.
+def detect_encoding(sample, encoding=None):
+    """Detect encoding of a byte string sample.
     """
     # To reduce tabulator import time
-    from chardet.universaldetector import UniversalDetector
-    if encoding is not None:
-        if encoding.lower() == 'utf-8':
-            prefix = bytes.read(len(codecs.BOM_UTF8))
-            if prefix == codecs.BOM_UTF8:
+    from cchardet import detect
+    def detect_utf8_sig(sample, encoding):
+        if encoding == 'utf-8':
+            if sample.startswith(codecs.BOM_UTF8):
                 encoding = 'utf-8-sig'
-            bytes.seek(0)
         return encoding
-    detector = UniversalDetector()
-    num_lines = config.ENCODING_DETECTION_MAX_LINES
-    while num_lines > 0:
-        line = bytes.readline()
-        detector.feed(line)
-        if detector.done:
-            break
-        num_lines -= 1
-    detector.close()
-    bytes.seek(0)
-    confidence = detector.result['confidence']
-    encoding = detector.result['encoding']
-    # Do not use if not confident
-    if confidence < config.ENCODING_DETECTION_MIN_CONFIDENCE:
+    if encoding is not None:
+        encoding = encoding.lower()
+        return detect_utf8_sig(sample, encoding)
+    result = detect(sample)
+    confidence = result['confidence'] or 0
+    encoding = (result['encoding'] or '').lower()
+    encoding = detect_utf8_sig(sample, encoding)
+    if confidence < config.ENCODING_CONFIDENCE:
         encoding = config.DEFAULT_ENCODING
-    # Default to utf-8 for safety
     if encoding == 'ascii':
         encoding = config.DEFAULT_ENCODING
     return encoding
 
 
-detect_html_re = re.compile('\s*<(!doctype|html)', re.IGNORECASE)
-
-
 def detect_html(text):
     """Detect if text is HTML.
     """
-    return bool(detect_html_re.match(text))
+    pattern = re.compile('\s*<(!doctype|html)', re.IGNORECASE)
+    return bool(pattern.match(text))
 
 
 def reset_stream(stream):
