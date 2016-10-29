@@ -407,7 +407,7 @@ def test_html_content():
 
     # Check raises
     source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
-    with pytest.raises(exceptions.SourceError) as excinfo:
+    with pytest.raises(exceptions.FormatError) as excinfo:
         table = topen(source, headers='row1')
     assert 'HTML' in str(excinfo.value)
 
