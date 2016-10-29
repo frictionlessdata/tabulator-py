@@ -90,20 +90,18 @@ def detect_encoding(bytes, encoding=None):
     if confidence < config.ENCODING_DETECTION_MIN_CONFIDENCE:
         encoding = config.DEFAULT_ENCODING
 
-    # Default to utf-8 for safety
+    # Replace ascii by utf-8 for safety
     if encoding == 'ascii':
         encoding = config.DEFAULT_ENCODING
 
     return encoding
 
 
-detect_html_re = re.compile('\s*<(!doctype|html)', re.IGNORECASE)
-
-
 def detect_html(text):
     """Detect if text is HTML.
     """
-    return bool(detect_html_re.match(text))
+    pattern = re.compile('\s*<(!doctype|html)', re.IGNORECASE)
+    return bool(pattern.match(text))
 
 
 def reset_stream(stream):
