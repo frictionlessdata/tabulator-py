@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import io
 from .. import exceptions
 from .. import helpers
+from .. import config
 from . import api
 
 
@@ -29,9 +30,11 @@ class StreamLoader(api.Loader):
 
         # Prepare bytes
         bytes = source
+        sample = bytes.read(config.BYTES_SAMPLE_SIZE)
+        bytes.seek(0)
 
         # Prepare encoding
-        encoding = helpers.detect_encoding(bytes, encoding)
+        encoding = helpers.detect_encoding(sample, encoding)
 
         # Return or raise
         if mode == 'b':

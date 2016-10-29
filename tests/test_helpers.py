@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 import io
 import pytest
-from tabulator import helpers
+from tabulator import helpers, config
 
 
 # Tests
@@ -41,23 +41,18 @@ def test_detect_format_works_with_urls_with_query_and_fragment_components():
 
 
 def test_detect_encoding():
-    bytes = io.open('README.md', 'rb')
-    assert helpers.detect_encoding(bytes) == 'utf-8'
+    sample = io.open('README.md', 'rb').read(config.BYTES_SAMPLE_SIZE)
+    assert helpers.detect_encoding(sample) == 'utf-8'
+
+
+def test_detect_encoding_windows_1252():
+    sample = b'A\n' * 300 + b'\xff\xff'
+    assert helpers.detect_encoding(sample) == 'windows-1252'
 
 
 def test_detect_encoding_unknown():
-    bytes = io.BytesIO(b'\xff\x81')
-    assert helpers.detect_encoding(bytes) == 'utf-8'
-
-
-def test_detect_encoding_long():
-    bytes = io.BytesIO(b'A\n' * 1000 + b'\xff\xff')
-    assert helpers.detect_encoding(bytes) == 'utf-8'
-
-
-def test_detect_encoding_not_so_long():
-    bytes = io.BytesIO(b'A\n' * 999 + b'\xff\xff')
-    assert helpers.detect_encoding(bytes) == 'windows-1252'
+    sample = b'\xff\x81'
+    assert helpers.detect_encoding(sample) == 'utf-8'
 
 
 def test_reset_stream_seekable():

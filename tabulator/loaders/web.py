@@ -10,6 +10,7 @@ from six.moves.urllib.error import URLError
 from six.moves.urllib.request import urlopen
 from .. import exceptions
 from .. import helpers
+from .. import config
 from . import api
 
 
@@ -38,6 +39,8 @@ class WebLoader(api.Loader):
             else:
                 bytes = _WebStream(source)
                 response = bytes.response
+            sample = bytes.read(config.BYTES_SAMPLE_SIZE)
+            bytes.seek(0)
         except URLError as exception:
             raise exceptions.HTTPError(str(exception))
 
@@ -47,7 +50,7 @@ class WebLoader(api.Loader):
                 encoding = response.headers.getparam('charset')
             else:
                 encoding = response.headers.get_content_charset()
-        encoding = helpers.detect_encoding(bytes, encoding)
+        encoding = helpers.detect_encoding(sample, encoding)
 
         # Return or raise
         if mode == 'b':
@@ -65,7 +68,7 @@ class _WebStream(object):
 
     def __init__(self, source):
         self.__source = source
-        self.__response = self.__make_request()
+        self.__response = urlopen(self.__source)
 
     def __getattr__(self, name):
         return getattr(self.__response, name)
@@ -79,9 +82,4 @@ class _WebStream(object):
 
     def seek(self, offset):
         assert offset == 0
-        self.__response = self.__make_request()
-
-    # Private
-
-    def __make_request(self):
-        return urlopen(self.__source)
+        self.__response = urlopen(self.__source)

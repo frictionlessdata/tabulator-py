@@ -9,8 +9,8 @@ from __future__ import unicode_literals
 
 DEFAULT_SCHEME = 'file'
 DEFAULT_ENCODING = 'utf-8'
-ENCODING_DETECTION_MAX_LINES = 1000
-ENCODING_DETECTION_MIN_CONFIDENCE = 0.5
+BYTES_SAMPLE_SIZE = 1000
+ENCODING_CONFIDENCE = 0.5
 LOADERS = {
     'file': 'tabulator.loaders.file.FileLoader',
     'ftp': 'tabulator.loaders.web.WebLoader',
