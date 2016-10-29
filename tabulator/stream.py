@@ -342,8 +342,8 @@ class Stream(object):
                     text += value
         html_source = helpers.detect_html(text)
         if html_source:
-            message = 'Source has been detected as HTML (not supported)'
-            raise exceptions.SourceError(message)
+            message = 'Format has been detected as HTML (not supported)'
+            raise exceptions.FormatError(message)
 
     def __apply_processors(self, iterator):
 

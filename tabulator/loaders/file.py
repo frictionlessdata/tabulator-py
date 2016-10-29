@@ -36,8 +36,8 @@ class FileLoader(api.Loader):
         except IOError as exception:
             raise exceptions.IOError(str(exception))
         if helpers.detect_zip(sample):
-            message = 'Source has been detected as ZIP (not supported)'
-            raise exceptions.SourceError(message)
+            message = 'Format has been detected as ZIP (not supported)'
+            raise exceptions.FormatError(message)
 
         # Prepare encoding
         encoding = helpers.detect_encoding(sample, encoding)

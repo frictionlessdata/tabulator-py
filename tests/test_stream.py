@@ -8,10 +8,30 @@ import pytest
 from tabulator import Stream, exceptions
 
 
+# Tests [formats]
+
+def test_stream_csv_excel():
+    source = 'value1,value2\nvalue3,value4'
+    with Stream(source, scheme='text', format='csv') as stream:
+        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
+
+
+def test_stream_csv_excel_tab():
+    source = 'value1\tvalue2\nvalue3\tvalue4'
+    with Stream(source, scheme='text', format='csv') as stream:
+        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
+
+
+def test_stream_csv_unix():
+    source = '"value1","value2"\n"value3","value4"'
+    with Stream(source, scheme='text', format='csv') as stream:
+        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
+
+
 # Tests [options]
 
 def test_stream_csv_delimiter():
-    source = 'value1;value2\nvalue3;value4'
+    source = '"value1";"value2"\n"value3";"value4"'
     with Stream(source, scheme='text', format='csv', delimiter=';') as stream:
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
@@ -54,23 +74,23 @@ def test_stream_json_prefix():
 
 # Tests [errors]
 
-def test_stream_source_error_zip():
-    stream = Stream('data/special/table.csv.zip', format='csv')
-    with pytest.raises(exceptions.SourceError) as excinfo:
-        stream.open()
-
-
-def test_stream_source_error_html():
-    stream = Stream('data/special/table.csv.html', format='csv')
-    with pytest.raises(exceptions.SourceError) as excinfo:
-        stream.open()
-
-
 def test_stream_source_error_data():
     stream = Stream('[1,2]', scheme='text', format='json')
     with pytest.raises(exceptions.SourceError) as excinfo:
         stream.open()
         stream.read()
+
+
+def test_stream_format_error_zip():
+    stream = Stream('data/special/table.csv.zip', format='csv')
+    with pytest.raises(exceptions.FormatError) as excinfo:
+        stream.open()
+
+
+def test_stream_format_error_html():
+    stream = Stream('data/special/table.csv.html', format='csv')
+    with pytest.raises(exceptions.FormatError) as excinfo:
+        stream.open()
 
 
 def test_stream_scheme_error():

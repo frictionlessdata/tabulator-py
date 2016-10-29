@@ -33,8 +33,8 @@ class StreamLoader(api.Loader):
         sample = bytes.read(config.BYTES_SAMPLE_SIZE)
         bytes.seek(0)
         if helpers.detect_zip(sample):
-            message = 'Source has been detected as ZIP (not supported)'
-            raise exceptions.SourceError(message)
+            message = 'Format has been detected as ZIP (not supported)'
+            raise exceptions.FormatError(message)
 
         # Prepare encoding
         encoding = helpers.detect_encoding(sample, encoding)

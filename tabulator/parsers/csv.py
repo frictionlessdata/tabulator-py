@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import csv
 import six
+from itertools import chain
 from codecs import iterencode
 from .. import helpers
 from . import api
@@ -72,7 +73,9 @@ class CSVParser(api.Parser):
         if six.PY2:
             # Reader requires utf-8 encoded stream
             bytes = iterencode(self.__chars, 'utf-8')
-            items = csv.reader(bytes, **self.__options)
+            sample = next(bytes)
+            dialect = self.__prepare_dialect(sample)
+            items = csv.reader(chain([sample], bytes), dialect=dialect)
             for number, item in enumerate(items, start=1):
                 values = []
                 for value in item:
@@ -82,6 +85,17 @@ class CSVParser(api.Parser):
 
         # For PY3 use chars
         else:
-            items = csv.reader(self.__chars, **self.__options)
+            sample = next(self.__chars)
+            dialect = self.__prepare_dialect(sample)
+            items = csv.reader(chain([sample], self.__chars), dialect=dialect)
             for number, item in enumerate(items, start=1):
                 yield (number, None, list(item))
+
+    def __prepare_dialect(self, sample):
+        try:
+            dialect = csv.Sniffer().sniff(sample)
+        except csv.Error:
+            dialect = csv.excel
+        for key, value in self.__options.items():
+            setattr(dialect, key, value)
+        return dialect
