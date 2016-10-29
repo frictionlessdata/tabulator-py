@@ -54,7 +54,19 @@ def test_stream_json_prefix():
 
 # Tests [errors]
 
-def test_stream_source_error():
+def test_stream_source_error_zip():
+    stream = Stream('data/special/table.csv.zip', format='csv')
+    with pytest.raises(exceptions.SourceError) as excinfo:
+        stream.open()
+
+
+def test_stream_source_error_html():
+    stream = Stream('data/special/table.csv.html', format='csv')
+    with pytest.raises(exceptions.SourceError) as excinfo:
+        stream.open()
+
+
+def test_stream_source_error_data():
     stream = Stream('[1,2]', scheme='text', format='json')
     with pytest.raises(exceptions.SourceError) as excinfo:
         stream.open()

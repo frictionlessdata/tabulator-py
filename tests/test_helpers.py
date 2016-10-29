@@ -55,6 +55,16 @@ def test_detect_encoding_unknown():
     assert helpers.detect_encoding(sample) == 'utf-8'
 
 
+def test_detect_zip_true():
+    sample = io.open('data/special/table.csv.zip', mode='rb').read(config.BYTES_SAMPLE_SIZE)
+    assert helpers.detect_zip(sample) == True
+
+
+def test_detect_zip_false():
+    sample = io.open('data/table.csv', mode='rb').read(config.BYTES_SAMPLE_SIZE)
+    assert helpers.detect_zip(sample) == False
+
+
 def test_reset_stream_seekable():
     file = io.open(__file__)
     file.seek(1)

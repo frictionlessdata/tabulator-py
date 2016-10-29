@@ -43,6 +43,9 @@ class WebLoader(api.Loader):
             bytes.seek(0)
         except URLError as exception:
             raise exceptions.HTTPError(str(exception))
+        if helpers.detect_zip(sample):
+            message = 'Source has been detected as ZIP (not supported)'
+            raise exceptions.SourceError(message)
 
         # Prepare encoding
         if encoding is None:
