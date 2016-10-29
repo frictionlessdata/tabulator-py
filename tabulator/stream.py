@@ -177,9 +177,9 @@ class Stream(object):
 
         # Bad options
         if options:
-            msg = 'Not supported options "%s" for scheme "%s" and format "%s"'
-            msg = msg % (', '.join(options), scheme, format)
-            raise exceptions.OptionsError(msg)
+            message = 'Not supported options "%s" for scheme "%s" and format "%s"'
+            message = message % (', '.join(options), scheme, format)
+            raise exceptions.OptionsError(message)
 
         # Open and setup
         self.__parser.open(self.__source, self.__encoding, self.__loader)
@@ -293,9 +293,9 @@ class Stream(object):
         writer_class = helpers.import_attribute(config.WRITERS[format])
         writer_options = helpers.extract_options(options, writer_class.options)
         if options:
-            msg = 'Not supported options "%s" for format "%s"'
-            msg = msg % (', '.join(options), format)
-            raise exceptions.OptionsError(msg)
+            message = 'Not supported options "%s" for format "%s"'
+            message = message % (', '.join(options), format)
+            raise exceptions.OptionsError(message)
         writer = writer_class(**writer_options)
         writer.write(target, encoding, extended_rows)
 
@@ -319,9 +319,9 @@ class Stream(object):
         keyed_source = False
         if self.__headers_row:
             if self.__headers_row > self.__sample_size:
-                msg = 'Headers row (%s) can\'t be more than sample_size (%s)'
-                msg = msg % (self.__headers_row, self.__sample_size)
-                raise exceptions.OptionsError(msg)
+                message = 'Headers row (%s) can\'t be more than sample_size (%s)'
+                message = message % (self.__headers_row, self.__sample_size)
+                raise exceptions.OptionsError(message)
             for number, headers, row in self.__sample_extended_rows:
                 if number == self.__headers_row:
                     if headers is not None:
@@ -342,8 +342,8 @@ class Stream(object):
                     text += value
         html_source = helpers.detect_html(text)
         if html_source:
-            msg = 'Source has been detected as HTML (not supported)'
-            raise exceptions.SourceError(msg)
+            message = 'Source has been detected as HTML (not supported)'
+            raise exceptions.SourceError(message)
 
     def __apply_processors(self, iterator):
 
