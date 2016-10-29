@@ -8,10 +8,30 @@ import pytest
 from tabulator import Stream, exceptions
 
 
+# Tests [formats]
+
+def test_stream_csv_excel():
+    source = 'value1,value2\nvalue3,value4'
+    with Stream(source, scheme='text', format='csv') as stream:
+        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
+
+
+def test_stream_csv_excel_tab():
+    source = 'value1\tvalue2\nvalue3\tvalue4'
+    with Stream(source, scheme='text', format='csv') as stream:
+        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
+
+
+def test_stream_csv_unix():
+    source = '"value1","value2"\n"value3","value4"'
+    with Stream(source, scheme='text', format='csv') as stream:
+        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
+
+
 # Tests [options]
 
 def test_stream_csv_delimiter():
-    source = 'value1;value2\nvalue3;value4'
+    source = '"value1";"value2"\n"value3";"value4"'
     with Stream(source, scheme='text', format='csv', delimiter=';') as stream:
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
