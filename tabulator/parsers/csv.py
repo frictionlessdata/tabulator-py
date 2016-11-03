@@ -9,6 +9,7 @@ import six
 from itertools import chain
 from codecs import iterencode
 from .. import helpers
+from .. import config
 from . import api
 
 
@@ -73,9 +74,8 @@ class CSVParser(api.Parser):
         if six.PY2:
             # Reader requires utf-8 encoded stream
             bytes = iterencode(self.__chars, 'utf-8')
-            sample = next(bytes)
-            dialect = self.__prepare_dialect(sample)
-            items = csv.reader(chain([sample], bytes), dialect=dialect)
+            sample, dialect = self.__prepare_dialect(bytes)
+            items = csv.reader(chain(sample, bytes), dialect=dialect)
             for number, item in enumerate(items, start=1):
                 values = []
                 for value in item:
@@ -85,17 +85,31 @@ class CSVParser(api.Parser):
 
         # For PY3 use chars
         else:
-            sample = next(self.__chars)
-            dialect = self.__prepare_dialect(sample)
-            items = csv.reader(chain([sample], self.__chars), dialect=dialect)
+            sample, dialect = self.__prepare_dialect(self.__chars)
+            items = csv.reader(chain(sample, self.__chars), dialect=dialect)
             for number, item in enumerate(items, start=1):
                 yield (number, None, list(item))
 
-    def __prepare_dialect(self, sample):
+    def __prepare_dialect(self, stream):
+
+        # Get sample
+        sample = []
+        while True:
+            try:
+                sample.append(next(stream))
+            except StopIteration:
+                break
+            if len(sample) >= config.CSV_SAMPLE_LINES:
+                break
+
+        # Get dialect
         try:
-            dialect = csv.Sniffer().sniff(sample)
+            separator = b'' if six.PY2 else ''
+            delimiter = self.__options.get('delimiter', ',')
+            dialect = csv.Sniffer().sniff(separator.join(sample), delimiter)
         except csv.Error:
             dialect = csv.excel
         for key, value in self.__options.items():
             setattr(dialect, key, value)
-        return dialect
+
+        return sample, dialect

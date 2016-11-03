@@ -18,7 +18,7 @@ def test_stream_csv_excel():
 
 def test_stream_csv_excel_tab():
     source = 'value1\tvalue2\nvalue3\tvalue4'
-    with Stream(source, scheme='text', format='csv') as stream:
+    with Stream(source, scheme='text', format='csv', delimiter='\t') as stream:
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 
@@ -26,6 +26,16 @@ def test_stream_csv_unix():
     source = '"value1","value2"\n"value3","value4"'
     with Stream(source, scheme='text', format='csv') as stream:
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
+
+
+def test_stream_csv_escaping():
+    with Stream('data/special/escaping.csv', escapechar='\\') as stream:
+        assert stream.read() == [
+            ['ID', 'Test'],
+            ['1', 'Test line 1'],
+            ['2', 'Test " line 2'],
+            ['3', 'Test " line 3'],
+        ]
 
 
 # Tests [options]
