@@ -40,14 +40,18 @@ def test_stream_csv_escaping():
 
 # Tests [format:gsheet]
 
-@pytest.mark.xfail
 def test_stream_gsheet():
-    source = 'https://docs.google.com/spreadsheets/d/1HXCBuWlekSd359yvHimvMJiD2CC_2og75WlL4EFAcmg/edit#gid=0'
+    source = 'https://docs.google.com/spreadsheets/d/1HXCBuWlekSd359yvHimvMJiD2CC_2og75WlL4EFAcmg/edit?usp=sharing'
     with Stream(source) as stream:
-        assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-@pytest.mark.xfail
+def test_stream_gsheet_with_gid():
+    source = 'https://docs.google.com/spreadsheets/d/1HXCBuWlekSd359yvHimvMJiD2CC_2og75WlL4EFAcmg/edit#gid=1137640675'
+    with Stream(source) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
 def test_stream_gsheet_bad_url():
     stream = Stream('https://docs.google.com/spreadsheets/d/bad')
     with pytest.raises(exceptions.HTTPError) as excinfo:

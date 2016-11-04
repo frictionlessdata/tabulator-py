@@ -4,7 +4,9 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import re
 import xlrd
+from ..stream import Stream
 from .. import helpers
 from . import api
 
@@ -12,47 +14,40 @@ from . import api
 # Module API
 
 class GsheetParser(api.Parser):
-    """Parser to parse Google Spreadsheet data format.
+    """Parser to parse Google Spreadsheets.
     """
 
     # Public
 
-    options = [
-        'sheet',
-    ]
+    options = []
 
-    def __init__(self, sheet='0'):
-        self.__sheet = sheet
-        self.__extended_rows = None
+    def __init__(self):
+        self.__stream = None
 
     @property
     def closed(self):
-        return self.__bytes is None or self.__bytes.closed
+        return self.__stream is None or self.__stream.closed
 
     def open(self, source, encoding, loader):
         self.close()
-        self.__loader = loader
-        self.__bytes = loader.load(source, encoding, mode='b')
-        self.__book = xlrd.open_workbook(
-                file_contents=self.__bytes.read(),
-                encoding_override=encoding)
-        self.__sheet = self.__book.sheet_by_index(self.__index)
-        self.reset()
+        url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv&id=%s&gid=%s'
+        match=re.search(r'.*/d/(?P<key>[^/]+)/.*(?:gid=(?P<gid>\d+))?.*', source)
+        key, gid = '', ''
+        if match:
+            key = match.group('key')
+            gid = match.group('gid') or '0'
+        url = url % (key, key, gid)
+        self.__stream = Stream(url, format='csv', encoding=encoding).open()
+        self.__extended_rows = self.__stream.iter(extended=True)
 
     def close(self):
         if not self.closed:
-            self.__bytes.close()
+            self.__stream.close()
 
     def reset(self):
-        helpers.reset_stream(self.__bytes)
+        self.__stream.reset()
         self.__extended_rows = self.__iter_extended_rows()
 
     @property
     def extended_rows(self):
         return self.__extended_rows
-
-    # Private
-
-    def __iter_extended_rows(self):
-        for number in range(1, self.__sheet.nrows+1):
-            yield (number, None, list(self.__sheet.row_values(number - 1)))
