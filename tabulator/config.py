@@ -18,7 +18,7 @@ LOADERS = {
     'ftps': 'tabulator.loaders.web.WebLoader',
     'http': 'tabulator.loaders.web.WebLoader',
     'https': 'tabulator.loaders.web.WebLoader',
-    'native': 'tabulator.loaders.native.NativeLoader',
+    'native': None,
     'stream': 'tabulator.loaders.stream.StreamLoader',
     'text': 'tabulator.loaders.text.TextLoader',
 }

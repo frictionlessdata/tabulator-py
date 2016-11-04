@@ -154,6 +154,7 @@ class Stream(object):
         options = copy(self.__options)
 
         # Initiate loader
+        self.__loader = None
         if scheme is None:
             scheme = helpers.detect_scheme(self.__source)
             if not scheme:
@@ -161,9 +162,11 @@ class Stream(object):
         if scheme not in config.LOADERS:
             message = 'Scheme "%s" is not supported' % scheme
             raise exceptions.SchemeError(message)
-        loader_class = helpers.import_attribute(config.LOADERS[scheme])
-        loader_options = helpers.extract_options(options, loader_class.options)
-        self.__loader = loader_class(**loader_options)
+        loader_path = config.LOADERS[scheme]
+        if loader_path:
+            loader_class = helpers.import_attribute(loader_path)
+            loader_options = helpers.extract_options(options, loader_class.options)
+            self.__loader = loader_class(**loader_options)
 
         # Initiate parser
         if format is None:
