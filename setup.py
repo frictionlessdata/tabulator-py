@@ -29,6 +29,7 @@ INSTALL_REQUIRES = [
     'linear-tsv>=1.0,<2.0a',
     'unicodecsv>=0.14,<1.0a',
     'jsonlines>=1.1,<2.0a',
+    'gdata>=2.0,<3.0a',
     'ezodf>=0.3,<1.0a',
     'lxml>=3.0,<4.0a',  # required by ezodf
 ]
