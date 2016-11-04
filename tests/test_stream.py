@@ -8,7 +8,7 @@ import pytest
 from tabulator import Stream, exceptions
 
 
-# Tests [formats]
+# Tests [format:csv]
 
 def test_stream_csv_excel():
     source = 'value1,value2\nvalue3,value4'
@@ -36,6 +36,22 @@ def test_stream_csv_escaping():
             ['2', 'Test " line 2'],
             ['3', 'Test " line 3'],
         ]
+
+
+# Tests [format:gsheet]
+
+@pytest.mark.xfail
+def test_stream_gsheet():
+    source = 'https://docs.google.com/spreadsheets/d/1HXCBuWlekSd359yvHimvMJiD2CC_2og75WlL4EFAcmg/edit#gid=0'
+    with Stream(source) as stream:
+        assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+@pytest.mark.xfail
+def test_stream_gsheet_bad_url():
+    stream = Stream('https://docs.google.com/spreadsheets/d/bad')
+    with pytest.raises(exceptions.HTTPError) as excinfo:
+        stream.open()
 
 
 # Tests [options]
