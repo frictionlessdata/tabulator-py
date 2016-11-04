@@ -21,9 +21,8 @@ class GsheetParser(api.Parser):
         'sheet',
     ]
 
-    def __init__(self, sheet=1):
-        self.__index = sheet-1
-        self.__bytes = None
+    def __init__(self, sheet='0'):
+        self.__sheet = sheet
         self.__extended_rows = None
 
     @property

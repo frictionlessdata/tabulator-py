@@ -32,6 +32,7 @@ class Stream(object):
                 - file (default)
                 - ftp
                 - ftps
+                - gsheet
                 - http
                 - https
                 - native
@@ -48,6 +49,8 @@ class Stream(object):
                     - quotechar
                     - quoting
                     - skipinitialspace
+                - gsheet
+                    - sheet
                 - json
                   options:
                     - prefix
