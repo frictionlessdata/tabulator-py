@@ -16,6 +16,7 @@ LOADERS = {
     'file': 'tabulator.loaders.file.FileLoader',
     'ftp': 'tabulator.loaders.web.WebLoader',
     'ftps': 'tabulator.loaders.web.WebLoader',
+    'gsheet': None,
     'http': 'tabulator.loaders.web.WebLoader',
     'https': 'tabulator.loaders.web.WebLoader',
     'native': None,
@@ -25,6 +26,7 @@ LOADERS = {
 
 PARSERS = {
     'csv': 'tabulator.parsers.csv.CSVParser',
+    'gsheet': 'tabulator.parsers.gsheet.GsheetParser',
     'json': 'tabulator.parsers.json.JSONParser',
     'jsonl': 'tabulator.parsers.ndjson.NDJSONParser',
     'ndjson': 'tabulator.parsers.ndjson.NDJSONParser',
