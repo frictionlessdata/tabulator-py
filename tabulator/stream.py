@@ -50,7 +50,6 @@ class Stream(object):
                     - quoting
                     - skipinitialspace
                 - gsheet
-                    - sheet
                 - json
                   options:
                     - prefix
