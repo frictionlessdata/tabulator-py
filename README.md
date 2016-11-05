@@ -88,6 +88,34 @@ stream.close()
 
 For the full list of options see - https://github.com/frictionlessdata/tabulator-py/blob/master/tabulator/stream.py#L17
 
+### CLI
+
+> It's a provisional API excluded from SemVer. If you use it as a part of other program please pin concrete `goodtables` version to your requirements file.
+
+The library ships with a simple CLI to read tabular data:
+
+```bash
+$ tabulator
+Usage: cli.py [OPTIONS] SOURCE
+
+Options:
+  --headers INTEGER
+  --scheme TEXT
+  --format TEXT
+  --encoding TEXT
+  --limit INTEGER
+  --help             Show this message and exit.
+```
+
+For example write a following command to the shell:
+
+```bash
+$ tabulator data/table.csv
+id, name
+1, english
+2, 中国人
+```
+
 ## API Reference
 
 ### Snapshot
