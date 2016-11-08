@@ -38,6 +38,12 @@ def test_stream_csv_escaping():
         ]
 
 
+def test_stream_csv_doublequote():
+    with Stream('data/special/doublequote.csv') as stream:
+        for row in  stream:
+            assert len(row) == 17
+
+
 # Tests [options]
 
 def test_stream_csv_delimiter():

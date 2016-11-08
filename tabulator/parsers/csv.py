@@ -107,6 +107,8 @@ class CSVParser(api.Parser):
             separator = b'' if six.PY2 else ''
             delimiter = self.__options.get('delimiter', ',')
             dialect = csv.Sniffer().sniff(separator.join(sample), delimiter)
+            if not dialect.escapechar:
+                dialect.doublequote = True
         except csv.Error:
             dialect = csv.excel
         for key, value in self.__options.items():
