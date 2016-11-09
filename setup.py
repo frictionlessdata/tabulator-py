@@ -29,6 +29,7 @@ INSTALL_REQUIRES = [
     'linear-tsv>=1.0,<2.0a',
     'unicodecsv>=0.14,<1.0a',
     'jsonlines>=1.1,<2.0a',
+    'click>=6.0,<7.0a',
     'ezodf>=0.3,<1.0a',
     'lxml>=3.0,<4.0a',  # required by ezodf
 ]
@@ -50,6 +51,11 @@ setup(
     install_requires=INSTALL_REQUIRES,
     tests_require=TESTS_REQUIRE,
     extras_require={'develop': TESTS_REQUIRE},
+    entry_points={
+        'console_scripts': [
+            'tabulator = tabulator.cli:cli',
+        ]
+    },
     zip_safe=False,
     long_description=README,
     description='Consistent interface for stream reading and writing tabular data (csv/xls/json/etc)',
