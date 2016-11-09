@@ -107,7 +107,7 @@ Options:
   --help             Show this message and exit.
 ```
 
-For example write a following command to the shell:
+Shell usage example:
 
 ```bash
 $ tabulator data/table.csv

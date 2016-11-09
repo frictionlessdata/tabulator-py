@@ -10,6 +10,6 @@ from tabulator.cli import cli
 
 def test_cli():
     runner = CliRunner()
-    result = runner.invoke(cli, ['data/table.csv', '--limit', '2'])
+    result = runner.invoke(cli, ['data/table.csv'])
     assert result.exit_code == 0
-    assert result.output == 'id, name\n1, english\n'
+    assert result.output.startswith('id, name\n1, english\n2,')
