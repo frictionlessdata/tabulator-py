@@ -21,8 +21,7 @@ class NDJSONParser(api.Parser):
 
     # Public
 
-    options = [
-    ]
+    options = []
 
     def __init__(self, **options):
         self.__options = options

@@ -29,6 +29,9 @@ def detect_scheme(source):
     if hasattr(source, 'read'):
         scheme = 'stream'
     elif isinstance(source, six.string_types):
+        if 'docs.google.com/spreadsheets' in source:
+            if 'export' not in source:
+                return 'gsheet'
         match = re.search(r'^([a-zA-Z]{2,}):\/{2}', source)
         if not match:
             return None
@@ -47,6 +50,9 @@ def detect_format(source):
     if hasattr(source, 'read'):
         format = ''
     elif isinstance(source, six.string_types):
+        if 'docs.google.com/spreadsheets' in source:
+            if 'export' not in source:
+                return 'gsheet'
         parsed_source = urlparse(source)
         path = parsed_source.path or parsed_source.netloc
         format = os.path.splitext(path)[1]

@@ -16,15 +16,17 @@ LOADERS = {
     'file': 'tabulator.loaders.file.FileLoader',
     'ftp': 'tabulator.loaders.web.WebLoader',
     'ftps': 'tabulator.loaders.web.WebLoader',
+    'gsheet': None,
     'http': 'tabulator.loaders.web.WebLoader',
     'https': 'tabulator.loaders.web.WebLoader',
-    'native': 'tabulator.loaders.native.NativeLoader',
+    'native': None,
     'stream': 'tabulator.loaders.stream.StreamLoader',
     'text': 'tabulator.loaders.text.TextLoader',
 }
 
 PARSERS = {
     'csv': 'tabulator.parsers.csv.CSVParser',
+    'gsheet': 'tabulator.parsers.gsheet.GsheetParser',
     'json': 'tabulator.parsers.json.JSONParser',
     'jsonl': 'tabulator.parsers.ndjson.NDJSONParser',
     'ndjson': 'tabulator.parsers.ndjson.NDJSONParser',
