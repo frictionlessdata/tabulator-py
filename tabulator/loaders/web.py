@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import io
 import six
 from six.moves.urllib.error import URLError
-from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import Request, urlopen
 from .. import exceptions
 from .. import helpers
 from .. import config
@@ -69,9 +69,16 @@ class _WebStream(object):
 
     # Public
 
+    HEADERS = {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) ' +
+                    'AppleWebKit/537.36 (KHTML, like Gecko) ' +
+                    'Chrome/54.0.2840.87 Safari/537.36'
+    }
+
     def __init__(self, source):
         self.__source = source
-        self.__response = urlopen(self.__source)
+        self.__request = Request(self.__source, headers=self.HEADERS)
+        self.__response = urlopen(self.__request)
 
     def __getattr__(self, name):
         return getattr(self.__response, name)
@@ -85,4 +92,4 @@ class _WebStream(object):
 
     def seek(self, offset):
         assert offset == 0
-        self.__response = urlopen(self.__source)
+        self.__response = urlopen(self.__request)
