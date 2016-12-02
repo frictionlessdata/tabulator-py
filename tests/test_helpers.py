@@ -65,6 +65,11 @@ def test_detect_zip_false():
     assert helpers.detect_zip(sample) == False
 
 
+def test_detect_zip_xlsx():
+    sample = io.open('data/table.xlsx', mode='rb').read(config.BYTES_SAMPLE_SIZE)
+    assert helpers.detect_zip(sample) == True
+
+
 def test_reset_stream_seekable():
     file = io.open(__file__)
     file.seek(1)
