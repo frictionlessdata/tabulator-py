@@ -24,7 +24,7 @@ class WebLoader(api.Loader):
 
     options = []
 
-    def load(self, source, encoding, mode):
+    def load(self, source, encoding, mode, allow_zip=False):
 
         # Requote uri
         source = helpers.requote_uri(source)
@@ -43,9 +43,10 @@ class WebLoader(api.Loader):
             bytes.seek(0)
         except URLError as exception:
             raise exceptions.HTTPError(str(exception))
-        if helpers.detect_zip(sample):
-            message = 'Format has been detected as ZIP (not supported)'
-            raise exceptions.FormatError(message)
+        if not allow_zip:
+            if helpers.detect_zip(sample):
+                message = 'Format has been detected as ZIP (not supported)'
+                raise exceptions.FormatError(message)
 
         # Prepare encoding
         if encoding is None:

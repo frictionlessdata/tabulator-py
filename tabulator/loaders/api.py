@@ -29,13 +29,14 @@ class Loader(object):
         pass
 
     @abstractmethod
-    def load(self, source, encoding, mode):
+    def load(self, source, encoding, mode, allow_zip=False):
         """Return byte/text stream file-like object.
 
         Args:
             source (str): table source
             encoding (str): encoding of source
             mode(str): text stream mode: 't' or 'b'
+            allow_zip(bool): if false will raise on zip format
 
         Returns:
             file-like: file-like object of byte/text stream

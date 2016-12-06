@@ -21,7 +21,7 @@ class StreamLoader(api.Loader):
 
     options = []
 
-    def load(self, source, encoding, mode):
+    def load(self, source, encoding, mode, allow_zip=False):
 
         # Raise if in text mode
         if hasattr(source, 'encoding'):
@@ -32,9 +32,10 @@ class StreamLoader(api.Loader):
         bytes = source
         sample = bytes.read(config.BYTES_SAMPLE_SIZE)
         bytes.seek(0)
-        if helpers.detect_zip(sample):
-            message = 'Format has been detected as ZIP (not supported)'
-            raise exceptions.FormatError(message)
+        if not allow_zip:
+            if helpers.detect_zip(sample):
+                message = 'Format has been detected as ZIP (not supported)'
+                raise exceptions.FormatError(message)
 
         # Prepare encoding
         encoding = helpers.detect_encoding(sample, encoding)

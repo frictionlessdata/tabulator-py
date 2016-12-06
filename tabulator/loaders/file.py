@@ -21,7 +21,7 @@ class FileLoader(api.Loader):
 
     options = []
 
-    def load(self, source, encoding, mode):
+    def load(self, source, encoding, mode, allow_zip=False):
 
         # Prepare source
         scheme = 'file://'
@@ -35,9 +35,10 @@ class FileLoader(api.Loader):
             bytes.seek(0)
         except IOError as exception:
             raise exceptions.IOError(str(exception))
-        if helpers.detect_zip(sample):
-            message = 'Format has been detected as ZIP (not supported)'
-            raise exceptions.FormatError(message)
+        if not allow_zip:
+            if helpers.detect_zip(sample):
+                message = 'Format has been detected as ZIP (not supported)'
+                raise exceptions.FormatError(message)
 
         # Prepare encoding
         encoding = helpers.detect_encoding(sample, encoding)

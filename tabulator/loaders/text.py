@@ -19,7 +19,7 @@ class TextLoader(api.Loader):
 
     options = []
 
-    def load(self, source, encoding, mode):
+    def load(self, source, encoding, mode, allow_zip=False):
 
         # Prepare source
         scheme = 'text://'
