@@ -8,6 +8,11 @@ import pytest
 from tabulator import Stream, exceptions
 
 
+# Constants
+
+BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
+
+
 # Tests [format:csv]
 
 def test_stream_csv_excel():
@@ -36,6 +41,22 @@ def test_stream_csv_escaping():
             ['2', 'Test " line 2'],
             ['3', 'Test " line 3'],
         ]
+
+
+# Tests [format:ods]
+
+def test_stream_ods_remote():
+    source = BASE_URL % 'data/table.ods'
+    with Stream(source) as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+# Tests [format:xlsx]
+
+def test_stream_xlsx_remote():
+    source = BASE_URL % 'data/table.xlsx'
+    with Stream(source) as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
 # Tests [format:gsheet]

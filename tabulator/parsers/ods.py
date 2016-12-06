@@ -43,7 +43,7 @@ class ODSParser(api.Parser):
     def open(self, source, encoding, loader):
         self.close()
         self.__loader = loader
-        self.__bytes = loader.load(source, encoding, mode='b')
+        self.__bytes = loader.load(source, encoding, mode='b', allow_zip=True)
         self.__book = ezodf.opendoc(BytesIO(self.__bytes.read()))
         self.__sheet = self.__book.sheets[self.__index]
         self.reset()

@@ -4,12 +4,10 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import io
 import os
 import re
 import six
 import codecs
-import zipfile
 from copy import copy
 from importlib import import_module
 from six.moves.urllib.parse import urlparse, urlunparse
@@ -91,8 +89,8 @@ def detect_encoding(sample, encoding=None):
 def detect_zip(sample):
     """Detect if byte string sample is ZIP.
     """
-    bytes = io.BytesIO(sample)
-    return zipfile.is_zipfile(bytes)
+    SIGNATURE = b'\x50\x4b\x03\x04'
+    return sample.startswith(SIGNATURE)
 
 
 def detect_html(text):
