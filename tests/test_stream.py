@@ -43,6 +43,14 @@ def test_stream_csv_escaping():
         ]
 
 
+# Tests [format:ods]
+
+def test_stream_ods_remote():
+    source = BASE_URL % 'data/table.ods'
+    with Stream(source) as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
 # Tests [format:xlsx]
 
 def test_stream_xlsx_remote():
