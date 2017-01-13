@@ -6,7 +6,7 @@ from __future__ import absolute_import
 
 import six
 import click
-from .stream import Stream
+import tabulator
 
 
 # Module API
@@ -18,9 +18,10 @@ from .stream import Stream
 @click.option('--format')
 @click.option('--encoding')
 @click.option('--limit', type=click.INT)
+@click.version_option(tabulator.__version__, message='%(version)s')
 def cli(source, limit, **options):
     options = {key: value for key, value in options.items() if value is not None}
-    with Stream(source, **options) as stream:
+    with tabulator.Stream(source, **options) as stream:
         cast = str
         if six.PY2:
             cast = unicode  # noqa
