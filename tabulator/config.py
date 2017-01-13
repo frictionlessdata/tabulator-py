@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
-# Module API
+# General
 
 DEFAULT_SCHEME = 'file'
 DEFAULT_ENCODING = 'utf-8'

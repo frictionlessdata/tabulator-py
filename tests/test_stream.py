@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import io
 import pytest
 from tabulator import Stream, exceptions
 
@@ -181,3 +182,43 @@ def test_stream_http_error():
     stream = Stream('http://github.com/bad_path.csv')
     with pytest.raises(exceptions.HTTPError) as excinfo:
         stream.open()
+
+
+# Tests [test]
+
+def test_stream_test_schemes():
+    # Supported
+    assert Stream.test('path.csv')
+    assert Stream.test('file://path.csv')
+    assert Stream.test('http://example.com/path.csv')
+    assert Stream.test('https://example.com/path.csv')
+    assert Stream.test('ftp://example.com/path.csv')
+    assert Stream.test('ftps://example.com/path.csv')
+    assert Stream.test('path.csv', scheme='file')
+    # Not supported
+    assert not Stream.test('ssh://example.com/path.csv')
+    assert not Stream.test('bad://example.com/path.csv')
+
+def test_stream_test_formats():
+    # Supported
+    assert Stream.test('path.csv')
+    assert Stream.test('path.json')
+    assert Stream.test('path.jsonl')
+    assert Stream.test('path.ndjson')
+    assert Stream.test('path.tsv')
+    assert Stream.test('path.xls')
+    assert Stream.test('path.ods')
+    assert Stream.test('path.no-format', format='csv')
+    # Not supported
+    assert not Stream.test('path.txt')
+    assert not Stream.test('path.bad')
+
+def test_stream_test_special():
+    # Gsheet
+    assert Stream.test('https://docs.google.com/spreadsheets/d/id', format='csv')
+    # File-like
+    assert Stream.test(io.open('data/table.csv', encoding='utf-8'), format='csv')
+    # Text
+    assert Stream.test('text://name,value\n1,2', format='csv')
+    # Native
+    assert Stream.test([{'name': 'value'}])

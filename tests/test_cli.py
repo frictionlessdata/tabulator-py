@@ -13,3 +13,10 @@ def test_cli():
     result = runner.invoke(cli, ['data/table.csv'])
     assert result.exit_code == 0
     assert result.output.startswith('id, name\n1, english\n2,')
+
+
+def test_cli_version():
+    runner = CliRunner()
+    result = runner.invoke(cli, ['--version'])
+    assert result.exit_code == 0
+    assert len(result.output.split('.')) == 3
