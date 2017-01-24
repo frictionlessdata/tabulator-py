@@ -88,6 +88,21 @@ def test_stream_csv_doublequote():
 
 # Tests [options]
 
+
+def test_stream_skip_rows():
+    source = 'data/special/skip-rows.csv'
+    with Stream(source, skip_rows=['#', 4]) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english']]
+
+
+def test_stream_skip_rows_with_headers():
+    source = 'data/special/skip-rows.csv'
+    with Stream(source, headers=2, skip_rows=['#', 1]) as stream:
+        assert stream.read() == [['2', '中国人']]
+
+
+# Tests [options]
+
 def test_stream_csv_delimiter():
     source = '"value1";"value2"\n"value3";"value4"'
     with Stream(source, scheme='text', format='csv', delimiter=';') as stream:

@@ -72,6 +72,11 @@ class Stream(object):
         post_parse (generator[]): post parse processors (hooks). Signature
             to follow is "processor(extended_rows)" which should yield
             one extended row (number, headers, row) per yield instruction.
+        skip_rows (int/str[]): list of rows to skip by:
+            - row number (add integers to the list)
+            - row comment (add strings to the list)
+            Example: skip_rows=[1, 2, '#', '//'] - rows 1, 2 and
+            all rows started with '#' and '//' will be skipped.
         options (dict): see in the scheme/format section
 
     """
@@ -86,6 +91,7 @@ class Stream(object):
                  encoding=None,
                  sample_size=100,
                  post_parse=[],
+                 skip_rows=[],
                  # DEPRECATED [v0.8-v1)
                  loader_options={},
                  parser_options={},
@@ -108,6 +114,15 @@ class Stream(object):
             self.__headers = list(headers)
         elif isinstance(headers, int):
             self.__headers_row = headers
+
+        # Set skip rows
+        self.__skip_rows_by_numbers = []
+        self.__skip_rows_by_comments = []
+        for directive in copy(skip_rows):
+            if isinstance(directive, int):
+                self.__skip_rows_by_numbers.append(directive)
+            else:
+                self.__skip_rows_by_comments.append(str(directive))
 
         # Set attributes
         self.__source = source
@@ -377,11 +392,21 @@ class Stream(object):
 
     def __apply_processors(self, iterator):
 
-        # Apply processors to iterator
+        # Builtin processor
         def builtin_processor(extended_rows):
             for number, headers, row in extended_rows:
+                # Set headers
                 headers = self.__headers
+                # Skip row by numbers
+                if number in self.__skip_rows_by_numbers:
+                    continue
+                # Skip row by comments
+                match = lambda comment: row[0].startswith(comment)
+                if list(filter(match, self.__skip_rows_by_comments)):
+                    continue
                 yield (number, headers, row)
+
+        # Apply processors to iterator
         processors = [builtin_processor] + self.__post_parse
         for processor in processors:
             iterator = processor(iterator)
