@@ -29,7 +29,7 @@ class GsheetParser(api.Parser):
     def open(self, source, encoding, loader):
         self.close()
         url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv&id=%s&gid=%s'
-        match = re.search(r'.*/d/(?P<key>[^/]+)/.*(?:gid=(?P<gid>\d+))?.*', source)
+        match = re.search(r'.*/d/(?P<key>[^/]+)/.*?(?:gid=(?P<gid>\d+))?$', source)
         key, gid = '', ''
         if match:
             key = match.group('key')
