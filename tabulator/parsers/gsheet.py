@@ -28,13 +28,15 @@ class GsheetParser(api.Parser):
 
     def open(self, source, encoding, loader):
         self.close()
-        url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv&id=%s&gid=%s'
+        url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv&id=%s'
         match = re.search(r'.*/d/(?P<key>[^/]+)/.*?(?:gid=(?P<gid>\d+))?$', source)
         key, gid = '', ''
         if match:
             key = match.group('key')
-            gid = match.group('gid') or '0'
-        url = url % (key, key, gid)
+            gid = match.group('gid')
+        url = url % (key, key)
+        if gid:
+            url = '%s&gid=%s' % (url, gid)
         self.__stream = Stream(url, format='csv', encoding=encoding).open()
         self.__extended_rows = self.__stream.iter(extended=True)
 
