@@ -63,15 +63,15 @@ def test_stream_xlsx_remote():
 # Tests [format:gsheet]
 
 def test_stream_gsheet():
-    source = 'https://docs.google.com/spreadsheets/d/1HXCBuWlekSd359yvHimvMJiD2CC_2og75WlL4EFAcmg/edit?usp=sharing'
+    source = 'https://docs.google.com/spreadsheets/d/1mHIWnDvW9cALRMq9OdNfRwjAthCUFUOACPp0Lkyl7b4/edit?usp=sharing'
     with Stream(source) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 def test_stream_gsheet_with_gid():
-    source = 'https://docs.google.com/spreadsheets/d/1HXCBuWlekSd359yvHimvMJiD2CC_2og75WlL4EFAcmg/edit#gid=1137640675'
+    source = 'https://docs.google.com/spreadsheets/d/1mHIWnDvW9cALRMq9OdNfRwjAthCUFUOACPp0Lkyl7b4/edit#gid=960698813'
     with Stream(source) as stream:
-        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+        assert stream.read() == [['id', 'name'], ['2', '中国人'], ['3', 'german']]
 
 
 def test_stream_gsheet_bad_url():
