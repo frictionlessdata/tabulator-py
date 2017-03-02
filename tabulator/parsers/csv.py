@@ -28,6 +28,7 @@ class CSVParser(api.Parser):
         'quotechar',
         'quoting',
         'skipinitialspace',
+        'lineterminator'
     ]
 
     def __init__(self, **options):
