@@ -93,6 +93,11 @@ def test_stream_txt():
     with Stream(source) as stream:
         assert stream.read() == [['english'], ['中国人']]
 
+def test_stream_txt_html():
+    source = 'data/table.html'
+    with Stream(source, format="txt") as stream:
+        assert stream.read() == [['<html><table>'], ['<tr><td>english</td></tr>'], ['<tr><td>中国人</td></tr>'], ['</table></html>']]
+
 
 # Tests [options]
 
