@@ -86,6 +86,19 @@ def test_stream_csv_doublequote():
             assert len(row) == 17
 
 
+# Tests [format:txt]
+
+def test_stream_txt():
+    source = 'data/table.txt'
+    with Stream(source) as stream:
+        assert stream.read() == [['english'], ['中国人']]
+
+def test_stream_txt_html():
+    source = 'data/table.html'
+    with Stream(source, format="txt") as stream:
+        assert stream.read() == [['<html><table>'], ['<tr><td>english</td></tr>'], ['<tr><td>中国人</td></tr>'], ['</table></html>']]
+
+
 # Tests [options]
 
 
@@ -224,8 +237,8 @@ def test_stream_test_formats():
     assert Stream.test('path.xls')
     assert Stream.test('path.ods')
     assert Stream.test('path.no-format', format='csv')
+    assert Stream.test('path.txt')
     # Not supported
-    assert not Stream.test('path.txt')
     assert not Stream.test('path.bad')
 
 def test_stream_test_special():
