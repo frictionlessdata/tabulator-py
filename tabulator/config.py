@@ -12,6 +12,8 @@ DEFAULT_ENCODING = 'utf-8'
 BYTES_SAMPLE_SIZE = 1000
 ENCODING_CONFIDENCE = 0.5
 CSV_SAMPLE_LINES = 100
+ALLOW_HTML_FOR_FORMATS = ['txt']
+
 LOADERS = {
     'file': 'tabulator.loaders.file.FileLoader',
     'ftp': 'tabulator.loaders.web.WebLoader',

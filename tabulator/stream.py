@@ -206,7 +206,8 @@ class Stream(object):
         self.__parser.open(self.__source, self.__encoding, self.__loader)
         self.__extract_sample()
         self.__extract_headers()
-        self.__detect_html()
+        if format not in config.ALLOW_HTML_FOR_FORMATS:
+            self.__detect_html()
 
         return self
 
