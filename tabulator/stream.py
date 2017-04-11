@@ -55,6 +55,7 @@ class Stream(object):
                     - prefix
                 - native
                 - tsv
+                - txt
                 - xls
                   options:
                     - sheet

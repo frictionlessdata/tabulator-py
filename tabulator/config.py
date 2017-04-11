@@ -35,6 +35,7 @@ PARSERS = {
     'xls': 'tabulator.parsers.excel.ExcelParser',
     'xlsx': 'tabulator.parsers.excelx.ExcelxParser',
     'ods': 'tabulator.parsers.ods.ODSParser',
+    'txt': 'tabulator.parsers.txt.TXTParser',
 }
 
 WRITERS = {
