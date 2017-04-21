@@ -400,18 +400,6 @@ def test_sample():
     assert table.sample == [['1', 'english'], ['2', '中国人']]
 
 
-# Tests [html content]
-
-
-def test_html_content():
-
-    # Check raises
-    source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
-    with pytest.raises(exceptions.FormatError) as excinfo:
-        table = topen(source, headers='row1')
-    assert 'HTML' in str(excinfo.value)
-
-
 # Tests [reset]
 
 def test_reset():

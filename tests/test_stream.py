@@ -7,6 +7,8 @@ from __future__ import unicode_literals
 import io
 import pytest
 from tabulator import Stream, exceptions
+from tabulator.loaders.file import FileLoader
+from tabulator.parsers.csv import CSVParser
 
 
 # Constants
@@ -86,7 +88,24 @@ def test_stream_csv_doublequote():
             assert len(row) == 17
 
 
-# Tests [options]
+# Tests [allow html]
+
+def test_html_content():
+    # Link to html file containing information about csv file
+    source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
+    with pytest.raises(exceptions.FormatError) as excinfo:
+        Stream(source).open()
+    assert 'HTML' in str(excinfo.value)
+
+
+def test_html_content_with_allow_html():
+    # Link to html file containing information about csv file
+    source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
+    with Stream(source, allow_html=True) as stream:
+        assert stream
+
+
+# Tests [skip rows]
 
 
 def test_stream_skip_rows():
@@ -99,6 +118,32 @@ def test_stream_skip_rows_with_headers():
     source = 'data/special/skip-rows.csv'
     with Stream(source, headers=2, skip_rows=['#', 1]) as stream:
         assert stream.read() == [['2', '中国人']]
+
+
+# Tests [custom loaders]
+
+
+def test_custom_loaders():
+    source = 'custom://data/table.csv'
+    class CustomLoader(FileLoader):
+        def load(self, source, *args, **kwargs):
+            return super(CustomLoader, self).load(
+                source.replace('custom://', ''), *args, **kwargs)
+    with Stream(source, custom_loaders={'custom': CustomLoader}) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+# Tests [custom parsers]
+
+
+def test_custom_parsers():
+    source = 'data/table.custom'
+    class CustomParser(CSVParser):
+        def open(self, source, *args, **kwargs):
+            return super(CustomParser, self).open(
+                source.replace('custom', 'csv'), *args, **kwargs)
+    with Stream(source, custom_parsers={'custom': CustomParser}) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 # Tests [options]
@@ -199,7 +244,7 @@ def test_stream_http_error():
         stream.open()
 
 
-# Tests [test]
+# Tests [Table.test]
 
 def test_stream_test_schemes():
     # Supported
