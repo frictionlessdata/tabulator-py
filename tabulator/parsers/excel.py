@@ -5,13 +5,13 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import xlrd
+from ..parser import Parser
 from .. import helpers
-from . import api
 
 
 # Module API
 
-class ExcelParser(api.Parser):
+class ExcelParser(Parser):
     """Parser to parse Excel data format.
     """
 
@@ -21,19 +21,19 @@ class ExcelParser(api.Parser):
         'sheet',
     ]
 
-    def __init__(self, sheet=1):
+    def __init__(self, loader, sheet=1):
+        self.__loader = loader
         self.__index = sheet-1
-        self.__bytes = None
         self.__extended_rows = None
+        self.__bytes = None
 
     @property
     def closed(self):
         return self.__bytes is None or self.__bytes.closed
 
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None):
         self.close()
-        self.__loader = loader
-        self.__bytes = loader.load(source, encoding, mode='b')
+        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
         self.__book = xlrd.open_workbook(
                 file_contents=self.__bytes.read(),
                 encoding_override=encoding)
@@ -55,5 +55,5 @@ class ExcelParser(api.Parser):
     # Private
 
     def __iter_extended_rows(self):
-        for number in range(1, self.__sheet.nrows+1):
-            yield (number, None, list(self.__sheet.row_values(number - 1)))
+        for row_number in range(1, self.__sheet.nrows+1):
+            yield (row_number, None, list(self.__sheet.row_values(row_number - 1)))

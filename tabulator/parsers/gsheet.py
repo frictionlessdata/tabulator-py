@@ -6,12 +6,12 @@ from __future__ import unicode_literals
 
 import re
 from ..stream import Stream
-from . import api
+from ..parser import Parser
 
 
 # Module API
 
-class GsheetParser(api.Parser):
+class GsheetParser(Parser):
     """Parser to parse Google Spreadsheets.
     """
 
@@ -19,14 +19,15 @@ class GsheetParser(api.Parser):
 
     options = []
 
-    def __init__(self):
+    def __init__(self, loader):
+        self.__loader = loader
         self.__stream = None
 
     @property
     def closed(self):
         return self.__stream is None or self.__stream.closed
 
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None):
         self.close()
         url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv&id=%s'
         match = re.search(r'.*/d/(?P<key>[^/]+)/.*?(?:gid=(?P<gid>\d+))?$', source)
@@ -46,7 +47,7 @@ class GsheetParser(api.Parser):
 
     def reset(self):
         self.__stream.reset()
-        self.__extended_rows = self.__iter_extended_rows()
+        self.__extended_rows = self.__stream.iter(extended=True)
 
     @property
     def extended_rows(self):

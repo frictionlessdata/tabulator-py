@@ -29,13 +29,13 @@ def detect_scheme(source):
     elif isinstance(source, six.string_types):
         if 'docs.google.com/spreadsheets' in source:
             if 'export' not in source:
-                return 'gsheet'
+                return None
         match = re.search(r'^([a-zA-Z]{2,}):\/{2}', source)
         if not match:
-            return None
+            return config.DEFAULT_SCHEME
         scheme = match.group(1).lower()
     else:
-        scheme = 'native'
+        scheme = None
     return scheme
 
 
@@ -58,7 +58,7 @@ def detect_format(source):
             return None
         format = format[1:].lower()
     else:
-        format = 'native'
+        format = 'inline'
     return format
 
 

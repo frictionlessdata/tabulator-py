@@ -21,21 +21,19 @@ class Loader(object):
 
     # Public
 
-    @property
-    # @abstractmethod
-    def options(self):
-        """list: list of available options
-        """
+    options = []
+
+    def __init__(self, **options):
         pass
 
     @abstractmethod
-    def load(self, source, encoding, mode, allow_zip=False):
+    def load(self, source, mode='t', encoding=None, allow_zip=False):
         """Return byte/text stream file-like object.
 
         Args:
             source (str): table source
-            encoding (str): encoding of source
             mode(str): text stream mode: 't' or 'b'
+            encoding (str): encoding of source
             allow_zip(bool): if false will raise on zip format
 
         Returns:

@@ -5,14 +5,14 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import ijson
+from ..parser import Parser
 from .. import exceptions
 from .. import helpers
-from . import api
 
 
 # Module API
 
-class JSONParser(api.Parser):
+class JSONParser(Parser):
     """Parser to parse JSON data format.
     """
 
@@ -22,7 +22,8 @@ class JSONParser(api.Parser):
         'prefix',
     ]
 
-    def __init__(self, prefix=None):
+    def __init__(self, loader, prefix=None):
+        self.__loader = loader
         self.__prefix = prefix
         self.__extended_rows = None
         self.__chars = None
@@ -31,10 +32,9 @@ class JSONParser(api.Parser):
     def closed(self):
         return self.__chars is None or self.__chars.closed
 
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None):
         self.close()
-        self.__loader = loader
-        self.__chars = loader.load(source, encoding, mode='t')
+        self.__chars = self.__loader.load(source, encoding=encoding)
         self.reset()
 
     def close(self):
@@ -56,16 +56,16 @@ class JSONParser(api.Parser):
         if self.__prefix is not None:
             path = '%s.item' % self.__prefix
         items = ijson.items(self.__chars, path)
-        for number, item in enumerate(items, start=1):
+        for row_number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
-                yield (number, None, list(item))
+                yield (row_number, None, list(item))
             elif isinstance(item, dict):
                 keys = []
                 values = []
                 for key in sorted(item.keys()):
                     keys.append(key)
                     values.append(item[key])
-                yield (number, list(keys), list(values))
+                yield (row_number, list(keys), list(values))
             else:
                 message = 'JSON item has to be list or dict'
                 raise exceptions.SourceError(message)

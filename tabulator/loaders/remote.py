@@ -8,15 +8,15 @@ import io
 import six
 from six.moves.urllib.error import URLError
 from six.moves.urllib.request import Request, urlopen
+from ..loader import Loader
 from .. import exceptions
 from .. import helpers
 from .. import config
-from . import api
 
 
 # Module API
 
-class WebLoader(api.Loader):
+class RemoteLoader(Loader):
     """Loader to load source from the web.
     """
 
@@ -24,7 +24,7 @@ class WebLoader(api.Loader):
 
     options = []
 
-    def load(self, source, encoding, mode, allow_zip=False):
+    def load(self, source, mode='t', encoding=None, allow_zip=False):
 
         # Requote uri
         source = helpers.requote_uri(source)

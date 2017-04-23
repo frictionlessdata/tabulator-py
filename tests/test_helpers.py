@@ -23,12 +23,12 @@ def test_detect_scheme():
     assert helpers.detect_scheme('xx://path') == 'xx'
     assert helpers.detect_scheme('XXX://path') == 'xxx'
     assert helpers.detect_scheme('XX://path') == 'xx'
-    assert helpers.detect_scheme('c://path') == None
-    assert helpers.detect_scheme('c:\\path') == None
-    assert helpers.detect_scheme('c:\path') == None
-    assert helpers.detect_scheme('http:/path') == None
-    assert helpers.detect_scheme('http//path') == None
-    assert helpers.detect_scheme('path') == None
+    assert helpers.detect_scheme('c://path') == 'file'
+    assert helpers.detect_scheme('c:\\path') == 'file'
+    assert helpers.detect_scheme('c:\path') == 'file'
+    assert helpers.detect_scheme('http:/path') == 'file'
+    assert helpers.detect_scheme('http//path') == 'file'
+    assert helpers.detect_scheme('path') == 'file'
 
 
 def test_detect_format():

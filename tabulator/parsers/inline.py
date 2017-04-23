@@ -5,21 +5,22 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+from ..parser import Parser
 from .. import exceptions
-from . import api
 
 
 # Module API
 
-class NativeParser(api.Parser):
-    """Parser to provide support for python native lists.
+class InlineParser(Parser):
+    """Parser to provide support for python inline lists.
     """
 
     # Public
 
     options = []
 
-    def __init__(self):
+    def __init__(self, loader):
+        self.__loader = loader
         self.__extended_rows = None
         self.__source = None
 
@@ -27,7 +28,7 @@ class NativeParser(api.Parser):
     def closed(self):
         return True
 
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None):
         if hasattr(source, '__next__' if six.PY3 else 'next'):
             message = 'Only callable returning an iterator is supported'
             raise exceptions.SourceError(message)
@@ -51,16 +52,16 @@ class NativeParser(api.Parser):
         items = self.__source
         if not hasattr(items, '__iter__'):
             items = items()
-        for number, item in enumerate(items, start=1):
+        for row_number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
-                yield (number, None, list(item))
+                yield (row_number, None, list(item))
             elif isinstance(item, dict):
                 keys = []
                 values = []
                 for key in sorted(item.keys()):
                     keys.append(key)
                     values.append(item[key])
-                yield (number, list(keys), list(values))
+                yield (row_number, list(keys), list(values))
             else:
-                message = 'Native item has to be tuple, list or dict'
+                message = 'Inline data item has to be tuple, list or dict'
                 raise exceptions.SourceError(message)

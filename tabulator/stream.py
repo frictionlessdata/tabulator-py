@@ -35,7 +35,7 @@ class Stream(object):
                 - gsheet
                 - http
                 - https
-                - native
+                - inline
                 - stream
                 - text
         format (str):
@@ -53,7 +53,7 @@ class Stream(object):
                 - json
                   options:
                     - prefix
-                - native
+                - inline
                 - tsv
                 - xls
                   options:
@@ -71,7 +71,7 @@ class Stream(object):
             headers will not be extracted from the source.
         post_parse (generator[]): post parse processors (hooks). Signature
             to follow is "processor(extended_rows)" which should yield
-            one extended row (number, headers, row) per yield instruction.
+            one extended row (row_number, headers, row) per yield instruction.
         skip_rows (int/str[]): list of rows to skip by:
             - row number (add integers to the list)
             - row comment (add strings to the list)
@@ -80,6 +80,7 @@ class Stream(object):
         allow_html (bool): if True it will allow html contents
         custom_loaders (dict): unofficial custom loaders keyed by scheme
         custom_parsers (dict): unofficial custom parsers keyed by format
+        custom_writers (dict): unofficial custom writers keyed by format
         options (dict): see in the scheme/format section
 
     """
@@ -98,6 +99,7 @@ class Stream(object):
                  allow_html=False,
                  custom_loaders={},
                  custom_parsers={},
+                 custom_writers={},
                  # DEPRECATED [v0.8-v1)
                  loader_options={},
                  parser_options={},
@@ -140,11 +142,12 @@ class Stream(object):
         self.__allow_html = allow_html
         self.__custom_loaders = copy(custom_loaders)
         self.__custom_parsers = copy(custom_parsers)
+        self.__custom_writers = copy(custom_writers)
         self.__options = options
         self.__sample_extended_rows = []
         self.__loader = None
         self.__parser = None
-        self.__number = 0
+        self.__row_number = 0
 
     def __enter__(self):
         """Enter context manager by opening table.
@@ -183,19 +186,18 @@ class Stream(object):
         self.__loader = None
         if scheme is None:
             scheme = helpers.detect_scheme(self.__source)
-            if not scheme:
-                scheme = config.DEFAULT_SCHEME
-        loader_class = self.__custom_loaders.get(scheme)
-        if loader_class is None:
-            if scheme not in config.LOADERS:
-                message = 'Scheme "%s" is not supported' % scheme
-                raise exceptions.SchemeError(message)
-            loader_path = config.LOADERS[scheme]
-            if loader_path:
-                loader_class = helpers.import_attribute(loader_path)
-        if loader_class is not None:
-            loader_options = helpers.extract_options(options, loader_class.options)
-            self.__loader = loader_class(**loader_options)
+        if scheme is not None:
+            loader_class = self.__custom_loaders.get(scheme)
+            if loader_class is None:
+                if scheme not in config.LOADERS:
+                    message = 'Scheme "%s" is not supported' % scheme
+                    raise exceptions.SchemeError(message)
+                loader_path = config.LOADERS[scheme]
+                if loader_path:
+                    loader_class = helpers.import_attribute(loader_path)
+            if loader_class is not None:
+                loader_options = helpers.extract_options(options, loader_class.options)
+                self.__loader = loader_class(**loader_options)
 
         # Initiate parser
         if format is None:
@@ -207,7 +209,7 @@ class Stream(object):
                 raise exceptions.FormatError(message)
             parser_class = helpers.import_attribute(config.PARSERS[format])
         parser_options = helpers.extract_options(options, parser_class.options)
-        self.__parser = parser_class(**parser_options)
+        self.__parser = parser_class(self.__loader, **parser_options)
 
         # Bad options
         if options:
@@ -216,7 +218,7 @@ class Stream(object):
             raise exceptions.OptionsError(message)
 
         # Open and setup
-        self.__parser.open(self.__source, self.__encoding, self.__loader)
+        self.__parser.open(self.__source, encoding=self.__encoding)
         self.__extract_sample()
         self.__extract_headers()
         if not self.__allow_html:
@@ -232,11 +234,11 @@ class Stream(object):
     def reset(self):
         """Reset table pointer to the first row.
         """
-        if self.__number > self.__sample_size:
+        if self.__row_number > self.__sample_size:
             self.__parser.reset()
             self.__extract_sample()
             self.__extract_headers()
-        self.__number = 0
+        self.__row_number = 0
 
     @property
     def headers(self):
@@ -251,7 +253,7 @@ class Stream(object):
         sample = []
         iterator = iter(self.__sample_extended_rows)
         iterator = self.__apply_processors(iterator)
-        for number, headers, row in iterator:
+        for row_number, headers, row in iterator:
             sample.append(row)
         return sample
 
@@ -270,11 +272,11 @@ class Stream(object):
             self.__sample_extended_rows,
             self.__parser.extended_rows)
         iterator = self.__apply_processors(iterator)
-        for number, headers, row in iterator:
-            if number > self.__number:
-                self.__number = number
+        for row_number, headers, row in iterator:
+            if row_number > self.__row_number:
+                self.__row_number = row_number
                 if extended:
-                    yield (number, headers, row)
+                    yield (row_number, headers, row)
                 elif keyed:
                     yield dict(zip(headers, row))
                 else:
@@ -321,18 +323,19 @@ class Stream(object):
             encoding = config.DEFAULT_ENCODING
         if format is None:
             format = helpers.detect_format(target)
-        if format not in config.WRITERS:
-            message = 'Format "%s" is not supported' % format
-            raise exceptions.FormatError(message)
-        extended_rows = self.iter(extended=True)
-        writer_class = helpers.import_attribute(config.WRITERS[format])
+        writer_class = self.__custom_writers.get(format)
+        if writer_class is None:
+            if format not in config.WRITERS:
+                message = 'Format "%s" is not supported' % format
+                raise exceptions.FormatError(message)
+            writer_class = helpers.import_attribute(config.WRITERS[format])
         writer_options = helpers.extract_options(options, writer_class.options)
         if options:
             message = 'Not supported options "%s" for format "%s"'
             message = message % (', '.join(options), format)
             raise exceptions.OptionsError(message)
         writer = writer_class(**writer_options)
-        writer.write(target, encoding, extended_rows)
+        writer.write(self.iter(), target, headers=self.headers, encoding=encoding)
 
     @staticmethod
     def test(source, scheme=None, format=None):
@@ -349,10 +352,9 @@ class Stream(object):
         """
         if scheme is None:
             scheme = helpers.detect_scheme(source)
-            if not scheme:
-                scheme = config.DEFAULT_SCHEME
-        if scheme not in config.LOADERS:
-            return False
+        if scheme is not None:
+            if scheme not in config.LOADERS:
+                return False
         if format is None:
             format = helpers.detect_format(source)
         if format not in config.PARSERS:
@@ -368,8 +370,8 @@ class Stream(object):
         if self.__sample_size:
             for _ in range(self.__sample_size):
                 try:
-                    number, headers, row = next(self.__parser.extended_rows)
-                    self.__sample_extended_rows.append((number, headers, row))
+                    row_number, headers, row = next(self.__parser.extended_rows)
+                    self.__sample_extended_rows.append((row_number, headers, row))
                 except StopIteration:
                     break
 
@@ -382,8 +384,8 @@ class Stream(object):
                 message = 'Headers row (%s) can\'t be more than sample_size (%s)'
                 message = message % (self.__headers_row, self.__sample_size)
                 raise exceptions.OptionsError(message)
-            for number, headers, row in self.__sample_extended_rows:
-                if number == self.__headers_row:
+            for row_number, headers, row in self.__sample_extended_rows:
+                if row_number == self.__headers_row:
                     if headers is not None:
                         self.__headers = headers
                         keyed_source = True
@@ -396,7 +398,7 @@ class Stream(object):
 
         # Detect html content
         text = ''
-        for number, headers, row in self.__sample_extended_rows:
+        for row_number, headers, row in self.__sample_extended_rows:
             for value in row:
                 if isinstance(value, six.string_types):
                     text += value
@@ -409,17 +411,17 @@ class Stream(object):
 
         # Builtin processor
         def builtin_processor(extended_rows):
-            for number, headers, row in extended_rows:
+            for row_number, headers, row in extended_rows:
                 # Set headers
                 headers = self.__headers
                 # Skip row by numbers
-                if number in self.__skip_rows_by_numbers:
+                if row_number in self.__skip_rows_by_numbers:
                     continue
                 # Skip row by comments
                 match = lambda comment: row[0].startswith(comment)
                 if list(filter(match, self.__skip_rows_by_comments)):
                     continue
-                yield (number, headers, row)
+                yield (row_number, headers, row)
 
         # Apply processors to iterator
         processors = [builtin_processor] + self.__post_parse

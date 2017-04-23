@@ -17,10 +17,10 @@ def test_tsv_parser():
     encoding = None
     loader = Mock()
     loader.load = Mock(return_value=io.open(source))
-    parser = TSVParser()
+    parser = TSVParser(loader)
 
     assert parser.closed
-    parser.open(source, encoding, loader)
+    parser.open(source, encoding=encoding)
     assert not parser.closed
 
     assert list(parser.extended_rows) == [

@@ -45,7 +45,7 @@ def topen(source,
                 - https
                 - ftp
                 - ftps
-                - native
+                - inline
         format (str):
             format of source:
                 - None (detect)

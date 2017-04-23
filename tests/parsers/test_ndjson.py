@@ -21,10 +21,10 @@ def test_ndjson_parser():
     encoding = None
     loader = Mock()
     loader.load = Mock(return_value=io.open(source, encoding='utf-8'))
-    parser = NDJSONParser()
+    parser = NDJSONParser(loader)
 
     assert parser.closed is True
-    parser.open(source, encoding, loader)
+    parser.open(source, encoding=encoding)
     assert parser.closed is False
 
     assert list(parser.extended_rows) == [
@@ -54,9 +54,9 @@ def test_ndjson_list():
         '[4, 5, 6]\n'
     )
 
-    parser = NDJSONParser()
     loader = Mock(load=Mock(return_value=stream))
-    parser.open(None, None, loader)
+    parser = NDJSONParser(loader)
+    parser.open(None)
 
     assert list(parser.extended_rows) == [
         (1, None, [1, 2, 3]),
@@ -70,9 +70,9 @@ def test_ndjson_scalar():
         '2\n'
     )
 
-    parser = NDJSONParser()
     loader = Mock(load=Mock(return_value=stream))
-    parser.open(None, None, loader)
+    parser = NDJSONParser(loader)
+    parser.open(None)
 
     with pytest.raises(exceptions.SourceError):
         list(parser.extended_rows)

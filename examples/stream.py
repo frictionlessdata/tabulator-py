@@ -82,7 +82,7 @@ with Stream(source, headers='row1') as stream:
         print(row)
 
 
-print('\nUsage of native lists:')
+print('\nUsage of inline lists:')
 source = [['id', 'name'], ['1', 'english'], ('2', '中国人')]
 with Stream(source, headers='row1') as stream:
     print(stream.headers)
@@ -90,7 +90,7 @@ with Stream(source, headers='row1') as stream:
         print(row)
 
 
-print('\nUsage of native lists (keyed):')
+print('\nUsage of inline lists (keyed):')
 source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
 with Stream(source) as stream:
     print(stream.headers)

@@ -4,24 +4,19 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from tabulator.loaders.web import WebLoader
-
-
-# Constants
-
-SOURCE = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/data/table.csv'
+from tabulator.loaders.local import LocalLoader
 
 
 # Tests
 
-def test_load_t():
-    loader = WebLoader()
-    chars = loader.load(SOURCE, 'utf-8', mode='t')
+def test_local_t():
+    loader = LocalLoader()
+    chars = loader.load('data/table.csv', encoding='utf-8')
     assert chars.read() == 'id,name\n1,english\n2,中国人\n'
 
 
-def test_load_b():
+def test_local_b():
     spec = '中国人'.encode('utf-8')
-    loader = WebLoader()
-    chars = loader.load(SOURCE, 'utf-8', mode='b')
+    loader = LocalLoader()
+    chars = loader.load('data/table.csv', mode='b', encoding='utf-8')
     assert chars.read() == b'id,name\n1,english\n2,' + spec + b'\n'

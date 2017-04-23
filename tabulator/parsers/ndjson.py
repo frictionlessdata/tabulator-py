@@ -6,14 +6,14 @@ from __future__ import unicode_literals
 
 import jsonlines
 
+from ..parser import Parser
 from .. import exceptions
 from .. import helpers
-from . import api
 
 
 # Module API
 
-class NDJSONParser(api.Parser):
+class NDJSONParser(Parser):
     """Parser to parse NDJSON data format.
 
     See: http://specs.okfnlabs.org/ndjson/
@@ -23,20 +23,19 @@ class NDJSONParser(api.Parser):
 
     options = []
 
-    def __init__(self, **options):
+    def __init__(self, loader, **options):
+        self.__loader = loader
         self.__options = options
         self.__extended_rows = None
-        self.__loader = None
         self.__chars = None
 
     @property
     def closed(self):
         return self.__chars is None or self.__chars.closed
 
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None):
         self.close()
-        self.__loader = loader
-        self.__chars = loader.load(source, encoding, mode='t')
+        self.__chars = self.__loader.load(source, encoding=encoding)
         self.reset()
 
     def close(self):
@@ -55,12 +54,12 @@ class NDJSONParser(api.Parser):
 
     def __iter_extended_rows(self):
         rows = jsonlines.Reader(self.__chars)
-        for number, row in enumerate(rows, start=1):
+        for row_number, row in enumerate(rows, start=1):
             if isinstance(row, (tuple, list)):
-                yield number, None, list(row)
+                yield row_number, None, list(row)
             elif isinstance(row, dict):
                 keys, values = zip(*sorted(row.items()))
-                yield number, list(keys), list(values)
+                yield row_number, list(keys), list(values)
             else:
                 raise exceptions.SourceError(
                     "JSON item has to be list or dict"

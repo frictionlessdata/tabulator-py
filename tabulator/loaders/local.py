@@ -5,15 +5,15 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+from ..loader import Loader
 from .. import exceptions
 from .. import helpers
 from .. import config
-from . import api
 
 
 # Module API
 
-class FileLoader(api.Loader):
+class LocalLoader(Loader):
     """Loader to load source from filesystem.
     """
 
@@ -21,7 +21,7 @@ class FileLoader(api.Loader):
 
     options = []
 
-    def load(self, source, encoding, mode, allow_zip=False):
+    def load(self, source, mode='t', encoding=None, allow_zip=False):
 
         # Prepare source
         scheme = 'file://'

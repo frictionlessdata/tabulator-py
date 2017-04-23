@@ -20,7 +20,7 @@ BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 # Tests [loaders/parsers]
 
-def test_file_csv():
+def test_local_csv():
 
     # Get table
     table = topen('data/table.csv')
@@ -30,7 +30,7 @@ def test_file_csv():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-def test_file_csv_parser_options():
+def test_local_csv_parser_options():
 
     # Get table
     table = topen('data/table.csv',
@@ -40,7 +40,7 @@ def test_file_csv_parser_options():
     assert table.headers is None
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
-def test_file_csv_with_bom():
+def test_local_csv_with_bom():
 
     # Get table
     table = topen('data/special/bom.csv', encoding='utf-8')
@@ -58,7 +58,7 @@ def test_file_csv_with_bom():
 
 
 # DEPRECATED [v0.5-v1)
-def test_file_csv_parser_class():
+def test_local_csv_parser_class():
 
     # Get table
     table = topen('data/table.csv', parser_class=CSVParser)
@@ -68,7 +68,7 @@ def test_file_csv_parser_class():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-def test_file_json_dicts():
+def test_local_json_dicts():
 
     # Get table
     table = topen('data/table-dicts.json')
@@ -78,7 +78,7 @@ def test_file_json_dicts():
     assert table.read() == [[1, 'english'], [2, '中国人']]
 
 
-def test_file_json_lists():
+def test_local_json_lists():
 
     # Get table
     table = topen('data/table-lists.json')
@@ -88,7 +88,7 @@ def test_file_json_lists():
     assert table.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
-def test_file_xls():
+def test_local_xls():
 
     # Get table
     table = topen('data/table.xls')
@@ -153,7 +153,7 @@ def test_text_json_lists():
     assert table.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
-def test_web_csv():
+def test_remote_csv():
 
     # Get table
     table = topen(BASE_URL % 'data/table.csv')
@@ -163,7 +163,7 @@ def test_web_csv():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-def test_web_csv_non_ascii_url():
+def test_remote_csv_non_ascii_url():
 
     # Get table
     table = topen('http://data.defra.gov.uk/ops/government_procurement_card/over_£500_GPC_apr_2013.csv')
@@ -177,7 +177,7 @@ def test_web_csv_non_ascii_url():
         'Description']
 
 
-def test_web_json_dicts():
+def test_remote_json_dicts():
 
     # Get table
     table = topen(BASE_URL % 'data/table-dicts.json')
@@ -187,7 +187,7 @@ def test_web_json_dicts():
     assert table.read() == [[1, 'english'], [2, '中国人']]
 
 
-def test_web_json_lists():
+def test_remote_json_lists():
 
     # Get table
     table = topen(BASE_URL % 'data/table-lists.json')
@@ -197,7 +197,7 @@ def test_web_json_lists():
     assert table.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
-def test_web_excel():
+def test_remote_excel():
 
     # Get table
     table = topen(BASE_URL % 'data/table.xls')
@@ -207,7 +207,7 @@ def test_web_excel():
     assert table.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
-def test_native():
+def test_inline():
 
     # Get table
     source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
@@ -218,7 +218,7 @@ def test_native():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-def test_native_iterator():
+def test_inline_iterator():
 
     # Get table
     source = iter([['id', 'name'], ['1', 'english'], ['2', '中国人']])
@@ -229,7 +229,7 @@ def test_native_iterator():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-def test_native_iterator():
+def test_inline_iterator():
 
     # Get table
     def generator():
@@ -242,7 +242,7 @@ def test_native_iterator():
     assert 'callable' in str(excinfo.value)
 
 
-def test_native_generator():
+def test_inline_generator():
 
     # Get table
     def generator():
@@ -256,11 +256,11 @@ def test_native_generator():
     assert table.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-def test_native_keyed():
+def test_inline_keyed():
 
     # Get table
     source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
-    table = topen(source, scheme='native', format='native')
+    table = topen(source, format='inline')
 
     # Make assertions
     assert table.headers is None
@@ -332,7 +332,7 @@ def test_headers_stream_context_manager():
             (3, ['id', 'name'], ['2', '中国人'])]
 
 
-def test_headers_native():
+def test_headers_inline():
 
     # Get table
     source = [[], ['id', 'name'], ['1', 'english'], ['2', '中国人']]
@@ -360,7 +360,7 @@ def test_headers_json_keyed():
         {'id': 2, 'name': '中国人'}]
 
 
-def test_headers_native_keyed():
+def test_headers_inline_keyed():
 
     # Get table
     source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
@@ -373,7 +373,7 @@ def test_headers_native_keyed():
         {'id': '2', 'name': '中国人'}]
 
 
-def test_headers_native_keyed_headers_is_none():
+def test_headers_inline_keyed_headers_is_none():
 
     # Get table
     source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
@@ -544,34 +544,3 @@ def test_processors_sample():
 
     # Make assertions
     assert table.sample == [['id', 'name']]
-
-
-# Tests [save]
-
-def test_save_csv(tmpdir):
-
-    # Save table
-    path = str(tmpdir.join('table.csv'))
-    table = topen('data/table.csv', headers=1)
-    table.save(path)
-
-    # Open saved table
-    table = topen(path, headers=1)
-
-    # Make assertions
-    assert table.headers == ['id', 'name']
-    assert table.read(extended=True) == [
-        (2, ['id', 'name'], ['1', 'english']),
-        (3, ['id', 'name'], ['2', '中国人'])]
-
-
-def test_save_xls(tmpdir):
-
-    # Save table
-    path = str(tmpdir.join('table.xls'))
-    table = topen('data/table.csv', headers=1)
-
-    # Assert raises
-    with pytest.raises(exceptions.FormatError) as excinfo:
-        table.save(path)
-    assert 'xls' in str(excinfo.value)

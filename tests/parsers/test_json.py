@@ -17,10 +17,10 @@ def test_json_parser():
     encoding = None
     loader = Mock()
     loader.load = Mock(return_value=io.open(source, 'rb'))
-    parser = JSONParser()
+    parser = JSONParser(loader)
 
     assert parser.closed
-    parser.open(source, encoding, loader)
+    parser.open(source, encoding=encoding)
     assert not parser.closed
 
     assert list(parser.extended_rows) == [

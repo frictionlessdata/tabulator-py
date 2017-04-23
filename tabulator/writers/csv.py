@@ -7,13 +7,13 @@ from __future__ import unicode_literals
 import io
 import six
 import unicodecsv
+from ..writer import Writer
 from .. import helpers
-from . import api
 
 
 # Module API
 
-class CSVWriter(api.Writer):
+class CSVWriter(Writer):
     """CSV writer.
     """
 
@@ -34,13 +34,11 @@ class CSVWriter(api.Writer):
         # Set attributes
         self.__options = options
 
-    def write(self, target, encoding, extended_rows):
+    def write(self, source, target, headers=None, encoding=None):
         helpers.ensure_dir(target)
         with io.open(target, 'wb') as file:
-            writer = unicodecsv.writer(
-                file, encoding=encoding, **self.__options)
-            iterator = enumerate(extended_rows, start=1)
-            for count, (_, headers, row) in iterator:
-                if count == 1 and headers:
-                    writer.writerow(headers)
+            writer = unicodecsv.writer(file, encoding=encoding, **self.__options)
+            if headers:
+                writer.writerow(headers)
+            for row in source:
                 writer.writerow(row)

@@ -21,11 +21,9 @@ class Parser(object):
 
     # Public
 
-    @property
-    # @abstractmethod
-    def options(self):
-        """list: list of available options
-        """
+    options = []
+
+    def __init__(self, loader, **options):
         pass
 
     @property
@@ -36,7 +34,7 @@ class Parser(object):
         pass  # pragma: no cover
 
     @abstractmethod
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None):
         """Open underlaying stream.
 
         Parser gets byte or text stream from loader
@@ -45,7 +43,6 @@ class Parser(object):
         Args:
             source (str): table source
             encoding (str): encoding of source
-            loader (Loader): loader instance
 
         """
         pass  # pragma: no cover

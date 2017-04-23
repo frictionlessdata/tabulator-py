@@ -7,8 +7,9 @@ from __future__ import unicode_literals
 import io
 import pytest
 from tabulator import Stream, exceptions
-from tabulator.loaders.file import FileLoader
+from tabulator.loaders.local import LocalLoader
 from tabulator.parsers.csv import CSVParser
+from tabulator.writers.csv import CSVWriter
 
 
 # Constants
@@ -125,7 +126,7 @@ def test_stream_skip_rows_with_headers():
 
 def test_custom_loaders():
     source = 'custom://data/table.csv'
-    class CustomLoader(FileLoader):
+    class CustomLoader(LocalLoader):
         def load(self, source, *args, **kwargs):
             return super(CustomLoader, self).load(
                 source.replace('custom://', ''), *args, **kwargs)
@@ -144,6 +145,21 @@ def test_custom_parsers():
                 source.replace('custom', 'csv'), *args, **kwargs)
     with Stream(source, custom_parsers={'custom': CustomParser}) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+# Tests [custom writers]
+
+def test_save_custom_writers(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.csv'))
+    class CustomWriter(CSVWriter): pass
+    with Stream(source, headers=1, custom_writers={'csv': CustomWriter}) as stream:
+        stream.save(target)
+    with Stream(target, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
 
 
 # Tests [options]
@@ -244,6 +260,29 @@ def test_stream_http_error():
         stream.open()
 
 
+# Tests [save]
+
+def test_save_csv(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.csv'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target)
+    with Stream(target, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_save_xls(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.xls'))
+    with Stream(source, headers=1) as stream:
+        with pytest.raises(exceptions.FormatError) as excinfo:
+            stream.save(target)
+        assert 'xls' in str(excinfo.value)
+
+
 # Tests [Table.test]
 
 def test_stream_test_schemes():
@@ -280,5 +319,5 @@ def test_stream_test_special():
     assert Stream.test(io.open('data/table.csv', encoding='utf-8'), format='csv')
     # Text
     assert Stream.test('text://name,value\n1,2', format='csv')
-    # Native
+    # Inline
     assert Stream.test([{'name': 'value'}])
