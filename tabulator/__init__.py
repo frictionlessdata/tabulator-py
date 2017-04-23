@@ -11,6 +11,7 @@ from .stream import Stream
 from .loader import Loader
 from .parser import Parser
 from .writer import Writer
+from .validate import validate
 from . import exceptions
 
 # Deprecated

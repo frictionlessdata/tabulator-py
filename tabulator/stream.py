@@ -337,30 +337,6 @@ class Stream(object):
         writer = writer_class(**writer_options)
         writer.write(self.iter(), target, headers=self.headers, encoding=encoding)
 
-    @staticmethod
-    def test(source, scheme=None, format=None):
-        """Test if this source has supported scheme and format.
-
-        Args:
-            source (str): stream source
-            scheme (str): stream scheme
-            format (str): stream format
-
-        Returns:
-            bool: True if source source has supported scheme and format
-
-        """
-        if scheme is None:
-            scheme = helpers.detect_scheme(source)
-        if scheme is not None:
-            if scheme not in config.LOADERS:
-                return False
-        if format is None:
-            format = helpers.detect_format(source)
-        if format not in config.PARSERS:
-            return False
-        return True
-
     # Private
 
     def __extract_sample(self):
