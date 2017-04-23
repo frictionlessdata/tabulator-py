@@ -77,6 +77,9 @@ class Stream(object):
             - row comment (add strings to the list)
             Example: skip_rows=[1, 2, '#', '//'] - rows 1, 2 and
             all rows started with '#' and '//' will be skipped.
+        allow_html (bool): if True it will allow html contents
+        custom_loaders (dict): unofficial custom loaders keyed by scheme
+        custom_parsers (dict): unofficial custom parsers keyed by format
         options (dict): see in the scheme/format section
 
     """
@@ -92,6 +95,9 @@ class Stream(object):
                  sample_size=100,
                  post_parse=[],
                  skip_rows=[],
+                 allow_html=False,
+                 custom_loaders={},
+                 custom_parsers={},
                  # DEPRECATED [v0.8-v1)
                  loader_options={},
                  parser_options={},
@@ -131,6 +137,9 @@ class Stream(object):
         self.__encoding = encoding
         self.__post_parse = copy(post_parse)
         self.__sample_size = sample_size
+        self.__allow_html = allow_html
+        self.__custom_loaders = copy(custom_loaders)
+        self.__custom_parsers = copy(custom_parsers)
         self.__options = options
         self.__sample_extended_rows = []
         self.__loader = None
@@ -176,22 +185,27 @@ class Stream(object):
             scheme = helpers.detect_scheme(self.__source)
             if not scheme:
                 scheme = config.DEFAULT_SCHEME
-        if scheme not in config.LOADERS:
-            message = 'Scheme "%s" is not supported' % scheme
-            raise exceptions.SchemeError(message)
-        loader_path = config.LOADERS[scheme]
-        if loader_path:
-            loader_class = helpers.import_attribute(loader_path)
+        loader_class = self.__custom_loaders.get(scheme)
+        if loader_class is None:
+            if scheme not in config.LOADERS:
+                message = 'Scheme "%s" is not supported' % scheme
+                raise exceptions.SchemeError(message)
+            loader_path = config.LOADERS[scheme]
+            if loader_path:
+                loader_class = helpers.import_attribute(loader_path)
+        if loader_class is not None:
             loader_options = helpers.extract_options(options, loader_class.options)
             self.__loader = loader_class(**loader_options)
 
         # Initiate parser
         if format is None:
             format = helpers.detect_format(self.__source)
-        if format not in config.PARSERS:
-            message = 'Format "%s" is not supported' % format
-            raise exceptions.FormatError(message)
-        parser_class = helpers.import_attribute(config.PARSERS[format])
+        parser_class = self.__custom_parsers.get(format)
+        if parser_class is None:
+            if format not in config.PARSERS:
+                message = 'Format "%s" is not supported' % format
+                raise exceptions.FormatError(message)
+            parser_class = helpers.import_attribute(config.PARSERS[format])
         parser_options = helpers.extract_options(options, parser_class.options)
         self.__parser = parser_class(**parser_options)
 
@@ -205,7 +219,8 @@ class Stream(object):
         self.__parser.open(self.__source, self.__encoding, self.__loader)
         self.__extract_sample()
         self.__extract_headers()
-        self.__detect_html()
+        if not self.__allow_html:
+            self.__detect_html()
 
         return self
 
