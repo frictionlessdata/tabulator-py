@@ -5,10 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from tabulator.loaders.text import TextLoader
-
-
-# Constants
-
 SOURCE = 'id,name\n1,english\n2,中国人\n'
 
 

@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
-import warnings
 from copy import copy
 from itertools import chain
 from . import exceptions
@@ -69,15 +68,15 @@ class Stream(object):
         sample_size (int): rows count for table.sample. Set to "0" to prevent
             any parsing activities before actual table.iter call. In this case
             headers will not be extracted from the source.
-        post_parse (generator[]): post parse processors (hooks). Signature
-            to follow is "processor(extended_rows)" which should yield
-            one extended row (row_number, headers, row) per yield instruction.
+        allow_html (bool): if True it will allow html contents
         skip_rows (int/str[]): list of rows to skip by:
             - row number (add integers to the list)
             - row comment (add strings to the list)
             Example: skip_rows=[1, 2, '#', '//'] - rows 1, 2 and
             all rows started with '#' and '//' will be skipped.
-        allow_html (bool): if True it will allow html contents
+        post_parse (generator[]): post parse processors (hooks). Signature
+            to follow is "processor(extended_rows)" which should yield
+            one extended row (row_number, headers, row) per yield instruction.
         custom_loaders (dict): unofficial custom loaders keyed by scheme
         custom_parsers (dict): unofficial custom parsers keyed by format
         custom_writers (dict): unofficial custom writers keyed by format
@@ -94,26 +93,13 @@ class Stream(object):
                  format=None,
                  encoding=None,
                  sample_size=100,
-                 post_parse=[],
-                 skip_rows=[],
                  allow_html=False,
+                 skip_rows=[],
+                 post_parse=[],
                  custom_loaders={},
                  custom_parsers={},
                  custom_writers={},
-                 # DEPRECATED [v0.8-v1)
-                 loader_options={},
-                 parser_options={},
                  **options):
-
-        # DEPRECATED [v0.8-v1)
-        if loader_options:
-            options.update(loader_options)
-            message = 'Use kwargs instead of "loader_options"'
-            warnings.warn(message, UserWarning)
-        if parser_options is None:
-            options.update(parser_options)
-            message = 'Use kwargs instead of "parser_options"'
-            warnings.warn(message, UserWarning)
 
         # Set headers
         self.__headers = None

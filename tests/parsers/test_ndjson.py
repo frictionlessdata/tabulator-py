@@ -6,9 +6,8 @@ from __future__ import unicode_literals
 
 import io
 import pytest
-from six import StringIO
 from mock import Mock
-
+from six import StringIO
 from tabulator import exceptions, Stream
 from tabulator.parsers.ndjson import NDJSONParser
 

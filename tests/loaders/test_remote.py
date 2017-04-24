@@ -5,10 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from tabulator.loaders.remote import RemoteLoader
-
-
-# Constants
-
 SOURCE = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/data/table.csv'
 
 

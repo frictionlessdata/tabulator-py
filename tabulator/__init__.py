@@ -14,11 +14,6 @@ from .writer import Writer
 from .validate import validate
 from . import exceptions
 
-# Deprecated
-
-from .topen import topen
-from .stream import Stream as Table
-
 # Version
 
 import io

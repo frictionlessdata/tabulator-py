@@ -5,19 +5,35 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import ast
+import six
 import pytest
 from tabulator import Stream, exceptions
 from tabulator.loaders.local import LocalLoader
 from tabulator.parsers.csv import CSVParser
 from tabulator.writers.csv import CSVWriter
-
-
-# Constants
-
 BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 
-# Tests [format:csv]
+# Format: csv
+
+def test_stream_local_csv():
+    with Stream('data/table.csv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_local_csv_with_bom():
+    with Stream('data/special/bom.csv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_local_csv_with_bom_with_encoding():
+    with Stream('data/special/bom.csv', encoding='utf-8') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
 
 def test_stream_csv_excel():
     source = 'value1,value2\nvalue3,value4'
@@ -47,7 +63,77 @@ def test_stream_csv_escaping():
         ]
 
 
-# Tests [format:ods]
+def test_stream_stream_csv():
+    source = io.open('data/table.csv', mode='rb')
+    with Stream(source, format='csv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_text_csv():
+    source = 'text://id,name\n1,english\n2,中国人\n'
+    with Stream(source, format='csv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_remote_csv():
+    with Stream(BASE_URL % 'data/table.csv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_remote_csv_non_ascii_url():
+    with Stream('http://data.defra.gov.uk/ops/government_procurement_card/over_£500_GPC_apr_2013.csv') as stream:
+        assert stream.sample[0] == [
+            'Entity',
+            'Transaction Posting Date',
+            'Merchant Name',
+            'Amount',
+            'Description']
+
+
+# Format: json
+
+def test_stream_local_json_dicts():
+    with Stream('data/table-dicts.json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_local_json_lists():
+    with Stream('data/table-lists.json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+def test_stream_text_json_dicts():
+    source = '[{"id": 1, "name": "english" }, {"id": 2, "name": "中国人" }]'
+    with Stream(source, scheme='text', format='json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_text_json_lists():
+    source = '[["id", "name"], [1, "english"], [2, "中国人"]]'
+    with Stream(source, scheme='text', format='json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+def test_stream_remote_json_dicts():
+    with Stream(BASE_URL % 'data/table-dicts.json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_remote_json_lists():
+    with Stream(BASE_URL % 'data/table-lists.json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+# Format: ods
 
 def test_stream_ods_remote():
     source = BASE_URL % 'data/table.ods'
@@ -55,7 +141,21 @@ def test_stream_ods_remote():
         assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
-# Tests [format:xlsx]
+# Format: xls
+
+def test_stream_local_xls():
+    with Stream('data/table.xls') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_remote_xls():
+    with Stream(BASE_URL % 'data/table.xls') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+# Format: xlsx
 
 def test_stream_xlsx_remote():
     source = BASE_URL % 'data/table.xlsx'
@@ -63,7 +163,14 @@ def test_stream_xlsx_remote():
         assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
-# Tests [format:gsheet]
+def test_stream_stream_xlsx():
+    source = io.open('data/table.xlsx', mode='rb')
+    with Stream(source, format='xlsx') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+# Format: gsheet
 
 def test_stream_gsheet():
     source = 'https://docs.google.com/spreadsheets/d/1mHIWnDvW9cALRMq9OdNfRwjAthCUFUOACPp0Lkyl7b4/edit?usp=sharing'
@@ -89,9 +196,120 @@ def test_stream_csv_doublequote():
             assert len(row) == 17
 
 
-# Tests [allow html]
+# Format: inline
 
-def test_html_content():
+def test_stream_inline():
+    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream(source) as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_inline_iterator():
+    source = iter([['id', 'name'], ['1', 'english'], ['2', '中国人']])
+    with Stream(source) as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_inline_iterator():
+    def generator():
+        yield ['id', 'name']
+        yield ['1', 'english']
+        yield ['2', '中国人']
+    with pytest.raises(exceptions.SourceError) as excinfo:
+        iterator = generator()
+        Stream(iterator).open()
+    assert 'callable' in str(excinfo.value)
+
+
+def test_stream_inline_generator():
+    def generator():
+        yield ['id', 'name']
+        yield ['1', 'english']
+        yield ['2', '中国人']
+    with Stream(generator) as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_inline_keyed():
+    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+    with Stream(source, format='inline') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['1', 'english'], ['2', '中国人']]
+
+
+# Headers
+
+def test_stream_headers():
+    with Stream('data/table.csv', headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert list(stream.iter(keyed=True)) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
+
+
+def test_stream_headers_user_set():
+    source = [['1', 'english'], ['2', '中国人']]
+    with Stream(source, headers=['id', 'name']) as stream:
+        assert stream.headers == ['id', 'name']
+        assert list(stream.iter(keyed=True)) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
+
+
+def test_stream_headers_stream_context_manager():
+    source = io.open('data/table.csv', mode='rb')
+    with Stream(source, headers=1, format='csv') as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_stream_headers_inline():
+    source = [[], ['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream(source, headers=2) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (3, ['id', 'name'], ['1', 'english']),
+            (4, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_stream_headers_json_keyed():
+    # Get table
+    source = ('text://['
+        '{"id": 1, "name": "english"},'
+        '{"id": 2, "name": "中国人"}]')
+    with Stream(source, headers=1, format='json') as stream:
+        assert stream.headers == ['id', 'name']
+        assert list(stream.iter(keyed=True)) == [
+            {'id': 1, 'name': 'english'},
+            {'id': 2, 'name': '中国人'}]
+
+
+def test_stream_headers_inline_keyed():
+    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+    with Stream(source, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert list(stream.iter(keyed=True)) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
+
+
+def test_stream_headers_inline_keyed_headers_is_none():
+    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+    with Stream(source, headers=None) as stream:
+        assert stream.headers == None
+        assert list(stream.iter(extended=True)) == [
+            (1, None, ['1', 'english']),
+            (2, None, ['2', '中国人'])]
+
+
+# Allow html
+
+def test_stream_html_content():
     # Link to html file containing information about csv file
     source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
     with pytest.raises(exceptions.FormatError) as excinfo:
@@ -99,14 +317,14 @@ def test_html_content():
     assert 'HTML' in str(excinfo.value)
 
 
-def test_html_content_with_allow_html():
+def test_stream_html_content_with_allow_html():
     # Link to html file containing information about csv file
     source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
     with Stream(source, allow_html=True) as stream:
         assert stream
 
 
-# Tests [skip rows]
+# Skip rows
 
 
 def test_stream_skip_rows():
@@ -121,10 +339,79 @@ def test_stream_skip_rows_with_headers():
         assert stream.read() == [['2', '中国人']]
 
 
-# Tests [custom loaders]
+# Post parse
+
+def test_stream_post_parse_headers():
+
+    # Processors
+    def extract_headers(extended_rows):
+        headers = None
+        for row_number, _, row in extended_rows:
+            if row_number == 1:
+                headers = row
+                continue
+            yield (row_number, headers, row)
+
+    # Stream
+    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream(source, post_parse=[extract_headers]) as stream:
+        assert stream.headers == None
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
 
 
-def test_custom_loaders():
+def test_stream_post_parse_chain():
+
+    # Processors
+    def skip_commented_rows(extended_rows):
+        for row_number, headers, row in extended_rows:
+            if (row and hasattr(row[0], 'startswith') and
+                    row[0].startswith('#')):
+                continue
+            yield (row_number, headers, row)
+    def skip_blank_rows(extended_rows):
+        for row_number, headers, row in extended_rows:
+            if not row:
+                continue
+            yield (row_number, headers, row)
+    def cast_rows(extended_rows):
+        for row_number, headers, row in extended_rows:
+            crow = []
+            for value in row:
+                try:
+                    if isinstance(value, six.string_types):
+                        value = ast.literal_eval(value)
+                except Exception:
+                    pass
+                crow.append(value)
+            yield (row_number, headers, crow)
+
+    # Stream
+    source = [['id', 'name'], ['#1', 'english'], [], ['2', '中国人']]
+    post_parse = [skip_commented_rows, skip_blank_rows, cast_rows]
+    with Stream(source, headers=1, post_parse=post_parse) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read() == [[2, '中国人']]
+
+
+def test_stream_post_parse_sample():
+
+    # Processors
+    def only_first_row(extended_rows):
+        for row_number, header, row in extended_rows:
+            if row_number == 1:
+                yield (row_number, header, row)
+
+    # Stream
+    with Stream('data/table.csv', post_parse=[only_first_row]) as stream:
+        assert stream.sample == [['id', 'name']]
+
+
+# Custom loaders
+
+
+def test_stream_custom_loaders():
     source = 'custom://data/table.csv'
     class CustomLoader(LocalLoader):
         def load(self, source, *args, **kwargs):
@@ -134,10 +421,10 @@ def test_custom_loaders():
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-# Tests [custom parsers]
+# Custom parsers
 
 
-def test_custom_parsers():
+def test_stream_custom_parsers():
     source = 'data/table.custom'
     class CustomParser(CSVParser):
         def open(self, source, *args, **kwargs):
@@ -147,9 +434,9 @@ def test_custom_parsers():
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-# Tests [custom writers]
+# Custom writers
 
-def test_save_custom_writers(tmpdir):
+def test_stream_save_custom_writers(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.csv'))
     class CustomWriter(CSVWriter): pass
@@ -162,7 +449,7 @@ def test_save_custom_writers(tmpdir):
             (3, ['id', 'name'], ['2', '中国人'])]
 
 
-# Tests [options]
+# Loader/parser options
 
 def test_stream_csv_delimiter():
     source = '"value1";"value2"\n"value3";"value4"'
@@ -206,7 +493,7 @@ def test_stream_json_prefix():
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 
-# Tests [errors]
+# Open errors
 
 def test_stream_source_error_data():
     stream = Stream('[1,2]', scheme='text', format='json')
@@ -260,9 +547,71 @@ def test_stream_http_error():
         stream.open()
 
 
-# Tests [save]
+# Sample
 
-def test_save_csv(tmpdir):
+def test_stream_sample():
+    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream(source, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.sample == [['1', 'english'], ['2', '中国人']]
+
+
+# Reset
+
+def test_stream_reset():
+    with Stream('data/table.csv', headers=1) as stream:
+        headers1 = stream.headers
+        contents1 = stream.read()
+        stream.reset()
+        headers2 = stream.headers
+        contents2 = stream.read()
+        assert headers1 == ['id', 'name']
+        assert contents1 == [['1', 'english'], ['2', '中国人']]
+        assert headers1 == headers2
+        assert contents1 == contents2
+
+
+def test_stream_reset_and_sample_size():
+    with Stream('data/special/long.csv', headers=1, sample_size=3) as stream:
+        # Before reset
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'a']),
+            (3, ['id', 'name'], ['2', 'b']),
+            (4, ['id', 'name'], ['3', 'c']),
+            (5, ['id', 'name'], ['4', 'd']),
+            (6, ['id', 'name'], ['5', 'e']),
+            (7, ['id', 'name'], ['6', 'f'])]
+        assert stream.sample == [['1', 'a'], ['2', 'b']]
+        assert stream.read() == []
+        # Reset stream
+        stream.reset()
+        # After reset
+        assert stream.read(extended=True, limit=3) == [
+            (2, ['id', 'name'], ['1', 'a']),
+            (3, ['id', 'name'], ['2', 'b']),
+            (4, ['id', 'name'], ['3', 'c'])]
+        assert stream.sample == [['1', 'a'], ['2', 'b']]
+        assert stream.read(extended=True) == [
+            (5, ['id', 'name'], ['4', 'd']),
+            (6, ['id', 'name'], ['5', 'e']),
+            (7, ['id', 'name'], ['6', 'f'])]
+
+
+def test_stream_reset_generator():
+    def generator():
+        yield [1]
+        yield [2]
+    with Stream(generator, sample_size=0) as stream:
+        # Before reset
+        assert stream.read() == [[1], [2]]
+        # Reset stream
+        stream.reset()
+        # After reset
+        assert stream.read() == [[1], [2]]
+
+# Save
+
+def test_stream_save_csv(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.csv'))
     with Stream(source, headers=1) as stream:
@@ -274,7 +623,7 @@ def test_save_csv(tmpdir):
             (3, ['id', 'name'], ['2', '中国人'])]
 
 
-def test_save_xls(tmpdir):
+def test_stream_save_xls(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.xls'))
     with Stream(source, headers=1) as stream:
