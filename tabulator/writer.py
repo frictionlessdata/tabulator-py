@@ -12,22 +12,18 @@ from abc import ABCMeta, abstractmethod
 
 @add_metaclass(ABCMeta)
 class Writer(object):
-    """Writer representation.
-
-    Args:
-        options(dict): writer options
-
-    """
 
     # Public
 
     options = []
 
     def __init__(self, **options):
+        """https://github.com/frictionlessdata/tabulator-py#custom-writers
+        """
         pass
 
     @abstractmethod
     def write(self, source, target, headers=None, encoding=None):
-        """Write tabular data to target.
+        """https://github.com/frictionlessdata/tabulator-py#custom-writers
         """
         pass

@@ -12,66 +12,44 @@ from abc import ABCMeta, abstractmethod
 
 @add_metaclass(ABCMeta)
 class Parser(object):
-    """Parser representation.
-
-    Args:
-        options(dict): parser options
-
-    """
 
     # Public
 
     options = []
 
     def __init__(self, loader, **options):
+        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
+        """
         pass
 
     @property
     @abstractmethod
     def closed(self):
-        """Return if underlaynig stream is closed.
+        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
         """
         pass  # pragma: no cover
 
     @abstractmethod
     def open(self, source, encoding=None):
-        """Open underlaying stream.
-
-        Parser gets byte or text stream from loader
-        to start emit items from this stream.
-
-        Args:
-            source (str): table source
-            encoding (str): encoding of source
-
+        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
         """
         pass  # pragma: no cover
 
     @abstractmethod
     def close(self):
-        """Close underlaying stream.
+        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
         """
         pass  # pragma: no cover
 
     @abstractmethod
     def reset(self):
-        """Reset items and underlaying stream.
-
-        After reset call iterations over items will
-        start from scratch.
-
+        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
         """
         pass  # pragma: no cover
 
     @property
     @abstractmethod
     def extended_rows(self):
-        """iterator: Extended rows.
-
-        Extended rows iterator from parsed underlaying stream.
-
-        Yields:
-            tuple: extended row (number, headers, values)
-
+        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
         """
         pass  # pragma: no cover

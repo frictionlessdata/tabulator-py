@@ -15,74 +15,6 @@ from . import config
 # Module API
 
 class Stream(object):
-    """Tabular stream.
-
-    Args:
-        source (str): stream source
-        headers (list/str):
-            headers list or pointer:
-                - list of headers for setting by user
-                - row number to extract headers from this row
-                  For plain source headers row and all rows
-                  before will be removed. For keyed source no rows
-                  will be removed.
-        scheme (str):
-            scheme of source:
-                - file (default)
-                - ftp
-                - ftps
-                - gsheet
-                - http
-                - https
-                - inline
-                - stream
-                - text
-        format (str):
-            format of source:
-                - None (detect)
-                - csv
-                  options:
-                    - delimiter
-                    - doublequote
-                    - escapechar
-                    - quotechar
-                    - quoting
-                    - skipinitialspace
-                - gsheet
-                - json
-                  options:
-                    - prefix
-                - inline
-                - tsv
-                - xls
-                  options:
-                    - sheet
-                - xlsx
-                  options:
-                    - sheet
-        encoding (str):
-            encoding of source:
-                - None (detect)
-                - utf-8
-                - <encodings>
-        sample_size (int): rows count for table.sample. Set to "0" to prevent
-            any parsing activities before actual table.iter call. In this case
-            headers will not be extracted from the source.
-        allow_html (bool): if True it will allow html contents
-        skip_rows (int/str[]): list of rows to skip by:
-            - row number (add integers to the list)
-            - row comment (add strings to the list)
-            Example: skip_rows=[1, 2, '#', '//'] - rows 1, 2 and
-            all rows started with '#' and '//' will be skipped.
-        post_parse (generator[]): post parse processors (hooks). Signature
-            to follow is "processor(extended_rows)" which should yield
-            one extended row (row_number, headers, row) per yield instruction.
-        custom_loaders (dict): unofficial custom loaders keyed by scheme
-        custom_parsers (dict): unofficial custom parsers keyed by format
-        custom_writers (dict): unofficial custom writers keyed by format
-        options (dict): see in the scheme/format section
-
-    """
 
     # Public
 
@@ -100,6 +32,8 @@ class Stream(object):
                  custom_parsers={},
                  custom_writers={},
                  **options):
+        """https://github.com/frictionlessdata/tabulator-py#stream
+        """
 
         # Set headers
         self.__headers = None
@@ -136,31 +70,31 @@ class Stream(object):
         self.__row_number = 0
 
     def __enter__(self):
-        """Enter context manager by opening table.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         if self.closed:
             self.open()
         return self
 
     def __exit__(self, type, value, traceback):
-        """Exit context manager by closing table.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         if not self.closed:
             self.close()
 
     def __iter__(self):
-        """Return rows iterator.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         return self.iter()
 
     @property
     def closed(self):
-        """Return true if table is closed.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         return not self.__parser or self.__parser.closed
 
     def open(self):
-        """Open table to iterate over it.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
 
         # Prepare variables
@@ -213,12 +147,12 @@ class Stream(object):
         return self
 
     def close(self):
-        """Close table by closing underlaying stream.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         self.__parser.close()
 
     def reset(self):
-        """Reset table pointer to the first row.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         if self.__row_number > self.__sample_size:
             self.__parser.reset()
@@ -228,13 +162,13 @@ class Stream(object):
 
     @property
     def headers(self):
-        """None/list: table headers
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         return self.__headers
 
     @property
     def sample(self):
-        """list[]: sample of rows
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         sample = []
         iterator = iter(self.__sample_extended_rows)
@@ -244,15 +178,7 @@ class Stream(object):
         return sample
 
     def iter(self, keyed=False, extended=False):
-        """Return rows iterator.
-
-        Args:
-            keyed (bool): yield keyed rows
-            extended (bool): yield extended rows
-
-        Yields:
-            mixed[]/mixed{}: row/keyed row/extended row
-
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         iterator = chain(
             self.__sample_extended_rows,
@@ -269,16 +195,7 @@ class Stream(object):
                     yield row
 
     def read(self, keyed=False, extended=False, limit=None):
-        """Return table rows with count limit.
-
-        Args:
-            keyed (bool): return keyed rows
-            extended (bool): return extended rows
-            limit (int): rows count limit
-
-        Returns:
-            list: rows/keyed rows/extended rows
-
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         result = []
         rows = self.iter(keyed=keyed, extended=extended)
@@ -289,21 +206,7 @@ class Stream(object):
         return result
 
     def save(self, target, format=None,  encoding=None, **options):
-        """Save stream to filesystem.
-
-        Args:
-            target (str): stream target
-            format (str):
-                saving format:
-                    - None (detect)
-                    - csv
-                      options:
-                        - delimiter
-            encoding (str):
-                saving encoding:
-                    - utf-8 (default)
-                    - <encodings>
-
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         if encoding is None:
             encoding = config.DEFAULT_ENCODING

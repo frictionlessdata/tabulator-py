@@ -63,6 +63,12 @@ def test_stream_csv_escaping():
         ]
 
 
+def test_stream_csv_doublequote():
+    with Stream('data/special/doublequote.csv') as stream:
+        for row in  stream:
+            assert len(row) == 17
+
+
 def test_stream_stream_csv():
     source = io.open('data/table.csv', mode='rb')
     with Stream(source, format='csv') as stream:
@@ -188,12 +194,6 @@ def test_stream_gsheet_bad_url():
     stream = Stream('https://docs.google.com/spreadsheets/d/bad')
     with pytest.raises(exceptions.HTTPError) as excinfo:
         stream.open()
-
-
-def test_stream_csv_doublequote():
-    with Stream('data/special/doublequote.csv') as stream:
-        for row in  stream:
-            assert len(row) == 17
 
 
 # Format: inline
@@ -487,9 +487,9 @@ def test_stream_excelx_sheet():
         assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
-def test_stream_json_prefix():
+def test_stream_json_node():
     source = '{"root": [["value1", "value2"], ["value3", "value4"]]}'
-    with Stream(source, scheme='text', format='json', prefix='root') as stream:
+    with Stream(source, scheme='text', format='json', node='root') as stream:
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 

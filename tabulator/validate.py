@@ -11,16 +11,7 @@ from . import helpers
 # Module API
 
 def validate(source, scheme=None, format=None):
-    """Validate if this source has supported scheme and format.
-
-    Args:
-        source (str): stream source
-        scheme (str): stream scheme
-        format (str): stream format
-
-    Returns:
-        bool: True if source source has supported scheme and format
-
+    """https://github.com/frictionlessdata/tabulator-py#validate
     """
     if scheme is None:
         scheme = helpers.detect_scheme(source)
