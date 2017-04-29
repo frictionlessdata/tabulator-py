@@ -8,11 +8,99 @@ import io
 import ast
 import six
 import pytest
+import datetime
 from tabulator import Stream, exceptions
 from tabulator.loaders.local import LocalLoader
 from tabulator.parsers.csv import CSVParser
 from tabulator.writers.csv import CSVWriter
 BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
+
+
+# Headers
+
+def test_stream_headers():
+    with Stream('data/table.csv', headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert list(stream.iter(keyed=True)) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
+
+
+def test_stream_headers_user_set():
+    source = [['1', 'english'], ['2', '中国人']]
+    with Stream(source, headers=['id', 'name']) as stream:
+        assert stream.headers == ['id', 'name']
+        assert list(stream.iter(keyed=True)) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
+
+
+def test_stream_headers_stream_context_manager():
+    source = io.open('data/table.csv', mode='rb')
+    with Stream(source, headers=1, format='csv') as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_stream_headers_inline():
+    source = [[], ['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream(source, headers=2) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (3, ['id', 'name'], ['1', 'english']),
+            (4, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_stream_headers_json_keyed():
+    # Get table
+    source = ('text://['
+        '{"id": 1, "name": "english"},'
+        '{"id": 2, "name": "中国人"}]')
+    with Stream(source, headers=1, format='json') as stream:
+        assert stream.headers == ['id', 'name']
+        assert list(stream.iter(keyed=True)) == [
+            {'id': 1, 'name': 'english'},
+            {'id': 2, 'name': '中国人'}]
+
+
+def test_stream_headers_inline_keyed():
+    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+    with Stream(source, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert list(stream.iter(keyed=True)) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'}]
+
+
+def test_stream_headers_inline_keyed_headers_is_none():
+    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+    with Stream(source, headers=None) as stream:
+        assert stream.headers == None
+        assert list(stream.iter(extended=True)) == [
+            (1, None, ['1', 'english']),
+            (2, None, ['2', '中国人'])]
+
+
+# Scheme: local
+
+#TODO: add tests
+
+
+# Scheme: remote
+
+#TODO: add tests
+
+
+# Scheme: stream
+
+#TODO: add tests
+
+
+# Scheme: text
+
+#TODO: add tests
 
 
 # Format: csv
@@ -240,71 +328,14 @@ def test_stream_inline_keyed():
         assert stream.read() == [['1', 'english'], ['2', '中国人']]
 
 
-# Headers
+# Encoding
 
-def test_stream_headers():
-    with Stream('data/table.csv', headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert list(stream.iter(keyed=True)) == [
-            {'id': '1', 'name': 'english'},
-            {'id': '2', 'name': '中国人'}]
+#TODO: add tests
 
 
-def test_stream_headers_user_set():
-    source = [['1', 'english'], ['2', '中国人']]
-    with Stream(source, headers=['id', 'name']) as stream:
-        assert stream.headers == ['id', 'name']
-        assert list(stream.iter(keyed=True)) == [
-            {'id': '1', 'name': 'english'},
-            {'id': '2', 'name': '中国人'}]
+# Sample size
 
-
-def test_stream_headers_stream_context_manager():
-    source = io.open('data/table.csv', mode='rb')
-    with Stream(source, headers=1, format='csv') as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read(extended=True) == [
-            (2, ['id', 'name'], ['1', 'english']),
-            (3, ['id', 'name'], ['2', '中国人'])]
-
-
-def test_stream_headers_inline():
-    source = [[], ['id', 'name'], ['1', 'english'], ['2', '中国人']]
-    with Stream(source, headers=2) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read(extended=True) == [
-            (3, ['id', 'name'], ['1', 'english']),
-            (4, ['id', 'name'], ['2', '中国人'])]
-
-
-def test_stream_headers_json_keyed():
-    # Get table
-    source = ('text://['
-        '{"id": 1, "name": "english"},'
-        '{"id": 2, "name": "中国人"}]')
-    with Stream(source, headers=1, format='json') as stream:
-        assert stream.headers == ['id', 'name']
-        assert list(stream.iter(keyed=True)) == [
-            {'id': 1, 'name': 'english'},
-            {'id': 2, 'name': '中国人'}]
-
-
-def test_stream_headers_inline_keyed():
-    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
-    with Stream(source, headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert list(stream.iter(keyed=True)) == [
-            {'id': '1', 'name': 'english'},
-            {'id': '2', 'name': '中国人'}]
-
-
-def test_stream_headers_inline_keyed_headers_is_none():
-    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
-    with Stream(source, headers=None) as stream:
-        assert stream.headers == None
-        assert list(stream.iter(extended=True)) == [
-            (1, None, ['1', 'english']),
-            (2, None, ['2', '中国人'])]
+#TODO: add tests
 
 
 # Allow html
@@ -322,6 +353,19 @@ def test_stream_html_content_with_allow_html():
     source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
     with Stream(source, allow_html=True) as stream:
         assert stream
+
+
+# Force strings
+
+def test_stream_force_strings():
+    temp = datetime.datetime(2000, 1, 1, 17)
+    date = datetime.date(2000, 1, 1)
+    time = datetime.time(17, 00)
+    source = [['John', 21, 1.5, temp, date, time]]
+    with Stream(source, force_strings=True) as stream:
+        assert stream.read() == [
+            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01', '17:00:00']
+        ]
 
 
 # Skip rows

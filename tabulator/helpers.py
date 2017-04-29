@@ -8,6 +8,7 @@ import os
 import re
 import six
 import codecs
+import datetime
 from copy import copy
 from importlib import import_module
 from six.moves.urllib.parse import urlparse, urlunparse
@@ -162,3 +163,12 @@ def extract_options(options, names):
             result[name] = value
             del options[name]
     return result
+
+
+def stringify_value(value):
+    """Convert any value to string.
+    """
+    isoformat = getattr(value, 'isoformat', None)
+    if isoformat is not None:
+        value = isoformat()
+    return str(value)

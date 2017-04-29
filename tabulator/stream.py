@@ -26,6 +26,7 @@ class Stream(object):
                  encoding=None,
                  sample_size=100,
                  allow_html=False,
+                 force_strings=False,
                  skip_rows=[],
                  post_parse=[],
                  custom_loaders={},
@@ -57,9 +58,10 @@ class Stream(object):
         self.__scheme = scheme
         self.__format = format
         self.__encoding = encoding
-        self.__post_parse = copy(post_parse)
         self.__sample_size = sample_size
         self.__allow_html = allow_html
+        self.__force_strings = force_strings
+        self.__post_parse = copy(post_parse)
         self.__custom_loaders = copy(custom_loaders)
         self.__custom_parsers = copy(custom_parsers)
         self.__custom_writers = copy(custom_writers)
@@ -185,6 +187,8 @@ class Stream(object):
             self.__parser.extended_rows)
         iterator = self.__apply_processors(iterator)
         for row_number, headers, row in iterator:
+            if self.__force_strings:
+                row = list(map(helpers.stringify_value, row))
             if row_number > self.__row_number:
                 self.__row_number = row_number
                 if extended:

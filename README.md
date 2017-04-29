@@ -294,6 +294,26 @@ stream = Stream('data.tsv')
 
 # TODO: write
 
+### Force strings
+
+Because `tabulator` support not only sources with string data representation as `csv` but also sources supporting different data types as `json` or `inline` there is a `Stream` option `force_strings` to stringify all data values on reading.
+
+Here how stream works without forcing strings:
+
+```python
+with Stream([['string', 1, datetime.time(17, 00)]]) as stream:
+  stream.read() # [['string', 1, datetime.time(17, 00)]]
+```
+
+The same data source using `force_strings` option:
+
+```python
+with Stream([['string', 1]], force_strings=True) as stream:
+  stream.read() # [['string', '1', '17:00:00']]
+```
+
+For all temporal values stream will use ISO format. But if your data source doesn't support temporal values (for instance `json` format) `Stream` just returns it as it is without converting to ISO format.
+
 ### Skip rows
 
 # TODO: write
@@ -434,7 +454,7 @@ Save source data to target.
 - **headers (str[])** - optional headers
 - **encoding (str)** - encoding of source
 
-### validate
+### Validate
 
 For cases you don't need open the source but want to know is it supported by `tabulator` or not you could use `validate` function. It also let you know what exactly is not supported raising correspondig exception class.
 
@@ -458,7 +478,7 @@ Validate if this source has supported scheme and format.
 - raises **(exceptions.FormatError)** - if format is not supported
 - returns **(bool)** - `True` if scheme/format is supported
 
-### exceptions
+### Exceptions
 
 #### exceptions.TabulatorException
 
