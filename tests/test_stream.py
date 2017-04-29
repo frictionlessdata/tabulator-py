@@ -85,22 +85,32 @@ def test_stream_headers_inline_keyed_headers_is_none():
 
 # Scheme: local
 
-#TODO: add tests
+def test_stream_local():
+    with Stream('data/table.csv') as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 # Scheme: remote
 
-#TODO: add tests
+def test_stream_remote():
+    with Stream(BASE_URL % 'data/table.csv') as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 # Scheme: stream
 
-#TODO: add tests
+def test_stream_stream():
+    source = io.open('data/table.csv', mode='rb')
+    with Stream(source, format='csv') as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 # Scheme: text
 
-#TODO: add tests
+def test_stream_text():
+    source = 'text://value1,value2\nvalue3,value4'
+    with Stream(source, format='csv') as stream:
+        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 
 # Format: csv
@@ -330,12 +340,18 @@ def test_stream_inline_keyed():
 
 # Encoding
 
-#TODO: add tests
+def test_stream_encoding():
+    with Stream('data/data.csv', encoding='utf-8') as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 # Sample size
 
-#TODO: add tests
+def test_stream_sample():
+    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream(source, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.sample == [['1', 'english'], ['2', '中国人']]
 
 
 # Allow html
@@ -589,15 +605,6 @@ def test_stream_http_error():
     stream = Stream('http://github.com/bad_path.csv')
     with pytest.raises(exceptions.HTTPError) as excinfo:
         stream.open()
-
-
-# Sample
-
-def test_stream_sample():
-    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
-    with Stream(source, headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.sample == [['1', 'english'], ['2', '中国人']]
 
 
 # Reset
