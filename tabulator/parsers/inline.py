@@ -19,8 +19,9 @@ class InlineParser(Parser):
 
     options = []
 
-    def __init__(self, loader):
+    def __init__(self, loader, force_parse=False):
         self.__loader = loader
+        self.__force_parse = force_parse
         self.__extended_rows = None
         self.__source = None
 
@@ -63,5 +64,7 @@ class InlineParser(Parser):
                     values.append(item[key])
                 yield (row_number, list(keys), list(values))
             else:
-                message = 'Inline data item has to be tuple, list or dict'
-                raise exceptions.SourceError(message)
+                if not self.__force_parse:
+                    message = 'Inline data item has to be tuple, list or dict'
+                    raise exceptions.SourceError(message)
+                yield (row_number, None, [])

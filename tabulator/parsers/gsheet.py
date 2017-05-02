@@ -19,8 +19,9 @@ class GsheetParser(Parser):
 
     options = []
 
-    def __init__(self, loader):
+    def __init__(self, loader, force_parse=False):
         self.__loader = loader
+        self.__force_parse = force_parse
         self.__stream = None
 
     @property
@@ -38,7 +39,8 @@ class GsheetParser(Parser):
         url = url % (key, key)
         if gid:
             url = '%s&gid=%s' % (url, gid)
-        self.__stream = Stream(url, format='csv', encoding=encoding).open()
+        self.__stream = Stream(
+            url, format='csv', encoding=encoding, force_parse=self.__force_parse).open()
         self.__extended_rows = self.__stream.iter(extended=True)
 
     def close(self):

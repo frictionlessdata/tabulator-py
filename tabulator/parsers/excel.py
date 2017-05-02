@@ -21,9 +21,10 @@ class ExcelParser(Parser):
         'sheet',
     ]
 
-    def __init__(self, loader, sheet=1):
+    def __init__(self, loader, force_parse=False, sheet=1):
         self.__loader = loader
         self.__index = sheet-1
+        self.__force_parse = force_parse
         self.__extended_rows = None
         self.__bytes = None
 

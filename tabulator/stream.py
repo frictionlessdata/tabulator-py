@@ -27,6 +27,7 @@ class Stream(object):
                  sample_size=100,
                  allow_html=False,
                  force_strings=False,
+                 force_parse=False,
                  skip_rows=[],
                  post_parse=[],
                  custom_loaders={},
@@ -61,6 +62,7 @@ class Stream(object):
         self.__sample_size = sample_size
         self.__allow_html = allow_html
         self.__force_strings = force_strings
+        self.__force_parse = force_parse
         self.__post_parse = copy(post_parse)
         self.__custom_loaders = copy(custom_loaders)
         self.__custom_parsers = copy(custom_parsers)
@@ -131,7 +133,8 @@ class Stream(object):
                 raise exceptions.FormatError(message)
             parser_class = helpers.import_attribute(config.PARSERS[format])
         parser_options = helpers.extract_options(options, parser_class.options)
-        self.__parser = parser_class(self.__loader, **parser_options)
+        self.__parser = parser_class(
+            self.__loader, force_parse=self.__force_parse, **parser_options)
 
         # Bad options
         if options:

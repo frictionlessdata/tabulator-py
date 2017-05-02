@@ -31,7 +31,7 @@ class CSVParser(Parser):
         'lineterminator'
     ]
 
-    def __init__(self, loader, **options):
+    def __init__(self, loader, force_parse=False, **options):
 
         # Make bytes
         if six.PY2:
@@ -42,6 +42,7 @@ class CSVParser(Parser):
         # Set attributes
         self.__loader = loader
         self.__options = options
+        self.__force_parse = force_parse
         self.__extended_rows = None
         self.__chars = None
 

@@ -8,7 +8,6 @@ import os
 import re
 import six
 import codecs
-import datetime
 from copy import copy
 from importlib import import_module
 from six.moves.urllib.parse import urlparse, urlunparse

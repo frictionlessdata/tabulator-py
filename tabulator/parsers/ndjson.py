@@ -23,9 +23,9 @@ class NDJSONParser(Parser):
 
     options = []
 
-    def __init__(self, loader, **options):
+    def __init__(self, loader, force_parse=False):
         self.__loader = loader
-        self.__options = options
+        self.__force_parse = force_parse
         self.__extended_rows = None
         self.__chars = None
 
@@ -59,8 +59,8 @@ class NDJSONParser(Parser):
                 yield row_number, None, list(row)
             elif isinstance(row, dict):
                 keys, values = zip(*sorted(row.items()))
-                yield row_number, list(keys), list(values)
+                yield (row_number, list(keys), list(values))
             else:
-                raise exceptions.SourceError(
-                    "JSON item has to be list or dict"
-                )
+                if not self.__force_parse:
+                    raise exceptions.SourceError('JSON item has to be list or dict')
+                yield (row_number, None, [])

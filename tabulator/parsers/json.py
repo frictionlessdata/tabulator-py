@@ -22,9 +22,10 @@ class JSONParser(Parser):
         'node',
     ]
 
-    def __init__(self, loader, node=None):
+    def __init__(self, loader, force_parse=False, node=None):
         self.__loader = loader
         self.__node = node
+        self.__force_parse = force_parse
         self.__extended_rows = None
         self.__chars = None
 
@@ -67,5 +68,7 @@ class JSONParser(Parser):
                     values.append(item[key])
                 yield (row_number, list(keys), list(values))
             else:
-                message = 'JSON item has to be list or dict'
-                raise exceptions.SourceError(message)
+                if not self.__force_parse:
+                    message = 'JSON item has to be list or dict'
+                    raise exceptions.SourceError(message)
+                yield (row_number, None, [])

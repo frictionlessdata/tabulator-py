@@ -141,6 +141,7 @@ Create stream class instance.
 - **sample_size (int)** - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source.
 - **allow_html (bool)** - a flag to allow html
 - **force_strings (bool)** - if `True` all output will be converted to strings
+- **force_parse (bool)** - if `True` on row parsing error a stream will return an empty row instead of raising an exception
 - **skip_rows (int/str[])** - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped.
 - **post_parse (generator[])** - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction.
 - **custom_loaders (dict)** - loaders keyed by scheme. See a section below.
@@ -517,11 +518,12 @@ with Stream(source, custom_parsers={'custom': CustomParser}) as stream:
 
 There are more examples in internal `tabulator.parsers` module.
 
-#### Parser(parser, \*\*options)
+#### Parser(loader, force_parse=False, \*\*options)
 
 Create parser class instance.
 
 - **loader (Loader)** - loader instance
+- **force_parse (bool)** - if True parser must yield [row_number, None, []] if there is an row parsing error instead of stopping the iteration by raising an exception
 - **options (dict)** - parser options
 - returns **(Parser)** - `Parser` class instance
 
@@ -725,6 +727,7 @@ Here described only breaking and the most important changes. The full changelog 
 New API added:
 - published `Loader/Parser/Writer` API
 - added `Stream` argument `force_strings`
+- added `Stream` argument `force_parse`
 - added `Stream` argument `custom_writers`
 
 Deprecated API removal:

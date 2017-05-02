@@ -22,8 +22,9 @@ class TSVParser(Parser):
 
     options = []
 
-    def __init__(self, loader):
+    def __init__(self, loader, force_parse=False):
         self.__loader = loader
+        self.__force_parse = force_parse
         self.__extended_rows = None
         self.__chars = None
 

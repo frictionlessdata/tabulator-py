@@ -341,7 +341,7 @@ def test_stream_inline_keyed():
 # Encoding
 
 def test_stream_encoding():
-    with Stream('data/data.csv', encoding='utf-8') as stream:
+    with Stream('data/table.csv', encoding='utf-8') as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
@@ -381,6 +381,28 @@ def test_stream_force_strings():
     with Stream(source, force_strings=True) as stream:
         assert stream.read() == [
             ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01', '17:00:00']
+        ]
+
+
+# Force parse
+
+def test_stream_force_parse_inline():
+    source = [['John', 21], 'bad-row', ['Alex', 33]]
+    with Stream(source, force_parse=True) as stream:
+        assert stream.read(extended=True) == [
+            (1, None, ['John', 21]),
+            (2, None, []),
+            (3, None, ['Alex', 33]),
+        ]
+
+
+def test_stream_force_parse_json():
+    source = '[["John", 21], "bad-row", ["Alex", 33]]'
+    with Stream(source, scheme='text', format='json', force_parse=True) as stream:
+        assert stream.read(extended=True) == [
+            (1, None, ['John', 21]),
+            (2, None, []),
+            (3, None, ['Alex', 33]),
         ]
 
 

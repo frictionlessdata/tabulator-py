@@ -17,7 +17,7 @@ class Parser(object):
 
     options = []
 
-    def __init__(self, loader, **options):
+    def __init__(self, loader, force_parse=False, **options):
         """https://github.com/frictionlessdata/tabulator-py#custom-parsers
         """
         pass
