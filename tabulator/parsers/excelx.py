@@ -43,7 +43,7 @@ class ExcelxParser(api.Parser):
             self.__bytes.close()
             self.__bytes = new_bytes
             self.__bytes.seek(0)
-        self.__book = openpyxl.load_workbook(self.__bytes, read_only=True)
+        self.__book = openpyxl.load_workbook(self.__bytes, read_only=True, data_only=True)
         self.__sheet = self.__book.worksheets[self.__index]
         self.reset()
 
