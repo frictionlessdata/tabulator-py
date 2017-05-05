@@ -599,9 +599,9 @@ def test_stream_excelx_sheet():
         assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
-def test_stream_json_node():
+def test_stream_json_property():
     source = '{"root": [["value1", "value2"], ["value3", "value4"]]}'
-    with Stream(source, scheme='text', format='json', node='root') as stream:
+    with Stream(source, scheme='text', format='json', property='root') as stream:
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 

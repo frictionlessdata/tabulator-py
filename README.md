@@ -321,11 +321,11 @@ stream = Stream([{'name': 'John', 'age': 21}, {'name': 'Alex', 'age': 33}])
 Source should be a valid JSON document containing array of arrays or array of objects (see `inline` format example).
 
 ```python
-stream = Stream('data.json', node='key1.key2')
+stream = Stream('data.json', property='key1.key2')
 ```
 
 Options:
-- node - path to tabular data node separated by dots. For example having data structure like `{"response": {"data": [...]}}` you should set node to `response.data`.
+- property - path to tabular data property separated by dots. For example having data structure like `{"response": {"data": [...]}}` you should set property to `response.data`.
 
 #### ndjson
 
@@ -749,7 +749,7 @@ Deprecated API removal:
 Provisional API changed:
 - updated `Loader/Parser/Writer` API - please use an updated version
 
-### [v0.15](https://github.com/frictionlessdata/goodtables-py/tree/v0.15.0)
+### [v0.15](https://github.com/frictionlessdata/tabulator-py/tree/v0.15.0)
 
 Provisional API added:
-- unofficial support for `Stream` arguments `custom_loaders/parsrs`
+- unofficial support for `Stream` arguments `custom_loaders/parsers`
