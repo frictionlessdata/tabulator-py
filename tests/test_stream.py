@@ -9,6 +9,7 @@ import ast
 import six
 import pytest
 import datetime
+from sqlalchemy import create_engine
 from tabulator import Stream, exceptions
 from tabulator.loaders.local import LocalLoader
 from tabulator.parsers.csv import CSVParser
@@ -243,6 +244,35 @@ def test_stream_ods_remote():
     source = BASE_URL % 'data/table.ods'
     with Stream(source) as stream:
         assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+# Format: sql
+
+def test_stream_format_sql(database_url):
+    with Stream(database_url, table='data') as stream:
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_format_sql_order_by(database_url):
+    with Stream(database_url, table='data', order_by='id') as stream:
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_format_sql_order_by_desc(database_url):
+    with Stream(database_url, table='data', order_by='id desc') as stream:
+        assert stream.read() == [[2, '中国人'], [1, 'english']]
+
+
+def test_stream_format_sql_table_is_required_error(database_url):
+    with pytest.raises(exceptions.OptionsError) as excinfo:
+        Stream(database_url).open()
+    assert 'table' in str(excinfo.value)
+
+
+def test_stream_format_sql_headers(database_url):
+    with Stream(database_url, table='data', headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
 
 
 # Format: xls

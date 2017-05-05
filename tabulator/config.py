@@ -12,6 +12,10 @@ DEFAULT_ENCODING = 'utf-8'
 BYTES_SAMPLE_SIZE = 1000
 ENCODING_CONFIDENCE = 0.5
 CSV_SAMPLE_LINES = 100
+SQL_SCHEMES = ['sqlite', 'mysql', 'postgresql']
+
+# Loaders
+
 LOADERS = {
     'file': 'tabulator.loaders.local.LocalLoader',
     'ftp': 'tabulator.loaders.remote.RemoteLoader',
@@ -21,6 +25,8 @@ LOADERS = {
     'stream': 'tabulator.loaders.stream.StreamLoader',
     'text': 'tabulator.loaders.text.TextLoader',
 }
+
+# Parsers
 
 PARSERS = {
     'csv': 'tabulator.parsers.csv.CSVParser',
@@ -32,8 +38,11 @@ PARSERS = {
     'tsv': 'tabulator.parsers.tsv.TSVParser',
     'xls': 'tabulator.parsers.excel.ExcelParser',
     'xlsx': 'tabulator.parsers.excelx.ExcelxParser',
+    'sql': 'tabulator.parsers.sql.SQLParser',
     'ods': 'tabulator.parsers.ods.ODSParser',
 }
+
+# Writers
 
 WRITERS = {
     'csv': 'tabulator.writers.csv.CSVWriter',

@@ -24,9 +24,11 @@ def detect_scheme(source):
     For example `http` from `http://example.com/table.csv`
 
     """
-    if hasattr(source, 'read'):
+    if detect_stream(source):
         scheme = 'stream'
     elif isinstance(source, six.string_types):
+        if detect_sql(source):
+            return None
         if 'docs.google.com/spreadsheets' in source:
             if 'export' not in source:
                 return None
@@ -45,9 +47,11 @@ def detect_format(source):
     For example `csv` from `http://example.com/table.csv`
 
     """
-    if hasattr(source, 'read'):
+    if detect_stream(source):
         format = ''
     elif isinstance(source, six.string_types):
+        if detect_sql(source):
+            return 'sql'
         if 'docs.google.com/spreadsheets' in source:
             if 'export' not in source:
                 return 'gsheet'
@@ -84,6 +88,23 @@ def detect_encoding(sample, encoding=None):
     if encoding == 'ascii':
         encoding = config.DEFAULT_ENCODING
     return encoding
+
+
+def detect_stream(source):
+    """Detect if source is file-like stream.
+    """
+    if hasattr(source, 'read'):
+        return True
+    return False
+
+
+def detect_sql(source):
+    """Detect if source is SQL.
+    """
+    for scheme in config.SQL_SCHEMES:
+        if source.startswith('%s://' % scheme):
+            return True
+    return False
 
 
 def detect_zip(sample):

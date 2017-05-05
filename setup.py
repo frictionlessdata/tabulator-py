@@ -26,6 +26,7 @@ INSTALL_REQUIRES = [
     'cchardet>=1.0,<2.0a',
     'openpyxl>=2.4,<3.0a',
     'requests>=2.8,<3.0a',
+    'sqlalchemy>=1.1,<2.0a',
     'linear-tsv>=1.0,<2.0a',
     'unicodecsv>=0.14,<1.0a',
     'jsonlines>=1.1,<2.0a',

@@ -11,8 +11,8 @@ A library for reading and writing tabular data (csv/xls/json/etc).
 
 ## Features
 
-- supports various formats: csv/tsv/xls/xlsx/json/ndjson/ods/gsheet/native/etc
-- reads data from variables, filesystem or Internet
+- supports various formats: csv/tsv/xls/xlsx/json/ndjson/ods/gsheet/inline/sql/etc
+- reads data from local, remote, stream or text sources
 - streams data instead of using a lot of memory
 - processes data via simple user processors
 - saves data using the same interface
@@ -345,6 +345,18 @@ stream = Stream('data.ods', sheet=1)
 
 Options:
 - sheet - sheet number starting from 1
+
+#### sql
+
+Source should be a valid database URL supported by `sqlalchemy`.
+
+```python
+stream = Stream('postgresql://name:pass@host:5432/database', table='data')
+```
+
+Options:
+- table - database table name to read data (REQUIRED)
+- order_by - SQL expression to order rows e.g. `name desc`
 
 #### tsv
 
