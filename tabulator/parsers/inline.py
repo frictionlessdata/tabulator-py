@@ -19,9 +19,9 @@ class InlineParser(Parser):
 
     options = []
 
-    def __init__(self, loader, force_parse=False):
+    def __init__(self, loader):
         self.__loader = loader
-        self.__force_parse = force_parse
+        self.__force_parse = None
         self.__extended_rows = None
         self.__source = None
 
@@ -29,11 +29,12 @@ class InlineParser(Parser):
     def closed(self):
         return True
 
-    def open(self, source, encoding=None):
+    def open(self, source, encoding=None, force_parse=False):
         if hasattr(source, '__next__' if six.PY3 else 'next'):
             message = 'Only callable returning an iterator is supported'
             raise exceptions.SourceError(message)
         self.close()
+        self.__force_parse = force_parse
         self.__source = source
         self.reset()
 

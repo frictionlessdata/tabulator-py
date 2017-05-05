@@ -19,17 +19,18 @@ class GsheetParser(Parser):
 
     options = []
 
-    def __init__(self, loader, force_parse=False):
+    def __init__(self, loader):
         self.__loader = loader
-        self.__force_parse = force_parse
+        self.__force_parse = None
         self.__stream = None
 
     @property
     def closed(self):
         return self.__stream is None or self.__stream.closed
 
-    def open(self, source, encoding=None):
+    def open(self, source, encoding=None, force_parse=False):
         self.close()
+        self.__force_parse = force_parse
         url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv&id=%s'
         match = re.search(r'.*/d/(?P<key>[^/]+)/.*?(?:gid=(?P<gid>\d+))?$', source)
         key, gid = '', ''

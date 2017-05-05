@@ -22,7 +22,7 @@ class SQLParser(Parser):
         'order_by',
     ]
 
-    def __init__(self, loader, force_parse=False, table=None, order_by=None):
+    def __init__(self, loader, table=None, order_by=None):
 
         # Ensure table
         if table is None:
@@ -30,9 +30,9 @@ class SQLParser(Parser):
 
         # Set attributes
         self.__loader = loader
-        self.__force_parse = force_parse
         self.__table = table
         self.__order_by = order_by
+        self.__force_parse = None
         self.__engine = None
         self.__extended_rows = None
 
@@ -40,8 +40,9 @@ class SQLParser(Parser):
     def closed(self):
         return self.__engine is None
 
-    def open(self, source, encoding=None):
+    def open(self, source, encoding=None, force_parse=False):
         self.close()
+        self.__force_parse = force_parse
         self.__engine = create_engine(source)
         self.__engine.update_execution_options(stream_results=True)
         self.reset()

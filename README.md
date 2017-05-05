@@ -530,12 +530,11 @@ with Stream(source, custom_parsers={'custom': CustomParser}) as stream:
 
 There are more examples in internal `tabulator.parsers` module.
 
-#### Parser(loader, force_parse=False, \*\*options)
+#### Parser(loader, \*\*options)
 
 Create parser class instance.
 
 - **loader (Loader)** - loader instance
-- **force_parse (bool)** - if True parser must yield [row_number, None, []] if there is an row parsing error instead of stopping the iteration by raising an exception
 - **options (dict)** - parser options
 - returns **(Parser)** - `Parser` class instance
 
@@ -543,13 +542,14 @@ Create parser class instance.
 
 - returns **(bool)** - `True` if parser is closed
 
-#### parser.open(source, encoding=None)
+#### parser.open(source, encoding=None, force_parse=False)
 
 Open underlaying stream. Parser gets byte or text stream from loader
 to start emit items from this stream.
 
 - **source (str)** - table source
 - **encoding (str)** - encoding of source
+- **force_parse (bool)** - if True parser must yield [row_number, None, []] if there is an row in parsing error instead of stopping the iteration by raising an exception
 
 #### parser.close()
 
