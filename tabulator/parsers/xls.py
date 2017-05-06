@@ -4,17 +4,15 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import shutil
-import openpyxl
-from tempfile import TemporaryFile
+import xlrd
 from ..parser import Parser
 from .. import helpers
 
 
 # Module API
 
-class ExcelxParser(Parser):
-    """Parser to parse Excel modern `xlsx` data format.
+class XLSParser(Parser):
+    """Parser to parse Excel data format.
     """
 
     # Public
@@ -37,18 +35,11 @@ class ExcelxParser(Parser):
     def open(self, source, encoding=None, force_parse=False):
         self.close()
         self.__force_parse = force_parse
-        self.__bytes = self.__loader.load(
-            source, mode='b', encoding=encoding, allow_zip=True)
-        # For remote stream we need local copy (will be deleted on close by Python)
-        # https://docs.python.org/3.5/library/tempfile.html#tempfile.TemporaryFile
-        if hasattr(self.__bytes, 'url'):
-            new_bytes = TemporaryFile()
-            shutil.copyfileobj(self.__bytes, new_bytes)
-            self.__bytes.close()
-            self.__bytes = new_bytes
-            self.__bytes.seek(0)
-        self.__book = openpyxl.load_workbook(self.__bytes, read_only=True, data_only=True)
-        self.__sheet = self.__book.worksheets[self.__index]
+        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
+        self.__book = xlrd.open_workbook(
+                file_contents=self.__bytes.read(),
+                encoding_override=encoding)
+        self.__sheet = self.__book.sheet_by_index(self.__index)
         self.reset()
 
     def close(self):
@@ -66,5 +57,5 @@ class ExcelxParser(Parser):
     # Private
 
     def __iter_extended_rows(self):
-        for row_number, row in enumerate(self.__sheet.iter_rows(), start=1):
-            yield (row_number, None, list(cell.value for cell in row))
+        for row_number in range(1, self.__sheet.nrows+1):
+            yield (row_number, None, list(self.__sheet.row_values(row_number - 1)))

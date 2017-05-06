@@ -6,18 +6,18 @@ from __future__ import unicode_literals
 
 import io
 from mock import Mock
-from tabulator.parsers.excelx import ExcelxParser
+from tabulator.parsers.xlsx import XLSXParser
 
 
 # Tests
 
-def test_excelx_parser():
+def test_xlsx_parser():
 
     source = 'data/table.xlsx'
     encoding = None
     loader = Mock()
     loader.load = Mock(return_value=io.open(source, 'rb'))
-    parser = ExcelxParser(loader)
+    parser = XLSXParser(loader)
 
     assert parser.closed
     parser.open(source, encoding=encoding)

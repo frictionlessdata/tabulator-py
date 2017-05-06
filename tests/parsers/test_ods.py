@@ -12,7 +12,7 @@ from tabulator.parsers.ods import ODSParser
 
 # Tests
 
-def test_excelx_parser():
+def test_ods_parser():
 
     source = 'data/table.ods'
     encoding = None
@@ -36,12 +36,3 @@ def test_excelx_parser():
 
     parser.close()
     assert parser.closed
-
-
-def test_stream_ods():
-    with Stream('data/table.ods', headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read(keyed=True) == [
-            {'id': 1.0, 'name': 'english'},
-            {'id': 2.0, 'name': '中国人'},
-        ]

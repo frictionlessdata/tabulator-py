@@ -198,110 +198,28 @@ def test_stream_remote_csv_non_ascii_url():
             'Description']
 
 
-# Format: json
-
-def test_stream_local_json_dicts():
-    with Stream('data/table-dicts.json') as stream:
-        assert stream.headers is None
-        assert stream.read() == [[1, 'english'], [2, '中国人']]
+def test_stream_csv_delimiter():
+    source = '"value1";"value2"\n"value3";"value4"'
+    with Stream(source, scheme='text', format='csv', delimiter=';') as stream:
+        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 
-def test_stream_local_json_lists():
-    with Stream('data/table-lists.json') as stream:
-        assert stream.headers is None
-        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+def test_stream_csv_escapechar():
+    source = 'value1%,value2\nvalue3%,value4'
+    with Stream(source, scheme='text', format='csv', escapechar='%') as stream:
+        assert stream.read() == [['value1,value2'], ['value3,value4']]
 
 
-def test_stream_text_json_dicts():
-    source = '[{"id": 1, "name": "english" }, {"id": 2, "name": "中国人" }]'
-    with Stream(source, scheme='text', format='json') as stream:
-        assert stream.headers is None
-        assert stream.read() == [[1, 'english'], [2, '中国人']]
+def test_stream_csv_quotechar():
+    source = '%value1,value2%\n%value3,value4%'
+    with Stream(source, scheme='text', format='csv', quotechar='%') as stream:
+        assert stream.read() == [['value1,value2'], ['value3,value4']]
 
 
-def test_stream_text_json_lists():
-    source = '[["id", "name"], [1, "english"], [2, "中国人"]]'
-    with Stream(source, scheme='text', format='json') as stream:
-        assert stream.headers is None
-        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
-
-
-def test_stream_remote_json_dicts():
-    with Stream(BASE_URL % 'data/table-dicts.json') as stream:
-        assert stream.headers is None
-        assert stream.read() == [[1, 'english'], [2, '中国人']]
-
-
-def test_stream_remote_json_lists():
-    with Stream(BASE_URL % 'data/table-lists.json') as stream:
-        assert stream.headers is None
-        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
-
-
-# Format: ods
-
-def test_stream_ods_remote():
-    source = BASE_URL % 'data/table.ods'
-    with Stream(source) as stream:
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
-
-
-# Format: sql
-
-def test_stream_format_sql(database_url):
-    with Stream(database_url, table='data') as stream:
-        assert stream.read() == [[1, 'english'], [2, '中国人']]
-
-
-def test_stream_format_sql_order_by(database_url):
-    with Stream(database_url, table='data', order_by='id') as stream:
-        assert stream.read() == [[1, 'english'], [2, '中国人']]
-
-
-def test_stream_format_sql_order_by_desc(database_url):
-    with Stream(database_url, table='data', order_by='id desc') as stream:
-        assert stream.read() == [[2, '中国人'], [1, 'english']]
-
-
-def test_stream_format_sql_table_is_required_error(database_url):
-    with pytest.raises(exceptions.OptionsError) as excinfo:
-        Stream(database_url).open()
-    assert 'table' in str(excinfo.value)
-
-
-def test_stream_format_sql_headers(database_url):
-    with Stream(database_url, table='data', headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read() == [[1, 'english'], [2, '中国人']]
-
-
-# Format: xls
-
-def test_stream_local_xls():
-    with Stream('data/table.xls') as stream:
-        assert stream.headers is None
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
-
-
-def test_stream_remote_xls():
-    with Stream(BASE_URL % 'data/table.xls') as stream:
-        assert stream.headers is None
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
-
-
-# Format: xlsx
-
-def test_stream_xlsx_remote():
-    source = BASE_URL % 'data/table.xlsx'
-    with Stream(source) as stream:
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
-
-
-def test_stream_stream_xlsx():
-    source = io.open('data/table.xlsx', mode='rb')
-    with Stream(source, format='xlsx') as stream:
-        assert stream.headers is None
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+def test_stream_csv_quotechar():
+    source = 'value1, value2\nvalue3, value4'
+    with Stream(source, scheme='text', format='csv', skipinitialspace=True) as stream:
+        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 
 # Format: gsheet
@@ -366,6 +284,133 @@ def test_stream_inline_keyed():
     with Stream(source, format='inline') as stream:
         assert stream.headers is None
         assert stream.read() == [['1', 'english'], ['2', '中国人']]
+
+
+# Format: json
+
+def test_stream_local_json_dicts():
+    with Stream('data/table-dicts.json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_local_json_lists():
+    with Stream('data/table-lists.json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+def test_stream_text_json_dicts():
+    source = '[{"id": 1, "name": "english" }, {"id": 2, "name": "中国人" }]'
+    with Stream(source, scheme='text', format='json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_text_json_lists():
+    source = '[["id", "name"], [1, "english"], [2, "中国人"]]'
+    with Stream(source, scheme='text', format='json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+def test_stream_remote_json_dicts():
+    with Stream(BASE_URL % 'data/table-dicts.json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_remote_json_lists():
+    with Stream(BASE_URL % 'data/table-lists.json') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+# Format: ods
+
+def test_stream_ods():
+    with Stream('data/table.ods', headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(keyed=True) == [
+            {'id': 1.0, 'name': 'english'},
+            {'id': 2.0, 'name': '中国人'},
+        ]
+
+
+def test_stream_ods_remote():
+    source = BASE_URL % 'data/table.ods'
+    with Stream(source) as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+# Format: sql
+
+def test_stream_format_sql(database_url):
+    with Stream(database_url, table='data') as stream:
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_format_sql_order_by(database_url):
+    with Stream(database_url, table='data', order_by='id') as stream:
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+def test_stream_format_sql_order_by_desc(database_url):
+    with Stream(database_url, table='data', order_by='id desc') as stream:
+        assert stream.read() == [[2, '中国人'], [1, 'english']]
+
+
+def test_stream_format_sql_table_is_required_error(database_url):
+    with pytest.raises(exceptions.OptionsError) as excinfo:
+        Stream(database_url).open()
+    assert 'table' in str(excinfo.value)
+
+
+def test_stream_format_sql_headers(database_url):
+    with Stream(database_url, table='data', headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+# Format: xls
+
+def test_stream_local_xls():
+    with Stream('data/table.xls') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_remote_xls():
+    with Stream(BASE_URL % 'data/table.xls') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_xls_sheet():
+    source = 'data/special/sheet2.xls'
+    with Stream(source, sheet=2) as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+# Format: xlsx
+
+def test_stream_xlsx_remote():
+    source = BASE_URL % 'data/table.xlsx'
+    with Stream(source) as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_stream_xlsx():
+    source = io.open('data/table.xlsx', mode='rb')
+    with Stream(source, format='xlsx') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_xlsx_sheet():
+    source = 'data/special/sheet2.xlsx'
+    with Stream(source, sheet=2) as stream:
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
 # Encoding
@@ -562,41 +607,6 @@ def test_stream_save_custom_writers(tmpdir):
 
 
 # Loader/parser options
-
-def test_stream_csv_delimiter():
-    source = '"value1";"value2"\n"value3";"value4"'
-    with Stream(source, scheme='text', format='csv', delimiter=';') as stream:
-        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
-
-
-def test_stream_csv_escapechar():
-    source = 'value1%,value2\nvalue3%,value4'
-    with Stream(source, scheme='text', format='csv', escapechar='%') as stream:
-        assert stream.read() == [['value1,value2'], ['value3,value4']]
-
-
-def test_stream_csv_quotechar():
-    source = '%value1,value2%\n%value3,value4%'
-    with Stream(source, scheme='text', format='csv', quotechar='%') as stream:
-        assert stream.read() == [['value1,value2'], ['value3,value4']]
-
-
-def test_stream_csv_quotechar():
-    source = 'value1, value2\nvalue3, value4'
-    with Stream(source, scheme='text', format='csv', skipinitialspace=True) as stream:
-        assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
-
-
-def test_stream_excel_sheet():
-    source = 'data/special/sheet2.xls'
-    with Stream(source, sheet=2) as stream:
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
-
-
-def test_stream_excelx_sheet():
-    source = 'data/special/sheet2.xlsx'
-    with Stream(source, sheet=2) as stream:
-        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
 def test_stream_json_property():

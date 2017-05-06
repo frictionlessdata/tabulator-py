@@ -19,10 +19,10 @@ SQL_SCHEMES = ['firebird', 'mssql', 'mysql', 'oracle', 'postgresql', 'sqlite', '
 
 LOADERS = {
     'file': 'tabulator.loaders.local.LocalLoader',
-    'ftp': 'tabulator.loaders.remote.RemoteLoader',
-    'ftps': 'tabulator.loaders.remote.RemoteLoader',
     'http': 'tabulator.loaders.remote.RemoteLoader',
     'https': 'tabulator.loaders.remote.RemoteLoader',
+    'ftp': 'tabulator.loaders.remote.RemoteLoader',
+    'ftps': 'tabulator.loaders.remote.RemoteLoader',
     'stream': 'tabulator.loaders.stream.StreamLoader',
     'text': 'tabulator.loaders.text.TextLoader',
 }
@@ -32,15 +32,15 @@ LOADERS = {
 PARSERS = {
     'csv': 'tabulator.parsers.csv.CSVParser',
     'gsheet': 'tabulator.parsers.gsheet.GsheetParser',
+    'inline': 'tabulator.parsers.inline.InlineParser',
     'json': 'tabulator.parsers.json.JSONParser',
     'jsonl': 'tabulator.parsers.ndjson.NDJSONParser',
     'ndjson': 'tabulator.parsers.ndjson.NDJSONParser',
-    'inline': 'tabulator.parsers.inline.InlineParser',
-    'tsv': 'tabulator.parsers.tsv.TSVParser',
-    'xls': 'tabulator.parsers.excel.ExcelParser',
-    'xlsx': 'tabulator.parsers.excelx.ExcelxParser',
-    'sql': 'tabulator.parsers.sql.SQLParser',
     'ods': 'tabulator.parsers.ods.ODSParser',
+    'sql': 'tabulator.parsers.sql.SQLParser',
+    'tsv': 'tabulator.parsers.tsv.TSVParser',
+    'xls': 'tabulator.parsers.xls.XLSParser',
+    'xlsx': 'tabulator.parsers.xlsx.XLSXParser',
 }
 
 # Writers
