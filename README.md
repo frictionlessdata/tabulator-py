@@ -343,6 +343,8 @@ Operations:
 
 #### ods
 
+> This format is not included to package by default. To use it please install `tabulator` with an `ods` extras: `$ pip install tabulator[ods]`
+
 Source should be a valid Open Office document.
 
 ```python

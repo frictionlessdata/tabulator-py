@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import jsonlines
-
 from ..parser import Parser
 from .. import exceptions
 from .. import helpers

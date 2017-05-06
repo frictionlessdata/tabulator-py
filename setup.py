@@ -20,19 +20,21 @@ def read(*paths):
 # Prepare
 PACKAGE = 'tabulator'
 INSTALL_REQUIRES = [
-    'six>=1.9,<2.0a',
-    'xlrd>=1.0,<2.0a',
-    'ijson>=2.0,<3.0a',
-    'cchardet>=1.0,<2.0a',
-    'openpyxl>=2.4,<3.0a',
-    'requests>=2.8,<3.0a',
-    'sqlalchemy>=1.1,<2.0a',
-    'linear-tsv>=1.0,<2.0a',
-    'unicodecsv>=0.14,<1.0a',
-    'jsonlines>=1.1,<2.0a',
-    'click>=6.0,<7.0a',
-    'ezodf>=0.3,<1.0a',
-    'lxml>=3.0,<4.0a',  # required by ezodf
+    'six>=1.9,<2.0',
+    'click>=6.0,<7.0',
+    'requests>=2.8,<3.0',
+    'cchardet>=1.0,<2.0',
+    'unicodecsv>=0.14,<1.0',
+    'ijson>=2.0,<3.0',
+    'jsonlines>=1.1,<2.0',
+    'sqlalchemy>=1.1,<2.0',
+    'linear-tsv>=1.0,<2.0',
+    'xlrd>=1.0,<2.0',
+    'openpyxl>=2.4,<3.0',
+]
+INSTALL_FORMAT_ODS_REQUIRES = [
+    'ezodf>=0.3,<1.0',
+    'lxml>=3.0,<4.0',
 ]
 TESTS_REQUIRE = [
     'pylama',
@@ -51,7 +53,10 @@ setup(
     include_package_data=True,
     install_requires=INSTALL_REQUIRES,
     tests_require=TESTS_REQUIRE,
-    extras_require={'develop': TESTS_REQUIRE},
+    extras_require={
+        'ods': INSTALL_FORMAT_ODS_REQUIRES,
+        'develop': TESTS_REQUIRE,
+    },
     entry_points={
         'console_scripts': [
             'tabulator = tabulator.cli:cli',
