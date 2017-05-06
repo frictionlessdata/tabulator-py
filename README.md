@@ -549,7 +549,7 @@ to start emit items from this stream.
 
 - **source (str)** - table source
 - **encoding (str)** - encoding of source
-- **force_parse (bool)** - if True parser must yield [row_number, None, []] if there is an row in parsing error instead of stopping the iteration by raising an exception
+- **force_parse (bool)** - if True parser must yield (row_number, None, []) if there is an row in parsing error instead of stopping the iteration by raising an exception
 
 #### parser.close()
 

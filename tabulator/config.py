@@ -12,7 +12,8 @@ DEFAULT_ENCODING = 'utf-8'
 BYTES_SAMPLE_SIZE = 1000
 ENCODING_CONFIDENCE = 0.5
 CSV_SAMPLE_LINES = 100
-SQL_SCHEMES = ['sqlite', 'mysql', 'postgresql']
+# http://docs.sqlalchemy.org/en/latest/dialects/index.html
+SQL_SCHEMES = ['firebird', 'mssql', 'mysql', 'oracle', 'postgresql', 'sqlite', 'sybase']
 
 # Loaders
 
