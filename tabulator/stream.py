@@ -101,15 +101,16 @@ class Stream(object):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """
 
-        # Prepare variables
-        scheme = self.__scheme
-        format = self.__format
+        # Get scheme and format
+        detected_scheme, detected_format = helpers.detect_scheme_and_format(self.__source)
+        scheme = self.__scheme or detected_scheme
+        format = self.__format or detected_format
+
+        # Get options
         options = copy(self.__options)
 
         # Initiate loader
         self.__loader = None
-        if scheme is None:
-            scheme = helpers.detect_scheme(self.__source)
         if scheme is not None:
             loader_class = self.__custom_loaders.get(scheme)
             if loader_class is None:
@@ -124,8 +125,6 @@ class Stream(object):
                 self.__loader = loader_class(**loader_options)
 
         # Initiate parser
-        if format is None:
-            format = helpers.detect_format(self.__source)
         parser_class = self.__custom_parsers.get(format)
         if parser_class is None:
             if format not in config.PARSERS:
@@ -218,7 +217,7 @@ class Stream(object):
         if encoding is None:
             encoding = config.DEFAULT_ENCODING
         if format is None:
-            format = helpers.detect_format(target)
+            _, format = helpers.detect_scheme_and_format(target)
         writer_class = self.__custom_writers.get(format)
         if writer_class is None:
             if format not in config.WRITERS:

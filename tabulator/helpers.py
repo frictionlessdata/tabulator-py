@@ -17,53 +17,39 @@ from . import config
 
 # Module API
 
-def detect_scheme(source):
-    """Detect scheme by source.
+def detect_scheme_and_format(source):
+    """Detect scheme and format based on source and return as a tuple.
 
     Scheme is a minimum 2 letters before `://` (will be lower cased).
     For example `http` from `http://example.com/table.csv`
 
     """
-    if detect_stream(source):
-        scheme = 'stream'
-    elif isinstance(source, six.string_types):
-        if detect_sql(source):
-            return None
-        if 'docs.google.com/spreadsheets' in source:
-            if 'export' not in source:
-                return None
-        match = re.search(r'^([a-zA-Z]{2,}):\/{2}', source)
-        if not match:
-            return config.DEFAULT_SCHEME
-        scheme = match.group(1).lower()
-    else:
-        scheme = None
-    return scheme
 
+    # Scheme: stream
+    if hasattr(source, 'read'):
+        return ('stream', None)
 
-def detect_format(source):
-    """Detect format by source.
+    # Format: inline
+    if not isinstance(source, six.string_types):
+        return (None, 'inline')
 
-    For example `csv` from `http://example.com/table.csv`
+    # Format: gsheet
+    if 'docs.google.com/spreadsheets' in source:
+        if 'export' not in source:
+            return (None, 'gsheet')
 
-    """
-    if detect_stream(source):
-        format = ''
-    elif isinstance(source, six.string_types):
-        if detect_sql(source):
-            return 'sql'
-        if 'docs.google.com/spreadsheets' in source:
-            if 'export' not in source:
-                return 'gsheet'
-        parsed_source = urlparse(source)
-        path = parsed_source.path or parsed_source.netloc
-        format = os.path.splitext(path)[1]
-        if not format:
-            return None
-        format = format[1:].lower()
-    else:
-        format = 'inline'
-    return format
+    # Format: sql
+    for sql_scheme in config.SQL_SCHEMES:
+        if source.startswith('%s://' % sql_scheme):
+            return (None, 'sql')
+
+    # General
+    parsed = urlparse(source)
+    scheme = parsed.scheme.lower()
+    if len(scheme) < 2:
+        scheme = config.DEFAULT_SCHEME
+    format = os.path.splitext(parsed.path or parsed.netloc)[1][1:].lower() or None
+    return (scheme, format)
 
 
 def detect_encoding(sample, encoding=None):
@@ -88,23 +74,6 @@ def detect_encoding(sample, encoding=None):
     if encoding == 'ascii':
         encoding = config.DEFAULT_ENCODING
     return encoding
-
-
-def detect_stream(source):
-    """Detect if source is file-like stream.
-    """
-    if hasattr(source, 'read'):
-        return True
-    return False
-
-
-def detect_sql(source):
-    """Detect if source is SQL.
-    """
-    for scheme in config.SQL_SCHEMES:
-        if source.startswith('%s://' % scheme):
-            return True
-    return False
 
 
 def detect_zip(sample):

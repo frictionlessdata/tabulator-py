@@ -13,13 +13,17 @@ from . import helpers
 def validate(source, scheme=None, format=None):
     """https://github.com/frictionlessdata/tabulator-py#validate
     """
-    if scheme is None:
-        scheme = helpers.detect_scheme(source)
+
+    # Get scheme and format
+    detected_scheme, detected_format = helpers.detect_scheme_and_format(source)
+    scheme = scheme or detected_scheme
+    format = format or detected_format
+
+    # Validate scheme and format
     if scheme is not None:
         if scheme not in config.LOADERS:
             return False
-    if format is None:
-        format = helpers.detect_format(source)
     if format not in config.PARSERS:
         return False
+
     return True
