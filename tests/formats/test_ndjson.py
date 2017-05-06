@@ -12,9 +12,19 @@ from tabulator import exceptions, Stream
 from tabulator.parsers.ndjson import NDJSONParser
 
 
-# Tests
+# Stream
 
-def test_ndjson_parser():
+def test_stream_ndjson():
+    with Stream('data/table.ndjson', headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(keyed=True) == [
+            {'id': 1, 'name': 'english'},
+            {'id': 2, 'name': '中国人'}]
+
+
+# Parser
+
+def test_parser_ndjson():
 
     source = 'data/table.ndjson'
     encoding = None
@@ -39,15 +49,7 @@ def test_ndjson_parser():
     assert parser.closed
 
 
-def test_stream_ndjson():
-    with Stream('data/table.ndjson', headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read(keyed=True) == [
-            {'id': 1, 'name': 'english'},
-            {'id': 2, 'name': '中国人'}]
-
-
-def test_ndjson_list():
+def test_parser_ndjson_list():
     stream = StringIO(
         '[1, 2, 3]\n'
         '[4, 5, 6]\n'
@@ -63,7 +65,7 @@ def test_ndjson_list():
     ]
 
 
-def test_ndjson_scalar():
+def test_parser_ndjson_scalar():
     stream = StringIO(
         '1\n'
         '2\n'

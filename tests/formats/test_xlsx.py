@@ -6,12 +6,35 @@ from __future__ import unicode_literals
 
 import io
 from mock import Mock
+from tabulator import Stream, exceptions
 from tabulator.parsers.xlsx import XLSXParser
+BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 
-# Tests
+# Stream
 
-def test_xlsx_parser():
+def test_stream_xlsx_remote():
+    source = BASE_URL % 'data/table.xlsx'
+    with Stream(source) as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_stream_xlsx():
+    source = io.open('data/table.xlsx', mode='rb')
+    with Stream(source, format='xlsx') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_xlsx_sheet():
+    source = 'data/special/sheet2.xlsx'
+    with Stream(source, sheet=2) as stream:
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+# Parser
+
+def test_parser_xlsx():
 
     source = 'data/table.xlsx'
     encoding = None

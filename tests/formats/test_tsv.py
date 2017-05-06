@@ -6,30 +6,32 @@ from __future__ import unicode_literals
 
 import io
 from mock import Mock
-from tabulator.parsers.json import JSONParser
+from tabulator.parsers.tsv import TSVParser
 
 
-# Tests
+# Parser
 
-def test_json_parser():
+def test_parser_tsv():
 
-    source = 'data/table-dicts.json'
+    source = 'data/table.tsv'
     encoding = None
     loader = Mock()
-    loader.load = Mock(return_value=io.open(source, 'rb'))
-    parser = JSONParser(loader)
+    loader.load = Mock(return_value=io.open(source))
+    parser = TSVParser(loader)
 
     assert parser.closed
     parser.open(source, encoding=encoding)
     assert not parser.closed
 
     assert list(parser.extended_rows) == [
-        (1, ['id', 'name'], [1, 'english']),
-        (2, ['id', 'name'], [2, '中国人'])]
+        (1, None, ['id', 'name']),
+        (2, None, ['1', 'english']),
+        (3, None, ['2', '中国人']),
+        (4, None, ['3', None])]
 
     assert len(list(parser.extended_rows)) == 0
     parser.reset()
-    assert len(list(parser.extended_rows)) == 2
+    assert len(list(parser.extended_rows)) == 4
 
     parser.close()
     assert parser.closed
