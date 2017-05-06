@@ -174,7 +174,7 @@ Reset stream pointer to the first row.
 
 - returns **(list)** - data sample
 
-#### stream.iter()
+#### stream.iter(keyed=False, extended=False)
 
 Iter stream rows.
 
@@ -231,6 +231,8 @@ If `headers` is a row number and data source is not keyed all rows before this r
 
 ### Schemes
 
+There is a list of all supported schemes.
+
 #### file
 
 It's a defaulat scheme. Source should be a file in local filesystem.
@@ -268,6 +270,8 @@ stream = Stream('text://name,age\nJohn, 21\n', format='csv')
 
 ### Formats
 
+There is a list of all supported formats. Formats support `read` operation could be opened by `Stream.open()` and formats support `write` operation could be used in `Stream.save()`.
+
 #### csv
 
 Source should be parsable by csv parser.
@@ -275,6 +279,10 @@ Source should be parsable by csv parser.
 ```python
 stream = Stream('data.csv', delimiter=',')
 ```
+
+Operations:
+- read
+- write
 
 Options:
 - delimiter
@@ -286,17 +294,6 @@ Options:
 - lineterminator
 
 See options reference in [Python documentation](https://docs.python.org/3/library/csv.html#dialects-and-formatting-parameters).
-
-#### xls/xlsx
-
-Source should be a valid Excel document.
-
-```python
-stream = Stream('data.xls', sheet=1)
-```
-
-Options:
-- sheet - sheet number starting from 1
 
 #### gsheet
 
@@ -316,6 +313,9 @@ stream = Stream([['name', 'age'], ['John', 21], ['Alex', 33]])
 stream = Stream([{'name': 'John', 'age': 21}, {'name': 'Alex', 'age': 33}])
 ```
 
+Operations:
+- read
+
 #### json
 
 Source should be a valid JSON document containing array of arrays or array of objects (see `inline` format example).
@@ -323,6 +323,9 @@ Source should be a valid JSON document containing array of arrays or array of ob
 ```python
 stream = Stream('data.json', property='key1.key2')
 ```
+
+Operations:
+- read
 
 Options:
 - property - path to tabular data property separated by dots. For example having data structure like `{"response": {"data": [...]}}` you should set property to `response.data`.
@@ -335,6 +338,9 @@ Source should be parsable by ndjson parser.
 stream = Stream('data.ndjson')
 ```
 
+Operations:
+- read
+
 #### ods
 
 Source should be a valid Open Office document.
@@ -342,6 +348,9 @@ Source should be a valid Open Office document.
 ```python
 stream = Stream('data.ods', sheet=1)
 ```
+
+Operations:
+- read
 
 Options:
 - sheet - sheet number starting from 1
@@ -354,6 +363,9 @@ Source should be a valid database URL supported by `sqlalchemy`.
 stream = Stream('postgresql://name:pass@host:5432/database', table='data')
 ```
 
+Operations:
+- read
+
 Options:
 - table - database table name to read data (REQUIRED)
 - order_by - SQL expression to order rows e.g. `name desc`
@@ -365,6 +377,23 @@ Source should be parsable by tsv parser.
 ```python
 stream = Stream('data.tsv')
 ```
+
+Operations:
+- read
+
+#### xls/xlsx
+
+Source should be a valid Excel document.
+
+```python
+stream = Stream('data.xls', sheet=1)
+```
+
+Operations:
+- read
+
+Options:
+- sheet - sheet number starting from 1
 
 ### Encoding
 
@@ -423,7 +452,20 @@ For all temporal values stream will use ISO format. But if your data source does
 
 ### Force parse
 
-TODO: write
+Some data source could be partially mailformed for a parser. For example `inline` source could have good rows (lists or dicts) and bad rows (for example strings). By default `stream.iter/read` will raise `exceptions.SourceError` on the first bad row:
+
+```python
+with Stream([[1], 'bad', [3]]) as stream:
+  stream.read() # raise exceptions.SourceError
+```
+
+With `force_parse` option for `Stream` constructor this default behaviour could be changed.
+If it's set to `True` non-parsable rows will be returned as empty rows:
+
+```python
+with Stream([[1], 'bad', [3]]) as stream:
+  stream.read() # [[1], [], [3]]
+```
 
 ### Skip rows
 
@@ -489,6 +531,10 @@ There are more examples in internal `tabulator.loaders` module.
 - **options (dict)** - loader options
 - returns **(Loader)** - `Loader` class instance
 
+#### Loader.options
+
+List of supported options.
+
 #### loader.load(source, mode='t', encoding=None, allow_zip=False)
 
 - **source (str)** - table source
@@ -537,6 +583,10 @@ Create parser class instance.
 - **loader (Loader)** - loader instance
 - **options (dict)** - parser options
 - returns **(Parser)** - `Parser` class instance
+
+#### Parser.options
+
+List of supported options.
 
 #### parser.closed
 
@@ -592,6 +642,10 @@ Create writer class instance.
 - **options (dict)** - writer options
 - returns **(Writer)** - `Writer` class instance
 
+#### Writer.options
+
+List of supported options.
+
 #### writer.save(source, target, headers=None, encoding=None)
 
 Save source data to target.
@@ -600,6 +654,31 @@ Save source data to target.
 - **source (str)** - save target
 - **headers (str[])** - optional headers
 - **encoding (str)** - encoding of source
+
+### Keyed and extended rows
+
+Stream methods `stream.iter/read()` accept `keyed` and `extended` flags to vary data structure of output data row.
+
+By default a stream returns every row as a list:
+
+```python
+with Stream([['name', 'age'], ['Alex', 21]]) as stream:
+  stream.read() # [['Alex', 21]]
+```
+
+With `keyed=True` a stream returns every row as a dict:
+
+```python
+with Stream([['name', 'age'], ['Alex', 21]]) as stream:
+  stream.read(keyed=True) # [{'name': 'Alex', 'age': 21}]
+```
+
+And with `extended=True` a stream returns every row as a tuple contining row number starting from 1, headers as a list and row as a list:
+
+```python
+with Stream([['name', 'age'], ['Alex', 21]]) as stream:
+  stream.read(extended=True) # (1, ['name', 'age'], ['Alex', 21])
+```
 
 ### Validate
 
