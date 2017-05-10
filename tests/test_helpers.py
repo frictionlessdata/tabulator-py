@@ -11,33 +11,28 @@ from tabulator import helpers, config
 
 # Tests
 
-def test_detect_scheme():
-    assert helpers.detect_scheme('text://path') == 'text'
-    assert helpers.detect_scheme('stream://path') == 'stream'
-    assert helpers.detect_scheme('file://path') == 'file'
-    assert helpers.detect_scheme('ftp://path') == 'ftp'
-    assert helpers.detect_scheme('ftps://path') == 'ftps'
-    assert helpers.detect_scheme('http://path') == 'http'
-    assert helpers.detect_scheme('https://path') == 'https'
-    assert helpers.detect_scheme('xxx://path') == 'xxx'
-    assert helpers.detect_scheme('xx://path') == 'xx'
-    assert helpers.detect_scheme('XXX://path') == 'xxx'
-    assert helpers.detect_scheme('XX://path') == 'xx'
-    assert helpers.detect_scheme('c://path') == None
-    assert helpers.detect_scheme('c:\\path') == None
-    assert helpers.detect_scheme('c:\path') == None
-    assert helpers.detect_scheme('http:/path') == None
-    assert helpers.detect_scheme('http//path') == None
-    assert helpers.detect_scheme('path') == None
-
-
-def test_detect_format():
-    assert helpers.detect_format('path.CsV') == 'csv'
-
-
-def test_detect_format_works_with_urls_with_query_and_fragment_components():
-    url = 'http://someplace.com/foo/path.csv?foo=bar#baz'
-    assert helpers.detect_format(url) == 'csv'
+@pytest.mark.parametrize('source, scheme, format', [
+    ('text://path', 'text', None),
+    ('stream://path', 'stream', None),
+    ('file://path', 'file', None),
+    ('ftp://path', 'ftp', None),
+    ('ftps://path', 'ftps', None),
+    ('http://path', 'http', None),
+    ('https://path', 'https', None),
+    ('xxx://path', 'xxx', None),
+    ('xx://path', 'xx', None),
+    ('XXX://path', 'xxx', None),
+    ('XX://path', 'xx', None),
+    ('c://path', 'file', None),
+    ('c:\\path', 'file', None),
+    ('c:\path', 'file', None),
+    ('http//path', 'file', None),
+    ('path', 'file', None),
+    ('path.CsV', 'file', 'csv'),
+    ('http://someplace.com/foo/path.csv?foo=bar#baz', 'http', 'csv'),
+])
+def test_detect_scheme_and_format(source, scheme, format):
+    assert helpers.detect_scheme_and_format(source) == (scheme, format)
 
 
 def test_detect_encoding():

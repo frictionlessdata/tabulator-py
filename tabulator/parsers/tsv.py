@@ -5,13 +5,13 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import tsv
+from ..parser import Parser
 from .. import helpers
-from . import api
 
 
 # Module API
 
-class TSVParser(api.Parser):
+class TSVParser(Parser):
     """Parser to parse linear TSV data format.
 
     See: http://dataprotocols.org/linear-tsv/
@@ -22,19 +22,20 @@ class TSVParser(api.Parser):
 
     options = []
 
-    def __init__(self):
+    def __init__(self, loader):
+        self.__loader = loader
+        self.__force_parse = None
         self.__extended_rows = None
-        self.__loader = None
         self.__chars = None
 
     @property
     def closed(self):
         return self.__chars is None or self.__chars.closed
 
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None, force_parse=False):
         self.close()
-        self.__loader = loader
-        self.__chars = loader.load(source, encoding, mode='t')
+        self.__force_parse = force_parse
+        self.__chars = self.__loader.load(source, encoding=encoding)
         self.reset()
 
     def close(self):
@@ -53,5 +54,5 @@ class TSVParser(api.Parser):
 
     def __iter_extended_rows(self):
         items = tsv.un(self.__chars)
-        for number, item in enumerate(items, start=1):
-            yield (number, None, list(item))
+        for row_number, item in enumerate(items, start=1):
+            yield (row_number, None, list(item))

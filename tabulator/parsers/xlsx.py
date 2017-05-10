@@ -7,13 +7,13 @@ from __future__ import unicode_literals
 import shutil
 import openpyxl
 from tempfile import TemporaryFile
+from ..parser import Parser
 from .. import helpers
-from . import api
 
 
 # Module API
 
-class ExcelxParser(api.Parser):
+class XLSXParser(Parser):
     """Parser to parse Excel modern `xlsx` data format.
     """
 
@@ -23,18 +23,22 @@ class ExcelxParser(api.Parser):
         'sheet',
     ]
 
-    def __init__(self, sheet=1):
-        self.__index = sheet-1
-        self.__bytes = None
+    def __init__(self, loader, sheet=1):
+        self.__loader = loader
+        self.__index = sheet - 1
+        self.__force_parse = None
         self.__extended_rows = None
+        self.__bytes = None
 
     @property
     def closed(self):
         return self.__bytes is None or self.__bytes.closed
 
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None, force_parse=False):
         self.close()
-        self.__bytes = loader.load(source, encoding, mode='b', allow_zip=True)
+        self.__force_parse = force_parse
+        self.__bytes = self.__loader.load(
+            source, mode='b', encoding=encoding, allow_zip=True)
         # For remote stream we need local copy (will be deleted on close by Python)
         # https://docs.python.org/3.5/library/tempfile.html#tempfile.TemporaryFile
         if hasattr(self.__bytes, 'url'):
@@ -62,5 +66,5 @@ class ExcelxParser(api.Parser):
     # Private
 
     def __iter_extended_rows(self):
-        for number, row in enumerate(self.__sheet.iter_rows(), start=1):
-            yield (number, None, list(cell.value for cell in row))
+        for row_number, row in enumerate(self.__sheet.iter_rows(), start=1):
+            yield (row_number, None, list(cell.value for cell in row))

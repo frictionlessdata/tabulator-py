@@ -8,54 +8,54 @@ from __future__ import unicode_literals
 # Module API
 
 class TabulatorException(Exception):
-    """Base Tabulator exception.
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass
 
 
 class SourceError(TabulatorException):
-    """Stream error.
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass
 
 
 class SchemeError(TabulatorException):
-    """Scheme error.
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass
 
 
 class FormatError(TabulatorException):
-    """Format error.
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass
 
 
 class EncodingError(TabulatorException):
-    """Encoding error.
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass
 
 
 class OptionsError(TabulatorException):
-    """Options error.
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass
 
 
 class IOError(TabulatorException):
-    """IO error.
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass
 
 
 class HTTPError(TabulatorException):
-    """HTTP error.
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass
 
 
 class ResetError(TabulatorException):
-    """Reset error.
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass

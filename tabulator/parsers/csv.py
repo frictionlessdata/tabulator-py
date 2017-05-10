@@ -8,14 +8,14 @@ import csv
 import six
 from itertools import chain
 from codecs import iterencode
+from ..parser import Parser
 from .. import helpers
 from .. import config
-from . import api
 
 
 # Module API
 
-class CSVParser(api.Parser):
+class CSVParser(Parser):
     """Parser to parse CSV data format.
     """
 
@@ -31,7 +31,7 @@ class CSVParser(api.Parser):
         'lineterminator'
     ]
 
-    def __init__(self, **options):
+    def __init__(self, loader, **options):
 
         # Make bytes
         if six.PY2:
@@ -40,19 +40,20 @@ class CSVParser(api.Parser):
                     options[key] = str(value)
 
         # Set attributes
+        self.__loader = loader
         self.__options = options
+        self.__force_parse = None
         self.__extended_rows = None
-        self.__loader = None
         self.__chars = None
 
     @property
     def closed(self):
         return self.__chars is None or self.__chars.closed
 
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None, force_parse=False):
         self.close()
-        self.__loader = loader
-        self.__chars = loader.load(source, encoding, mode='t')
+        self.__force_parse = force_parse
+        self.__chars = self.__loader.load(source, encoding=encoding)
         self.reset()
 
     def close(self):
@@ -77,19 +78,19 @@ class CSVParser(api.Parser):
             bytes = iterencode(self.__chars, 'utf-8')
             sample, dialect = self.__prepare_dialect(bytes)
             items = csv.reader(chain(sample, bytes), dialect=dialect)
-            for number, item in enumerate(items, start=1):
+            for row_number, item in enumerate(items, start=1):
                 values = []
                 for value in item:
                     value = value.decode('utf-8')
                     values.append(value)
-                yield (number, None, list(values))
+                yield (row_number, None, list(values))
 
         # For PY3 use chars
         else:
             sample, dialect = self.__prepare_dialect(self.__chars)
             items = csv.reader(chain(sample, self.__chars), dialect=dialect)
-            for number, item in enumerate(items, start=1):
-                yield (number, None, list(item))
+            for row_number, item in enumerate(items, start=1):
+                yield (row_number, None, list(item))
 
     def __prepare_dialect(self, stream):
 

@@ -11,25 +11,19 @@ from abc import ABCMeta, abstractmethod
 # Module API
 
 @add_metaclass(ABCMeta)
-class Writer(object):
-    """Writer representation.
-
-    Args:
-        options(dict): writer options
-
-    """
+class Loader(object):
 
     # Public
 
-    @property
-    # @abstractmethod
-    def options(self):
-        """list: list of available options
+    options = []
+
+    def __init__(self, **options):
+        """https://github.com/frictionlessdata/tabulator-py#custom-loaders
         """
         pass
 
     @abstractmethod
-    def write(self, target, encoding, extended_rows):
-        """Write tabular data to target.
+    def load(self, source, mode='t', encoding=None, allow_zip=False):
+        """https://github.com/frictionlessdata/tabulator-py#custom-loaders
         """
         pass

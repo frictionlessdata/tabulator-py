@@ -6,14 +6,13 @@ from __future__ import unicode_literals
 
 import ezodf
 from six import BytesIO
-
+from ..parser import Parser
 from .. import helpers
-from . import api
 
 
 # Module API
 
-class ODSParser(api.Parser):
+class ODSParser(Parser):
     """Parser to parse ODF Spreadsheets.
 
     Args:
@@ -28,22 +27,24 @@ class ODSParser(api.Parser):
         'sheet',
     ]
 
-    def __init__(self, sheet=1):
+    def __init__(self, loader, sheet=1):
+        self.__loader = loader
         self.__index = sheet - 1 if isinstance(sheet, int) else sheet
-        self.__loader = None
+        self.__force_parse = None
+        self.__extended_rows = None
         self.__bytes = None
         self.__book = None
         self.__sheet = None
-        self.__extended_rows = None
 
     @property
     def closed(self):
         return self.__bytes is None or self.__bytes.closed
 
-    def open(self, source, encoding, loader):
+    def open(self, source, encoding=None, force_parse=False):
         self.close()
-        self.__loader = loader
-        self.__bytes = loader.load(source, encoding, mode='b', allow_zip=True)
+        self.__force_parse = force_parse
+        self.__bytes = self.__loader.load(
+            source, mode='b', encoding=encoding, allow_zip=True)
         self.__book = ezodf.opendoc(BytesIO(self.__bytes.read()))
         self.__sheet = self.__book.sheets[self.__index]
         self.reset()
@@ -63,5 +64,5 @@ class ODSParser(api.Parser):
     # Private
 
     def __iter_extended_rows(self):
-        for number, row in enumerate(self.__sheet.rows(), start=1):
-            yield number, None, [cell.value for cell in row]
+        for row_number, row in enumerate(self.__sheet.rows(), start=1):
+            yield row_number, None, [cell.value for cell in row]

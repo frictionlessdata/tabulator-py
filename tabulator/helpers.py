@@ -17,49 +17,39 @@ from . import config
 
 # Module API
 
-def detect_scheme(source):
-    """Detect scheme by source.
+def detect_scheme_and_format(source):
+    """Detect scheme and format based on source and return as a tuple.
 
     Scheme is a minimum 2 letters before `://` (will be lower cased).
     For example `http` from `http://example.com/table.csv`
 
     """
+
+    # Scheme: stream
     if hasattr(source, 'read'):
-        scheme = 'stream'
-    elif isinstance(source, six.string_types):
-        if 'docs.google.com/spreadsheets' in source:
-            if 'export' not in source:
-                return 'gsheet'
-        match = re.search(r'^([a-zA-Z]{2,}):\/{2}', source)
-        if not match:
-            return None
-        scheme = match.group(1).lower()
-    else:
-        scheme = 'native'
-    return scheme
+        return ('stream', None)
 
+    # Format: inline
+    if not isinstance(source, six.string_types):
+        return (None, 'inline')
 
-def detect_format(source):
-    """Detect format by source.
+    # Format: gsheet
+    if 'docs.google.com/spreadsheets' in source:
+        if 'export' not in source:
+            return (None, 'gsheet')
 
-    For example `csv` from `http://example.com/table.csv`
+    # Format: sql
+    for sql_scheme in config.SQL_SCHEMES:
+        if source.startswith('%s://' % sql_scheme):
+            return (None, 'sql')
 
-    """
-    if hasattr(source, 'read'):
-        format = ''
-    elif isinstance(source, six.string_types):
-        if 'docs.google.com/spreadsheets' in source:
-            if 'export' not in source:
-                return 'gsheet'
-        parsed_source = urlparse(source)
-        path = parsed_source.path or parsed_source.netloc
-        format = os.path.splitext(path)[1]
-        if not format:
-            return None
-        format = format[1:].lower()
-    else:
-        format = 'native'
-    return format
+    # General
+    parsed = urlparse(source)
+    scheme = parsed.scheme.lower()
+    if len(scheme) < 2:
+        scheme = config.DEFAULT_SCHEME
+    format = os.path.splitext(parsed.path or parsed.netloc)[1][1:].lower() or None
+    return (scheme, format)
 
 
 def detect_encoding(sample, encoding=None):
@@ -162,3 +152,12 @@ def extract_options(options, names):
             result[name] = value
             del options[name]
     return result
+
+
+def stringify_value(value):
+    """Convert any value to string.
+    """
+    isoformat = getattr(value, 'isoformat', None)
+    if isoformat is not None:
+        value = isoformat()
+    return str(value)

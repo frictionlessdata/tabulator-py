@@ -8,6 +8,8 @@ from click.testing import CliRunner
 from tabulator.cli import cli
 
 
+# Tests
+
 def test_cli():
     runner = CliRunner()
     result = runner.invoke(cli, ['data/table.csv'])

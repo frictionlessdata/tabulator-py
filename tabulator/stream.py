@@ -5,7 +5,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
-import warnings
 from copy import copy
 from itertools import chain
 from . import exceptions
@@ -16,73 +15,6 @@ from . import config
 # Module API
 
 class Stream(object):
-    """Tabular stream.
-
-    Args:
-        source (str): stream source
-        headers (list/str):
-            headers list or pointer:
-                - list of headers for setting by user
-                - row number to extract headers from this row
-                  For plain source headers row and all rows
-                  before will be removed. For keyed source no rows
-                  will be removed.
-        scheme (str):
-            scheme of source:
-                - file (default)
-                - ftp
-                - ftps
-                - gsheet
-                - http
-                - https
-                - native
-                - stream
-                - text
-        format (str):
-            format of source:
-                - None (detect)
-                - csv
-                  options:
-                    - delimiter
-                    - doublequote
-                    - escapechar
-                    - quotechar
-                    - quoting
-                    - skipinitialspace
-                - gsheet
-                - json
-                  options:
-                    - prefix
-                - native
-                - tsv
-                - xls
-                  options:
-                    - sheet
-                - xlsx
-                  options:
-                    - sheet
-        encoding (str):
-            encoding of source:
-                - None (detect)
-                - utf-8
-                - <encodings>
-        sample_size (int): rows count for table.sample. Set to "0" to prevent
-            any parsing activities before actual table.iter call. In this case
-            headers will not be extracted from the source.
-        post_parse (generator[]): post parse processors (hooks). Signature
-            to follow is "processor(extended_rows)" which should yield
-            one extended row (number, headers, row) per yield instruction.
-        skip_rows (int/str[]): list of rows to skip by:
-            - row number (add integers to the list)
-            - row comment (add strings to the list)
-            Example: skip_rows=[1, 2, '#', '//'] - rows 1, 2 and
-            all rows started with '#' and '//' will be skipped.
-        allow_html (bool): if True it will allow html contents
-        custom_loaders (dict): unofficial custom loaders keyed by scheme
-        custom_parsers (dict): unofficial custom parsers keyed by format
-        options (dict): see in the scheme/format section
-
-    """
 
     # Public
 
@@ -93,25 +25,17 @@ class Stream(object):
                  format=None,
                  encoding=None,
                  sample_size=100,
-                 post_parse=[],
-                 skip_rows=[],
                  allow_html=False,
+                 force_strings=False,
+                 force_parse=False,
+                 skip_rows=[],
+                 post_parse=[],
                  custom_loaders={},
                  custom_parsers={},
-                 # DEPRECATED [v0.8-v1)
-                 loader_options={},
-                 parser_options={},
+                 custom_writers={},
                  **options):
-
-        # DEPRECATED [v0.8-v1)
-        if loader_options:
-            options.update(loader_options)
-            message = 'Use kwargs instead of "loader_options"'
-            warnings.warn(message, UserWarning)
-        if parser_options is None:
-            options.update(parser_options)
-            message = 'Use kwargs instead of "parser_options"'
-            warnings.warn(message, UserWarning)
+        """https://github.com/frictionlessdata/tabulator-py#stream
+        """
 
         # Set headers
         self.__headers = None
@@ -135,71 +59,72 @@ class Stream(object):
         self.__scheme = scheme
         self.__format = format
         self.__encoding = encoding
-        self.__post_parse = copy(post_parse)
         self.__sample_size = sample_size
         self.__allow_html = allow_html
+        self.__force_strings = force_strings
+        self.__force_parse = force_parse
+        self.__post_parse = copy(post_parse)
         self.__custom_loaders = copy(custom_loaders)
         self.__custom_parsers = copy(custom_parsers)
+        self.__custom_writers = copy(custom_writers)
         self.__options = options
         self.__sample_extended_rows = []
         self.__loader = None
         self.__parser = None
-        self.__number = 0
+        self.__row_number = 0
 
     def __enter__(self):
-        """Enter context manager by opening table.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         if self.closed:
             self.open()
         return self
 
     def __exit__(self, type, value, traceback):
-        """Exit context manager by closing table.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         if not self.closed:
             self.close()
 
     def __iter__(self):
-        """Return rows iterator.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         return self.iter()
 
     @property
     def closed(self):
-        """Return true if table is closed.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         return not self.__parser or self.__parser.closed
 
     def open(self):
-        """Open table to iterate over it.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
 
-        # Prepare variables
-        scheme = self.__scheme
-        format = self.__format
+        # Get scheme and format
+        detected_scheme, detected_format = helpers.detect_scheme_and_format(self.__source)
+        scheme = self.__scheme or detected_scheme
+        format = self.__format or detected_format
+
+        # Get options
         options = copy(self.__options)
 
         # Initiate loader
         self.__loader = None
-        if scheme is None:
-            scheme = helpers.detect_scheme(self.__source)
-            if not scheme:
-                scheme = config.DEFAULT_SCHEME
-        loader_class = self.__custom_loaders.get(scheme)
-        if loader_class is None:
-            if scheme not in config.LOADERS:
-                message = 'Scheme "%s" is not supported' % scheme
-                raise exceptions.SchemeError(message)
-            loader_path = config.LOADERS[scheme]
-            if loader_path:
-                loader_class = helpers.import_attribute(loader_path)
-        if loader_class is not None:
-            loader_options = helpers.extract_options(options, loader_class.options)
-            self.__loader = loader_class(**loader_options)
+        if scheme is not None:
+            loader_class = self.__custom_loaders.get(scheme)
+            if loader_class is None:
+                if scheme not in config.LOADERS:
+                    message = 'Scheme "%s" is not supported' % scheme
+                    raise exceptions.SchemeError(message)
+                loader_path = config.LOADERS[scheme]
+                if loader_path:
+                    loader_class = helpers.import_attribute(loader_path)
+            if loader_class is not None:
+                loader_options = helpers.extract_options(options, loader_class.options)
+                self.__loader = loader_class(**loader_options)
 
         # Initiate parser
-        if format is None:
-            format = helpers.detect_format(self.__source)
         parser_class = self.__custom_parsers.get(format)
         if parser_class is None:
             if format not in config.PARSERS:
@@ -207,7 +132,7 @@ class Stream(object):
                 raise exceptions.FormatError(message)
             parser_class = helpers.import_attribute(config.PARSERS[format])
         parser_options = helpers.extract_options(options, parser_class.options)
-        self.__parser = parser_class(**parser_options)
+        self.__parser = parser_class(self.__loader, **parser_options)
 
         # Bad options
         if options:
@@ -216,7 +141,8 @@ class Stream(object):
             raise exceptions.OptionsError(message)
 
         # Open and setup
-        self.__parser.open(self.__source, self.__encoding, self.__loader)
+        self.__parser.open(
+            self.__source, encoding=self.__encoding, force_parse=self.__force_parse)
         self.__extract_sample()
         self.__extract_headers()
         if not self.__allow_html:
@@ -225,72 +151,57 @@ class Stream(object):
         return self
 
     def close(self):
-        """Close table by closing underlaying stream.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         self.__parser.close()
 
     def reset(self):
-        """Reset table pointer to the first row.
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
-        if self.__number > self.__sample_size:
+        if self.__row_number > self.__sample_size:
             self.__parser.reset()
             self.__extract_sample()
             self.__extract_headers()
-        self.__number = 0
+        self.__row_number = 0
 
     @property
     def headers(self):
-        """None/list: table headers
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         return self.__headers
 
     @property
     def sample(self):
-        """list[]: sample of rows
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         sample = []
         iterator = iter(self.__sample_extended_rows)
         iterator = self.__apply_processors(iterator)
-        for number, headers, row in iterator:
+        for row_number, headers, row in iterator:
             sample.append(row)
         return sample
 
     def iter(self, keyed=False, extended=False):
-        """Return rows iterator.
-
-        Args:
-            keyed (bool): yield keyed rows
-            extended (bool): yield extended rows
-
-        Yields:
-            mixed[]/mixed{}: row/keyed row/extended row
-
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         iterator = chain(
             self.__sample_extended_rows,
             self.__parser.extended_rows)
         iterator = self.__apply_processors(iterator)
-        for number, headers, row in iterator:
-            if number > self.__number:
-                self.__number = number
+        for row_number, headers, row in iterator:
+            if self.__force_strings:
+                row = list(map(helpers.stringify_value, row))
+            if row_number > self.__row_number:
+                self.__row_number = row_number
                 if extended:
-                    yield (number, headers, row)
+                    yield (row_number, headers, row)
                 elif keyed:
                     yield dict(zip(headers, row))
                 else:
                     yield row
 
     def read(self, keyed=False, extended=False, limit=None):
-        """Return table rows with count limit.
-
-        Args:
-            keyed (bool): return keyed rows
-            extended (bool): return extended rows
-            limit (int): rows count limit
-
-        Returns:
-            list: rows/keyed rows/extended rows
-
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         result = []
         rows = self.iter(keyed=keyed, extended=extended)
@@ -301,63 +212,25 @@ class Stream(object):
         return result
 
     def save(self, target, format=None,  encoding=None, **options):
-        """Save stream to filesystem.
-
-        Args:
-            target (str): stream target
-            format (str):
-                saving format:
-                    - None (detect)
-                    - csv
-                      options:
-                        - delimiter
-            encoding (str):
-                saving encoding:
-                    - utf-8 (default)
-                    - <encodings>
-
+        """https://github.com/frictionlessdata/tabulator-py#stream
         """
         if encoding is None:
             encoding = config.DEFAULT_ENCODING
         if format is None:
-            format = helpers.detect_format(target)
-        if format not in config.WRITERS:
-            message = 'Format "%s" is not supported' % format
-            raise exceptions.FormatError(message)
-        extended_rows = self.iter(extended=True)
-        writer_class = helpers.import_attribute(config.WRITERS[format])
+            _, format = helpers.detect_scheme_and_format(target)
+        writer_class = self.__custom_writers.get(format)
+        if writer_class is None:
+            if format not in config.WRITERS:
+                message = 'Format "%s" is not supported' % format
+                raise exceptions.FormatError(message)
+            writer_class = helpers.import_attribute(config.WRITERS[format])
         writer_options = helpers.extract_options(options, writer_class.options)
         if options:
             message = 'Not supported options "%s" for format "%s"'
             message = message % (', '.join(options), format)
             raise exceptions.OptionsError(message)
         writer = writer_class(**writer_options)
-        writer.write(target, encoding, extended_rows)
-
-    @staticmethod
-    def test(source, scheme=None, format=None):
-        """Test if this source has supported scheme and format.
-
-        Args:
-            source (str): stream source
-            scheme (str): stream scheme
-            format (str): stream format
-
-        Returns:
-            bool: True if source source has supported scheme and format
-
-        """
-        if scheme is None:
-            scheme = helpers.detect_scheme(source)
-            if not scheme:
-                scheme = config.DEFAULT_SCHEME
-        if scheme not in config.LOADERS:
-            return False
-        if format is None:
-            format = helpers.detect_format(source)
-        if format not in config.PARSERS:
-            return False
-        return True
+        writer.write(self.iter(), target, headers=self.headers, encoding=encoding)
 
     # Private
 
@@ -368,8 +241,8 @@ class Stream(object):
         if self.__sample_size:
             for _ in range(self.__sample_size):
                 try:
-                    number, headers, row = next(self.__parser.extended_rows)
-                    self.__sample_extended_rows.append((number, headers, row))
+                    row_number, headers, row = next(self.__parser.extended_rows)
+                    self.__sample_extended_rows.append((row_number, headers, row))
                 except StopIteration:
                     break
 
@@ -382,8 +255,8 @@ class Stream(object):
                 message = 'Headers row (%s) can\'t be more than sample_size (%s)'
                 message = message % (self.__headers_row, self.__sample_size)
                 raise exceptions.OptionsError(message)
-            for number, headers, row in self.__sample_extended_rows:
-                if number == self.__headers_row:
+            for row_number, headers, row in self.__sample_extended_rows:
+                if row_number == self.__headers_row:
                     if headers is not None:
                         self.__headers = headers
                         keyed_source = True
@@ -396,7 +269,7 @@ class Stream(object):
 
         # Detect html content
         text = ''
-        for number, headers, row in self.__sample_extended_rows:
+        for row_number, headers, row in self.__sample_extended_rows:
             for value in row:
                 if isinstance(value, six.string_types):
                     text += value
@@ -409,17 +282,17 @@ class Stream(object):
 
         # Builtin processor
         def builtin_processor(extended_rows):
-            for number, headers, row in extended_rows:
+            for row_number, headers, row in extended_rows:
                 # Set headers
                 headers = self.__headers
                 # Skip row by numbers
-                if number in self.__skip_rows_by_numbers:
+                if row_number in self.__skip_rows_by_numbers:
                     continue
                 # Skip row by comments
                 match = lambda comment: row[0].startswith(comment)
                 if list(filter(match, self.__skip_rows_by_comments)):
                     continue
-                yield (number, headers, row)
+                yield (row_number, headers, row)
 
         # Apply processors to iterator
         processors = [builtin_processor] + self.__post_parse
