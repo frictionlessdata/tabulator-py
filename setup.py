@@ -36,6 +36,9 @@ INSTALL_FORMAT_ODS_REQUIRES = [
     'ezodf>=0.3,<1.0',
     'lxml>=3.0,<4.0',
 ]
+INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
+    'datapackage<1.0',
+]
 TESTS_REQUIRE = [
     'pylama',
     'tox',
@@ -55,6 +58,7 @@ setup(
     tests_require=TESTS_REQUIRE,
     extras_require={
         'ods': INSTALL_FORMAT_ODS_REQUIRES,
+        'datapackage': INSTALL_FORMAT_DATAPACKAGE_REQUIRES,
         'develop': TESTS_REQUIRE,
     },
     entry_points={

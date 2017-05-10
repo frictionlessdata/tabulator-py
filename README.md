@@ -397,6 +397,21 @@ Operations:
 Options:
 - sheet - sheet number starting from 1
 
+#### datapackage
+> This format is not included to package by default. To use it please install `tabulator` with an `datapackage` extras: `$ pip install tabulator[datapackage]`
+
+Source should be a valid Tabular Data Package see (https://frictionlessdata.io).
+
+```python
+stream = Stream('datapackage.json', resource=1)
+```
+
+Operations:
+- read
+
+Options:
+- resource - resource index (starting from 0) or resource name
+
 ### Encoding
 
 `Stream` constructor accepts `encoding` argument to ensure needed encoding will be used. As a value argument supported by python encoding name could be used:
