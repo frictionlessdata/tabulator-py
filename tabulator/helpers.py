@@ -43,16 +43,17 @@ def detect_scheme_and_format(source):
         if source.startswith('%s://' % sql_scheme):
             return (None, 'sql')
 
-    # Format: datapackage
-    if source.endswith('/datapackage.json'):
-        return (None, 'datapackage')
-
     # General
     parsed = urlparse(source)
     scheme = parsed.scheme.lower()
     if len(scheme) < 2:
         scheme = config.DEFAULT_SCHEME
     format = os.path.splitext(parsed.path or parsed.netloc)[1][1:].lower() or None
+
+    # Format: datapackage
+    if parsed.path.endswith('datapackage.json'):
+        return (None, 'datapackage')
+
     return (scheme, format)
 
 

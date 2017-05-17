@@ -55,12 +55,17 @@ def test_second_resource():
 
 
 def test_named_resource():
-    with Stream('data/datapackage.json', resource='number-two', headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read(keyed=True) == [
-            {'id': 1, 'name': '中国人'},
-            {'id': 2, 'name': 'english'},
-        ]
+    curdir = os.getcwd()
+    try:
+        os.chdir('data/')
+        with Stream('datapackage.json', resource='number-two', headers=1) as stream:
+            assert stream.headers == ['id', 'name']
+            assert stream.read(keyed=True) == [
+                {'id': 1, 'name': '中国人'},
+                {'id': 2, 'name': 'english'},
+            ]
+    finally:
+        os.chdir(curdir)
 
 
 def test_datapackage_list():

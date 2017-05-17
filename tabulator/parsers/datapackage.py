@@ -49,11 +49,10 @@ class DataPackageParser(Parser):
 
     def reset(self):
         if isinstance(self.__resource, six.string_types):
-            print(self.__datapackage.resources)
             named_resource = next(iter(filter(
                 lambda res: res.descriptor['name'] == self.__resource,
                 self.__datapackage.resources
-            )))
+            )))  # TODO: use data_package.getResource(name) when v1 is released
             self.__resource_iter = named_resource.iter()
         else:
             self.__resource_iter = \
