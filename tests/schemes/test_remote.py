@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import pytest
 from tabulator import Stream
 from tabulator.loaders.remote import RemoteLoader
 BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
@@ -14,6 +15,13 @@ BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 def test_stream_https():
     with Stream(BASE_URL % 'data/table.csv') as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+@pytest.mark.skip()
+def test_stream_https_latin1():
+    # Github returns wrong encoding `utf-8`
+    with Stream(BASE_URL % 'data/special/latin1.csv') as stream:
+        assert len(stream.read()) == 10
 
 
 # Loader
