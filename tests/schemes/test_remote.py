@@ -17,7 +17,6 @@ def test_stream_https():
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-@pytest.mark.skip()
 def test_stream_https_latin1():
     # Github returns wrong encoding `utf-8`
     with Stream(BASE_URL % 'data/special/latin1.csv') as stream:
