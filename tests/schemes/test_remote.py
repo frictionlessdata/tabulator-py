@@ -20,7 +20,7 @@ def test_stream_https():
 def test_stream_https_latin1():
     # Github returns wrong encoding `utf-8`
     with Stream(BASE_URL % 'data/special/latin1.csv') as stream:
-        assert len(stream.read()) == 10
+        assert stream.read()
 
 
 # Loader
