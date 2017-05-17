@@ -8,7 +8,7 @@ VERSION := $(shell head -n 1 $(PACKAGE)/VERSION)
 all: list
 
 install:
-	pip install --upgrade -e .[ods,develop]
+	pip install --upgrade -e .[ods,datapackage,develop]
 
 list:
 	@grep '^\.PHONY' Makefile | cut -d' ' -f2- | tr ' ' '\n'

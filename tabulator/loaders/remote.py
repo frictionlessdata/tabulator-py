@@ -49,11 +49,6 @@ class RemoteLoader(Loader):
                 raise exceptions.FormatError(message)
 
         # Prepare encoding
-        if encoding is None:
-            if six.PY2:
-                encoding = response.headers.getparam('charset')
-            else:
-                encoding = response.headers.get_content_charset()
         encoding = helpers.detect_encoding(sample, encoding)
 
         # Return or raise
