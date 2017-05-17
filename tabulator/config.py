@@ -31,6 +31,7 @@ LOADERS = {
 
 PARSERS = {
     'csv': 'tabulator.parsers.csv.CSVParser',
+    'datapackage': 'tabulator.parsers.datapackage.DataPackageParser',
     'gsheet': 'tabulator.parsers.gsheet.GsheetParser',
     'inline': 'tabulator.parsers.inline.InlineParser',
     'json': 'tabulator.parsers.json.JSONParser',
