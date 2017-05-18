@@ -5,7 +5,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
-from tabulator import validate
+import pytest
+from tabulator import validate, exceptions
 
 
 # Tests
@@ -20,8 +21,10 @@ def test_validate_test_schemes():
     assert validate('ftps://example.com/path.csv')
     assert validate('path.csv', scheme='file')
     # Not supported
-    assert not validate('ssh://example.com/path.csv')
-    assert not validate('bad://example.com/path.csv')
+    with pytest.raises(exceptions.SchemeError) as excinfo:
+        validate('ssh://example.com/path.csv')
+    with pytest.raises(exceptions.SchemeError) as excinfo:
+        validate('bad://example.com/path.csv')
 
 
 def test_validate_test_formats():
@@ -35,8 +38,10 @@ def test_validate_test_formats():
     assert validate('path.ods')
     assert validate('path.no-format', format='csv')
     # Not supported
-    assert not validate('path.txt')
-    assert not validate('path.bad')
+    with pytest.raises(exceptions.FormatError) as excinfo:
+        validate('path.txt')
+    with pytest.raises(exceptions.FormatError) as excinfo:
+        validate('path.bad')
 
 
 def test_validate_test_special():

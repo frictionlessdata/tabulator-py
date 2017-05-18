@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 from . import config
 from . import helpers
+from . import exceptions
 
 
 # Module API
@@ -22,8 +23,8 @@ def validate(source, scheme=None, format=None):
     # Validate scheme and format
     if scheme is not None:
         if scheme not in config.LOADERS:
-            return False
+            raise exceptions.SchemeError('Scheme "%s" is not supported' % scheme)
     if format not in config.PARSERS:
-        return False
+        raise exceptions.FormatError('Format "%s" is not supported' % format)
 
     return True
