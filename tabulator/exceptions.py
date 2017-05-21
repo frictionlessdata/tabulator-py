@@ -13,6 +13,18 @@ class TabulatorException(Exception):
     pass
 
 
+class IOError(TabulatorException):
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
+    """
+    pass
+
+
+class HTTPError(TabulatorException):
+    """https://github.com/frictionlessdata/tabulator-py#exceptions
+    """
+    pass
+
+
 class SourceError(TabulatorException):
     """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
@@ -38,18 +50,6 @@ class EncodingError(TabulatorException):
 
 
 class OptionsError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
-    pass
-
-
-class IOError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
-    pass
-
-
-class HTTPError(TabulatorException):
     """https://github.com/frictionlessdata/tabulator-py#exceptions
     """
     pass

@@ -728,6 +728,14 @@ Validate if this source has supported scheme and format.
 
 Base class for all `tabulator` exceptions.
 
+#### exceptions.IOError
+
+All underlaying input-output errors.
+
+#### exceptions.HTTPError
+
+All underlaying HTTP errors.
+
 #### exceptions.SourceError
 
 This class of exceptions covers all source errors like bad data structure for JSON.
@@ -747,14 +755,6 @@ All errors related to encoding problems.
 #### exceptions.OptionsError
 
 All errors related to not supported by Loader/Parser/Writer options.
-
-#### exceptions.IOError
-
-All underlaying input-output errors.
-
-#### exceptions.HTTPError
-
-All underlaying HTTP errors.
 
 #### exceptions.ResetError
 
