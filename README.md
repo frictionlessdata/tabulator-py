@@ -243,6 +243,8 @@ stream = Stream('data.csv')
 
 #### http/https/ftp/ftps
 
+> In Python 2 `tabulator` can't stream remote data source because of underlaying libraries limitation. The whole data source will be loaded to the memory. In Python 3 there is no such a problem and `tabulator` is able to stream remote data source as expected.
+
 Source should be a file available via one of this protocols in the web.
 
 
@@ -400,6 +402,8 @@ Operations:
 - read
 
 #### xls/xlsx
+
+> For `xls` format `tabulator` can't stream data source because of underlaying libraries limitation. The whole data source will be loaded to the memory. For `xlsx` format there is no such a problem and `tabulator` is able to stream data source as expected.
 
 Source should be a valid Excel document.
 
