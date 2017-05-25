@@ -40,13 +40,13 @@ INSTALL_REQUIRES = [
     # Format: xlsx
     'openpyxl>=2.4,<3.0',
 ]
-INSTALL_FORMAT_ODS_REQUIRES = [
-    'ezodf>=0.3,<2.0',
-    'lxml>=3.0,<4.0',
-]
 INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
     # TODO: update after specs-v1
     'datapackage<1.0',
+]
+INSTALL_FORMAT_ODS_REQUIRES = [
+    'ezodf>=0.3,<2.0',
+    'lxml>=3.0,<4.0',
 ]
 TESTS_REQUIRE = [
     'pylama',
