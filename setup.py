@@ -45,6 +45,7 @@ INSTALL_FORMAT_ODS_REQUIRES = [
     'lxml>=3.0,<4.0',
 ]
 INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
+    # TODO: update after specs-v1
     'datapackage<1.0',
 ]
 TESTS_REQUIRE = [
