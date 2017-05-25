@@ -20,20 +20,28 @@ def read(*paths):
 # Prepare
 PACKAGE = 'tabulator'
 INSTALL_REQUIRES = [
+    # General
     'six>=1.9,<2.0',
     'click>=6.0,<7.0',
     'requests>=2.8,<3.0',
     'cchardet>=1.0,<2.0',
-    'unicodecsv>=0.14,<1.0',
+    # Format: csv
+    'unicodecsv>=0.14,<2.0',
+    # Format: json
     'ijson>=2.0,<3.0',
+    # Format: ndjson
     'jsonlines>=1.1,<2.0',
+    # Format: sql
     'sqlalchemy>=1.1,<2.0',
+    # Format: tsv
     'linear-tsv>=1.0,<2.0',
+    # Format: xls
     'xlrd>=1.0,<2.0',
+    # Format: xlsx
     'openpyxl>=2.4,<3.0',
 ]
 INSTALL_FORMAT_ODS_REQUIRES = [
-    'ezodf>=0.3,<1.0',
+    'ezodf>=0.3,<2.0',
     'lxml>=3.0,<4.0',
 ]
 INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
