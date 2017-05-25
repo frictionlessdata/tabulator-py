@@ -66,9 +66,9 @@ setup(
     install_requires=INSTALL_REQUIRES,
     tests_require=TESTS_REQUIRE,
     extras_require={
-        'ods': INSTALL_FORMAT_ODS_REQUIRES,
         'datapackage': INSTALL_FORMAT_DATAPACKAGE_REQUIRES,
         'develop': TESTS_REQUIRE,
+        'ods': INSTALL_FORMAT_ODS_REQUIRES,
     },
     entry_points={
         'console_scripts': [
