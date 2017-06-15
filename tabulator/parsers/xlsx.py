@@ -52,8 +52,8 @@ class XLSXParser(Parser):
             self.__bytes.seek(0)
         # To fill merged cells we can't use read-only because
         # `sheet.merged_cell_ranges` is not available in this mode
-        self.__book = openpyxl.load_workbook(self.__bytes,
-            read_only=not self.__fill_merged_cells, data_only=True)
+        self.__book = openpyxl.load_workbook(
+            self.__bytes, read_only=not self.__fill_merged_cells, data_only=True)
         self.__sheet = self.__book.worksheets[self.__index]
         self.__process_merged_cells()
         self.reset()
