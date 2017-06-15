@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import shutil
 import openpyxl
+from itertools import chain
 from tempfile import TemporaryFile
 from ..parser import Parser
 from .. import helpers
@@ -21,13 +22,15 @@ class XLSXParser(Parser):
 
     options = [
         'sheet',
+        'fill_merged_cells',
     ]
 
-    def __init__(self, loader, sheet=1):
+    def __init__(self, loader, sheet=1, fill_merged_cells=False):
         self.__loader = loader
         self.__index = sheet - 1
-        self.__force_parse = None
+        self.__fill_merged_cells = fill_merged_cells
         self.__extended_rows = None
+        self.__force_parse = None
         self.__bytes = None
 
     @property
@@ -47,8 +50,12 @@ class XLSXParser(Parser):
             self.__bytes.close()
             self.__bytes = new_bytes
             self.__bytes.seek(0)
-        self.__book = openpyxl.load_workbook(self.__bytes, read_only=True, data_only=True)
+        # To fill merged cells we can't use read-only because
+        # `sheet.merged_cell_ranges` is not available in this mode
+        self.__book = openpyxl.load_workbook(self.__bytes,
+            read_only=not self.__fill_merged_cells, data_only=True)
         self.__sheet = self.__book.worksheets[self.__index]
+        self.__process_merged_cells()
         self.reset()
 
     def close(self):
@@ -68,3 +75,13 @@ class XLSXParser(Parser):
     def __iter_extended_rows(self):
         for row_number, row in enumerate(self.__sheet.iter_rows(), start=1):
             yield (row_number, None, list(cell.value for cell in row))
+
+    def __process_merged_cells(self):
+        if self.__fill_merged_cells:
+            for merged_cell_range in self.__sheet.merged_cell_ranges:
+                merged_rows = openpyxl.utils.rows_from_range(merged_cell_range)
+                coordinates = list(chain(*merged_rows))
+                value = self.__sheet[coordinates[0]].value
+                for coordinate in coordinates:
+                    cell = self.__sheet[coordinate]
+                    cell.value = value
