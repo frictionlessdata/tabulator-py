@@ -416,7 +416,7 @@ Operations:
 
 Options:
 - sheet - sheet number starting from 1
-- fill_merged_cells - if `True` it will unmerge and fill all merged cells by a visible value. With this option enabled the parser can't stream data.
+- fill_merged_cells - if `True` it will unmerge and fill all merged cells by a visible value. With this option enabled the parser can't stream data and load the whole document into memory.
 
 ### Encoding
 

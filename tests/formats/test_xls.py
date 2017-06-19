@@ -32,6 +32,18 @@ def test_stream_xls_sheet():
         assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
+def test_stream_xlsx_merged_cells():
+    source = 'data/special/merged-cells.xls'
+    with Stream(source) as stream:
+        assert stream.read() == [['data', ''], ['', ''], ['', '']]
+
+
+def test_stream_xlsx_merged_cells_fill():
+    source = 'data/special/merged-cells.xls'
+    with Stream(source, fill_merged_cells=True) as stream:
+        assert stream.read() == [['data', 'data'], ['data', 'data'], ['data', 'data']]
+
+
 # Parser
 
 def test_parser_xls():

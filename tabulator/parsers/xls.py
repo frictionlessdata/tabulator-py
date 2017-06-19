@@ -19,11 +19,13 @@ class XLSParser(Parser):
 
     options = [
         'sheet',
+        'fill_merged_cells',
     ]
 
-    def __init__(self, loader, sheet=1):
+    def __init__(self, loader, sheet=1, fill_merged_cells=False):
         self.__loader = loader
         self.__index = sheet - 1
+        self.__fill_merged_cells = fill_merged_cells
         self.__force_parse = None
         self.__extended_rows = None
         self.__bytes = None
@@ -38,7 +40,8 @@ class XLSParser(Parser):
         self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
         self.__book = xlrd.open_workbook(
                 file_contents=self.__bytes.read(),
-                encoding_override=encoding)
+                encoding_override=encoding,
+                formatting_info=True)
         self.__sheet = self.__book.sheet_by_index(self.__index)
         self.reset()
 
@@ -57,5 +60,13 @@ class XLSParser(Parser):
     # Private
 
     def __iter_extended_rows(self):
-        for row_number in range(1, self.__sheet.nrows+1):
-            yield (row_number, None, list(self.__sheet.row_values(row_number - 1)))
+        for x in range(0, self.__sheet.nrows):
+            row_number = x + 1
+            row = []
+            for y, value in enumerate(self.__sheet.row_values(x)):
+                if self.__fill_merged_cells:
+                    for xlo, xhi, ylo, yhi in self.__sheet.merged_cells:
+                        if x in range(xlo, xhi) and y in range(ylo, yhi):
+                            value = self.__sheet.cell_value(xlo, ylo)
+                row.append(value)
+            yield (row_number, None, row)
