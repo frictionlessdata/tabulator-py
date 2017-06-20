@@ -19,7 +19,7 @@ def test_stream_xlsx_remote():
         assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
-def test_stream_stream_xlsx():
+def test_stream_xlsx_stream():
     source = io.open('data/table.xlsx', mode='rb')
     with Stream(source, format='xlsx') as stream:
         assert stream.headers is None
@@ -30,6 +30,18 @@ def test_stream_xlsx_sheet():
     source = 'data/special/sheet2.xlsx'
     with Stream(source, sheet=2) as stream:
         assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+def test_stream_xlsx_merged_cells():
+    source = 'data/special/merged-cells.xlsx'
+    with Stream(source) as stream:
+        assert stream.read() == [['data', None]]
+
+
+def test_stream_xlsx_merged_cells_fill():
+    source = 'data/special/merged-cells.xlsx'
+    with Stream(source, fill_merged_cells=True) as stream:
+        assert stream.read() == [['data', 'data'], ['data', 'data'], ['data', 'data']]
 
 
 # Parser
