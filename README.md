@@ -836,7 +836,12 @@ and `mock` packages. This packages are available only in tox envionments.
 
 Here described only breaking and the most important changes. The full changelog could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
-### v1.0
+### v1.1
+
+New API added:
+- added `fill_merged_cells` argument to `xls/xlsx` formats
+
+### [v1.0](https://github.com/frictionlessdata/tabulator-py/tree/v1.0.0)
 
 New API added:
 - published `Loader/Parser/Writer` API
