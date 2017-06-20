@@ -70,3 +70,4 @@ venv3/
 # Project
 tmp
 .projectile
+.~lock*
