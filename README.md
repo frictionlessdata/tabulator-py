@@ -529,7 +529,7 @@ Processors will be applied to source from left to right. For example in listing 
 
 ### Custom loaders
 
-> It's a provisional API. If you use it as a part of other program please pin concrete `goodtables` version to your requirements file.
+> It's a provisional API. If you use it as a part of other program please pin concrete `tabulator` version to your requirements file.
 
 To create a custom loader `Loader` interface should be implemented and passed to `Stream` constructor as `custom_loaders={'scheme': CustomLoader}` argument.
 
@@ -568,7 +568,7 @@ List of supported options.
 
 ### Custom parsers
 
-> It's a provisional API. If you use it as a part of other program please pin concrete `goodtables` version to your requirements file.
+> It's a provisional API. If you use it as a part of other program please pin concrete `tabulator` version to your requirements file.
 
 To create a custom parser `Parser` interface should be implemented and passed to `Stream` constructor as `custom_parsers={'format': CustomParser}` argument.
 
@@ -638,7 +638,7 @@ Reset items and underlaying stream. After reset call iterations over items will 
 
 ### Custom writers
 
-> It's a provisional API. If you use it as a part of other program please pin concrete `goodtables` version to your requirements file.
+> It's a provisional API. If you use it as a part of other program please pin concrete `tabulator` version to your requirements file.
 
 To create a custom writer `Writer` interface should be implemented and passed to `Stream` constructor as `custom_writers={'format': CustomWriter}` argument.
 
@@ -704,6 +704,8 @@ with Stream([['name', 'age'], ['Alex', 21]]) as stream:
 ```
 
 ### Validate
+
+> It's a provisional API. If you use it as a part of other program please pin concrete `tabulator` version to your requirements file.
 
 For cases you don't need open the source but want to know is it supported by `tabulator` or not you could use `validate` function. It also let you know what exactly is not supported raising correspondig exception class.
 
