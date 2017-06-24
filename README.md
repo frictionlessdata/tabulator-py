@@ -129,7 +129,7 @@ with Stream('data.csv') as stream:
 
 It's just a pretty basic `Stream` introduction. Please read the full documentation below and about `Stream` arguments in more detail in following sections. There are many other goodies like headers extraction, keyed output, post parse processors and many more!
 
-#### `Stream(source, headers=None, scheme=None, format=None, encoding=None, sample_size=100, allow_html=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, \*\*options)`
+#### `Stream(source, headers=None, scheme=None, format=None, encoding=None, sample_size=100, allow_html=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)`
 
 Create stream class instance.
 
@@ -199,35 +199,6 @@ Save stream to filesystem.
 - `format (str)` - saving format. See supported formats
 - `encoding (str)` - saving encoding
 - `options (dict)` - writer options
-
-### Headers
-
-By default `Stream` considers all data source rows as values:
-
-```python
-with Stream([['name', 'age'], ['Alex', 21]]):
-  stream.headers # None
-  stream.read() # [['name', 'age'], ['Alex', 21]]
-```
-
-To alter this behaviour `headers` argument is supported by `Stream` constructor. This argument could be an integer - row number starting from 1 containing headers:
-
-```python
-# Integer
-with Stream([['name', 'age'], ['Alex', 21]], headers=1):
-  stream.headers # ['name', 'age']
-  stream.read() # [['Alex', 21]]
-```
-
-Or it could be a list of strings - user-defined headers:
-
-```python
-with Stream([['Alex', 21]], headers=['name', 'age']):
-  stream.headers # ['name', 'age']
-  stream.read() # [['Alex', 21]]
-```
-
-If `headers` is a row number and data source is not keyed all rows before this row and this row will be removed from data stream (see first example).
 
 ### Schemes
 
@@ -418,6 +389,35 @@ Options:
 - sheet - sheet number starting from 1
 - fill_merged_cells - if `True` it will unmerge and fill all merged cells by a visible value. With this option enabled the parser can't stream data and load the whole document into memory.
 
+### Headers
+
+By default `Stream` considers all data source rows as values:
+
+```python
+with Stream([['name', 'age'], ['Alex', 21]]):
+  stream.headers # None
+  stream.read() # [['name', 'age'], ['Alex', 21]]
+```
+
+To alter this behaviour `headers` argument is supported by `Stream` constructor. This argument could be an integer - row number starting from 1 containing headers:
+
+```python
+# Integer
+with Stream([['name', 'age'], ['Alex', 21]], headers=1):
+  stream.headers # ['name', 'age']
+  stream.read() # [['Alex', 21]]
+```
+
+Or it could be a list of strings - user-defined headers:
+
+```python
+with Stream([['Alex', 21]], headers=['name', 'age']):
+  stream.headers # ['name', 'age']
+  stream.read() # [['Alex', 21]]
+```
+
+If `headers` is a row number and data source is not keyed all rows before this row and this row will be removed from data stream (see first example).
+
 ### Encoding
 
 `Stream` constructor accepts `encoding` argument to ensure needed encoding will be used. As a value argument supported by python encoding name could be used:
@@ -574,7 +574,7 @@ with Stream(source, custom_loaders={'custom': CustomLoader}) as stream:
 
 There are more examples in internal `tabulator.loaders` module.
 
-#### `Loader(\*\*options)`
+#### `Loader(**options)`
 
 - `options (dict)` - loader options
 - `(Loader)` - returns `Loader` class instance
@@ -624,7 +624,7 @@ with Stream(source, custom_parsers={'custom': CustomParser}) as stream:
 
 There are more examples in internal `tabulator.parsers` module.
 
-#### `Parser(loader, \*\*options)`
+#### `Parser(loader, **options)`
 
 Create parser class instance.
 
@@ -683,7 +683,7 @@ with Stream(source, custom_writers={'custom': CustomWriter}) as stream:
 
 There are more examples in internal `tabulator.writers` module.
 
-#### `Writer(\*\*options)`
+#### `Writer(**options)`
 
 Create writer class instance.
 
