@@ -129,76 +129,76 @@ with Stream('data.csv') as stream:
 
 It's just a pretty basic `Stream` introduction. Please read the full documentation below and about `Stream` arguments in more detail in following sections. There are many other goodies like headers extraction, keyed output, post parse processors and many more!
 
-#### Stream(source, headers=None, scheme=None, format=None, encoding=None, sample_size=100, allow_html=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, \*\*options)
+#### `Stream(source, headers=None, scheme=None, format=None, encoding=None, sample_size=100, allow_html=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, \*\*options)`
 
 Create stream class instance.
 
-- **source (any)** - stream source in a form based on `scheme` argument
-- **headers (list/int)** - headers list or source row number containing headers. If number is given for plain source headers row and all rows before will be removed and for keyed source no rows will be removed.
-- **scheme (str)** - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below.
-- **format (str)** - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below.
-- **encoding (str)** - source encoding with  `None` (detect) as default.
-- **sample_size (int)** - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source.
-- **allow_html (bool)** - a flag to allow html
-- **force_strings (bool)** - if `True` all output will be converted to strings
-- **force_parse (bool)** - if `True` on row parsing error a stream will return an empty row instead of raising an exception
-- **skip_rows (int/str[])** - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped.
-- **post_parse (generator[])** - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction.
-- **custom_loaders (dict)** - loaders keyed by scheme. See a section below.
-- **custom_parsers (dict)** - custom parsers keyed by format. See a section below.
-- **custom_writers (dict)** - custom writers keyed by format. See a section below.
-- **options (dict)** - loader/parser options. See in the scheme/format section
-- returns **(Stream)** - Stream class instance
+- `source (any)` - stream source in a form based on `scheme` argument
+- `headers (list/int)` - headers list or source row number containing headers. If number is given for plain source headers row and all rows before will be removed and for keyed source no rows will be removed.
+- `scheme (str)` - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below.
+- `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below.
+- `encoding (str)` - source encoding with  `None` (detect) as default.
+- `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source.
+- `allow_html (bool)` - a flag to allow html
+- `force_strings (bool)` - if `True` all output will be converted to strings
+- `force_parse (bool)` - if `True` on row parsing error a stream will return an empty row instead of raising an exception
+- `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped.
+- `post_parse (generator[])` - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction.
+- `custom_loaders (dict)` - loaders keyed by scheme. See a section below.
+- `custom_parsers (dict)` - custom parsers keyed by format. See a section below.
+- `custom_writers (dict)` - custom writers keyed by format. See a section below.
+- `options (dict)` - loader/parser options. See in the scheme/format section
+- `(Stream)` - returns Stream class instance
 
-#### stream.closed
+#### `stream.closed`
 
-- returns **(bool)** - `True` if underlaying stream is closed
+- `(bool)` - returns`True` if underlaying stream is closed
 
-#### stream.open()
+#### `stream.open()`
 
 Open stream by opening underlaying stream.
 
-#### stream.close()
+#### `stream.close()`
 
 Close stream by closing underlaying stream.
 
-#### stream.reset()
+#### `stream.reset()`
 
 Reset stream pointer to the first row.
 
-#### stream.headers
+#### `stream.headers`
 
-- returns **(str[])** - data headers
+- `(str[])` - returns data headers
 
-#### stream.sample
+#### `stream.sample`
 
-- returns **(list)** - data sample
+- `(list)` - returns data sample
 
-#### stream.iter(keyed=False, extended=False)
+#### `stream.iter(keyed=False, extended=False)`
 
 Iter stream rows.
 
-- **keyed (bool)** - yield keyed rows
-- **extended (bool)** - yield extended rows
-- returns **(any[]/any{})** - yields row/keyed row/extended row
+- `keyed (bool)` - if True yield keyed rows
+- `extended (bool)` - if True yield extended rows
+- `(any[]/any{})` - yields row/keyed row/extended row
 
-#### stream.read(keyed=False, extended=False, limit=None)
+#### `stream.read(keyed=False, extended=False, limit=None)`
 
 Read table rows with count limit.
 
-- **keyed (bool)** - return keyed rows
-- **extended (bool)** - return extended rows
-- **limit (int)** - rows count limit
-- returns **(list)** - rows/keyed rows/extended rows
+- `keyed (bool)` - return keyed rows
+- `extended (bool)` - return extended rows
+- `limit (int)` - rows count limit
+- `(list)` - returns rows/keyed rows/extended rows
 
-#### stream.save(target, format=None,  encoding=None, **options)
+#### `stream.save(target, format=None,  encoding=None, **options)`
 
 Save stream to filesystem.
 
-- **target (str)** - stream target
-- **format (str)** - saving format. See supported formats
-- **encoding (str)** - saving encoding
-- **options (dict)** - writer options
+- `target (str)` - stream target
+- `format (str)` - saving format. See supported formats
+- `encoding (str)` - saving encoding
+- `options (dict)` - writer options
 
 ### Headers
 
@@ -527,6 +527,31 @@ Post parse processor gets extended rows (`[row_number, headers, row]`) iterator 
 
 Processors will be applied to source from left to right. For example in listing above `multiply_on_two` processor gets rows from `skip_odd_rows` processor.
 
+### Keyed and extended rows
+
+Stream methods `stream.iter/read()` accept `keyed` and `extended` flags to vary data structure of output data row.
+
+By default a stream returns every row as a list:
+
+```python
+with Stream([['name', 'age'], ['Alex', 21]]) as stream:
+  stream.read() # [['Alex', 21]]
+```
+
+With `keyed=True` a stream returns every row as a dict:
+
+```python
+with Stream([['name', 'age'], ['Alex', 21]]) as stream:
+  stream.read(keyed=True) # [{'name': 'Alex', 'age': 21}]
+```
+
+And with `extended=True` a stream returns every row as a tuple contining row number starting from 1, headers as a list and row as a list:
+
+```python
+with Stream([['name', 'age'], ['Alex', 21]]) as stream:
+  stream.read(extended=True) # (1, ['name', 'age'], ['Alex', 21])
+```
+
 ### Custom loaders
 
 > It's a provisional API. If you use it as a part of other program please pin concrete `tabulator` version to your requirements file.
@@ -549,22 +574,22 @@ with Stream(source, custom_loaders={'custom': CustomLoader}) as stream:
 
 There are more examples in internal `tabulator.loaders` module.
 
-#### Loader(\*\*options)
+#### `Loader(\*\*options)`
 
-- **options (dict)** - loader options
-- returns **(Loader)** - `Loader` class instance
+- `options (dict)` - loader options
+- `(Loader)` - returns `Loader` class instance
 
-#### Loader.options
+#### `Loader.options`
 
 List of supported options.
 
-#### loader.load(source, mode='t', encoding=None, allow_zip=False)
+#### `loader.load(source, mode='t', encoding=None, allow_zip=False)`
 
-- **source (str)** - table source
-- **mode (str)** - text stream mode: 't' or 'b'
-- **encoding (str)** - encoding of source
-- **allow_zip (bool)** - if false will raise on zip format
-- returns **(file-like)** - file-like object of bytes or chars based on mode argument
+- `source (str)` - table source
+- `mode (str)` - text stream mode: 't' or 'b'
+- `encoding (str)` - encoding of source
+- `allow_zip (bool)` - if false will raise on zip format
+- `(file-like)` - returns file-like object of bytes or chars based on mode argument
 
 ### Custom parsers
 
@@ -599,42 +624,42 @@ with Stream(source, custom_parsers={'custom': CustomParser}) as stream:
 
 There are more examples in internal `tabulator.parsers` module.
 
-#### Parser(loader, \*\*options)
+#### `Parser(loader, \*\*options)`
 
 Create parser class instance.
 
-- **loader (Loader)** - loader instance
-- **options (dict)** - parser options
-- returns **(Parser)** - `Parser` class instance
+- `loader (Loader)` - loader instance
+- `options (dict)` - parser options
+- `(Parser)` - returns `Parser` class instance
 
-#### Parser.options
+#### `Parser.options`
 
 List of supported options.
 
-#### parser.closed
+#### `parser.closed`
 
-- returns **(bool)** - `True` if parser is closed
+- `(bool)` - returns `True` if parser is closed
 
-#### parser.open(source, encoding=None, force_parse=False)
+#### `parser.open(source, encoding=None, force_parse=False)`
 
 Open underlaying stream. Parser gets byte or text stream from loader
 to start emit items from this stream.
 
-- **source (str)** - table source
-- **encoding (str)** - encoding of source
-- **force_parse (bool)** - if True parser must yield (row_number, None, []) if there is an row in parsing error instead of stopping the iteration by raising an exception
+- `source (str)` - table source
+- `encoding (str)` - encoding of source
+- `force_parse (bool)` - if True parser must yield (row_number, None, []) if there is an row in parsing error instead of stopping the iteration by raising an exception
 
-#### parser.close()
+#### `parser.close()`
 
 Close underlaying stream.
 
-#### parser.reset()
+#### `parser.reset()`
 
 Reset items and underlaying stream. After reset call iterations over items will start from scratch.
 
-#### parser.extended_rows
+#### `parser.extended_rows`
 
-- returns **(iterator)** - extended rows iterator
+- `(iterator)` - returns extended rows iterator
 
 ### Custom writers
 
@@ -658,50 +683,25 @@ with Stream(source, custom_writers={'custom': CustomWriter}) as stream:
 
 There are more examples in internal `tabulator.writers` module.
 
-#### Writer(\*\*options)
+#### `Writer(\*\*options)`
 
 Create writer class instance.
 
-- **options (dict)** - writer options
-- returns **(Writer)** - `Writer` class instance
+- `options (dict)` - writer options
+- `(Writer)` - returns `Writer` class instance
 
-#### Writer.options
+#### `Writer.options`
 
 List of supported options.
 
-#### writer.save(source, target, headers=None, encoding=None)
+#### `writer.save(source, target, headers=None, encoding=None)`
 
 Save source data to target.
 
-- **source (str)** - data source
-- **source (str)** - save target
-- **headers (str[])** - optional headers
-- **encoding (str)** - encoding of source
-
-### Keyed and extended rows
-
-Stream methods `stream.iter/read()` accept `keyed` and `extended` flags to vary data structure of output data row.
-
-By default a stream returns every row as a list:
-
-```python
-with Stream([['name', 'age'], ['Alex', 21]]) as stream:
-  stream.read() # [['Alex', 21]]
-```
-
-With `keyed=True` a stream returns every row as a dict:
-
-```python
-with Stream([['name', 'age'], ['Alex', 21]]) as stream:
-  stream.read(keyed=True) # [{'name': 'Alex', 'age': 21}]
-```
-
-And with `extended=True` a stream returns every row as a tuple contining row number starting from 1, headers as a list and row as a list:
-
-```python
-with Stream([['name', 'age'], ['Alex', 21]]) as stream:
-  stream.read(extended=True) # (1, ['name', 'age'], ['Alex', 21])
-```
+- `source (str)` - data source
+- `source (str)` - save target
+- `headers (str[])` - optional headers
+- `encoding (str)` - encoding of source
 
 ### Validate
 
@@ -718,52 +718,52 @@ except exceptions.TabulatorException:
   tabular = False
 ```
 
-#### validate(source, scheme=None, format=None)
+#### `validate(source, scheme=None, format=None)`
 
 Validate if this source has supported scheme and format.
 
-- **source (any)** - data source
-- **scheme (str)** - data scheme
-- **format (str)** - data format
-- raises **(exceptions.SchemeError)** - if scheme is not supported
-- raises **(exceptions.FormatError)** - if format is not supported
-- returns **(bool)** - `True` if scheme/format is supported
+- `source (any)` - data source
+- `scheme (str)` - data scheme
+- `format (str)` - data format
+- `(exceptions.SchemeError)` - raises if scheme is not supported
+- `(exceptions.FormatError)` - raises if format is not supported
+- `(bool)` - returns `True` if scheme/format is supported
 
 ### Exceptions
 
-#### exceptions.TabulatorException
+#### `exceptions.TabulatorException`
 
 Base class for all `tabulator` exceptions.
 
-#### exceptions.IOError
+#### `exceptions.IOError`
 
 All underlaying input-output errors.
 
-#### exceptions.HTTPError
+#### `exceptions.HTTPError`
 
 All underlaying HTTP errors.
 
-#### exceptions.SourceError
+#### `exceptions.SourceError`
 
 This class of exceptions covers all source errors like bad data structure for JSON.
 
-#### exceptions.SchemeError
+#### `exceptions.SchemeError`
 
 For example this exceptions will be used if you provide not supported source scheme like `bad://source.csv`.
 
-#### exceptions.FormatError
+#### `exceptions.FormatError`
 
 For example this exceptions will be used if you provide not supported source format like `http://source.bad`.
 
-#### exceptions.EncodingError
+#### `exceptions.EncodingError`
 
 All errors related to encoding problems.
 
-#### exceptions.OptionsError
+#### `exceptions.OptionsError`
 
 All errors related to not supported by Loader/Parser/Writer options.
 
-#### exceptions.ResetError
+#### `exceptions.ResetError`
 
 All errors caused by stream reset problems.
 
@@ -780,7 +780,7 @@ id, name
 2, 中国人
 ```
 
-#### $ tabulator
+#### `$ tabulator`
 
 ```bash
 Usage: cli.py [OPTIONS] SOURCE
