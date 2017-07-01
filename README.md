@@ -206,7 +206,7 @@ There is a list of all supported schemes.
 
 #### file
 
-It's a defaulat scheme. Source should be a file in local filesystem.
+The default scheme. Source should be a file in local filesystem.
 
 ```python
 stream = Stream('data.csv')
