@@ -146,7 +146,7 @@ Create stream class instance.
 - `custom_loaders (dict)` - loaders keyed by scheme. See a section below.
 - `custom_parsers (dict)` - custom parsers keyed by format. See a section below.
 - `custom_writers (dict)` - custom writers keyed by format. See a section below.
-- `<name> (type)` - loader/parser options. See in the scheme/format section
+- `<name> (<type>)` - loader/parser options. See in the scheme/format section
 - `(Stream)` - returns Stream class instance
 
 #### `stream.closed`
