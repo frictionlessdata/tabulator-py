@@ -25,8 +25,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
 The package use semantic versioning. It means that major versions  could include breaking changes. It's highly recommended to specify `tabulator` version range if you use `setup.py` or `requirements.txt` file e.g. `tabulator<2.0`.
 
 ```
-$ pip install tabulator # v0.15
-$ pip install tabulator --pre # v1.0-alpha
+$ pip install tabulator
 ```
 
 ### Examples
