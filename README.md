@@ -128,7 +128,7 @@ with Stream('data.csv') as stream:
 
 It's just a pretty basic `Stream` introduction. Please read the full documentation below and about `Stream` arguments in more detail in following sections. There are many other goodies like headers extraction, keyed output, post parse processors and many more!
 
-#### `Stream(source, headers=None, scheme=None, format=None, encoding=None, sample_size=100, allow_html=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)`
+#### `Stream(source, **options)`
 
 Create stream class instance.
 
@@ -137,16 +137,16 @@ Create stream class instance.
 - `scheme (str)` - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below.
 - `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below.
 - `encoding (str)` - source encoding with  `None` (detect) as default.
+- `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped.
 - `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source.
 - `allow_html (bool)` - a flag to allow html
 - `force_strings (bool)` - if `True` all output will be converted to strings
 - `force_parse (bool)` - if `True` on row parsing error a stream will return an empty row instead of raising an exception
-- `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped.
 - `post_parse (generator[])` - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction.
 - `custom_loaders (dict)` - loaders keyed by scheme. See a section below.
 - `custom_parsers (dict)` - custom parsers keyed by format. See a section below.
 - `custom_writers (dict)` - custom writers keyed by format. See a section below.
-- `options (dict)` - loader/parser options. See in the scheme/format section
+- `<name> (type)` - loader/parser options. See in the scheme/format section
 - `(Stream)` - returns Stream class instance
 
 #### `stream.closed`
