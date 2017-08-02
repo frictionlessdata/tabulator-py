@@ -113,10 +113,28 @@ def test_stream_csv_quotechar():
         assert stream.read() == [['value1,value2'], ['value3,value4']]
 
 
-def test_stream_csv_quotechar():
+def test_stream_csv_skipinitialspace():
     source = 'value1, value2\nvalue3, value4'
     with Stream(source, scheme='text', format='csv', skipinitialspace=True) as stream:
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
+
+
+def test_stream_csv_detect_delimiter_tab():
+    source = 'a1\tb1\tc1A,c1B\na2\tb2\tc2\n'
+    with Stream(source, scheme='text', format='csv') as stream:
+        assert stream.read() == [['a1', 'b1', 'c1A,c1B'], ['a2', 'b2', 'c2']]
+
+
+def test_stream_csv_detect_delimiter_semicolon():
+    source = 'a1;b1\na2;b2\n'
+    with Stream(source, scheme='text', format='csv') as stream:
+        assert stream.read() == [['a1', 'b1'], ['a2', 'b2']]
+
+
+def test_stream_csv_detect_delimiter_pipe():
+    source = 'a1|b1\na2|b2\n'
+    with Stream(source, scheme='text', format='csv') as stream:
+        assert stream.read() == [['a1', 'b1'], ['a2', 'b2']]
 
 
 # Parser
