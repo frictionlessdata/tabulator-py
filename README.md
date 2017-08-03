@@ -835,14 +835,19 @@ and `mock` packages. This packages are available only in tox envionments.
 
 ## Changelog
 
-Here described only breaking and the most important changes. The full changelog could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+### v1.2
+
+Improved behaviour:
+- autodetect common csv delimiters
 
 ### v1.1
 
 New API added:
 - added `fill_merged_cells` argument to `xls/xlsx` formats
 
-### [v1.0](https://github.com/frictionlessdata/tabulator-py/tree/v1.0.0)
+### v1.0
 
 New API added:
 - published `Loader/Parser/Writer` API
@@ -857,7 +862,7 @@ Deprecated API removal:
 Provisional API changed:
 - updated `Loader/Parser/Writer` API - please use an updated version
 
-### [v0.15](https://github.com/frictionlessdata/tabulator-py/tree/v0.15.0)
+### v0.15
 
 Provisional API added:
 - unofficial support for `Stream` arguments `custom_loaders/parsers`
