@@ -419,14 +419,14 @@ If `headers` is a row number and data source is not keyed all rows before this r
 
 ### Encoding
 
-`Stream` constructor accepts `encoding` argument to ensure needed encoding will be used. As a value argument supported by python encoding name could be used:
+`Stream` constructor accepts `encoding` argument to ensure needed encoding will be used. As a value argument supported by python encoding name (e.g. 'latin1', 'utf-8', ..) could be used:
 
 ```python
 with Stream(source, encoding='latin1') as stream:
   stream.read()
 ```
 
-By default an encoding will be detected automatically.
+By default an encoding will be detected automatically. If you experience a *UnicodeDecodeError* parsing your file, try setting this argument to 'utf-8'.
 
 
 ### Sample size
