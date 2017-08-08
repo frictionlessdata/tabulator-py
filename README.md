@@ -169,6 +169,18 @@ Reset stream pointer to the first row.
 
 - `(str[])` - returns data headers
 
+#### `stream.scheme`
+
+- `(str)` - returns an actual scheme
+
+#### `stream.format`
+
+- `(str)` - returns an actual format
+
+#### `stream.encoding`
+
+- `(str)` - returns an actual encoding
+
 #### `stream.sample`
 
 - `(list)` - returns data sample
@@ -652,6 +664,10 @@ Close underlaying stream.
 
 Reset items and underlaying stream. After reset call iterations over items will start from scratch.
 
+#### `parser.encoding`
+
+- `(str)` - returns an actual encoding
+
 #### `parser.extended_rows`
 
 - `(iterator)` - returns extended rows iterator
@@ -828,6 +844,19 @@ and `mock` packages. This packages are available only in tox envionments.
 ## Changelog
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+### v1.3
+
+New API added:
+- `stream.scheme`
+- `stream.format`
+- `stream.encoding`
+
+Promoted provisional API to stable API:
+- `Loader` (custom loaders)
+- `Parser` (custom parsers)
+- `Writer` (custom writers)
+- `validate`
 
 ### v1.2
 
