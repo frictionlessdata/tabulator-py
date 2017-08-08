@@ -48,13 +48,11 @@ class RemoteLoader(Loader):
                 message = 'Format has been detected as ZIP (not supported)'
                 raise exceptions.FormatError(message)
 
-        # Prepare encoding
-        encoding = helpers.detect_encoding(sample, encoding)
-
         # Return or raise
         if mode == 'b':
             return bytes
         else:
+            encoding = helpers.detect_encoding(sample, encoding)
             chars = io.TextIOWrapper(bytes, encoding)
             return chars
 
