@@ -30,6 +30,7 @@ class DataPackageParser(Parser):
         self.__force_parse = None
         self.__datapackage = None
         self.__resource_iter = None
+        self.__encoding = None
 
     @property
     def closed(self):
@@ -54,10 +55,16 @@ class DataPackageParser(Parser):
                 self.__datapackage.resources
             )))  # TODO: use data_package.getResource(name) when v1 is released
             self.__resource_iter = named_resource.iter()
+            self.__encoding = named_resource.descriptor.get('encoding')
         else:
-            self.__resource_iter = \
-                self.__datapackage.resources[self.__resource].iter()
+            indexed_resource = self.__datapackage.resources[self.__resource]
+            self.__resource_iter = indexed_resource.iter()
+            self.__encoding = indexed_resource.descriptor.get('encoding')
         self.__extended_rows = self.__iter_extended_rows()
+
+    @property
+    def encoding(self):
+        return self.__encoding
 
     @property
     def extended_rows(self):

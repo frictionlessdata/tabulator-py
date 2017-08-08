@@ -30,6 +30,7 @@ class XLSXParser(Parser):
         self.__index = sheet - 1
         self.__fill_merged_cells = fill_merged_cells
         self.__extended_rows = None
+        self.__encoding = None
         self.__force_parse = None
         self.__bytes = None
 
@@ -56,6 +57,7 @@ class XLSXParser(Parser):
             self.__bytes, read_only=not self.__fill_merged_cells, data_only=True)
         self.__sheet = self.__book.worksheets[self.__index]
         self.__process_merged_cells()
+        self.__encoding = encoding
         self.reset()
 
     def close(self):
@@ -65,6 +67,10 @@ class XLSXParser(Parser):
     def reset(self):
         helpers.reset_stream(self.__bytes)
         self.__extended_rows = self.__iter_extended_rows()
+
+    @property
+    def encoding(self):
+        return self.__encoding
 
     @property
     def extended_rows(self):

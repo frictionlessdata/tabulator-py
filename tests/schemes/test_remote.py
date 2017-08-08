@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import pytest
 from tabulator import Stream
 from tabulator.loaders.remote import RemoteLoader
-BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
+BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
 # Stream

@@ -21,14 +21,13 @@ class TextLoader(Loader):
 
     def load(self, source, mode='t', encoding=None, allow_zip=False):
 
+        # Default encoding fallback
+        encoding = encoding or config.DEFAULT_ENCODING
+
         # Prepare source
         scheme = 'text://'
         if source.startswith(scheme):
             source = source.replace(scheme, '', 1)
-
-        # Prepare encoding
-        if encoding is None:
-            encoding = config.DEFAULT_ENCODING
 
         # Prepare bytes
         bytes = io.BufferedRandom(io.BytesIO())

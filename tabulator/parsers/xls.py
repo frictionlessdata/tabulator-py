@@ -28,6 +28,7 @@ class XLSParser(Parser):
         self.__fill_merged_cells = fill_merged_cells
         self.__force_parse = None
         self.__extended_rows = None
+        self.__encoding = None
         self.__bytes = None
 
     @property
@@ -43,6 +44,7 @@ class XLSParser(Parser):
                 encoding_override=encoding,
                 formatting_info=True)
         self.__sheet = self.__book.sheet_by_index(self.__index)
+        self.__encoding = encoding
         self.reset()
 
     def close(self):
@@ -52,6 +54,10 @@ class XLSParser(Parser):
     def reset(self):
         helpers.reset_stream(self.__bytes)
         self.__extended_rows = self.__iter_extended_rows()
+
+    @property
+    def encoding(self):
+        return self.__encoding
 
     @property
     def extended_rows(self):

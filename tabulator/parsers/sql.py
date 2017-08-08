@@ -35,6 +35,7 @@ class SQLParser(Parser):
         self.__force_parse = None
         self.__engine = None
         self.__extended_rows = None
+        self.__encoding = None
 
     @property
     def closed(self):
@@ -45,6 +46,7 @@ class SQLParser(Parser):
         self.__force_parse = force_parse
         self.__engine = create_engine(source)
         self.__engine.update_execution_options(stream_results=True)
+        self.__encoding = encoding
         self.reset()
 
     def close(self):
@@ -54,6 +56,10 @@ class SQLParser(Parser):
 
     def reset(self):
         self.__extended_rows = self.__iter_extended_rows()
+
+    @property
+    def encoding(self):
+        return self.__encoding
 
     @property
     def extended_rows(self):
