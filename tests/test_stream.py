@@ -14,6 +14,7 @@ from tabulator import Stream, exceptions
 from tabulator.loaders.local import LocalLoader
 from tabulator.parsers.csv import CSVParser
 from tabulator.writers.csv import CSVWriter
+BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
 # Headers
@@ -81,6 +82,60 @@ def test_stream_headers_inline_keyed_headers_is_none():
         assert list(stream.iter(extended=True)) == [
             (1, None, ['1', 'english']),
             (2, None, ['2', '中国人'])]
+
+
+# Scheme
+
+def test_stream_scheme_file():
+    with Stream('data/table.csv') as stream:
+        assert stream.scheme == 'file'
+
+
+def test_stream_scheme_https():
+    with Stream(BASE_URL % 'data/table.csv') as stream:
+        assert stream.scheme == 'https'
+
+
+def test_stream_scheme_stream():
+    with Stream(io.open('data/table.csv', mode='rb'), format='csv') as stream:
+        assert stream.scheme == 'stream'
+
+
+def test_stream_scheme_text():
+    with Stream('text://a\nb', format='csv') as stream:
+        assert stream.scheme == 'text'
+
+
+# Format
+
+def test_stream_format_csv():
+    with Stream('data/table.csv') as stream:
+        assert stream.format == 'csv'
+
+
+def test_stream_format_ndjson():
+    with Stream('data/table.ndjson') as stream:
+        assert stream.format == 'ndjson'
+
+
+def test_stream_format_ods():
+    with Stream('data/table.ods') as stream:
+        assert stream.format == 'ods'
+
+
+def test_stream_format_tsv():
+    with Stream('data/table.tsv') as stream:
+        assert stream.format == 'tsv'
+
+
+def test_stream_format_xls():
+    with Stream('data/table.xls') as stream:
+        assert stream.format == 'xls'
+
+
+def test_stream_format_xlsx():
+    with Stream('data/table.xlsx') as stream:
+        assert stream.format == 'xlsx'
 
 
 # Encoding
@@ -404,6 +459,7 @@ def test_stream_reset_generator():
         stream.reset()
         # After reset
         assert stream.read() == [[1], [2]]
+
 
 # Save
 

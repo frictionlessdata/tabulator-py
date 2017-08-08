@@ -67,6 +67,9 @@ class Stream(object):
         self.__custom_loaders = copy(custom_loaders)
         self.__custom_parsers = copy(custom_parsers)
         self.__custom_writers = copy(custom_writers)
+        self.__actual_scheme = scheme
+        self.__actual_format = format
+        self.__actual_encoding = encoding
         self.__options = options
         self.__sample_extended_rows = []
         self.__loader = None
@@ -148,6 +151,11 @@ class Stream(object):
         if not self.__allow_html:
             self.__detect_html()
 
+        # Set scheme/format/encoding
+        self.__actual_scheme = scheme
+        self.__actual_format = format
+        self.__actual_encoding = self.__parser.encoding
+
         return self
 
     def close(self):
@@ -171,13 +179,22 @@ class Stream(object):
         return self.__headers
 
     @property
+    def scheme(self):
+        """https://github.com/frictionlessdata/tabulator-py#stream
+        """
+        return self.__actual_scheme
+
+    @property
+    def format(self):
+        """https://github.com/frictionlessdata/tabulator-py#stream
+        """
+        return self.__actual_format
+
+    @property
     def encoding(self):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """
-        encoding = self.__encoding
-        if self.__parser:
-            encoding = self.__parser.encoding
-        return encoding
+        return self.__actual_encoding
 
     @property
     def sample(self):
