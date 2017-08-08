@@ -171,6 +171,15 @@ class Stream(object):
         return self.__headers
 
     @property
+    def encoding(self):
+        """https://github.com/frictionlessdata/tabulator-py#stream
+        """
+        encoding = self.__encoding
+        if self.__parser:
+            encoding = self.__parser.encoding
+        return encoding
+
+    @property
     def sample(self):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """

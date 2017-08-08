@@ -23,6 +23,7 @@ class InlineParser(Parser):
         self.__loader = loader
         self.__force_parse = None
         self.__extended_rows = None
+        self.__encoding = None
         self.__source = None
 
     @property
@@ -36,6 +37,7 @@ class InlineParser(Parser):
         self.close()
         self.__force_parse = force_parse
         self.__source = source
+        self.__encoding = encoding
         self.reset()
 
     def close(self):
@@ -43,6 +45,10 @@ class InlineParser(Parser):
 
     def reset(self):
         self.__extended_rows = self.__iter_extended_rows()
+
+    @property
+    def encoding(self):
+        return self.__encoding
 
     @property
     def extended_rows(self):

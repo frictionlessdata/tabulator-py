@@ -49,6 +49,13 @@ class Parser(object):
 
     @property
     @abstractmethod
+    def encoding(self):
+        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
+        """
+        pass  # pragma: no cover
+
+    @property
+    @abstractmethod
     def extended_rows(self):
         """https://github.com/frictionlessdata/tabulator-py#custom-parsers
         """

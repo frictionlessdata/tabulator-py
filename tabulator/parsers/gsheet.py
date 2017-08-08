@@ -23,6 +23,7 @@ class GsheetParser(Parser):
         self.__loader = loader
         self.__force_parse = None
         self.__stream = None
+        self.__encoding = None
 
     @property
     def closed(self):
@@ -43,6 +44,7 @@ class GsheetParser(Parser):
         self.__stream = Stream(
             url, format='csv', encoding=encoding, force_parse=self.__force_parse).open()
         self.__extended_rows = self.__stream.iter(extended=True)
+        self.__encoding = encoding
 
     def close(self):
         if not self.closed:
@@ -51,6 +53,10 @@ class GsheetParser(Parser):
     def reset(self):
         self.__stream.reset()
         self.__extended_rows = self.__stream.iter(extended=True)
+
+    @property
+    def encoding(self):
+        return self.__encoding
 
     @property
     def extended_rows(self):

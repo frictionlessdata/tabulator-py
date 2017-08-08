@@ -32,6 +32,7 @@ class ODSParser(Parser):
         self.__index = sheet - 1 if isinstance(sheet, int) else sheet
         self.__force_parse = None
         self.__extended_rows = None
+        self.__encoding = None
         self.__bytes = None
         self.__book = None
         self.__sheet = None
@@ -47,6 +48,7 @@ class ODSParser(Parser):
             source, mode='b', encoding=encoding, allow_zip=True)
         self.__book = ezodf.opendoc(BytesIO(self.__bytes.read()))
         self.__sheet = self.__book.sheets[self.__index]
+        self.__encoding = encoding
         self.reset()
 
     def close(self):
@@ -56,6 +58,10 @@ class ODSParser(Parser):
     def reset(self):
         helpers.reset_stream(self.__bytes)
         self.__extended_rows = self.__iter_extended_rows()
+
+    @property
+    def encoding(self):
+        return self.__encoding
 
     @property
     def extended_rows(self):

@@ -86,8 +86,21 @@ def test_stream_headers_inline_keyed_headers_is_none():
 # Encoding
 
 def test_stream_encoding():
-    with Stream('data/table.csv', encoding='utf-8') as stream:
+    with Stream('data/table.csv') as stream:
+        assert stream.encoding == 'utf-8'
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_encoding_explicit_utf8():
+    with Stream('data/table.csv', encoding='utf-8') as stream:
+        assert stream.encoding == 'utf-8'
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_encoding_explicit_latin1():
+    with Stream('data/special/latin1.csv', encoding='latin1') as stream:
+        assert stream.encoding == 'latin1'
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '©']]
 
 
 # Sample size

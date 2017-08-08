@@ -26,6 +26,7 @@ class TSVParser(Parser):
         self.__loader = loader
         self.__force_parse = None
         self.__extended_rows = None
+        self.__encoding = None
         self.__chars = None
 
     @property
@@ -36,6 +37,9 @@ class TSVParser(Parser):
         self.close()
         self.__force_parse = force_parse
         self.__chars = self.__loader.load(source, encoding=encoding)
+        self.__encoding = getattr(self.__chars, 'encoding', encoding)
+        if self.__encoding:
+            self.__encoding.lower()
         self.reset()
 
     def close(self):
@@ -45,6 +49,10 @@ class TSVParser(Parser):
     def reset(self):
         helpers.reset_stream(self.__chars)
         self.__extended_rows = self.__iter_extended_rows()
+
+    @property
+    def encoding(self):
+        return self.__encoding
 
     @property
     def extended_rows(self):
