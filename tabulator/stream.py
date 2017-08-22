@@ -162,6 +162,7 @@ class Stream(object):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """
         self.__parser.close()
+        self.__row_number = 0
 
     def reset(self):
         """https://github.com/frictionlessdata/tabulator-py#stream
