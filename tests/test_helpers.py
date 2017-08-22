@@ -30,6 +30,9 @@ from tabulator import helpers, config
     ('path', 'file', None),
     ('path.CsV', 'file', 'csv'),
     ('http://someplace.com/foo/path.csv?foo=bar#baz', 'http', 'csv'),
+    ('https://docs.google.com/spreadsheets/d/X/edit?usp=sharing', None, 'gsheet'),
+    ('https://docs.google.com/spreadsheets/d/X/export?format=csv&gid=0&single=true', 'https', 'csv'),
+    ('https://docs.google.com/spreadsheets/d/X/pub?gid=0&single=true&output=csv', 'https', 'csv'),
 ])
 def test_detect_scheme_and_format(source, scheme, format):
     assert helpers.detect_scheme_and_format(source) == (scheme, format)
