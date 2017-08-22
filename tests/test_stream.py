@@ -486,7 +486,7 @@ def test_stream_save_xls(tmpdir):
 
 # Issues
 
-def test_stream_reset_on_close():
+def test_stream_reset_on_close_issue_190():
     source = [['1', 'english'], ['2', '中国人']]
     stream = Stream(source)
     stream.open()
