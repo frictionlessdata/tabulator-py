@@ -35,8 +35,10 @@ def detect_scheme_and_format(source):
 
     # Format: gsheet
     if 'docs.google.com/spreadsheets' in source:
-        if 'export' not in source:
+        if 'export' not in source and 'pub' not in source:
             return (None, 'gsheet')
+        elif 'csv' in source:
+            return ('https', 'csv')
 
     # Format: sql
     for sql_scheme in config.SQL_SCHEMES:
