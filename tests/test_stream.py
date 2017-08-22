@@ -482,3 +482,15 @@ def test_stream_save_xls(tmpdir):
         with pytest.raises(exceptions.FormatError) as excinfo:
             stream.save(target)
         assert 'xls' in str(excinfo.value)
+
+
+# Issues
+
+def test_stream_reset_on_close_issue_190():
+    source = [['1', 'english'], ['2', '中国人']]
+    stream = Stream(source)
+    stream.open()
+    stream.read(limit=1) == [['1', 'english']]
+    stream.open()
+    stream.read(limit=1) == [['1', 'english']]
+    stream.close()
