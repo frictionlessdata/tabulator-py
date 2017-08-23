@@ -158,6 +158,14 @@ def test_stream_encoding_explicit_latin1():
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '©']]
 
 
+def test_stream_encoding_utf_16():
+    # Bytes encoded as UTF-16 with BOM in platform order is detected
+    bio = io.BytesIO(u'en,English\nja,日本語'.encode('utf-16'))
+    with Stream(bio, format='csv') as stream:
+        assert stream.encoding == 'utf-16'
+        assert stream.read() == [[u'en', u'English'], [u'ja', u'日本語']]
+
+
 # Sample size
 
 def test_stream_sample():

@@ -67,6 +67,13 @@ def _canonical_encoding(sample, encoding):
         # <https://github.com/PyYoshi/cChardet/issues/28>
         if sample.startswith(codecs.BOM_UTF8):
             encoding = 'utf-8-sig'
+    # Use the BOM stripping name (without byte-order) for UTF-16 encodings
+    elif encoding == 'utf-16-be':
+        if sample.startswith(codecs.BOM_UTF16_BE):
+            encoding = 'utf-16'
+    elif encoding == 'utf-16-le':
+        if sample.startswith(codecs.BOM_UTF16_LE):
+            encoding = 'utf-16'
     return encoding
 
 

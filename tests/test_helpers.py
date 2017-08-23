@@ -48,6 +48,16 @@ def test_detect_encoding_windows_1252():
     assert helpers.detect_encoding(sample) == 'cp1252'
 
 
+def test_detect_encoding_utf_16_be():
+    sample = u'\uFEFFthen some text'.encode('utf-16-be')
+    assert helpers.detect_encoding(sample) == 'utf-16'
+
+
+def test_detect_encoding_utf_16_le():
+    sample = u'\uFEFFthen some text'.encode('utf-16-le')
+    assert helpers.detect_encoding(sample) == 'utf-16'
+
+
 def test_detect_encoding_unknown():
     sample = b'\xff\x81'
     assert helpers.detect_encoding(sample) == 'utf-8'
