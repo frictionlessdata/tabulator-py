@@ -59,23 +59,28 @@ def detect_scheme_and_format(source):
     return (scheme, format)
 
 
+def _canonical_encoding(sample, encoding):
+    """Give encoding name in canonical form and correct 'utf-8-sig'."""
+    encoding = codecs.lookup(encoding).name
+    if encoding == 'utf-8':
+        # Work around 'Incorrect detection of utf-8-sig encoding'
+        # <https://github.com/PyYoshi/cChardet/issues/28>
+        if sample.startswith(codecs.BOM_UTF8):
+            encoding = 'utf-8-sig'
+    return encoding
+
+
 def detect_encoding(sample, encoding=None):
     """Detect encoding of a byte string sample.
     """
     # To reduce tabulator import time
     from cchardet import detect
-    def detect_utf8_sig(sample, encoding):
-        if encoding == 'utf-8':
-            if sample.startswith(codecs.BOM_UTF8):
-                encoding = 'utf-8-sig'
-        return encoding
     if encoding is not None:
-        encoding = encoding.lower()
-        return detect_utf8_sig(sample, encoding)
+        return _canonical_encoding(sample, encoding)
     result = detect(sample)
     confidence = result['confidence'] or 0
-    encoding = (result['encoding'] or '').lower()
-    encoding = detect_utf8_sig(sample, encoding)
+    encoding = result['encoding'] or 'ascii'
+    encoding = _canonical_encoding(sample, encoding)
     if confidence < config.ENCODING_CONFIDENCE:
         encoding = config.DEFAULT_ENCODING
     if encoding == 'ascii':

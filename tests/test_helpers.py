@@ -45,7 +45,7 @@ def test_detect_encoding():
 
 def test_detect_encoding_windows_1252():
     sample = b'A\n' * 300 + b'\xff\xff'
-    assert helpers.detect_encoding(sample) == 'windows-1252'
+    assert helpers.detect_encoding(sample) == 'cp1252'
 
 
 def test_detect_encoding_unknown():
