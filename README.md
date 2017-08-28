@@ -845,6 +845,11 @@ and `mock` packages. This packages are available only in tox envionments.
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+### v1.4
+
+Improved behaviour:
+- updated encoding name to a canonical form
+
 ### v1.3
 
 New API added:
