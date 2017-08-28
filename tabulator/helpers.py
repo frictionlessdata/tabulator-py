@@ -63,7 +63,7 @@ def _canonical_encoding(sample, encoding):
     """Give encoding name in canonical form and correct 'utf-8-sig'."""
     encoding = codecs.lookup(encoding).name
     # Work around 'Incorrect detection of utf-8-sig encoding'
-    # <https://github.com/PyYoshi/cChardet/issues/28>    
+    # <https://github.com/PyYoshi/cChardet/issues/28>
     if encoding == 'utf-8':
         if sample.startswith(codecs.BOM_UTF8):
             encoding = 'utf-8-sig'
