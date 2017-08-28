@@ -154,7 +154,7 @@ def test_stream_encoding_explicit_utf8():
 
 def test_stream_encoding_explicit_latin1():
     with Stream('data/special/latin1.csv', encoding='latin1') as stream:
-        assert stream.encoding == 'latin1'
+        assert stream.encoding == 'iso8859-1'
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '©']]
 
 
