@@ -614,7 +614,8 @@ For example let's implement a custom parser:
 from tabulator import Parser
 
 class CustomParser(Parser):
-  def __init__(self, loader, **options):
+  options = []
+  def __init__(self, loader, force_parse, **options):
     self.__loader = loader
   @property
   def closed(self):
@@ -639,11 +640,12 @@ There are more examples in internal `tabulator.parsers` module.
 
 List of supported custom options.
 
-#### `Parser(loader, **options)`
+#### `Parser(loader, force_parse, **options)`
 
 Create parser class instance.
 
 - `loader (Loader)` - loader instance
+- `force_parse (bool)` - if True parser must yield (row_number, None, []) if there is an row in parsing error instead of stopping the iteration by raising an exception
 - `options (dict)` - parser options
 - `(Parser)` - returns `Parser` class instance
 
@@ -651,14 +653,13 @@ Create parser class instance.
 
 - `(bool)` - returns `True` if parser is closed
 
-#### `parser.open(source, encoding=None, force_parse=False)`
+#### `parser.open(source, encoding=None)`
 
 Open underlaying stream. Parser gets byte or text stream from loader
 to start emit items from this stream.
 
 - `source (str)` - table source
 - `encoding (str)` - encoding of source
-- `force_parse (bool)` - if True parser must yield (row_number, None, []) if there is an row in parsing error instead of stopping the iteration by raising an exception
 
 #### `parser.close()`
 
@@ -771,14 +772,6 @@ For example this exceptions will be used if you provide not supported source for
 #### `exceptions.EncodingError`
 
 All errors related to encoding problems.
-
-#### `exceptions.OptionsError`
-
-All errors related to not supported by Loader/Parser/Writer options.
-
-#### `exceptions.ResetError`
-
-All errors caused by stream reset problems.
 
 ### CLI
 

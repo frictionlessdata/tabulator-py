@@ -26,7 +26,7 @@ class SQLParser(Parser):
 
         # Ensure table
         if table is None:
-            raise exceptions.OptionsError('Format `sql` requires `table` option.')
+            raise exceptions.TabulatorException('Format `sql` requires `table` option.')
 
         # Set attributes
         self.__loader = loader

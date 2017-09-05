@@ -147,7 +147,7 @@ class Stream(object):
         if options:
             message = 'Not supported options "%s" for scheme "%s" and format "%s"'
             message = message % (', '.join(options), scheme, format)
-            raise exceptions.OptionsError(message)
+            raise exceptions.TabulatorException(message)
 
         # Open and setup
         self.__parser.open(self.__source, encoding=self.__encoding)
@@ -267,7 +267,7 @@ class Stream(object):
         if options:
             message = 'Not supported options "%s" for format "%s"'
             message = message % (', '.join(options), format)
-            raise exceptions.OptionsError(message)
+            raise exceptions.TabulatorException(message)
         writer = writer_class(**writer_options)
         writer.write(self.iter(), target, headers=self.headers, encoding=encoding)
 
@@ -293,7 +293,7 @@ class Stream(object):
             if self.__headers_row > self.__sample_size:
                 message = 'Headers row (%s) can\'t be more than sample_size (%s)'
                 message = message % (self.__headers_row, self.__sample_size)
-                raise exceptions.OptionsError(message)
+                raise exceptions.TabulatorException(message)
             for row_number, headers, row in self.__sample_extended_rows:
                 if row_number == self.__headers_row:
                     if headers is not None:

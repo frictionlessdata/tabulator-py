@@ -26,7 +26,7 @@ def test_stream_format_sql_order_by_desc(database_url):
 
 
 def test_stream_format_sql_table_is_required_error(database_url):
-    with pytest.raises(exceptions.OptionsError) as excinfo:
+    with pytest.raises(exceptions.TabulatorException) as excinfo:
         Stream(database_url).open()
     assert 'table' in str(excinfo.value)
 

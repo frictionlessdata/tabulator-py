@@ -407,7 +407,7 @@ def test_stream_format_error():
 
 
 def test_stream_options_error():
-    with pytest.raises(exceptions.OptionsError) as excinfo:
+    with pytest.raises(exceptions.TabulatorException) as excinfo:
         Stream('', scheme='text', format='csv', bad_option=True).open()
     assert 'bad_option' in str(excinfo.value)
 

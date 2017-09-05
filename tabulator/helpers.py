@@ -124,8 +124,8 @@ def reset_stream(stream):
         try:
             stream.seek(0)
         except Exception:
-            message = 'Stream is not seekable.'
-            raise exceptions.ResetError(message)
+            message = 'It\'s not possible to reset this stream'
+            raise exceptions.TabulatorException(message)
 
 
 def ensure_dir(path):

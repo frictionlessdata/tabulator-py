@@ -49,13 +49,7 @@ class EncodingError(TabulatorException):
     pass
 
 
-class OptionsError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
-    pass
+# Deprecated
 
-
-class ResetError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
-    pass
+OptionsError = TabulatorException
+ResetError = TabulatorException
