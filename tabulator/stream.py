@@ -127,7 +127,9 @@ class Stream(object):
                     loader_class = helpers.import_attribute(loader_path)
             if loader_class is not None:
                 loader_options = helpers.extract_options(options, loader_class.options)
-                self.__loader = loader_class(self.__bytes_sample_size, **loader_options)
+                self.__loader = loader_class(
+                    bytes_sample_size=self.__bytes_sample_size,
+                    **loader_options)
 
         # Initiate parser
         parser_class = self.__custom_parsers.get(format)
@@ -137,7 +139,9 @@ class Stream(object):
                 raise exceptions.FormatError(message)
             parser_class = helpers.import_attribute(config.PARSERS[format])
         parser_options = helpers.extract_options(options, parser_class.options)
-        self.__parser = parser_class(self.__loader, **parser_options)
+        self.__parser = parser_class(self.__loader,
+                force_parse=self.__force_parse,
+                **parser_options)
 
         # Bad options
         if options:
@@ -146,8 +150,7 @@ class Stream(object):
             raise exceptions.OptionsError(message)
 
         # Open and setup
-        self.__parser.open(
-            self.__source, encoding=self.__encoding, force_parse=self.__force_parse)
+        self.__parser.open(self.__source, encoding=self.__encoding)
         self.__extract_sample()
         self.__extract_headers()
         if not self.__allow_html:

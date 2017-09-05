@@ -24,10 +24,10 @@ class DataPackageParser(Parser):
         'resource',
     ]
 
-    def __init__(self, loader, resource=0):
+    def __init__(self, loader, force_parse=False, resource=0):
+        self.__force_parse = force_parse
         self.__resource = resource
         self.__extended_rows = None
-        self.__force_parse = None
         self.__datapackage = None
         self.__resource_iter = None
         self.__encoding = None
@@ -36,9 +36,8 @@ class DataPackageParser(Parser):
     def closed(self):
         return self.__resource_iter is None
 
-    def open(self, source, encoding=None, force_parse=False):
+    def open(self, source, encoding=None):
         self.close()
-        self.__force_parse = force_parse
         self.__datapackage = datapackage.DataPackage(source)
         self.reset()
 
