@@ -42,6 +42,7 @@ deploy:
   provider: pypi
   user: okfn
   distributions: sdist bdist_wheel
+  skip_cleanup: true
   on:
     tags: true
   password:

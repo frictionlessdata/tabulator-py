@@ -24,8 +24,8 @@ A library for reading and writing tabular data (csv/xls/json/etc).
 
 The package use semantic versioning. It means that major versions  could include breaking changes. It's highly recommended to specify `tabulator` version range if you use `setup.py` or `requirements.txt` file e.g. `tabulator<2.0`.
 
-```
-$ pip install tabulator
+```bash
+$ pip install tabulator # OR "sudo pip install tabulator"
 ```
 
 ### Examples
@@ -494,8 +494,7 @@ with Stream([[1], 'bad', [3]]) as stream:
   stream.read() # raise exceptions.SourceError
 ```
 
-With `force_parse` option for `Stream` constructor this default behaviour could be changed.
-If it's set to `True` non-parsable rows will be returned as empty rows:
+With `force_parse` option for `Stream` constructor this default behaviour could be changed. If it's set to `True` non-parsable rows will be returned as empty rows:
 
 ```python
 with Stream([[1], 'bad', [3]]) as stream:
@@ -804,8 +803,7 @@ Options:
 
 The project follows the [Open Knowledge International coding standards](https://github.com/okfn/coding-standards).
 
-Recommended way to get started is to create and activate a project virtual environment.
-To install package and development dependencies into active environment:
+Recommended way to get started is to create and activate a project virtual environment. To install package and development dependencies into active environment:
 
 ```
 $ make install
@@ -817,9 +815,7 @@ To run tests with linting and coverage:
 $ make test
 ```
 
-For linting `pylama` configured in `pylama.ini` is used. On this stage it's already
-installed into your environment and could be used separately with more fine-grained control
-as described in documentation - https://pylama.readthedocs.io/en/latest/.
+For linting `pylama` configured in `pylama.ini` is used. On this stage it's already installed into your environment and could be used separately with more fine-grained control as described in documentation - https://pylama.readthedocs.io/en/latest/.
 
 For example to sort results by error type:
 
@@ -827,18 +823,15 @@ For example to sort results by error type:
 $ pylama --sort <path>
 ```
 
-For testing `tox` configured in `tox.ini` is used.
-It's already installed into your environment and could be used separately with more fine-grained control as described in documentation - https://testrun.org/tox/latest/.
+For testing `tox` configured in `tox.ini` is used. It's already installed into your environment and could be used separately with more fine-grained control as described in documentation - https://testrun.org/tox/latest/.
 
-For example to check subset of tests against Python 2 environment with increased verbosity.
-All positional arguments and options after `--` will be passed to `py.test`:
+For example to check subset of tests against Python 2 environment with increased verbosity. All positional arguments and options after `--` will be passed to `py.test`:
 
 ```bash
 tox -e py27 -- -v tests/<path>
 ```
 
-Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage`
-and `mock` packages. This packages are available only in tox envionments.
+Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage` and `mock` packages. This packages are available only in tox envionments.
 
 ## Changelog
 
