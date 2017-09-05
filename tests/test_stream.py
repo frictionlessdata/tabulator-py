@@ -166,15 +166,6 @@ def test_stream_encoding_utf_16():
         assert stream.read() == [[u'en', u'English'], [u'ja', u'日本語']]
 
 
-# Sample size
-
-def test_stream_sample():
-    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
-    with Stream(source, headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.sample == [['1', 'english'], ['2', '中国人']]
-
-
 # Allow html
 
 def test_stream_html_content():
@@ -190,6 +181,25 @@ def test_stream_html_content_with_allow_html():
     source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
     with Stream(source, allow_html=True) as stream:
         assert stream
+
+
+# Sample size
+
+def test_stream_sample():
+    source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream(source, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.sample == [['1', 'english'], ['2', '中国人']]
+
+
+# Bytes sample size
+
+def test_stream_bytes_sample_size():
+    source = 'data/special/latin1.csv'
+    with Stream(source) as stream:
+        assert stream.encoding == 'iso8859-2'
+    with Stream(source, sample_size=0, bytes_sample_size=10) as stream:
+        assert stream.encoding == 'utf-8'
 
 
 # Force strings

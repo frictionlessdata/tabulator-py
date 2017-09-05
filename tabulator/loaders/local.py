@@ -21,6 +21,9 @@ class LocalLoader(Loader):
 
     options = []
 
+    def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE):
+        self.__bytes_sample_size = bytes_sample_size
+
     def load(self, source, mode='t', encoding=None, allow_zip=False):
 
         # Prepare source
@@ -31,7 +34,7 @@ class LocalLoader(Loader):
         # Prepare bytes
         try:
             bytes = io.open(source, 'rb')
-            sample = bytes.read(config.BYTES_SAMPLE_SIZE)
+            sample = bytes.read(self.__bytes_sample_size)
             bytes.seek(0)
         except IOError as exception:
             raise exceptions.IOError(str(exception))

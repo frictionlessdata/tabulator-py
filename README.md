@@ -138,8 +138,9 @@ Create stream class instance.
 - `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below.
 - `encoding (str)` - source encoding with  `None` (detect) as default.
 - `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped.
-- `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source.
 - `allow_html (bool)` - a flag to allow html
+- `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source.
+- `bytes_sample_size (int)` - sample size in bytes for operations like encoding detection.
 - `force_strings (bool)` - if `True` all output will be converted to strings
 - `force_parse (bool)` - if `True` on row parsing error a stream will return an empty row instead of raising an exception
 - `post_parse (generator[])` - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction.
@@ -574,6 +575,8 @@ from tabulator import Loader
 
 class CustomLoader(Loader):
   options = []
+  def __init__(self, bytes_sample_size, **options):
+        pass
   def load(self, source, mode='t', encoding=None, allow_zip=False):
     # load logic
 
@@ -583,14 +586,15 @@ with Stream(source, custom_loaders={'custom': CustomLoader}) as stream:
 
 There are more examples in internal `tabulator.loaders` module.
 
-#### `Loader(**options)`
-
-- `options (dict)` - loader options
-- `(Loader)` - returns `Loader` class instance
-
 #### `Loader.options`
 
-List of supported options.
+List of supported custom options.
+
+#### `Loader(bytes_sample_size, **options)`
+
+- `bytes_sample_size (int)` - sample size in bytes
+- `options (dict)` - loader options
+- `(Loader)` - returns `Loader` class instance
 
 #### `loader.load(source, mode='t', encoding=None, allow_zip=False)`
 
@@ -610,7 +614,7 @@ For example let's implement a custom parser:
 from tabulator import Parser
 
 class CustomParser(Parser):
-  def __init__(self, loader):
+  def __init__(self, loader, **options):
     self.__loader = loader
   @property
   def closed(self):
@@ -631,6 +635,10 @@ with Stream(source, custom_parsers={'custom': CustomParser}) as stream:
 
 There are more examples in internal `tabulator.parsers` module.
 
+#### `Parser.options`
+
+List of supported custom options.
+
 #### `Parser(loader, **options)`
 
 Create parser class instance.
@@ -638,10 +646,6 @@ Create parser class instance.
 - `loader (Loader)` - loader instance
 - `options (dict)` - parser options
 - `(Parser)` - returns `Parser` class instance
-
-#### `Parser.options`
-
-List of supported options.
 
 #### `parser.closed`
 
@@ -683,6 +687,8 @@ from tabulator import Writer
 
 class CustomWriter(Writer):
   options = []
+  def __init__(self, **options):
+        pass
   def save(self, source, target, headers=None, encoding=None):
     # save logic
 
@@ -692,16 +698,16 @@ with Stream(source, custom_writers={'custom': CustomWriter}) as stream:
 
 There are more examples in internal `tabulator.writers` module.
 
+#### `Writer.options`
+
+List of supported custom options.
+
 #### `Writer(**options)`
 
 Create writer class instance.
 
 - `options (dict)` - writer options
 - `(Writer)` - returns `Writer` class instance
-
-#### `Writer.options`
-
-List of supported options.
 
 #### `writer.save(source, target, headers=None, encoding=None)`
 

@@ -24,8 +24,9 @@ class Stream(object):
                  scheme=None,
                  format=None,
                  encoding=None,
-                 sample_size=100,
                  allow_html=False,
+                 sample_size=config.DEFAULT_SAMPLE_SIZE,
+                 bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE,
                  force_strings=False,
                  force_parse=False,
                  skip_rows=[],
@@ -59,8 +60,9 @@ class Stream(object):
         self.__scheme = scheme
         self.__format = format
         self.__encoding = encoding
-        self.__sample_size = sample_size
         self.__allow_html = allow_html
+        self.__sample_size = sample_size
+        self.__bytes_sample_size = bytes_sample_size
         self.__force_strings = force_strings
         self.__force_parse = force_parse
         self.__post_parse = copy(post_parse)
@@ -125,7 +127,7 @@ class Stream(object):
                     loader_class = helpers.import_attribute(loader_path)
             if loader_class is not None:
                 loader_options = helpers.extract_options(options, loader_class.options)
-                self.__loader = loader_class(**loader_options)
+                self.__loader = loader_class(self.__bytes_sample_size, **loader_options)
 
         # Initiate parser
         parser_class = self.__custom_parsers.get(format)
