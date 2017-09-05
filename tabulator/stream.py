@@ -216,6 +216,13 @@ class Stream(object):
     def iter(self, keyed=False, extended=False):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """
+
+        # Error if closed
+        if self.closed:
+            message = 'Stream is closed. Please call "stream.open()" first.'
+            raise exceptions.TabulatorException(message)
+
+        # Iterate rows
         iterator = chain(
             self.__sample_extended_rows,
             self.__parser.extended_rows)

@@ -502,6 +502,16 @@ def test_stream_save_xls(tmpdir):
         assert 'xls' in str(excinfo.value)
 
 
+# Reading close
+
+def test_stream_read_closed():
+    stream = Stream('data/table.csv')
+    with pytest.raises(exceptions.TabulatorException) as excinfo:
+        stream.read()
+    assert 'stream.open()' in str(excinfo.value)
+
+
+
 # Issues
 
 def test_stream_reset_on_close_issue_190():

@@ -28,7 +28,7 @@ class InlineParser(Parser):
 
     @property
     def closed(self):
-        return True
+        return False
 
     def open(self, source, encoding=None):
         if hasattr(source, '__next__' if six.PY3 else 'next'):
