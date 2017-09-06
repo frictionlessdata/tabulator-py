@@ -22,17 +22,17 @@ class SQLParser(Parser):
         'order_by',
     ]
 
-    def __init__(self, loader, table=None, order_by=None):
+    def __init__(self, loader, force_parse=False, table=None, order_by=None):
 
         # Ensure table
         if table is None:
-            raise exceptions.OptionsError('Format `sql` requires `table` option.')
+            raise exceptions.TabulatorException('Format `sql` requires `table` option.')
 
         # Set attributes
         self.__loader = loader
         self.__table = table
         self.__order_by = order_by
-        self.__force_parse = None
+        self.__force_parse = force_parse
         self.__engine = None
         self.__extended_rows = None
         self.__encoding = None
@@ -41,9 +41,8 @@ class SQLParser(Parser):
     def closed(self):
         return self.__engine is None
 
-    def open(self, source, encoding=None, force_parse=False):
+    def open(self, source, encoding=None):
         self.close()
-        self.__force_parse = force_parse
         self.__engine = create_engine(source)
         self.__engine.update_execution_options(stream_results=True)
         self.__encoding = encoding

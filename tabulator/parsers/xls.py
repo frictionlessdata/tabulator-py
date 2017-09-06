@@ -22,11 +22,11 @@ class XLSParser(Parser):
         'fill_merged_cells',
     ]
 
-    def __init__(self, loader, sheet=1, fill_merged_cells=False):
+    def __init__(self, loader, force_parse=False, sheet=1, fill_merged_cells=False):
         self.__loader = loader
         self.__index = sheet - 1
         self.__fill_merged_cells = fill_merged_cells
-        self.__force_parse = None
+        self.__force_parse = force_parse
         self.__extended_rows = None
         self.__encoding = None
         self.__bytes = None
@@ -35,9 +35,8 @@ class XLSParser(Parser):
     def closed(self):
         return self.__bytes is None or self.__bytes.closed
 
-    def open(self, source, encoding=None, force_parse=False):
+    def open(self, source, encoding=None):
         self.close()
-        self.__force_parse = force_parse
         self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
         self.__book = xlrd.open_workbook(
                 file_contents=self.__bytes.read(),

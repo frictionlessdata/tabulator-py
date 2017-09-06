@@ -31,7 +31,7 @@ class CSVParser(Parser):
         'lineterminator'
     ]
 
-    def __init__(self, loader, **options):
+    def __init__(self, loader, force_parse=False, **options):
 
         # Make bytes
         if six.PY2:
@@ -42,7 +42,7 @@ class CSVParser(Parser):
         # Set attributes
         self.__loader = loader
         self.__options = options
-        self.__force_parse = None
+        self.__force_parse = force_parse
         self.__extended_rows = None
         self.__encoding = None
         self.__chars = None
@@ -51,9 +51,8 @@ class CSVParser(Parser):
     def closed(self):
         return self.__chars is None or self.__chars.closed
 
-    def open(self, source, encoding=None, force_parse=False):
+    def open(self, source, encoding=None):
         self.close()
-        self.__force_parse = force_parse
         self.__chars = self.__loader.load(source, encoding=encoding)
         self.__encoding = getattr(self.__chars, 'encoding', encoding)
         if self.__encoding:

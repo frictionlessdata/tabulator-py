@@ -24,8 +24,8 @@ A library for reading and writing tabular data (csv/xls/json/etc).
 
 The package use semantic versioning. It means that major versions  could include breaking changes. It's highly recommended to specify `tabulator` version range if you use `setup.py` or `requirements.txt` file e.g. `tabulator<2.0`.
 
-```
-$ pip install tabulator
+```bash
+$ pip install tabulator # OR "sudo pip install tabulator"
 ```
 
 ### Examples
@@ -133,19 +133,20 @@ It's just a pretty basic `Stream` introduction. Please read the full documentati
 Create stream class instance.
 
 - `source (any)` - stream source in a form based on `scheme` argument
-- `headers (list/int)` - headers list or source row number containing headers. If number is given for plain source headers row and all rows before will be removed and for keyed source no rows will be removed.
-- `scheme (str)` - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below.
-- `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below.
-- `encoding (str)` - source encoding with  `None` (detect) as default.
-- `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped.
-- `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source.
-- `allow_html (bool)` - a flag to allow html
-- `force_strings (bool)` - if `True` all output will be converted to strings
-- `force_parse (bool)` - if `True` on row parsing error a stream will return an empty row instead of raising an exception
-- `post_parse (generator[])` - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction.
-- `custom_loaders (dict)` - loaders keyed by scheme. See a section below.
-- `custom_parsers (dict)` - custom parsers keyed by format. See a section below.
-- `custom_writers (dict)` - custom writers keyed by format. See a section below.
+- `headers (list/int)` - headers list or source row number containing headers. If number is given for plain source headers row and all rows before will be removed and for keyed source no rows will be removed. See [headers](https://github.com/frictionlessdata/tabulator-py#headers) section.
+- `scheme (str)` - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below. See [schemes](https://github.com/frictionlessdata/tabulator-py#schemes) section.
+- `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below. See [formats](https://github.com/frictionlessdata/tabulator-py#formats) section.
+- `encoding (str)` - source encoding with  `None` (detect) as default.  See [encoding](https://github.com/frictionlessdata/tabulator-py#encoding) section.
+- `allow_html (bool)` - a flag to allow html.  See [allow html](https://github.com/frictionlessdata/tabulator-py#allow-html) section.
+- `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source. See [sample size](https://github.com/frictionlessdata/tabulator-py#sample-size) section.
+- `bytes_sample_size (int)` - sample size in bytes for operations like encoding detection. See [bytes sample size](https://github.com/frictionlessdata/tabulator-py#bytes-sample-size) section.
+- `force_strings (bool)` - if `True` all output will be converted to strings.  See [force strings](https://github.com/frictionlessdata/tabulator-py#force-strings) section.
+- `force_parse (bool)` - if `True` on row parsing error a stream will return an empty row instead of raising an exception. See [force parse](https://github.com/frictionlessdata/tabulator-py#force-parse) section.
+- `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped. See [skip rows](https://github.com/frictionlessdata/tabulator-py#skip-rows) section.
+- `post_parse (generator[])` - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction. See [post parse](https://github.com/frictionlessdata/tabulator-py#post-parse) section.
+- `custom_loaders (dict)` - loaders keyed by scheme. See a section below. See [custom loaders](https://github.com/frictionlessdata/tabulator-py#custom-loaders) section.
+- `custom_parsers (dict)` - custom parsers keyed by format. See a section below. See [custom parsers](https://github.com/frictionlessdata/tabulator-py#custom-parsers) section.
+- `custom_writers (dict)` - custom writers keyed by format. See a section below. See [custom writers](https://github.com/frictionlessdata/tabulator-py#custom-writers) section.
 - `<name> (<type>)` - loader/parser options. See in the scheme/format section
 - `(Stream)` - returns Stream class instance
 
@@ -187,7 +188,7 @@ Reset stream pointer to the first row.
 
 #### `stream.iter(keyed=False, extended=False)`
 
-Iter stream rows.
+Iter stream rows. See [keyed and extended rows](https://github.com/frictionlessdata/tabulator-py#https://github.com/frictionlessdata/tabulator-py#keyed-and-extended-rows) section.
 
 - `keyed (bool)` - if True yield keyed rows
 - `extended (bool)` - if True yield extended rows
@@ -195,7 +196,7 @@ Iter stream rows.
 
 #### `stream.read(keyed=False, extended=False, limit=None)`
 
-Read table rows with count limit.
+Read table rows with count limit. See [keyed and extended rows](https://github.com/frictionlessdata/tabulator-py#https://github.com/frictionlessdata/tabulator-py#keyed-and-extended-rows) section.
 
 - `keyed (bool)` - return keyed rows
 - `extended (bool)` - return extended rows
@@ -440,6 +441,16 @@ with Stream(source, encoding='latin1') as stream:
 
 By default an encoding will be detected automatically. If you experience a *UnicodeDecodeError* parsing your file, try setting this argument to 'utf-8'.
 
+### Allow html
+
+By default `Stream` will raise `exceptions.FormatError` on `stream.open()` call if html contents is detected. It's not a tabular format and for example providing link to csv file inside html (e.g. GitHub page) is a common mistake.
+
+But sometimes this default behaviour is not what is needed. For example you write custom parser which should support html contents. In this case `allow_html` option for `Stream` could be used:
+
+```python
+with Stream(sorce_with_html, allow_html=True) as stream:
+  stream.read() # no exception on open
+```
 
 ### Sample size
 
@@ -453,16 +464,19 @@ with Stream(two_rows_source, sample_size=1) as stream:
 
 Data sample could be really useful if you want to implement some initial data checks without moving stream pointer as `stream.iter/read` do. But if you don't want any interactions with an actual source before first `stream.iter/read` call just disable data smapling with `sample_size=0`.
 
-### Allow html
+### Bytes sample size
 
-By default `Stream` will raise `exceptions.FormatError` on `stream.open()` call if html contents is detected. It's not a tabular format and for example providing link to csv file inside html (e.g. GitHub page) is a common mistake.
-
-But sometimes this default behaviour is not what is needed. For example you write custom parser which should support html contents. In this case `allow_html` option for `Stream` could be used:
+On initial reading stage `tabulator` should detect contents encoding. The argument `bytes_sample_size` customizes how many bytes will be read to detect encoding:
 
 ```python
-with Stream(sorce_with_html, allow_html=True) as stream:
-  stream.read() # no exception on open
+source = 'data/special/latin1.csv'
+with Stream(source) as stream:
+    stream.encoding # 'iso8859-2'
+with Stream(source, sample_size=0, bytes_sample_size=10) as stream:
+    stream.encoding # 'utf-8'
 ```
+
+In this example our data file doesn't include `iso8859-2` characters in first 10 bytes. So we could see the difference in encoding detection. Note `sample_size` usage here - these two parameters are independent. Here we use `sample_size=0` to prevent rows sample creation (will fail with bad encoding).
 
 ### Force strings
 
@@ -493,8 +507,7 @@ with Stream([[1], 'bad', [3]]) as stream:
   stream.read() # raise exceptions.SourceError
 ```
 
-With `force_parse` option for `Stream` constructor this default behaviour could be changed.
-If it's set to `True` non-parsable rows will be returned as empty rows:
+With `force_parse` option for `Stream` constructor this default behaviour could be changed. If it's set to `True` non-parsable rows will be returned as empty rows:
 
 ```python
 with Stream([[1], 'bad', [3]]) as stream:
@@ -574,6 +587,8 @@ from tabulator import Loader
 
 class CustomLoader(Loader):
   options = []
+  def __init__(self, bytes_sample_size, **options):
+        pass
   def load(self, source, mode='t', encoding=None, allow_zip=False):
     # load logic
 
@@ -583,14 +598,15 @@ with Stream(source, custom_loaders={'custom': CustomLoader}) as stream:
 
 There are more examples in internal `tabulator.loaders` module.
 
-#### `Loader(**options)`
-
-- `options (dict)` - loader options
-- `(Loader)` - returns `Loader` class instance
-
 #### `Loader.options`
 
-List of supported options.
+List of supported custom options.
+
+#### `Loader(bytes_sample_size, **options)`
+
+- `bytes_sample_size (int)` - sample size in bytes
+- `options (dict)` - loader options
+- `(Loader)` - returns `Loader` class instance
 
 #### `loader.load(source, mode='t', encoding=None, allow_zip=False)`
 
@@ -610,7 +626,8 @@ For example let's implement a custom parser:
 from tabulator import Parser
 
 class CustomParser(Parser):
-  def __init__(self, loader):
+  options = []
+  def __init__(self, loader, force_parse, **options):
     self.__loader = loader
   @property
   def closed(self):
@@ -631,30 +648,30 @@ with Stream(source, custom_parsers={'custom': CustomParser}) as stream:
 
 There are more examples in internal `tabulator.parsers` module.
 
-#### `Parser(loader, **options)`
+#### `Parser.options`
+
+List of supported custom options.
+
+#### `Parser(loader, force_parse, **options)`
 
 Create parser class instance.
 
 - `loader (Loader)` - loader instance
+- `force_parse (bool)` - if True parser must yield (row_number, None, []) if there is an row in parsing error instead of stopping the iteration by raising an exception
 - `options (dict)` - parser options
 - `(Parser)` - returns `Parser` class instance
-
-#### `Parser.options`
-
-List of supported options.
 
 #### `parser.closed`
 
 - `(bool)` - returns `True` if parser is closed
 
-#### `parser.open(source, encoding=None, force_parse=False)`
+#### `parser.open(source, encoding=None)`
 
 Open underlaying stream. Parser gets byte or text stream from loader
 to start emit items from this stream.
 
 - `source (str)` - table source
 - `encoding (str)` - encoding of source
-- `force_parse (bool)` - if True parser must yield (row_number, None, []) if there is an row in parsing error instead of stopping the iteration by raising an exception
 
 #### `parser.close()`
 
@@ -683,6 +700,8 @@ from tabulator import Writer
 
 class CustomWriter(Writer):
   options = []
+  def __init__(self, **options):
+        pass
   def save(self, source, target, headers=None, encoding=None):
     # save logic
 
@@ -692,16 +711,16 @@ with Stream(source, custom_writers={'custom': CustomWriter}) as stream:
 
 There are more examples in internal `tabulator.writers` module.
 
+#### `Writer.options`
+
+List of supported custom options.
+
 #### `Writer(**options)`
 
 Create writer class instance.
 
 - `options (dict)` - writer options
 - `(Writer)` - returns `Writer` class instance
-
-#### `Writer.options`
-
-List of supported options.
 
 #### `writer.save(source, target, headers=None, encoding=None)`
 
@@ -766,14 +785,6 @@ For example this exceptions will be used if you provide not supported source for
 
 All errors related to encoding problems.
 
-#### `exceptions.OptionsError`
-
-All errors related to not supported by Loader/Parser/Writer options.
-
-#### `exceptions.ResetError`
-
-All errors caused by stream reset problems.
-
 ### CLI
 
 > It's a provisional API. If you use it as a part of other program please pin concrete `goodtables` version to your requirements file.
@@ -805,8 +816,7 @@ Options:
 
 The project follows the [Open Knowledge International coding standards](https://github.com/okfn/coding-standards).
 
-Recommended way to get started is to create and activate a project virtual environment.
-To install package and development dependencies into active environment:
+Recommended way to get started is to create and activate a project virtual environment. To install package and development dependencies into active environment:
 
 ```
 $ make install
@@ -818,9 +828,7 @@ To run tests with linting and coverage:
 $ make test
 ```
 
-For linting `pylama` configured in `pylama.ini` is used. On this stage it's already
-installed into your environment and could be used separately with more fine-grained control
-as described in documentation - https://pylama.readthedocs.io/en/latest/.
+For linting `pylama` configured in `pylama.ini` is used. On this stage it's already installed into your environment and could be used separately with more fine-grained control as described in documentation - https://pylama.readthedocs.io/en/latest/.
 
 For example to sort results by error type:
 
@@ -828,18 +836,15 @@ For example to sort results by error type:
 $ pylama --sort <path>
 ```
 
-For testing `tox` configured in `tox.ini` is used.
-It's already installed into your environment and could be used separately with more fine-grained control as described in documentation - https://testrun.org/tox/latest/.
+For testing `tox` configured in `tox.ini` is used. It's already installed into your environment and could be used separately with more fine-grained control as described in documentation - https://testrun.org/tox/latest/.
 
-For example to check subset of tests against Python 2 environment with increased verbosity.
-All positional arguments and options after `--` will be passed to `py.test`:
+For example to check subset of tests against Python 2 environment with increased verbosity. All positional arguments and options after `--` will be passed to `py.test`:
 
 ```bash
 tox -e py27 -- -v tests/<path>
 ```
 
-Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage`
-and `mock` packages. This packages are available only in tox envionments.
+Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage` and `mock` packages. This packages are available only in tox envionments.
 
 ## Changelog
 

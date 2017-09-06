@@ -17,7 +17,7 @@ class Loader(object):
 
     options = []
 
-    def __init__(self, **options):
+    def __init__(self, bytes_sample_size, **options):
         """https://github.com/frictionlessdata/tabulator-py#custom-loaders
         """
         pass

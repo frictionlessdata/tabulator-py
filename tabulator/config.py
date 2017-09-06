@@ -9,7 +9,8 @@ from __future__ import unicode_literals
 
 DEFAULT_SCHEME = 'file'
 DEFAULT_ENCODING = 'utf-8'
-BYTES_SAMPLE_SIZE = 1000
+DEFAULT_SAMPLE_SIZE = 100
+DEFAULT_BYTES_SAMPLE_SIZE = 10000
 ENCODING_CONFIDENCE = 0.5
 CSV_SAMPLE_LINES = 100
 # http://docs.sqlalchemy.org/en/latest/dialects/index.html

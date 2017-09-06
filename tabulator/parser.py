@@ -17,7 +17,7 @@ class Parser(object):
 
     options = []
 
-    def __init__(self, loader, **options):
+    def __init__(self, loader, force_parse, **options):
         """https://github.com/frictionlessdata/tabulator-py#custom-parsers
         """
         pass
@@ -30,7 +30,7 @@ class Parser(object):
         pass  # pragma: no cover
 
     @abstractmethod
-    def open(self, source, encoding=None, force_parse=False):
+    def open(self, source, encoding=None):
         """https://github.com/frictionlessdata/tabulator-py#custom-parsers
         """
         pass  # pragma: no cover

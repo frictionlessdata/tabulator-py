@@ -24,8 +24,9 @@ class Stream(object):
                  scheme=None,
                  format=None,
                  encoding=None,
-                 sample_size=100,
                  allow_html=False,
+                 sample_size=config.DEFAULT_SAMPLE_SIZE,
+                 bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE,
                  force_strings=False,
                  force_parse=False,
                  skip_rows=[],
@@ -59,8 +60,9 @@ class Stream(object):
         self.__scheme = scheme
         self.__format = format
         self.__encoding = encoding
-        self.__sample_size = sample_size
         self.__allow_html = allow_html
+        self.__sample_size = sample_size
+        self.__bytes_sample_size = bytes_sample_size
         self.__force_strings = force_strings
         self.__force_parse = force_parse
         self.__post_parse = copy(post_parse)
@@ -125,7 +127,9 @@ class Stream(object):
                     loader_class = helpers.import_attribute(loader_path)
             if loader_class is not None:
                 loader_options = helpers.extract_options(options, loader_class.options)
-                self.__loader = loader_class(**loader_options)
+                self.__loader = loader_class(
+                    bytes_sample_size=self.__bytes_sample_size,
+                    **loader_options)
 
         # Initiate parser
         parser_class = self.__custom_parsers.get(format)
@@ -135,17 +139,18 @@ class Stream(object):
                 raise exceptions.FormatError(message)
             parser_class = helpers.import_attribute(config.PARSERS[format])
         parser_options = helpers.extract_options(options, parser_class.options)
-        self.__parser = parser_class(self.__loader, **parser_options)
+        self.__parser = parser_class(self.__loader,
+                force_parse=self.__force_parse,
+                **parser_options)
 
         # Bad options
         if options:
             message = 'Not supported options "%s" for scheme "%s" and format "%s"'
             message = message % (', '.join(options), scheme, format)
-            raise exceptions.OptionsError(message)
+            raise exceptions.TabulatorException(message)
 
         # Open and setup
-        self.__parser.open(
-            self.__source, encoding=self.__encoding, force_parse=self.__force_parse)
+        self.__parser.open(self.__source, encoding=self.__encoding)
         self.__extract_sample()
         self.__extract_headers()
         if not self.__allow_html:
@@ -211,6 +216,13 @@ class Stream(object):
     def iter(self, keyed=False, extended=False):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """
+
+        # Error if closed
+        if self.closed:
+            message = 'Stream is closed. Please call "stream.open()" first.'
+            raise exceptions.TabulatorException(message)
+
+        # Iterate rows
         iterator = chain(
             self.__sample_extended_rows,
             self.__parser.extended_rows)
@@ -255,7 +267,7 @@ class Stream(object):
         if options:
             message = 'Not supported options "%s" for format "%s"'
             message = message % (', '.join(options), format)
-            raise exceptions.OptionsError(message)
+            raise exceptions.TabulatorException(message)
         writer = writer_class(**writer_options)
         writer.write(self.iter(), target, headers=self.headers, encoding=encoding)
 
@@ -281,7 +293,7 @@ class Stream(object):
             if self.__headers_row > self.__sample_size:
                 message = 'Headers row (%s) can\'t be more than sample_size (%s)'
                 message = message % (self.__headers_row, self.__sample_size)
-                raise exceptions.OptionsError(message)
+                raise exceptions.TabulatorException(message)
             for row_number, headers, row in self.__sample_extended_rows:
                 if row_number == self.__headers_row:
                     if headers is not None:

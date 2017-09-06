@@ -8,33 +8,11 @@ import os
 import json
 from mock import Mock
 import pytest
-
 from tabulator import Stream
 from tabulator.parsers.datapackage import DataPackageParser
 
 
-# Tests
-
-def test_datapackage_parser():
-
-    source = 'data/datapackage.json'
-    parser = DataPackageParser(None)
-
-    assert parser.closed is True
-    parser.open(source, None, None)
-    assert parser.closed is False
-
-    assert list(parser.extended_rows) == [
-        (1, ['id', 'name'], [1, 'english']),
-        (2, ['id', 'name'], [2, '中国人']),
-    ]
-
-    assert len(list(parser.extended_rows)) == 0
-    parser.reset()
-    assert len(list(parser.extended_rows)) == 2
-
-    parser.close()
-    assert parser.closed
+# Stream
 
 
 def test_stream_datapackage():
@@ -68,6 +46,30 @@ def test_named_resource():
         os.chdir(curdir)
 
 
+# Parser
+
+def test_datapackage_parser():
+
+    source = 'data/datapackage.json'
+    parser = DataPackageParser(None)
+
+    assert parser.closed is True
+    parser.open(source)
+    assert parser.closed is False
+
+    assert list(parser.extended_rows) == [
+        (1, ['id', 'name'], [1, 'english']),
+        (2, ['id', 'name'], [2, '中国人']),
+    ]
+
+    assert len(list(parser.extended_rows)) == 0
+    parser.reset()
+    assert len(list(parser.extended_rows)) == 2
+
+    parser.close()
+    assert parser.closed
+
+
 def test_datapackage_list():
     curdir= os.getcwd()
     try:
@@ -75,7 +77,7 @@ def test_datapackage_list():
         stream = json.load(open('datapackage.json'))
 
         parser = DataPackageParser(None)
-        parser.open(stream, None, None)
+        parser.open(stream)
 
         assert list(parser.extended_rows) == [
             (1, ['id', 'name'], [1, 'english']),
