@@ -136,7 +136,7 @@ Create stream class instance.
 - `headers (list/int)` - headers list or source row number containing headers. If number is given for plain source headers row and all rows before will be removed and for keyed source no rows will be removed. See [headers](https://github.com/frictionlessdata/tabulator-py#headers) section.
 - `scheme (str)` - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below. See [schemes](https://github.com/frictionlessdata/tabulator-py#schemes) section.
 - `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below. See [formats](https://github.com/frictionlessdata/tabulator-py#formats) section.
-- `encoding (str)` - source encoding with  `None` (detect) as default.  See [headers](https://github.com/frictionlessdata/tabulator-py#encoding) section.
+- `encoding (str)` - source encoding with  `None` (detect) as default.  See [encoding](https://github.com/frictionlessdata/tabulator-py#encoding) section.
 - `allow_html (bool)` - a flag to allow html.  See [allow html](https://github.com/frictionlessdata/tabulator-py#allow-html) section.
 - `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source. See [sample size](https://github.com/frictionlessdata/tabulator-py#sample-size) section.
 - `bytes_sample_size (int)` - sample size in bytes for operations like encoding detection. See [bytes sample size](https://github.com/frictionlessdata/tabulator-py#bytes-sample-size) section.
@@ -466,7 +466,7 @@ Data sample could be really useful if you want to implement some initial data ch
 
 ### Bytes sample size
 
-On initial reading stage `tabulator` should detect contents encoding. An argument `bytes_sample_size` allow to customize how much bytes will be read to detect encoding:
+On initial reading stage `tabulator` should detect contents encoding. The argument `bytes_sample_size` customizes how many bytes will be read to detect encoding:
 
 ```python
 source = 'data/special/latin1.csv'
