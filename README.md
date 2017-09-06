@@ -133,20 +133,20 @@ It's just a pretty basic `Stream` introduction. Please read the full documentati
 Create stream class instance.
 
 - `source (any)` - stream source in a form based on `scheme` argument
-- `headers (list/int)` - headers list or source row number containing headers. If number is given for plain source headers row and all rows before will be removed and for keyed source no rows will be removed.
-- `scheme (str)` - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below.
-- `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below.
-- `encoding (str)` - source encoding with  `None` (detect) as default.
-- `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped.
-- `allow_html (bool)` - a flag to allow html
-- `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source.
-- `bytes_sample_size (int)` - sample size in bytes for operations like encoding detection.
-- `force_strings (bool)` - if `True` all output will be converted to strings
-- `force_parse (bool)` - if `True` on row parsing error a stream will return an empty row instead of raising an exception
-- `post_parse (generator[])` - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction.
-- `custom_loaders (dict)` - loaders keyed by scheme. See a section below.
-- `custom_parsers (dict)` - custom parsers keyed by format. See a section below.
-- `custom_writers (dict)` - custom writers keyed by format. See a section below.
+- `headers (list/int)` - headers list or source row number containing headers. If number is given for plain source headers row and all rows before will be removed and for keyed source no rows will be removed. See [headers](https://github.com/frictionlessdata/tabulator-py#headers) section.
+- `scheme (str)` - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below. See [schemes](https://github.com/frictionlessdata/tabulator-py#schemes) section.
+- `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below. See [formats](https://github.com/frictionlessdata/tabulator-py#formats) section.
+- `encoding (str)` - source encoding with  `None` (detect) as default.  See [headers](https://github.com/frictionlessdata/tabulator-py#encoding) section.
+- `allow_html (bool)` - a flag to allow html.  See [allow html](https://github.com/frictionlessdata/tabulator-py#allow-html) section.
+- `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source. See [sample size](https://github.com/frictionlessdata/tabulator-py#sample-size) section.
+- `bytes_sample_size (int)` - sample size in bytes for operations like encoding detection. See [bytes sample size](https://github.com/frictionlessdata/tabulator-py#bytes-sample-size) section.
+- `force_strings (bool)` - if `True` all output will be converted to strings.  See [force strings](https://github.com/frictionlessdata/tabulator-py#force-strings) section.
+- `force_parse (bool)` - if `True` on row parsing error a stream will return an empty row instead of raising an exception. See [force parse](https://github.com/frictionlessdata/tabulator-py#force-parse) section.
+- `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped. See [skip rows](https://github.com/frictionlessdata/tabulator-py#skip-rows) section.
+- `post_parse (generator[])` - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction. See [post parse](https://github.com/frictionlessdata/tabulator-py#post-parse) section.
+- `custom_loaders (dict)` - loaders keyed by scheme. See a section below. See [custom loaders](https://github.com/frictionlessdata/tabulator-py#custom-loaders) section.
+- `custom_parsers (dict)` - custom parsers keyed by format. See a section below. See [custom parsers](https://github.com/frictionlessdata/tabulator-py#custom-parsers) section.
+- `custom_writers (dict)` - custom writers keyed by format. See a section below. See [custom writers](https://github.com/frictionlessdata/tabulator-py#custom-writers) section.
 - `<name> (<type>)` - loader/parser options. See in the scheme/format section
 - `(Stream)` - returns Stream class instance
 
@@ -188,7 +188,7 @@ Reset stream pointer to the first row.
 
 #### `stream.iter(keyed=False, extended=False)`
 
-Iter stream rows.
+Iter stream rows. See [keyed and extended rows](https://github.com/frictionlessdata/tabulator-py#https://github.com/frictionlessdata/tabulator-py#keyed-and-extended-rows) section.
 
 - `keyed (bool)` - if True yield keyed rows
 - `extended (bool)` - if True yield extended rows
@@ -196,7 +196,7 @@ Iter stream rows.
 
 #### `stream.read(keyed=False, extended=False, limit=None)`
 
-Read table rows with count limit.
+Read table rows with count limit. See [keyed and extended rows](https://github.com/frictionlessdata/tabulator-py#https://github.com/frictionlessdata/tabulator-py#keyed-and-extended-rows) section.
 
 - `keyed (bool)` - return keyed rows
 - `extended (bool)` - return extended rows
@@ -441,6 +441,16 @@ with Stream(source, encoding='latin1') as stream:
 
 By default an encoding will be detected automatically. If you experience a *UnicodeDecodeError* parsing your file, try setting this argument to 'utf-8'.
 
+### Allow html
+
+By default `Stream` will raise `exceptions.FormatError` on `stream.open()` call if html contents is detected. It's not a tabular format and for example providing link to csv file inside html (e.g. GitHub page) is a common mistake.
+
+But sometimes this default behaviour is not what is needed. For example you write custom parser which should support html contents. In this case `allow_html` option for `Stream` could be used:
+
+```python
+with Stream(sorce_with_html, allow_html=True) as stream:
+  stream.read() # no exception on open
+```
 
 ### Sample size
 
@@ -454,16 +464,19 @@ with Stream(two_rows_source, sample_size=1) as stream:
 
 Data sample could be really useful if you want to implement some initial data checks without moving stream pointer as `stream.iter/read` do. But if you don't want any interactions with an actual source before first `stream.iter/read` call just disable data smapling with `sample_size=0`.
 
-### Allow html
+### Bytes sample size
 
-By default `Stream` will raise `exceptions.FormatError` on `stream.open()` call if html contents is detected. It's not a tabular format and for example providing link to csv file inside html (e.g. GitHub page) is a common mistake.
-
-But sometimes this default behaviour is not what is needed. For example you write custom parser which should support html contents. In this case `allow_html` option for `Stream` could be used:
+On initial reading stage `tabulator` should detect contents encoding. An argument `bytes_sample_size` allow to customize how much bytes will be read to detect encoding:
 
 ```python
-with Stream(sorce_with_html, allow_html=True) as stream:
-  stream.read() # no exception on open
+source = 'data/special/latin1.csv'
+with Stream(source) as stream:
+    stream.encoding # 'iso8859-2'
+with Stream(source, sample_size=0, bytes_sample_size=10) as stream:
+    stream.encoding # 'utf-8'
 ```
+
+In this example our data file doesn't include `iso8859-2` characters in first 10 bytes. So we could see the difference in encoding detection. Note `sample_size` usage here - these two parameters are independent. Here we use `sample_size=0` to prevent rows sample creation (will fail with bad encoding).
 
 ### Force strings
 
