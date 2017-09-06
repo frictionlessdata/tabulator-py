@@ -850,6 +850,11 @@ Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage` and `m
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+### v1.5
+
+New API added:
+- Argument `bytes_sample_size` for the `Stream` constructor
+
 ### v1.4
 
 Improved behaviour:
