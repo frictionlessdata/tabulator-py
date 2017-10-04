@@ -4,7 +4,10 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import sys
+import pytest
 from tabulator import Stream
+from importlib import import_module
 from tabulator.loaders.local import LocalLoader
 
 
@@ -12,6 +15,13 @@ from tabulator.loaders.local import LocalLoader
 
 def test_stream_file():
     with Stream('data/table.csv') as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+@pytest.mark.skipif(sys.version_info < (3, 4), reason='not supported')
+def test_stream_pathlib_path():
+    pathlib = import_module('pathlib')
+    with Stream(Path('data/table.csv')) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
