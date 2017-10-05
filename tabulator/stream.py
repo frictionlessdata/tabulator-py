@@ -55,6 +55,10 @@ class Stream(object):
             else:
                 self.__skip_rows_by_comments.append(str(directive))
 
+        # Support for pathlib.Path
+        if hasattr(source, 'joinpath'):
+            source = str(source)
+
         # Set attributes
         self.__source = source
         self.__scheme = scheme

@@ -218,10 +218,11 @@ There is a list of all supported schemes.
 
 #### file
 
-The default scheme. Source should be a file in local filesystem.
+The default scheme. Source should be a file in local filesystem. You could provide a string or a `pathlib.Path` instance:
 
 ```python
 stream = Stream('data.csv')
+stream = Stream(pathlib.Path('data.csv'))
 ```
 
 #### http/https/ftp/ftps
