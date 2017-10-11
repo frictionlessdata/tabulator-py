@@ -41,8 +41,7 @@ INSTALL_REQUIRES = [
     'openpyxl>=2.4,<3.0',
 ]
 INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
-    # TODO: update after specs-v1
-    'datapackage<1.0',
+    'datapackage>=1.1.3,<2.0',
 ]
 INSTALL_FORMAT_ODS_REQUIRES = [
     'ezodf>=0.3,<2.0',

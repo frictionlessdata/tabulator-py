@@ -71,3 +71,6 @@ venv3/
 tmp
 .projectile
 .~lock*
+
+# Extra
+datapackage

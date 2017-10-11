@@ -7,7 +7,7 @@
         "fields": [
           {
             "name": "id",
-            "type": "integer"
+            "type": "number"
           },
           {
             "name": "name",

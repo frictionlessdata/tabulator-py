@@ -6,8 +6,8 @@ from __future__ import unicode_literals
 
 import os
 import json
-from mock import Mock
 import pytest
+from mock import Mock
 from tabulator import Stream
 from tabulator.parsers.datapackage import DataPackageParser
 
