@@ -851,6 +851,11 @@ Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage` and `m
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+### v1.7
+
+Improved behaviour:
+- Rebased `datapackage` format on `datapackage@1` libarry
+
 ### v1.6
 
 New API added:
