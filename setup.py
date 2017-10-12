@@ -32,7 +32,7 @@ INSTALL_REQUIRES = [
     # Format: ndjson
     'jsonlines>=1.1,<2.0',
     # Format: sql
-    'sqlalchemy>=1.1,<2.0',
+    'sqlalchemy>=0.9.6,<2.0',
     # Format: tsv
     'linear-tsv>=1.0,<2.0',
     # Format: xls
