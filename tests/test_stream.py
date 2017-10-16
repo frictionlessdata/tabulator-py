@@ -202,6 +202,26 @@ def test_stream_bytes_sample_size():
         assert stream.encoding == 'utf-8'
 
 
+# Ignore falsy headers
+
+def test_stream_ignore_falsy_headers_false():
+    source = 'text://header1,,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1) as stream:
+        assert stream.headers == ['header1', '', 'header3']
+        assert stream.read(keyed=True) == [
+            {'header1': 'value1', '': 'value2', 'header3': 'value3'},
+        ]
+
+
+def test_stream_ignore_falsy_headers_true():
+    source = 'text://header1,,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, ignore_falsy_headers=True) as stream:
+        assert stream.headers == ['header1', 'header3']
+        assert stream.read(keyed=True) == [
+            {'header1': 'value1', 'header3': 'value3'},
+        ]
+
+
 # Force strings
 
 def test_stream_force_strings():
@@ -509,7 +529,6 @@ def test_stream_read_closed():
     with pytest.raises(exceptions.TabulatorException) as excinfo:
         stream.read()
     assert 'stream.open()' in str(excinfo.value)
-
 
 
 # Issues

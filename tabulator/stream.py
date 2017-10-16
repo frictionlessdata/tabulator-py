@@ -27,6 +27,7 @@ class Stream(object):
                  allow_html=False,
                  sample_size=config.DEFAULT_SAMPLE_SIZE,
                  bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE,
+                 ignore_falsy_headers=False,
                  force_strings=False,
                  force_parse=False,
                  skip_rows=[],
@@ -67,6 +68,8 @@ class Stream(object):
         self.__allow_html = allow_html
         self.__sample_size = sample_size
         self.__bytes_sample_size = bytes_sample_size
+        self.__ignore_falsy_headers = ignore_falsy_headers
+        self.__falsy_header_indexes = []
         self.__force_strings = force_strings
         self.__force_parse = force_parse
         self.__post_parse = copy(post_parse)
@@ -305,6 +308,11 @@ class Stream(object):
                         keyed_source = True
                     else:
                         self.__headers = row
+                    if self.__ignore_falsy_headers:
+                        for index, header in list(enumerate(self.__headers)):
+                            if not header:
+                                del self.__headers[index]
+                                self.__falsy_header_indexes.append(index)
             if not keyed_source:
                 del self.__sample_extended_rows[:self.__headers_row]
 
@@ -335,6 +343,11 @@ class Stream(object):
                 match = lambda comment: row[0].startswith(comment)
                 if list(filter(match, self.__skip_rows_by_comments)):
                     continue
+                # Ignore falsy headers
+                if self.__falsy_header_indexes:
+                    for index in self.__falsy_header_indexes:
+                        if index < len(row):
+                            del row[index]
                 yield (row_number, headers, row)
 
         # Apply processors to iterator
