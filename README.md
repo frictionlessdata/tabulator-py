@@ -357,7 +357,7 @@ Operations:
 - read
 
 Options:
-- sheet - sheet number starting from 1
+- sheet - sheet number starting from 1 OR sheet name
 
 #### sql
 
