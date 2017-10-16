@@ -4,11 +4,13 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import six
 import shutil
 import openpyxl
 from itertools import chain
 from tempfile import TemporaryFile
 from ..parser import Parser
+from .. import exceptions
 from .. import helpers
 
 
@@ -27,7 +29,7 @@ class XLSXParser(Parser):
 
     def __init__(self, loader, force_parse=False, sheet=1, fill_merged_cells=False):
         self.__loader = loader
-        self.__index = sheet - 1
+        self.__sheet_pointer = sheet
         self.__fill_merged_cells = fill_merged_cells
         self.__extended_rows = None
         self.__encoding = None
@@ -40,8 +42,10 @@ class XLSXParser(Parser):
 
     def open(self, source, encoding=None):
         self.close()
-        self.__bytes = self.__loader.load(
-            source, mode='b', encoding=encoding, allow_zip=True)
+        self.__encoding = encoding
+        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding, allow_zip=True)
+
+        # Create copy for remote source
         # For remote stream we need local copy (will be deleted on close by Python)
         # https://docs.python.org/3.5/library/tempfile.html#tempfile.TemporaryFile
         if hasattr(self.__bytes, 'url'):
@@ -50,13 +54,25 @@ class XLSXParser(Parser):
             self.__bytes.close()
             self.__bytes = new_bytes
             self.__bytes.seek(0)
+
+        # Get book
         # To fill merged cells we can't use read-only because
         # `sheet.merged_cell_ranges` is not available in this mode
         self.__book = openpyxl.load_workbook(
             self.__bytes, read_only=not self.__fill_merged_cells, data_only=True)
-        self.__sheet = self.__book.worksheets[self.__index]
+
+        # Get sheet
+        try:
+            if isinstance(self.__sheet_pointer, six.string_types):
+                self.__sheet = self.__book.get_sheet_by_name(self.__sheet_pointer)
+            else:
+                self.__sheet = self.__book.worksheets[self.__sheet_pointer - 1]
+        except (KeyError, IndexError):
+            message = 'Excel document "%s" doesn\'t have a sheet "%s"'
+            raise exceptions.SourceError(message % (source, self.__sheet_pointer))
         self.__process_merged_cells()
-        self.__encoding = encoding
+
+        # Reset parser
         self.reset()
 
     def close(self):

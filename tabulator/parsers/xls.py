@@ -54,7 +54,7 @@ class XLSParser(Parser):
                 self.__sheet = self.__book.sheet_by_name(self.__sheet_pointer)
             else:
                 self.__sheet = self.__book.sheet_by_index(self.__sheet_pointer - 1)
-        except (IndexError, xlrd.XLRDError):
+        except (xlrd.XLRDError, IndexError):
             message = 'Excel document "%s" doesn\'t have a sheet "%s"'
             raise exceptions.SourceError(message % (source, self.__sheet_pointer))
 
