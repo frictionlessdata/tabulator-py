@@ -202,9 +202,9 @@ def test_stream_bytes_sample_size():
         assert stream.encoding == 'utf-8'
 
 
-# Ignore falsy headers
+# Ignore blank headers
 
-def test_stream_ignore_falsy_headers_false():
+def test_stream_ignore_blank_headers_false():
     source = 'text://header1,,header3\nvalue1,value2,value3'
     with Stream(source, format='csv', headers=1) as stream:
         assert stream.headers == ['header1', '', 'header3']
@@ -213,9 +213,9 @@ def test_stream_ignore_falsy_headers_false():
         ]
 
 
-def test_stream_ignore_falsy_headers_true():
+def test_stream_ignore_blank_headers_true():
     source = 'text://header1,,header3\nvalue1,value2,value3'
-    with Stream(source, format='csv', headers=1, ignore_falsy_headers=True) as stream:
+    with Stream(source, format='csv', headers=1, ignore_blank_headers=True) as stream:
         assert stream.headers == ['header1', 'header3']
         assert stream.read(keyed=True) == [
             {'header1': 'value1', 'header3': 'value3'},
