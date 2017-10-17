@@ -29,6 +29,28 @@ def test_stream_ods_remote():
         assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
+def test_stream_ods_sheet_by_index():
+    with Stream('data/table.ods', sheet=1) as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_ods_sheet_by_index_not_existent():
+    with pytest.raises(exceptions.SourceError) as excinfo:
+        Stream('data/table.ods', sheet=3).open()
+    assert 'sheet "3"' in str(excinfo.value)
+
+
+def test_stream_ods_sheet_by_name():
+    with Stream('data/table.ods', sheet='Лист1') as stream:
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+def test_stream_ods_sheet_by_index_not_existent():
+    with pytest.raises(exceptions.SourceError) as excinfo:
+        Stream('data/table.ods', sheet='not-existent').open()
+    assert 'sheet "not-existent"' in str(excinfo.value)
+
+
 # Parser
 
 def test_parser_ods():

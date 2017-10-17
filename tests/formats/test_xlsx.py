@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import pytest
 from mock import Mock
 from tabulator import Stream, exceptions
 from tabulator.parsers.xlsx import XLSXParser
@@ -26,10 +27,30 @@ def test_stream_xlsx_stream():
         assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
-def test_stream_xlsx_sheet():
+def test_stream_xlsx_sheet_by_index():
     source = 'data/special/sheet2.xlsx'
     with Stream(source, sheet=2) as stream:
         assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+def test_stream_xlsx_sheet_by_index_not_existent():
+    source = 'data/special/sheet2.xlsx'
+    with pytest.raises(exceptions.SourceError) as excinfo:
+        Stream(source, sheet=3).open()
+    assert 'sheet "3"' in str(excinfo.value)
+
+
+def test_stream_xlsx_sheet_by_name():
+    source = 'data/special/sheet2.xlsx'
+    with Stream(source, sheet='Sheet2') as stream:
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+def test_stream_xlsx_sheet_by_name_not_existent():
+    source = 'data/special/sheet2.xlsx'
+    with pytest.raises(exceptions.SourceError) as excinfo:
+        Stream(source, sheet='not-existent').open()
+    assert 'sheet "not-existent"' in str(excinfo.value)
 
 
 def test_stream_xlsx_merged_cells():
