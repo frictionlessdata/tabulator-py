@@ -872,6 +872,12 @@ Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage` and `m
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+### v1.8
+
+New API added:
+- Formats `XLS/XLSX/ODS` now supports a sheet name passed as a `sheet` argument
+- The `Stream` constructor now accepts an `ignore_blank_headers` option
+
 ### v1.7
 
 Improved behaviour:
