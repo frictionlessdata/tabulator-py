@@ -140,7 +140,7 @@ Create stream class instance.
 - `allow_html (bool)` - a flag to allow html.  See [allow html](https://github.com/frictionlessdata/tabulator-py#allow-html) section.
 - `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source. See [sample size](https://github.com/frictionlessdata/tabulator-py#sample-size) section.
 - `bytes_sample_size (int)` - sample size in bytes for operations like encoding detection. See [bytes sample size](https://github.com/frictionlessdata/tabulator-py#bytes-sample-size) section.
-- `ignore_false_headers (bool)` - a flag to ignore any column having a blank header. See [ignore blank headers](https://github.com/frictionlessdata/tabulator-py#ignore-blank-headers) section.
+- `ignore_blank_headers (bool)` - a flag to ignore any column having a blank header. See [ignore blank headers](https://github.com/frictionlessdata/tabulator-py#ignore-blank-headers) section.
 - `force_strings (bool)` - if `True` all output will be converted to strings.  See [force strings](https://github.com/frictionlessdata/tabulator-py#force-strings) section.
 - `force_parse (bool)` - if `True` on row parsing error a stream will return an empty row instead of raising an exception. See [force parse](https://github.com/frictionlessdata/tabulator-py#force-parse) section.
 - `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped. See [skip rows](https://github.com/frictionlessdata/tabulator-py#skip-rows) section.
