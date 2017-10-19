@@ -52,7 +52,6 @@ def test_stream_inline_keyed():
         assert stream.read() == [['1', 'english'], ['2', '中国人']]
 
 
-@pytest.mark.only
 def test_stream_inline_keyed_with_headers_argument():
     source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
     with Stream(source, format='inline', headers=['name', 'id']) as stream:

@@ -513,8 +513,7 @@ def test_stream_save_csv(tmpdir):
             (3, ['id', 'name'], ['2', '中国人'])]
 
 
-@pytest.mark.only
-def test_stream_save_inline_keyed_order(tmpdir):
+def test_stream_save_inline_keyed_with_headers_argument(tmpdir):
     source = [{'key1': 'value1', 'key2': 'value2'}]
     target = str(tmpdir.join('table.csv'))
     with Stream(source, headers=['key2', 'key1']) as stream:

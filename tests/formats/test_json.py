@@ -32,6 +32,13 @@ def test_stream_text_json_dicts():
         assert stream.read() == [[1, 'english'], [2, '中国人']]
 
 
+def test_stream_text_json_dicts_with_headers_argument():
+    source = '[{"id": 1, "name": "english" }, {"id": 2, "name": "中国人" }]'
+    with Stream(source, scheme='text', format='json', headers=['name', 'id']) as stream:
+        assert stream.headers == ['name', 'id']
+        assert stream.read() == [['english', 1], ['中国人', 2]]
+
+
 def test_stream_text_json_lists():
     source = '[["id", "name"], [1, "english"], [2, "中国人"]]'
     with Stream(source, scheme='text', format='json') as stream:
