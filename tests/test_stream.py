@@ -513,7 +513,7 @@ def test_stream_save_csv(tmpdir):
             (3, ['id', 'name'], ['2', '中国人'])]
 
 
-def test_stream_save_xls(tmpdir):
+def test_stream_save_xls_not_supported(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.xls'))
     with Stream(source, headers=1) as stream:
