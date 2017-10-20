@@ -23,7 +23,7 @@ class Loader(object):
         pass
 
     @abstractmethod
-    def load(self, source, mode='t', encoding=None, allow_zip=False):
+    def load(self, source, mode='t', encoding=None):
         """https://github.com/frictionlessdata/tabulator-py#custom-loaders
         """
         pass

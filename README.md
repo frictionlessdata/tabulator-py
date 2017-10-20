@@ -17,6 +17,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
 - processes data via simple user processors
 - saves data using the same interface
 - custom loaders, parsers and writers
+- support for compressed files
 
 ## Getting started
 
@@ -137,6 +138,7 @@ Create stream class instance.
 - `scheme (str)` - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below. See [schemes](https://github.com/frictionlessdata/tabulator-py#schemes) section.
 - `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below. See [formats](https://github.com/frictionlessdata/tabulator-py#formats) section.
 - `encoding (str)` - source encoding with  `None` (detect) as default.  See [encoding](https://github.com/frictionlessdata/tabulator-py#encoding) section.
+- `compression (str)` - source compression like `zip` with  `None` (detect) as default. See [compression](https://github.com/frictionlessdata/tabulator-py#compression) section.
 - `allow_html (bool)` - a flag to allow html.  See [allow html](https://github.com/frictionlessdata/tabulator-py#allow-html) section.
 - `sample_size (int)` - rows count for table.sample. Set to "0" to prevent any parsing activities before actual table.iter call. In this case headers will not be extracted from the source. See [sample size](https://github.com/frictionlessdata/tabulator-py#sample-size) section.
 - `bytes_sample_size (int)` - sample size in bytes for operations like encoding detection. See [bytes sample size](https://github.com/frictionlessdata/tabulator-py#bytes-sample-size) section.
@@ -232,10 +234,12 @@ stream = Stream(pathlib.Path('data.csv'))
 
 Source should be a file available via one of this protocols in the web.
 
-
 ```python
 stream = Stream('http://example.com/data.csv')
 ```
+
+Options:
+- http_stream - use HTTP streaming when possible. Enabled by default.
 
 #### stream
 
@@ -443,6 +447,26 @@ with Stream(source, encoding='latin1') as stream:
 
 By default an encoding will be detected automatically. If you experience a *UnicodeDecodeError* parsing your file, try setting this argument to 'utf-8'.
 
+### Compression
+
+`Stream` constructor accepts `compression` argument to ensure that needed compression will be used. By default compression will be inferred from file name:
+
+```python
+with Stream('http://example.com/data.csv.zip') as stream:
+  stream.read()
+```
+
+Provide user defined compression e.g. `gz`:
+
+```python
+with Stream('data.csv.ext', compression='zip') as stream:
+  stream.read()
+```
+
+At the moment `tabulator` supports:
+- `zip` compression (Python3)
+- `gz` compression (Python3)
+
 ### Allow html
 
 By default `Stream` will raise `exceptions.FormatError` on `stream.open()` call if html contents is detected. It's not a tabular format and for example providing link to csv file inside html (e.g. GitHub page) is a common mistake.
@@ -611,7 +635,7 @@ class CustomLoader(Loader):
   options = []
   def __init__(self, bytes_sample_size, **options):
         pass
-  def load(self, source, mode='t', encoding=None, allow_zip=False):
+  def load(self, source, mode='t', encoding=None):
     # load logic
 
 with Stream(source, custom_loaders={'custom': CustomLoader}) as stream:
@@ -630,12 +654,11 @@ List of supported custom options.
 - `options (dict)` - loader options
 - `(Loader)` - returns `Loader` class instance
 
-#### `loader.load(source, mode='t', encoding=None, allow_zip=False)`
+#### `loader.load(source, mode='t', encoding=None)`
 
 - `source (str)` - table source
 - `mode (str)` - text stream mode: 't' or 'b'
 - `encoding (str)` - encoding of source
-- `allow_zip (bool)` - if false will raise on zip format
 - `(file-like)` - returns file-like object of bytes or chars based on mode argument
 
 ### Custom parsers

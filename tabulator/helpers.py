@@ -96,13 +96,6 @@ def normalize_encoding(sample, encoding):
     return encoding
 
 
-def detect_zip(sample):
-    """Detect if byte string sample is ZIP.
-    """
-    SIGNATURE = b'\x50\x4b\x03\x04'
-    return sample.startswith(SIGNATURE)
-
-
 def detect_html(text):
     """Detect if text is HTML.
     """

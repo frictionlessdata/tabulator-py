@@ -22,42 +22,53 @@ class RemoteLoader(Loader):
 
     # Public
 
-    options = []
+    options = [
+        'http_stream',
+    ]
 
-    def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE):
+    def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE,
+                 http_stream=True):
+
+        # No stream support
+        if six.PY2:
+            http_stream = False
+
+        # Set attributes
         self.__bytes_sample_size = bytes_sample_size
+        self.__http_stream = http_stream
 
-    def load(self, source, mode='t', encoding=None, allow_zip=False):
+    def load(self, source, mode='t', encoding=None):
 
-        # Requote uri
+        # Prepare source
         source = helpers.requote_uri(source)
 
         # Prepare bytes
         try:
-            if six.PY2:
+            if self.__http_stream:
+                bytes = _WebStream(source)
+                response = bytes.response
+            else:
                 response = urlopen(source)
                 bytes = io.BufferedRandom(io.BytesIO())
                 bytes.write(response.read())
                 bytes.seek(0)
-            else:
-                bytes = _WebStream(source)
-                response = bytes.response
-            sample = bytes.read(self.__bytes_sample_size)
-            bytes.seek(0)
         except URLError as exception:
             raise exceptions.HTTPError(str(exception))
-        if not allow_zip:
-            if helpers.detect_zip(sample):
-                message = 'Format has been detected as ZIP (not supported)'
-                raise exceptions.FormatError(message)
 
-        # Return or raise
+        # Return bytes
         if mode == 'b':
             return bytes
-        else:
+
+        # Detect encoding
+        if self.__bytes_sample_size:
+            sample = bytes.read(self.__bytes_sample_size)
+            bytes.seek(0)
             encoding = helpers.detect_encoding(sample, encoding)
-            chars = io.TextIOWrapper(bytes, encoding)
-            return chars
+
+        # Prepare chars
+        chars = io.TextIOWrapper(bytes, encoding)
+
+        return chars
 
 
 # Internal
@@ -66,15 +77,9 @@ class _WebStream(object):
 
     # Public
 
-    HEADERS = {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) ' +
-                    'AppleWebKit/537.36 (KHTML, like Gecko) ' +
-                    'Chrome/54.0.2840.87 Safari/537.36'
-    }
-
     def __init__(self, source):
         self.__source = source
-        self.__request = Request(self.__source, headers=self.HEADERS)
+        self.__request = Request(self.__source, headers=config.HTTP_HEADERS)
         self.__response = urlopen(self.__request)
 
     def __getattr__(self, name):
@@ -87,6 +92,7 @@ class _WebStream(object):
     def seekable(self):
         return True
 
-    def seek(self, offset):
+    def seek(self, offset, whence=0):
         assert offset == 0
+        assert whence == 0
         self.__response = urlopen(self.__request)

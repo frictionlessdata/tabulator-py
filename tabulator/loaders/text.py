@@ -22,10 +22,7 @@ class TextLoader(Loader):
     def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE):
         self.__bytes_sample_size = bytes_sample_size
 
-    def load(self, source, mode='t', encoding=None, allow_zip=False):
-
-        # Default encoding fallback
-        encoding = encoding or config.DEFAULT_ENCODING
+    def load(self, source, mode='t', encoding=None):
 
         # Prepare source
         scheme = 'text://'
@@ -34,12 +31,14 @@ class TextLoader(Loader):
 
         # Prepare bytes
         bytes = io.BufferedRandom(io.BytesIO())
-        bytes.write(source.encode(encoding))
+        bytes.write(source.encode(encoding or config.DEFAULT_ENCODING))
         bytes.seek(0)
 
-        # Return or raise
+        # Return bytes
         if mode == 'b':
             return bytes
-        else:
-            chars = io.TextIOWrapper(bytes, encoding)
-            return chars
+
+        # Prepare chars
+        chars = io.TextIOWrapper(bytes, encoding)
+
+        return chars

@@ -11,7 +11,13 @@ DEFAULT_SCHEME = 'file'
 DEFAULT_ENCODING = 'utf-8'
 DEFAULT_SAMPLE_SIZE = 100
 DEFAULT_BYTES_SAMPLE_SIZE = 10000
+SUPPORTED_COMPRESSION = ['zip', 'gz']
 ENCODING_CONFIDENCE = 0.5
+HTTP_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) ' +
+                'AppleWebKit/537.36 (KHTML, like Gecko) ' +
+                'Chrome/54.0.2840.87 Safari/537.36'
+}
 CSV_SAMPLE_LINES = 100
 # http://docs.sqlalchemy.org/en/latest/dialects/index.html
 SQL_SCHEMES = ['firebird', 'mssql', 'mysql', 'oracle', 'postgresql', 'sqlite', 'sybase']

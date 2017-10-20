@@ -400,12 +400,6 @@ def test_stream_source_error_data():
         stream.read()
 
 
-def test_stream_format_error_zip():
-    stream = Stream('data/special/table.csv.zip', format='csv')
-    with pytest.raises(exceptions.FormatError) as excinfo:
-        stream.open()
-
-
 def test_stream_format_error_html():
     stream = Stream('data/special/table.csv.html', format='csv')
     with pytest.raises(exceptions.FormatError) as excinfo:
@@ -532,13 +526,29 @@ def test_stream_save_xls_not_supported(tmpdir):
         assert 'xls' in str(excinfo.value)
 
 
-# Reading close
+# Reading closed
 
 def test_stream_read_closed():
     stream = Stream('data/table.csv')
     with pytest.raises(exceptions.TabulatorException) as excinfo:
         stream.read()
     assert 'stream.open()' in str(excinfo.value)
+
+
+# Support for compressed files
+
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_local_csv_zip():
+    with Stream('data/table.csv.zip') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_local_csv_gz():
+    with Stream('data/table.csv.gz') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 # Issues
