@@ -26,8 +26,8 @@ class StreamLoader(Loader):
 
     def load(self, source, mode='t', encoding=None):
 
-        # Raise if in text mode
-        if hasattr(source, 'encoding'):
+        # Support only bytes
+        if 'b' not in getattr(source, 'mode', 'b'):
             message = 'Only byte streams are supported.'
             raise exceptions.SourceError(message)
 

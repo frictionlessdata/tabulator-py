@@ -5,8 +5,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+import zipfile
+import tempfile
 from copy import copy
 from itertools import chain
+from .loaders.stream import StreamLoader
 from . import exceptions
 from . import helpers
 from . import config
@@ -24,6 +27,7 @@ class Stream(object):
                  scheme=None,
                  format=None,
                  encoding=None,
+                 compression=None,
                  allow_html=False,
                  sample_size=config.DEFAULT_SAMPLE_SIZE,
                  bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE,
@@ -65,6 +69,7 @@ class Stream(object):
         self.__scheme = scheme
         self.__format = format
         self.__encoding = encoding
+        self.__compression = compression
         self.__allow_html = allow_html
         self.__sample_size = sample_size
         self.__bytes_sample_size = bytes_sample_size
@@ -112,14 +117,18 @@ class Stream(object):
     def open(self):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """
+        options = copy(self.__options)
 
         # Get scheme and format
         detected_scheme, detected_format = helpers.detect_scheme_and_format(self.__source)
         scheme = self.__scheme or detected_scheme
         format = self.__format or detected_format
 
-        # Get options
-        options = copy(self.__options)
+        # Get compression
+        compression = None
+        for type in config.SUPPORTED_COMPRESSION:
+            if self.__compression == type or detected_format == type:
+                compression = type
 
         # Initiate loader
         self.__loader = None
@@ -134,9 +143,30 @@ class Stream(object):
                     loader_class = helpers.import_attribute(loader_path)
             if loader_class is not None:
                 loader_options = helpers.extract_options(options, loader_class.options)
+                if compression and 'http_stream' in loader_class.options:
+                    loader_options['http_stream'] = False
                 self.__loader = loader_class(
                     bytes_sample_size=self.__bytes_sample_size,
                     **loader_options)
+
+        # Zip compression
+        if compression == 'zip' and six.PY3:
+            source = self.__loader.load(self.__source, mode='b')
+            with zipfile.ZipFile(source) as archive:
+                name = archive.namelist()[0]
+                with archive.open(name) as file:
+                    source = tempfile.NamedTemporaryFile(suffix='.' + name)
+                    source.write(file.read())
+                    source.seek(0)
+            self.__source = source
+            self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
+            format = self.__format or helpers.detect_scheme_and_format(source.name)[1]
+            scheme = 'stream'
+
+        # Not supported compression
+        elif compression:
+            message = 'Compression "%s" is not supported for your Python version'
+            raise exceptions.TabulatorException(message % compression)
 
         # Initiate parser
         parser_class = self.__custom_parsers.get(format)
