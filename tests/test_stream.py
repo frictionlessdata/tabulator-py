@@ -535,11 +535,18 @@ def test_stream_read_closed():
     assert 'stream.open()' in str(excinfo.value)
 
 
-# Support for zipped files
+# Support for compressed files
 
 @pytest.mark.skipif(six.PY2, reason='Support only for Python3')
 def test_stream_local_csv_zip():
     with Stream('data/table.csv.zip') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_local_csv_gz():
+    with Stream('data/table.csv.gz') as stream:
         assert stream.headers is None
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 

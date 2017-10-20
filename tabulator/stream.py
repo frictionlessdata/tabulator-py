@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+import gzip
 import zipfile
 import tempfile
 from copy import copy
@@ -161,6 +162,14 @@ class Stream(object):
             self.__source = source
             self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
             format = self.__format or helpers.detect_scheme_and_format(source.name)[1]
+            scheme = 'stream'
+
+        # Gzip compression
+        elif compression == 'gz' and six.PY3:
+            name = self.__source.replace('.gz', '')
+            self.__source = gzip.open(self.__loader.load(self.__source, mode='b'))
+            self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
+            format = self.__format or helpers.detect_scheme_and_format(name)[1]
             scheme = 'stream'
 
         # Not supported compression
