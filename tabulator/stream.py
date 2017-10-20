@@ -157,7 +157,8 @@ class Stream(object):
                 name = archive.namelist()[0]
                 with archive.open(name) as file:
                     source = tempfile.NamedTemporaryFile(suffix='.' + name)
-                    source.write(file.read())
+                    for line in file:
+                        source.write(line)
                     source.seek(0)
             self.__source = source
             self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
