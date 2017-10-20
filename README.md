@@ -872,6 +872,11 @@ Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage` and `m
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+### v1.9
+
+Improved behaviour:
+- Now the `headers` argument allows to set order for keyed sources and cherry-pick values
+
 ### v1.8
 
 New API added:
