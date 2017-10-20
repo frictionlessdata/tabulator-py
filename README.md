@@ -895,6 +895,13 @@ Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage` and `m
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+### v1.10
+
+New API added:
+- Added support for compressed files i.e. `zip` and `gz` for Python3
+- The `Stream` constructor now accepts a `compression` argument
+- The `http/https` scheme now accepts a `http_stream` flag
+
 ### v1.9
 
 Improved behaviour:
