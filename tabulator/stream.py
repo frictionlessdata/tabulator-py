@@ -334,24 +334,34 @@ class Stream(object):
         # Builtin processor
         def builtin_processor(extended_rows):
             for row_number, headers, row in extended_rows:
-                # Set headers
-                headers = self.__headers
+
+                # Sync headers/row
+                if headers != self.__headers:
+                    if headers and self.__headers:
+                        keyed_row = dict(zip(headers, row))
+                        row = [keyed_row.get(header) for header in self.__headers]
+                    headers = self.__headers
+
                 # Skip row by numbers
                 if row_number in self.__skip_rows_by_numbers:
                     continue
+
                 # Skip row by comments
                 match = lambda comment: row[0].startswith(comment)
                 if list(filter(match, self.__skip_rows_by_comments)):
                     continue
+
                 # Ignore blank headers
                 if self.__blank_header_indexes:
                     for index in self.__blank_header_indexes:
                         if index < len(row):
                             del row[index]
+
                 yield (row_number, headers, row)
 
         # Apply processors to iterator
         processors = [builtin_processor] + self.__post_parse
         for processor in processors:
             iterator = processor(iterator)
+
         return iterator

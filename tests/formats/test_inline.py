@@ -50,3 +50,10 @@ def test_stream_inline_keyed():
     with Stream(source, format='inline') as stream:
         assert stream.headers is None
         assert stream.read() == [['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_inline_keyed_with_headers_argument():
+    source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
+    with Stream(source, format='inline', headers=['name', 'id']) as stream:
+        assert stream.headers == ['name', 'id']
+        assert stream.read() == [['english', '1'], ['中国人', '2']]
