@@ -24,7 +24,7 @@ class StreamLoader(Loader):
     def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE):
         self.__bytes_sample_size = bytes_sample_size
 
-    def load(self, source, mode='t', encoding=None, allow_zip=False):
+    def load(self, source, mode='t', encoding=None):
 
         # Raise if in text mode
         if hasattr(source, 'encoding'):
@@ -35,10 +35,6 @@ class StreamLoader(Loader):
         bytes = source
         sample = bytes.read(self.__bytes_sample_size)
         bytes.seek(0)
-        if not allow_zip:
-            if helpers.detect_zip(sample):
-                message = 'Format has been detected as ZIP (not supported)'
-                raise exceptions.FormatError(message)
 
         # Return or raise
         if mode == 'b':

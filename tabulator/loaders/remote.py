@@ -27,7 +27,7 @@ class RemoteLoader(Loader):
     def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE):
         self.__bytes_sample_size = bytes_sample_size
 
-    def load(self, source, mode='t', encoding=None, allow_zip=False):
+    def load(self, source, mode='t', encoding=None):
 
         # Requote uri
         source = helpers.requote_uri(source)
@@ -46,10 +46,6 @@ class RemoteLoader(Loader):
             bytes.seek(0)
         except URLError as exception:
             raise exceptions.HTTPError(str(exception))
-        if not allow_zip:
-            if helpers.detect_zip(sample):
-                message = 'Format has been detected as ZIP (not supported)'
-                raise exceptions.FormatError(message)
 
         # Return or raise
         if mode == 'b':

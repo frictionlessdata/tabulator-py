@@ -22,7 +22,7 @@ class TextLoader(Loader):
     def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE):
         self.__bytes_sample_size = bytes_sample_size
 
-    def load(self, source, mode='t', encoding=None, allow_zip=False):
+    def load(self, source, mode='t', encoding=None):
 
         # Default encoding fallback
         encoding = encoding or config.DEFAULT_ENCODING

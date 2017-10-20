@@ -400,12 +400,6 @@ def test_stream_source_error_data():
         stream.read()
 
 
-def test_stream_format_error_zip():
-    stream = Stream('data/special/table.csv.zip', format='csv')
-    with pytest.raises(exceptions.FormatError) as excinfo:
-        stream.open()
-
-
 def test_stream_format_error_html():
     stream = Stream('data/special/table.csv.html', format='csv')
     with pytest.raises(exceptions.FormatError) as excinfo:

@@ -41,8 +41,7 @@ class ODSParser(Parser):
     def open(self, source, encoding=None):
         self.close()
         self.__encoding = encoding
-        self.__bytes = self.__loader.load(
-            source, mode='b', encoding=encoding, allow_zip=True)
+        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
 
         # Get book
         self.__book = ezodf.opendoc(BytesIO(self.__bytes.read()))

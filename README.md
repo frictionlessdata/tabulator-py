@@ -611,7 +611,7 @@ class CustomLoader(Loader):
   options = []
   def __init__(self, bytes_sample_size, **options):
         pass
-  def load(self, source, mode='t', encoding=None, allow_zip=False):
+  def load(self, source, mode='t', encoding=None):
     # load logic
 
 with Stream(source, custom_loaders={'custom': CustomLoader}) as stream:
@@ -630,12 +630,11 @@ List of supported custom options.
 - `options (dict)` - loader options
 - `(Loader)` - returns `Loader` class instance
 
-#### `loader.load(source, mode='t', encoding=None, allow_zip=False)`
+#### `loader.load(source, mode='t', encoding=None)`
 
 - `source (str)` - table source
 - `mode (str)` - text stream mode: 't' or 'b'
 - `encoding (str)` - encoding of source
-- `allow_zip (bool)` - if false will raise on zip format
 - `(file-like)` - returns file-like object of bytes or chars based on mode argument
 
 ### Custom parsers

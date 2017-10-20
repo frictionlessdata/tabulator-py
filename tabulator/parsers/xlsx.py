@@ -43,7 +43,7 @@ class XLSXParser(Parser):
     def open(self, source, encoding=None):
         self.close()
         self.__encoding = encoding
-        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding, allow_zip=True)
+        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
 
         # Create copy for remote source
         # For remote stream we need local copy (will be deleted on close by Python)
