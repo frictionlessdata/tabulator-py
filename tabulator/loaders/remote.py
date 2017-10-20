@@ -46,7 +46,6 @@ class RemoteLoader(Loader):
         try:
             if self.__http_stream:
                 bytes = _WebStream(source)
-                response = bytes.response
             else:
                 response = urlopen(source)
                 bytes = io.BufferedRandom(io.BytesIO())
@@ -84,10 +83,6 @@ class _WebStream(object):
 
     def __getattr__(self, name):
         return getattr(self.__response, name)
-
-    @property
-    def response(self):
-        return self.__response
 
     def seekable(self):
         return True
