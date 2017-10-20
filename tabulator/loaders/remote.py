@@ -29,7 +29,7 @@ class RemoteLoader(Loader):
 
     def load(self, source, mode='t', encoding=None):
 
-        # Requote uri
+        # Prepare source
         source = helpers.requote_uri(source)
 
         # Prepare bytes
@@ -42,18 +42,23 @@ class RemoteLoader(Loader):
             else:
                 bytes = _WebStream(source)
                 response = bytes.response
-            sample = bytes.read(self.__bytes_sample_size)
-            bytes.seek(0)
         except URLError as exception:
             raise exceptions.HTTPError(str(exception))
 
-        # Return or raise
+        # Return bytes
         if mode == 'b':
             return bytes
-        else:
+
+        # Detect encoding
+        if self.__bytes_sample_size:
+            sample = bytes.read(self.__bytes_sample_size)
+            bytes.seek(0)
             encoding = helpers.detect_encoding(sample, encoding)
-            chars = io.TextIOWrapper(bytes, encoding)
-            return chars
+
+        # Prepare chars
+        chars = io.TextIOWrapper(bytes, encoding)
+
+        return chars
 
 
 # Internal

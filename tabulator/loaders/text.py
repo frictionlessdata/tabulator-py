@@ -24,9 +24,6 @@ class TextLoader(Loader):
 
     def load(self, source, mode='t', encoding=None):
 
-        # Default encoding fallback
-        encoding = encoding or config.DEFAULT_ENCODING
-
         # Prepare source
         scheme = 'text://'
         if source.startswith(scheme):
@@ -34,12 +31,14 @@ class TextLoader(Loader):
 
         # Prepare bytes
         bytes = io.BufferedRandom(io.BytesIO())
-        bytes.write(source.encode(encoding))
+        bytes.write(source.encode(encoding or config.DEFAULT_ENCODING))
         bytes.seek(0)
 
-        # Return or raise
+        # Return bytes
         if mode == 'b':
             return bytes
-        else:
-            chars = io.TextIOWrapper(bytes, encoding)
-            return chars
+
+        # Prepare chars
+        chars = io.TextIOWrapper(bytes, encoding)
+
+        return chars

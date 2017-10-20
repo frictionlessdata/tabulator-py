@@ -34,15 +34,20 @@ class LocalLoader(Loader):
         # Prepare bytes
         try:
             bytes = io.open(source, 'rb')
-            sample = bytes.read(self.__bytes_sample_size)
-            bytes.seek(0)
         except IOError as exception:
             raise exceptions.IOError(str(exception))
 
-        # Return or raise
+        # Return bytes
         if mode == 'b':
             return bytes
-        else:
+
+        # Detect encoding
+        if self.__bytes_sample_size:
+            sample = bytes.read(self.__bytes_sample_size)
+            bytes.seek(0)
             encoding = helpers.detect_encoding(sample, encoding)
-            chars = io.TextIOWrapper(bytes, encoding)
-            return chars
+
+        # Prepare chars
+        chars = io.TextIOWrapper(bytes, encoding)
+
+        return chars
