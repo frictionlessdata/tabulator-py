@@ -44,13 +44,12 @@ class RemoteLoader(Loader):
 
         # Prepare bytes
         try:
-            if self.__http_stream:
-                bytes = _WebStream(source)
-            else:
-                response = urlopen(source)
-                bytes = io.BufferedRandom(io.BytesIO())
-                bytes.write(response.read())
-                bytes.seek(0)
+            bytes = _WebStream(source)
+            if not self.__http_stream:
+                buffer = io.BufferedRandom(io.BytesIO())
+                buffer.write(bytes.read())
+                buffer.seek(0)
+                bytes = buffer
         except URLError as exception:
             raise exceptions.HTTPError(str(exception))
 
@@ -83,6 +82,9 @@ class _WebStream(object):
 
     def __getattr__(self, name):
         return getattr(self.__response, name)
+
+    def __iter__(self):
+        return self.__response
 
     def seekable(self):
         return True
