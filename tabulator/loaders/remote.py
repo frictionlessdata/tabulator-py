@@ -34,6 +34,7 @@ class RemoteLoader(Loader):
         # Create default session
         if not http_session:
             http_session = requests.Session()
+            http_session.headers.update(config.HTTP_HEADERS)
 
         # No stream support
         if six.PY2:
@@ -124,7 +125,6 @@ class _RemoteStream(object):
     def seek(self, offset, whence=0):
         assert offset == 0
         assert whence == 0
-        self.__response = self.__session.get(
-            self.__source, stream=True, headers=config.HTTP_HEADERS)
+        self.__response = self.__session.get(self.__source, stream=True)
         self.__response.raise_for_status()
         self.__response.raw.decode_content = True
