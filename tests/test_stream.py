@@ -84,6 +84,20 @@ def test_stream_headers_inline_keyed_headers_is_none():
             (2, None, ['2', '中国人'])]
 
 
+def test_stream_headers_xls_multiline():
+    source = 'data/special/multiline-headers.xlsx'
+    with Stream(source, headers=[1, 5], fill_merged_cells=True) as stream:
+        assert stream.headers == [
+            'Region',
+            'Caloric contribution (%)',
+            'Cumulative impact of changes on cost of food basket from previous quarter',
+            'Cumulative impact of changes on cost of food basket from baseline (%)',
+        ]
+        assert stream.read() == [
+            ['A', 'B', 'C', 'D']
+        ]
+
+
 # Scheme
 
 def test_stream_scheme_file():

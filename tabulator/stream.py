@@ -46,11 +46,19 @@ class Stream(object):
 
         # Set headers
         self.__headers = None
-        self.__headers_row = 0
-        if isinstance(headers, (tuple, list)):
-            self.__headers = list(headers)
-        elif isinstance(headers, int):
+        self.__headers_row = None
+        self.__headers_row_last = None
+        if isinstance(headers, int):
             self.__headers_row = headers
+            self.__headers_row_last = headers
+        elif isinstance(headers, (tuple, list)):
+            if (len(headers) == 2 and
+                    isinstance(headers[0], int) and
+                    isinstance(headers[1], int)):
+                self.__headers_row = headers[0]
+                self.__headers_row_last = headers[1]
+            else:
+                self.__headers = list(headers)
 
         # Set skip rows
         self.__skip_rows_by_numbers = []
@@ -269,11 +277,13 @@ class Stream(object):
             message = 'Stream is closed. Please call "stream.open()" first.'
             raise exceptions.TabulatorException(message)
 
-        # Iterate rows
+        # Create iterator
         iterator = chain(
             self.__sample_extended_rows,
             self.__parser.extended_rows)
         iterator = self.__apply_processors(iterator)
+
+        # Yield rows from iterator
         for row_number, headers, row in iterator:
             if self.__force_strings:
                 row = list(map(helpers.stringify_value, row))
@@ -300,21 +310,29 @@ class Stream(object):
     def save(self, target, format=None,  encoding=None, **options):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """
+
+        # Get encoding/format
         if encoding is None:
             encoding = config.DEFAULT_ENCODING
         if format is None:
             _, format = helpers.detect_scheme_and_format(target)
+
+        # Prepare writer class
         writer_class = self.__custom_writers.get(format)
         if writer_class is None:
             if format not in config.WRITERS:
                 message = 'Format "%s" is not supported' % format
                 raise exceptions.FormatError(message)
             writer_class = helpers.import_attribute(config.WRITERS[format])
+
+        # Prepare writer options
         writer_options = helpers.extract_options(options, writer_class.options)
         if options:
             message = 'Not supported options "%s" for format "%s"'
             message = message % (', '.join(options), format)
             raise exceptions.TabulatorException(message)
+
+        # Write data to target
         writer = writer_class(**writer_options)
         writer.write(self.iter(), target, headers=self.headers, encoding=encoding)
 
@@ -322,48 +340,69 @@ class Stream(object):
 
     def __extract_sample(self):
 
-        # Extract sample
+        # Sample is not requested
+        if not self.__sample_size:
+            return
+
+        # Extract sample rows
         self.__sample_extended_rows = []
-        if self.__sample_size:
-            for _ in range(self.__sample_size):
-                try:
-                    row_number, headers, row = next(self.__parser.extended_rows)
-                    self.__sample_extended_rows.append((row_number, headers, row))
-                except StopIteration:
-                    break
+        for _ in range(self.__sample_size):
+            try:
+                row_number, headers, row = next(self.__parser.extended_rows)
+                self.__sample_extended_rows.append((row_number, headers, row))
+            except StopIteration:
+                break
 
     def __extract_headers(self):
 
-        # Extract headers
+        # Heders row is not set
+        if not self.__headers_row:
+            return
+
+        # Sample is too short
+        if self.__headers_row > self.__sample_size:
+            message = 'Headers row (%s) can\'t be more than sample_size (%s)'
+            message = message % (self.__headers_row, self.__sample_size)
+            raise exceptions.TabulatorException(message)
+
+        # Get headers from data
         keyed_source = False
-        if self.__headers_row:
-            if self.__headers_row > self.__sample_size:
-                message = 'Headers row (%s) can\'t be more than sample_size (%s)'
-                message = message % (self.__headers_row, self.__sample_size)
-                raise exceptions.TabulatorException(message)
-            for row_number, headers, row in self.__sample_extended_rows:
-                if row_number == self.__headers_row:
-                    if headers is not None:
-                        self.__headers = headers
-                        keyed_source = True
-                    else:
-                        self.__headers = row
-                    if self.__ignore_blank_headers:
-                        for index, header in list(enumerate(self.__headers)):
-                            if header in ['', None]:
-                                del self.__headers[index]
-                                self.__blank_header_indexes.append(index)
-            if not keyed_source:
-                del self.__sample_extended_rows[:self.__headers_row]
+        for row_number, headers, row in self.__sample_extended_rows:
+            if row_number == self.__headers_row:
+                keyed_source = headers is not None
+                self.__headers = headers if keyed_source else row
+            if row_number > self.__headers_row:
+                headers = headers if keyed_source else row
+                for index in range(0, len(self.__headers)):
+                    if len(headers) > index and headers[index]:
+                        if not self.__headers[index]:
+                            self.__headers[index] = headers[index]
+                        elif not self.__headers[index].endswith(headers[index]):
+                            self.__headers[index] += ' ' + headers[index]
+            if row_number == self.__headers_row_last:
+                break
+
+        # Handle blank headers
+        if self.__ignore_blank_headers:
+            for index, header in list(enumerate(self.__headers)):
+                if header in ['', None]:
+                    del self.__headers[index]
+                    self.__blank_header_indexes.append(index)
+
+        # Remove headers from data
+        if not keyed_source:
+            del self.__sample_extended_rows[:self.__headers_row_last]
 
     def __detect_html(self):
 
-        # Detect html content
+        # Prepare text
         text = ''
         for row_number, headers, row in self.__sample_extended_rows:
             for value in row:
                 if isinstance(value, six.string_types):
                     text += value
+
+        # Detect html content
         html_source = helpers.detect_html(text)
         if html_source:
             message = 'Format has been detected as HTML (not supported)'
