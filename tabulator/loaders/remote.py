@@ -6,8 +6,7 @@ from __future__ import unicode_literals
 
 import io
 import six
-from six.moves.urllib.error import URLError
-from six.moves.urllib.request import Request, urlopen
+import requests
 from ..loader import Loader
 from .. import exceptions
 from .. import helpers
@@ -23,11 +22,19 @@ class RemoteLoader(Loader):
     # Public
 
     options = [
+        'http_session',
         'http_stream',
     ]
 
-    def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE,
+    def __init__(self,
+                 bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE,
+                 http_session=None,
                  http_stream=True):
+
+        # Create default session
+        if not http_session:
+            http_session = requests.Session()
+            http_session.headers.update(config.HTTP_HEADERS)
 
         # No stream support
         if six.PY2:
@@ -35,6 +42,7 @@ class RemoteLoader(Loader):
 
         # Set attributes
         self.__bytes_sample_size = bytes_sample_size
+        self.__http_session = http_session
         self.__http_stream = http_stream
 
     def load(self, source, mode='t', encoding=None):
@@ -44,15 +52,13 @@ class RemoteLoader(Loader):
 
         # Prepare bytes
         try:
-            if self.__http_stream:
-                bytes = _WebStream(source)
-                response = bytes.response
-            else:
-                response = urlopen(source)
-                bytes = io.BufferedRandom(io.BytesIO())
-                bytes.write(response.read())
-                bytes.seek(0)
-        except URLError as exception:
+            bytes = _RemoteStream(source, self.__http_session).open()
+            if not self.__http_stream:
+                buffer = io.BufferedRandom(io.BytesIO())
+                buffer.write(bytes.read())
+                buffer.seek(0)
+                bytes = buffer
+        except IOError as exception:
             raise exceptions.HTTPError(str(exception))
 
         # Return bytes
@@ -73,26 +79,52 @@ class RemoteLoader(Loader):
 
 # Internal
 
-class _WebStream(object):
+class _RemoteStream(object):
+
+    # It's possible to implement cache for bytes sample
+    # size to prevent additional HTTP calls used in seek
 
     # Public
 
-    def __init__(self, source):
+    remote = True
+
+    def __init__(self, source, session):
         self.__source = source
-        self.__request = Request(self.__source, headers=config.HTTP_HEADERS)
-        self.__response = urlopen(self.__request)
+        self.__session = session
 
-    def __getattr__(self, name):
-        return getattr(self.__response, name)
+    def readable(self):
+        return True
 
-    @property
-    def response(self):
-        return self.__response
+    def writable(self):
+        return False
 
     def seekable(self):
         return True
 
+    @property
+    def closed(self):
+        return self.__closed
+
+    def open(self):
+        self.__closed = False
+        self.seek(0)
+        return self
+
+    def close(self):
+        self.__closed = True
+
+    def tell(self):
+        return self.__response.raw.tell()
+
+    def flush(self):
+        pass
+
+    def read(self, size=None):
+        return self.__response.raw.read(size)
+
     def seek(self, offset, whence=0):
         assert offset == 0
         assert whence == 0
-        self.__response = urlopen(self.__request)
+        self.__response = self.__session.get(self.__source, stream=True)
+        self.__response.raise_for_status()
+        self.__response.raw.decode_content = True
