@@ -382,12 +382,14 @@ class Stream(object):
             if row_number == self.__headers_row_last:
                 break
 
-        # Handle blank headers
+        # Ignore blank headers
         if self.__ignore_blank_headers:
-            for index, header in list(enumerate(self.__headers)):
+            raw_headers, self.__headers = self.__headers, []
+            for index, header in list(enumerate(raw_headers)):
                 if header in ['', None]:
-                    del self.__headers[index]
                     self.__blank_header_indexes.append(index)
+                    continue
+                self.__headers.append(header)
 
         # Remove headers from data
         if not keyed_source:
