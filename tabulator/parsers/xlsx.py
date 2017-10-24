@@ -48,7 +48,7 @@ class XLSXParser(Parser):
         # Create copy for remote source
         # For remote stream we need local copy (will be deleted on close by Python)
         # https://docs.python.org/3.5/library/tempfile.html#tempfile.TemporaryFile
-        if hasattr(self.__bytes, 'url'):
+        if getattr(self.__bytes, 'remote', False):
             new_bytes = TemporaryFile()
             shutil.copyfileobj(self.__bytes, new_bytes)
             self.__bytes.close()

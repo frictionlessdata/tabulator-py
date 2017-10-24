@@ -239,7 +239,8 @@ stream = Stream('http://example.com/data.csv')
 ```
 
 Options:
-- http_stream - use HTTP streaming when possible. Enabled by default.
+- http_session - a `requests.Session` object. Read more in the `requests` [docs](http://docs.python-requests.org/en/master/user/advanced/#session-objects).
+- http_stream - use HTTP streaming when possible. It's enabled by default. Disable if you'd like to preload the whole file into memory first.
 
 #### stream
 
