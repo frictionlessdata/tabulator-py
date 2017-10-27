@@ -368,13 +368,16 @@ class Stream(object):
         # Get headers from data
         keyed_source = False
         for row_number, headers, row in self.__sample_extended_rows:
+            keyed_source = keyed_source or headers is not None
+            headers = headers if keyed_source else row
+            for index, header in enumerate(headers):
+                if header is not None:
+                    headers[index] = str(header).strip()
             if row_number == self.__headers_row:
-                keyed_source = headers is not None
-                self.__headers = headers if keyed_source else row
+                self.__headers = headers
             if row_number > self.__headers_row:
-                headers = headers if keyed_source else row
                 for index in range(0, len(self.__headers)):
-                    if len(headers) > index and headers[index]:
+                    if len(headers) > index and headers[index] is not None:
                         if not self.__headers[index]:
                             self.__headers[index] = headers[index]
                         elif not self.__headers[index].endswith(headers[index]):

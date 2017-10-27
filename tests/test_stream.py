@@ -98,6 +98,13 @@ def test_stream_headers_xls_multiline():
         ]
 
 
+def test_stream_headers_strip_and_non_strings():
+    source = [[' header ', 2, 3, None], ['value1', 'value2', 'value3', 'value4']]
+    with Stream(source, headers=1) as stream:
+        assert stream.headers == ['header', '2', '3', None]
+        assert stream.read() == [['value1', 'value2', 'value3', 'value4']]
+
+
 # Scheme
 
 def test_stream_scheme_file():
