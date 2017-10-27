@@ -134,7 +134,7 @@ It's just a pretty basic `Stream` introduction. Please read the full documentati
 Create stream class instance.
 
 - `source (any)` - stream source in a form based on `scheme` argument
-- `headers (list/int)` - headers list or source row number containing headers. If number is given for plain source headers row and all rows before will be removed and for keyed source no rows will be removed. See [headers](https://github.com/frictionlessdata/tabulator-py#headers) section.
+- `headers (list/int)` - headers list or row number containing headers or row numbers range containing headers. If number is given for plain source headers row and all rows before will be removed and for keyed source no rows will be removed. See [headers](https://github.com/frictionlessdata/tabulator-py#headers) section.
 - `scheme (str)` - source scheme with `file` as default. For the most cases scheme will be inferred from source. See a list of supported schemas below. See [schemes](https://github.com/frictionlessdata/tabulator-py#schemes) section.
 - `format (str)` - source format with `None` (detect) as default. For the most cases format will be inferred from source.  See a list of supported formats below. See [formats](https://github.com/frictionlessdata/tabulator-py#formats) section.
 - `encoding (str)` - source encoding with  `None` (detect) as default.  See [encoding](https://github.com/frictionlessdata/tabulator-py#encoding) section.
@@ -435,7 +435,15 @@ with Stream([['Alex', 21]], headers=['name', 'age']):
   stream.read() # [['Alex', 21]]
 ```
 
-If `headers` is a row number and data source is not keyed all rows before this row and this row will be removed from data stream (see first example).
+It's possible to use multiline headers:
+
+```python
+with Stream('data.xlsx', headers=[1,3], fill_merged_cells=True):
+  stream.headers # ['header from row 1-3']
+  stream.read() # [['value1', 'value2', 'value3']]
+```
+
+If `headers` is a row number/range and data source is not keyed all rows before headers and headers will be removed from data stream (see first example).
 
 ### Encoding
 
