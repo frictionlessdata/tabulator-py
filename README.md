@@ -904,6 +904,12 @@ Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage` and `m
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+### v1.11
+
+New API added:
+- Added `http_session` argument for `http/https` format (it now uses `requests`)
+- Added support for multiline headers: `headers` argument now accepts ranges like `[1,3]`
+
 ### v1.10
 
 New API added:
