@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import pytest
 from mock import Mock
 from tabulator import Stream
 from tabulator.parsers.csv import CSVParser
@@ -135,6 +136,15 @@ def test_stream_csv_detect_delimiter_pipe():
     source = 'a1|b1\na2|b2\n'
     with Stream(source, scheme='text', format='csv') as stream:
         assert stream.read() == [['a1', 'b1'], ['a2', 'b2']]
+
+
+def test_stream_csv_dialect_should_not_persist_if_sniffing_fails_issue_goodtables_228():
+    source1 = 'a;b;c\n#comment'
+    source2 = 'a,b,c\n#comment'
+    with Stream(source1, scheme='text', format='csv', headers=1, delimiter=';') as stream:
+        assert stream.headers == ['a', 'b', 'c']
+    with Stream(source2, scheme='text', format='csv', headers=1) as stream:
+        assert stream.headers == ['a', 'b', 'c']
 
 
 # Parser

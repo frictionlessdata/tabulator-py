@@ -119,7 +119,8 @@ class CSVParser(Parser):
             if not dialect.escapechar:
                 dialect.doublequote = True
         except csv.Error:
-            dialect = csv.excel
+            class dialect(csv.excel):
+                pass
         for key, value in self.__options.items():
             setattr(dialect, key, value)
 
