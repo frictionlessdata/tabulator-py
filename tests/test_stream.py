@@ -442,7 +442,7 @@ def test_stream_format_error():
     assert 'bad_format' in str(excinfo.value)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 3), reason='not supported')
+@pytest.mark.skipif(sys.version_info < (3, 5), reason='not supported')
 def test_stream_bad_options_warning():
     Stream('', scheme='text', format='csv', bad_option=True).open()
     with pytest.warns(UserWarning) as record:
