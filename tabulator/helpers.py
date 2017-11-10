@@ -173,4 +173,4 @@ def stringify_value(value):
     isoformat = getattr(value, 'isoformat', None)
     if isoformat is not None:
         value = isoformat()
-    return str(value)
+    return type(u'')(value)
