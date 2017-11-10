@@ -8,6 +8,7 @@ import six
 import gzip
 import zipfile
 import tempfile
+import warnings
 from copy import copy
 from itertools import chain
 from .loaders.stream import StreamLoader
@@ -40,7 +41,6 @@ class Stream(object):
                  custom_loaders={},
                  custom_parsers={},
                  custom_writers={},
-                 fail_unused_options=False,
                  **options):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """
@@ -94,7 +94,6 @@ class Stream(object):
         self.__actual_scheme = scheme
         self.__actual_format = format
         self.__actual_encoding = encoding
-        self.__fail_unused_options = fail_unused_options
         self.__options = options
         self.__sample_extended_rows = []
         self.__loader = None
@@ -202,11 +201,9 @@ class Stream(object):
 
         # Bad options
         if options:
-            message = 'Not supported options "%s" for scheme "%s" and format "%s"'
+            message = 'Not supported option(s) "%s" for scheme "%s" and format "%s"'
             message = message % (', '.join(options), scheme, format)
-            if self.__fail_unused_options:
-                raise exceptions.TabulatorException(message)
-            print(message)
+            warnings.warn(message, UserWarning)
 
         # Open and setup
         self.__parser.open(self.__source, encoding=self.__encoding)

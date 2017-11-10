@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import io
 import ast
 import six
+import sys
 import pytest
 import datetime
 from sqlalchemy import create_engine
@@ -441,11 +442,12 @@ def test_stream_format_error():
     assert 'bad_format' in str(excinfo.value)
 
 
-def test_stream_options_error():
+@pytest.mark.skipif(sys.version_info < (3, 3), reason='not supported')
+def test_stream_bad_options_warning():
     Stream('', scheme='text', format='csv', bad_option=True).open()
-    with pytest.raises(exceptions.TabulatorException) as excinfo:
-        Stream('', scheme='text', format='csv', fail_unused_options=True, bad_option=True).open()
-    assert 'bad_option' in str(excinfo.value)
+    with pytest.warns(UserWarning) as record:
+        Stream('', scheme='text', format='csv', bad_option=True).open()
+    assert 'bad_option' in str(record[0].message.args[0])
 
 
 def test_stream_io_error():
