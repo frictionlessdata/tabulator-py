@@ -40,6 +40,7 @@ class Stream(object):
                  custom_loaders={},
                  custom_parsers={},
                  custom_writers={},
+                 fail_unused_options=False,
                  **options):
         """https://github.com/frictionlessdata/tabulator-py#stream
         """
@@ -93,6 +94,7 @@ class Stream(object):
         self.__actual_scheme = scheme
         self.__actual_format = format
         self.__actual_encoding = encoding
+        self.__fail_unused_options = fail_unused_options
         self.__options = options
         self.__sample_extended_rows = []
         self.__loader = None
@@ -202,7 +204,9 @@ class Stream(object):
         if options:
             message = 'Not supported options "%s" for scheme "%s" and format "%s"'
             message = message % (', '.join(options), scheme, format)
-            raise exceptions.TabulatorException(message)
+            if self.__fail_unused_options:
+                raise exceptions.TabulatorException(message)
+            print(message)
 
         # Open and setup
         self.__parser.open(self.__source, encoding=self.__encoding)

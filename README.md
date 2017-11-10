@@ -151,6 +151,7 @@ Create stream class instance.
 - `custom_parsers (dict)` - custom parsers keyed by format. See a section below. See [custom parsers](https://github.com/frictionlessdata/tabulator-py#custom-parsers) section.
 - `custom_writers (dict)` - custom writers keyed by format. See a section below. See [custom writers](https://github.com/frictionlessdata/tabulator-py#custom-writers) section.
 - `<name> (<type>)` - loader/parser options. See in the scheme/format section
+- `fail_unused_options (bool)` - if `True` throw exception if any options are not used with `False` as default.
 - `(Stream)` - returns Stream class instance
 
 #### `stream.closed`
