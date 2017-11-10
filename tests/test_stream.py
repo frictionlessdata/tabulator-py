@@ -442,8 +442,9 @@ def test_stream_format_error():
 
 
 def test_stream_options_error():
+    Stream('', scheme='text', format='csv', bad_option=True).open()
     with pytest.raises(exceptions.TabulatorException) as excinfo:
-        Stream('', scheme='text', format='csv', bad_option=True).open()
+        Stream('', scheme='text', format='csv', fail_unused_options=True, bad_option=True).open()
     assert 'bad_option' in str(excinfo.value)
 
 
