@@ -110,3 +110,9 @@ def test_extract_options():
 def test_detect_html(sample):
     text, is_html = sample
     assert helpers.detect_html(text) is is_html
+
+
+def test_stringify_value():
+    sample = '\u4e9c'.encode('utf-8-sig').decode("utf-8")
+    assert helpers.stringify_value(sample) == sample
+
