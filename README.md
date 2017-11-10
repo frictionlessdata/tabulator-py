@@ -904,6 +904,11 @@ Under the hood `tox` uses `pytest` configured in `pytest.ini`, `coverage` and `m
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+### v1.12
+
+Updated behaviour:
+- Now `UserWarning` will be emitted on bad options instead of raising an exception
+
 ### v1.11
 
 New API added:
