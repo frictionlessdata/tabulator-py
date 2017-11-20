@@ -373,7 +373,7 @@ class Stream(object):
             headers = headers if keyed_source else row
             for index, header in enumerate(headers):
                 if header is not None:
-                    headers[index] = str(header).strip()
+                    headers[index] = six.text_type(header).strip()
             if row_number == self.__headers_row:
                 self.__headers = headers
             if row_number > self.__headers_row:

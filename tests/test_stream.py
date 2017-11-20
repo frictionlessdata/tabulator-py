@@ -28,6 +28,14 @@ def test_stream_headers():
             {'id': '2', 'name': '中国人'}]
 
 
+def test_stream_headers_unicode():
+    with Stream('data/table_unicode_headers.csv', headers=1) as stream:
+        assert stream.headers == ['id', '国人']
+        assert list(stream.iter(keyed=True)) == [
+            {'id': '1', '国人': 'english'},
+            {'id': '2', '国人': '中国人'}]
+
+
 def test_stream_headers_user_set():
     source = [['1', 'english'], ['2', '中国人']]
     with Stream(source, headers=['id', 'name']) as stream:
