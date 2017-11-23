@@ -7,8 +7,6 @@
 
 A library for reading and writing tabular data (csv/xls/json/etc).
 
-> Version v1.0 includes deprecated API removal and provisional API changes. Please read a [migration guide](#v10).
-
 ## Features
 
 - supports various formats: csv/tsv/xls/xlsx/json/ndjson/ods/gsheet/inline/sql/etc
