@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+import sys
 import xlrd
 from ..parser import Parser
 from .. import exceptions
@@ -46,7 +47,9 @@ class XLSParser(Parser):
         self.__book = xlrd.open_workbook(
             file_contents=self.__bytes.read(),
             encoding_override=encoding,
-            formatting_info=True)
+            formatting_info=True,
+            logfile=sys.stderr
+        )
 
         # Get sheet
         try:
