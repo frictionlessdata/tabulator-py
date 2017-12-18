@@ -302,6 +302,21 @@ def test_stream_skip_rows_with_headers():
         assert stream.read() == [['2', '中国人']]
 
 
+def test_stream_skip_rows_from_the_end():
+    source = 'data/special/skip-rows.csv'
+    with Stream(source, skip_rows=[-2, 1]) as stream:
+        assert stream.read() == [['1', 'english'], ['2', '中国人']]
+
+    with Stream(source, skip_rows=[-1, -2]) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english']]
+
+
+def test_stream_skip_rows_no_double_skip():
+    source = 'data/special/skip-rows.csv'
+    with Stream(source, skip_rows=[3, -2]) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
 # Post parse
 
 def test_stream_post_parse_headers():
