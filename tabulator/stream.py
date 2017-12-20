@@ -416,10 +416,17 @@ class Stream(object):
             raise exceptions.FormatError(message)
 
     def __apply_processors(self, iterator):
+        # last row counter will be incremented in builtin_processor()
+        # and used in skip_negative_rows() to count rows from the end
+        last_row_number = 0
+        rows_to_skip_from_end = [n for n in self.__skip_rows_by_numbers if n < 0]
 
         # Builtin processor
         def builtin_processor(extended_rows):
+            global last_row_number
+
             for row_number, headers, row in extended_rows:
+                last_row_number = row_number
 
                 # Sync headers/row
                 if headers != self.__headers:
@@ -452,30 +459,34 @@ class Stream(object):
             Rows to skip are taken from  Stream.__skip_rows_by_numbers
             """
             rows_to_skip = [n for n in self.__skip_rows_by_numbers if n < 0]
-            if not rows_to_skip:
-                for row in extended_rows:
+            buffer_size = abs(min(rows_to_skip))
+            # collections.deque - takes O[1] time to push/pop values from any side.
+            buffer = deque()
+
+            # use buffer to save last rows
+            for row in extended_rows:
+                buffer.append(row)
+                if len(buffer) > buffer_size:
+                    yield buffer.popleft()
+
+            # Now squeeze out the buffer
+            global last_row_number
+            # with last_row_number, we could transform negative row numbers to positive
+            rows_to_skip_positive = [last_row_number + 1 + n for n in rows_to_skip]
+            for row in buffer:
+                if row[0] not in rows_to_skip_positive:
                     yield row
-            else:
-                buffer_size = abs(min(rows_to_skip)) + 1
-                # collections.deque - takes O[1] time to push/pop values from any side.
-                buffer = deque()
 
-                # use buffer to save last rows
-                for row in extended_rows:
-                    buffer.append(row)
-                    if len(buffer) == buffer_size:
-                        yield buffer.popleft()
+        # form a processors list
+        processors = [builtin_processor]
 
-                # Now squeeze out the buffer
-                last_row_number = buffer[len(buffer)-1][0]
-                # with last_row_number, we could transform negative row numbers to positive
-                rows_to_skip_positive = [last_row_number + 1 + n for n in rows_to_skip]
-                for row in buffer:
-                    if row[0] not in rows_to_skip_positive:
-                        yield row
+        if rows_to_skip_from_end:
+            processors.append(skip_negative_rows)
+
+        if self.__post_parse:
+            processors += self.__post_parse
 
         # Apply processors to iterator
-        processors = [builtin_processor, skip_negative_rows] + self.__post_parse
         for processor in processors:
             iterator = processor(iterator)
 

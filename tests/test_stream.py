@@ -316,6 +316,10 @@ def test_stream_skip_rows_no_double_skip():
     with Stream(source, skip_rows=[3, -2]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
+    # no double skip at the very last row
+    with Stream(source, skip_rows=[4, -1]) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ["# it's a comment!"]]
+
 
 # Post parse
 
