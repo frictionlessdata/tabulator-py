@@ -416,17 +416,10 @@ class Stream(object):
             raise exceptions.FormatError(message)
 
     def __apply_processors(self, iterator):
-        # last row counter will be incremented in builtin_processor()
-        # and used in skip_negative_rows() to count rows from the end
-        last_row_number = 0
-        rows_to_skip_from_end = [n for n in self.__skip_rows_by_numbers if n < 0]
 
         # Builtin processor
         def builtin_processor(extended_rows):
-            global last_row_number
-
             for row_number, headers, row in extended_rows:
-                last_row_number = row_number
 
                 # Sync headers/row
                 if headers != self.__headers:
@@ -470,18 +463,17 @@ class Stream(object):
                     yield buffer.popleft()
 
             # Now squeeze out the buffer
-            global last_row_number
-            # with last_row_number, we could transform negative row numbers to positive
-            rows_to_skip_positive = [last_row_number + 1 + n for n in rows_to_skip]
-            for row in buffer:
-                if row[0] not in rows_to_skip_positive:
+            n = len(buffer)
+            for i, row in enumerate(buffer):
+                if i - n not in rows_to_skip:
                     yield row
 
         # form a processors list
         processors = [builtin_processor]
 
-        if rows_to_skip_from_end:
-            processors.append(skip_negative_rows)
+        # if we have to delete some rows with negative index (counting from the end)
+        if [n for n in self.__skip_rows_by_numbers if n < 0]:
+            processors.insert(0, skip_negative_rows)
 
         if self.__post_parse:
             processors += self.__post_parse
