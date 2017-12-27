@@ -11,6 +11,7 @@ import tempfile
 import warnings
 from copy import copy
 from itertools import chain
+from collections import deque
 from .loaders.stream import StreamLoader
 from . import exceptions
 from . import helpers
@@ -444,8 +445,40 @@ class Stream(object):
 
                 yield (row_number, headers, row)
 
+        def skip_negative_rows(extended_rows):
+            """
+            This processor will skip rows which counts from the end, e.g.
+            -1: skip last row, -2: skip pre-last row, etc.
+            Rows to skip are taken from  Stream.__skip_rows_by_numbers
+            """
+            rows_to_skip = [n for n in self.__skip_rows_by_numbers if n < 0]
+            buffer_size = abs(min(rows_to_skip))
+            # collections.deque - takes O[1] time to push/pop values from any side.
+            buffer = deque()
+
+            # use buffer to save last rows
+            for row in extended_rows:
+                buffer.append(row)
+                if len(buffer) > buffer_size:
+                    yield buffer.popleft()
+
+            # Now squeeze out the buffer
+            n = len(buffer)
+            for i, row in enumerate(buffer):
+                if i - n not in rows_to_skip:
+                    yield row
+
+        # form a processors list
+        processors = [builtin_processor]
+
+        # if we have to delete some rows with negative index (counting from the end)
+        if [n for n in self.__skip_rows_by_numbers if n < 0]:
+            processors.insert(0, skip_negative_rows)
+
+        if self.__post_parse:
+            processors += self.__post_parse
+
         # Apply processors to iterator
-        processors = [builtin_processor] + self.__post_parse
         for processor in processors:
             iterator = processor(iterator)
 

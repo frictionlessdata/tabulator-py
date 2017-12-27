@@ -143,7 +143,7 @@ Create stream class instance.
 - `ignore_blank_headers (bool)` - a flag to ignore any column having a blank header. See [ignore blank headers](https://github.com/frictionlessdata/tabulator-py#ignore-blank-headers) section.
 - `force_strings (bool)` - if `True` all output will be converted to strings.  See [force strings](https://github.com/frictionlessdata/tabulator-py#force-strings) section.
 - `force_parse (bool)` - if `True` on row parsing error a stream will return an empty row instead of raising an exception. See [force parse](https://github.com/frictionlessdata/tabulator-py#force-parse) section.
-- `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, '#', '//']` - rows 1, 2 and all rows started with `#` and `//` will be skipped. See [skip rows](https://github.com/frictionlessdata/tabulator-py#skip-rows) section.
+- `skip_rows (int/str[])` - list of rows to skip by row number or row comment. Example: `skip_rows=[1, 2, -1, -3, '#', '//']` - rows 1, 2 and rows 1, 3 from the end and all rows started with `#` and `//` will be skipped. See [skip rows](https://github.com/frictionlessdata/tabulator-py#skip-rows) section.
 - `post_parse (generator[])` - post parse processors (hooks). Signature to follow is `processor(extended_rows) -> yield (row_number, headers, row)` which should yield one extended row per yield instruction. See [post parse](https://github.com/frictionlessdata/tabulator-py#post-parse) section.
 - `custom_loaders (dict)` - loaders keyed by scheme. See a section below. See [custom loaders](https://github.com/frictionlessdata/tabulator-py#custom-loaders) section.
 - `custom_parsers (dict)` - custom parsers keyed by format. See a section below. See [custom parsers](https://github.com/frictionlessdata/tabulator-py#custom-parsers) section.
@@ -570,14 +570,14 @@ with Stream([[1], 'bad', [3]]) as stream:
 ### Skip rows
 
 It's a very common situation when your tabular data contains some rows you want to skip. It could be blank rows or commented rows. `Stream` constructors accepts `skip_rows` argument to make it possible. Value of this argument should be a list of integers and strings where:
-- integer is a row number starting from 1
+- integer is a row number (1 is the first row, -1 is the last)
 - string is a first row chars indicating that row is a comment
 
-Let's skip first, second and commented by '#' symbol rows:
+Let's skip first, second, last and commented by '#' symbol rows:
 
 ```python
-source = [['John', 1], ['Alex', 2], ['#Sam', 3], ['Mike', 4]]
-with Stream(source, skip_rows=[1, 2, '#']) as stream
+source = [['John', 1], ['Alex', 2], ['#Sam', 3], ['Mike', 4], ['John', 5]]
+with Stream(source, skip_rows=[1, 2, -1, '#']) as stream:
   stream.read() # [['Mike', 4]]
 ```
 

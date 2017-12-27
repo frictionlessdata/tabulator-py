@@ -14,7 +14,7 @@ language:
 
 python:
   - 2.7
-  - 3.3
+  # - 3.3  # pytest does not support 3.3 any more
   # - 3.4
   - 3.5
   - 3.6
