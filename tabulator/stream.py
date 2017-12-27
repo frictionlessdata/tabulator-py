@@ -417,7 +417,7 @@ class Stream(object):
 
     def __apply_processors(self, iterator):
 
-        # Builtin processor
+        # Base processor
         def builtin_processor(extended_rows):
             for row_number, headers, row in extended_rows:
 
@@ -445,6 +445,7 @@ class Stream(object):
 
                 yield (row_number, headers, row)
 
+        # Skip nagative rows processor
         def skip_negative_rows(extended_rows):
             """
             This processor will skip rows which counts from the end, e.g.
@@ -468,13 +469,11 @@ class Stream(object):
                 if i - n not in rows_to_skip:
                     yield row
 
-        # form a processors list
+        # Form a processors list
         processors = [builtin_processor]
-
         # if we have to delete some rows with negative index (counting from the end)
         if [n for n in self.__skip_rows_by_numbers if n < 0]:
             processors.insert(0, skip_negative_rows)
-
         if self.__post_parse:
             processors += self.__post_parse
 
