@@ -14,7 +14,6 @@ list:
 	@grep '^\.PHONY' Makefile | cut -d' ' -f2- | tr ' ' '\n'
 
 test:
-	pylama $(PACKAGE)
 	tox
 
 version:
