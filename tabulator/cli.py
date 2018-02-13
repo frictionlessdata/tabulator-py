@@ -28,7 +28,7 @@ def cli(source, limit, **options):
         if stream.headers:
             click.echo(click.style(', '.join(map(cast, stream.headers)), bold=True))
         for count, row in enumerate(stream, start=1):
-            click.echo(', '.join(map(cast, row)))
+            click.echo(','.join(map(cast, row)))
             if count == limit:
                 break
 
