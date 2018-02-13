@@ -39,8 +39,9 @@ def test_detect_scheme_and_format(source, scheme, format):
 
 
 def test_detect_encoding():
-    sample = io.open('README.md', 'rb').read(config.DEFAULT_BYTES_SAMPLE_SIZE)
-    assert helpers.detect_encoding(sample) == 'utf-8'
+    with io.open('Makefile', 'rb') as fp:
+        sample = fp.read(config.DEFAULT_BYTES_SAMPLE_SIZE)
+        assert helpers.detect_encoding(sample) == 'utf-8'
 
 
 def test_detect_encoding_windows_1252():
