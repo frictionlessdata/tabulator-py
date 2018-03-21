@@ -87,9 +87,14 @@ class XLSParser(Parser):
             row_number = x + 1
             row = []
             for y, value in enumerate(self.__sheet.row_values(x)):
+                # hacky way to parse booleans (cell values are integers (0/1) other way)
+                if self.__sheet.cell(x, y).ctype == xlrd.XL_CELL_BOOLEAN:
+                    value = bool(value)
                 if self.__fill_merged_cells:
                     for xlo, xhi, ylo, yhi in self.__sheet.merged_cells:
                         if x in range(xlo, xhi) and y in range(ylo, yhi):
                             value = self.__sheet.cell_value(xlo, ylo)
+                            if self.__sheet.cell(xlo, ylo).ctype == xlrd.XL_CELL_BOOLEAN:
+                                value = bool(value)
                 row.append(value)
             yield (row_number, None, row)
