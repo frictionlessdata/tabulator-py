@@ -287,8 +287,6 @@ class Stream(object):
 
         # Yield rows from iterator
         for row_number, headers, row in iterator:
-            if self.__force_strings:
-                row = list(map(helpers.stringify_value, row))
             if row_number > self.__row_number:
                 self.__row_number = row_number
                 if extended:
@@ -469,6 +467,12 @@ class Stream(object):
                 if i - n not in rows_to_skip:
                     yield row
 
+        # Force values to strings processor
+        def force_strings_processor(extended_rows):
+            for row_number, headers, row in extended_rows:
+                row = list(map(helpers.stringify_value, row))
+                yield (row_number, headers, row)
+
         # Form a processors list
         processors = [builtin_processor]
         # if we have to delete some rows with negative index (counting from the end)
@@ -476,6 +480,8 @@ class Stream(object):
             processors.insert(0, skip_negative_rows)
         if self.__post_parse:
             processors += self.__post_parse
+        if self.__force_strings:
+            processors.append(force_strings_processor)
 
         # Apply processors to iterator
         for processor in processors:
