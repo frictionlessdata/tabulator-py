@@ -99,7 +99,7 @@ def normalize_encoding(sample, encoding):
 def detect_html(text):
     """Detect if text is HTML.
     """
-    pattern = re.compile('\s*<(!doctype|html)', re.IGNORECASE)
+    pattern = re.compile('\\s*<(!doctype|html)', re.IGNORECASE)
     return bool(pattern.match(text))
 
 
