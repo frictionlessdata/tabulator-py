@@ -9,7 +9,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
 
 ## Features
 
-- **Supports most common tabular formats**: CSV, XLS, ODS, JSON, Google Sheets, SQL, and others.
+- **Supports most common tabular formats**: CSV, XLS, ODS, JSON, Google Sheets, SQL, and others. See complete list [below](#supported-file-formats).
 - **Loads local and remote data**: Supports HTTP and FTP.
 - **Low memory usage**: Only the current row is kept in memory, so you can
   large datasets.
@@ -232,7 +232,7 @@ with Stream([['name', 'age'], ['Alex', 21]], headers=1) as stream:
   stream.read() # [['Alex', 21]]
 ```
 
-You can also pass a lists of strings to define the headers expliticly:
+You can also pass a lists of strings to define the headers explicitly:
 
 ```python
 with Stream([['Alex', 21]], headers=['name', 'age']) as stream:
@@ -287,7 +287,7 @@ CSV file inside an HTML page, for example on GitHub.
 You can disable this behaviour using the `allow_html` option:
 
 ```python
-with Stream(sorce_with_html, allow_html=True) as stream:
+with Stream(source_with_html, allow_html=True) as stream:
   stream.read() # no exception on open
 ```
 
@@ -477,7 +477,7 @@ with open('data.csv') as fp:
 #### text
 
 The source is a string containing the tabular data. Both `scheme` and `format`
-must be set expliticly, as it's not possible to infer them.
+must be set explicitly, as it's not possible to infer them.
 
 ```python
 stream = Stream(
@@ -573,7 +573,7 @@ stream = Stream('datapackage.json', resource=1)
 
 #### inline (read only)
 
-Either a list of lists, or a list of dicts mapping the colum names to their
+Either a list of lists, or a list of dicts mapping the column names to their
 respective values.
 
 ```python
@@ -652,7 +652,7 @@ You can see examples of how the loaders are implemented by looking in the
 #### Custom parsers
 
 You can add support for a new file format by creating a custom parser. Similarly
-to custom loaders, custom parsers are implemented by inherinting from the
+to custom loaders, custom parsers are implemented by inheriting from the
 `Parser` class, and implementing its methods. This parser can then be used by
 `Stream` to parse data by passing it via the `custom_parsers={'format':
 CustomParser}` argument.
