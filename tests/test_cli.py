@@ -14,7 +14,7 @@ def test_cli():
     runner = CliRunner()
     result = runner.invoke(cli, ['data/table.csv'])
     assert result.exit_code == 0
-    assert result.output.startswith('id, name\n1, english\n2,')
+    assert result.output.startswith('id,name\n1,english\n2,')
 
 
 def test_cli_version():

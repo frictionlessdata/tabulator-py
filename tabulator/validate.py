@@ -12,8 +12,20 @@ from . import exceptions
 # Module API
 
 def validate(source, scheme=None, format=None):
-    """https://github.com/frictionlessdata/tabulator-py#validate
-    """
+    '''Check if tabulator is able to load the source.
+
+    Args:
+        source (Union[str, IO]): The source path or IO object.
+        scheme (str, optional): The source scheme. Auto-detect by default.
+        format (str, optional): The source file format. Auto-detect by default.
+
+    Returns:
+        bool: Whether tabulator is able to load the source file.
+
+    Raises:
+        `tabulator.exceptions.SchemeError`: The file scheme is not supported.
+        `tabulator.exceptions.FormatError`: The file format is not supported.
+    '''
 
     # Get scheme and format
     detected_scheme, detected_format = helpers.detect_scheme_and_format(source)

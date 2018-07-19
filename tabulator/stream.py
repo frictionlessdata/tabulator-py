@@ -21,6 +21,64 @@ from . import config
 # Module API
 
 class Stream(object):
+    '''Stream of tabular data.
+
+    This is the main `tabulator` class. It loads a data source, and allows you
+    to stream its parsed contents.
+
+    Args:
+        source (str): Path to file as ``<scheme>://path/to/file.<format>``. If
+            not explicitly set, the scheme (file, http, ...) and format (csv, xls,
+            ...) are inferred from the source string.
+        headers (Union[int, List[int], List[str]], optional): Either a row
+            number or list of row numbers (in case of multi-line headers) to be
+            considered as headers (rows start counting at 1), or the actual
+            headers defined a list of strings. If not set, all rows will be
+            treated as containing values.
+        scheme (str, optional): Scheme for loading the file (file, http, ...).
+             If not set, it'll be inferred from `source`.
+        format (str, optional): File source's format (csv, xls, ...). If not
+             set, it'll be inferred from `source`. inferred
+        encoding (str, optional): Source encoding. If not set, it'll be inferred.
+        compression (str, optional): Source file compression (zip, ...). If not
+            set, it'll be inferred.
+        allow_html (bool, optional): Allow the file source to be an HTML page.
+            If False, raises ``exceptions.FormatError`` if the loaded file is
+            an HTML page. Defaults to False.
+        sample_size (int, optional): Controls the number of sample rows used to
+            infer properties from the data (headers, encoding, etc.). Set to
+            ``0`` to disable sampling, in which case nothing will be inferred
+            from the data. Defaults to ``config.DEFAULT_SAMPLE_SIZE``.
+        bytes_sample_size (int, optional): Same as `sample_size`, but instead
+            of number of rows, controls number of bytes. Defaults to
+            ``config.DEFAULT_BYTES_SAMPLE_SIZE``.
+        ignore_blank_headers (bool, optional): When True, ignores all columns
+            that have blank headers. Defaults to False.
+        force_strings (bool, optional): When True, casts all data to strings.
+            Defaults to False.
+        force_parse (bool, optional): When True, don't raise exceptions when
+            parsing malformed rows, simply returning an empty value. Defaults
+            to False.
+        skip_rows (List[Union[int, str]], optional): List of row numbers and
+            strings to skip. If a string, it'll skip rows that begin with it
+            (e.g. '#' and '//').
+        post_parse (List[function], optional): List of generator functions that
+            receives a list of rows and headers, processes them, and yields
+            them (or not). Useful to pre-process the data. Defaults to None.
+        custom_loaders (dict, optional): Dictionary with keys as scheme names,
+            and values as their respective ``Loader`` class implementations.
+            Defaults to None.
+        custom_parsers (dict, optional): Dictionary with keys as format names,
+            and values as their respective ``Parser`` class implementations.
+            Defaults to None.
+        custom_loaders (dict, optional): Dictionary with keys as writer format
+            names, and values as their respective ``Writer`` class
+            implementations. Defaults to None.
+        **options (Any, optional): Extra options passed to the loaders and parsers.
+
+    Returns:
+        Stream: The Stream instance.
+    '''
 
     # Public
 
@@ -43,8 +101,6 @@ class Stream(object):
                  custom_parsers={},
                  custom_writers={},
                  **options):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
 
         # Set headers
         self.__headers = None
@@ -102,32 +158,24 @@ class Stream(object):
         self.__row_number = 0
 
     def __enter__(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
         if self.closed:
             self.open()
         return self
 
     def __exit__(self, type, value, traceback):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
         if not self.closed:
             self.close()
 
     def __iter__(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
         return self.iter()
 
     @property
     def closed(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
+        '''Returns True if the underlying stream is closed, False otherwise.'''
         return not self.__parser or self.__parser.closed
 
     def open(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
+        '''Opens the stream for reading.'''
         options = copy(self.__options)
 
         # Get scheme and format
@@ -221,14 +269,12 @@ class Stream(object):
         return self
 
     def close(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
+        '''Closes the stream.'''
         self.__parser.close()
         self.__row_number = 0
 
     def reset(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
+        '''Resets the stream pointer to the beginning of the file.'''
         if self.__row_number > self.__sample_size:
             self.__parser.reset()
             self.__extract_sample()
@@ -237,32 +283,27 @@ class Stream(object):
 
     @property
     def headers(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
         return self.__headers
 
     @property
     def scheme(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
         return self.__actual_scheme
 
     @property
     def format(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
         return self.__actual_format
 
     @property
     def encoding(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
         return self.__actual_encoding
 
     @property
     def sample(self):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
+        '''Returns the stream's rows used as sample.
+
+        These sample rows are used internally to infer characteristics of the
+        source file (e.g. encoding, headers, ...).
+        '''
         sample = []
         iterator = iter(self.__sample_extended_rows)
         iterator = self.__apply_processors(iterator)
@@ -271,8 +312,30 @@ class Stream(object):
         return sample
 
     def iter(self, keyed=False, extended=False):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
+        '''Iterate over the rows.
+
+        Each row is returned in a format that depends on the arguments `keyed`
+        and `extended`. By default, each row is returned as list of their
+        values.
+
+        Args:
+            keyed (bool, optional): When True, each returned row will be a
+                `dict` mapping the header name to its value in the current row.
+                For example, `[{'name': 'J Smith', 'value': '10'}]`. Ignored if
+                ``extended`` is True. Defaults to False.
+            extended (bool, optional): When True, returns each row as a tuple
+                with row number (starts at 1), list of headers, and list of row
+                values. For example, `(1, ['name', 'value'], ['J Smith', '10'])`.
+                Defaults to False.
+
+        Returns:
+            Iterator[Union[List[Any], Dict[str, Any], Tuple[int, List[str], List[Any]]]]:
+                The row itself. The format depends on the values of `keyed` and
+                `extended` arguments.
+
+        Raises:
+            exceptions.TabulatorException: If the stream is closed.
+        '''
 
         # Error if closed
         if self.closed:
@@ -299,8 +362,19 @@ class Stream(object):
                     yield row
 
     def read(self, keyed=False, extended=False, limit=None):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
+        '''Returns a list of rows.
+
+        Args:
+            keyed (bool, optional): See :func:`Stream.iter`.
+            extended (bool, optional): See :func:`Stream.iter`.
+            limit (int, optional): Number of rows to return. If None, returns
+            all rows. Defaults to None.
+
+        Returns:
+            List[Union[List[Any], Dict[str, Any], Tuple[int, List[str], List[Any]]]]:
+                The list of rows. The format depends on the values of `keyed`
+                and `extended` arguments.
+        '''
         result = []
         rows = self.iter(keyed=keyed, extended=extended)
         for count, row in enumerate(rows, start=1):
@@ -310,8 +384,16 @@ class Stream(object):
         return result
 
     def save(self, target, format=None,  encoding=None, **options):
-        """https://github.com/frictionlessdata/tabulator-py#stream
-        """
+        '''Save stream to the local filesystem.
+
+        Args:
+            target (str): Path where to save the stream.
+            format (str, optional): The format the stream will be saved as. If
+                None, detects from the ``target`` path. Defaults to None.
+            encoding (str, optional): Saved file encoding. Defaults to
+                ``config.DEFAULT_ENCODING``.
+            **options: Extra options passed to the writer.
+        '''
 
         # Get encoding/format
         if encoding is None:
@@ -447,11 +529,11 @@ class Stream(object):
 
         # Skip nagative rows processor
         def skip_negative_rows(extended_rows):
-            """
+            '''
             This processor will skip rows which counts from the end, e.g.
             -1: skip last row, -2: skip pre-last row, etc.
             Rows to skip are taken from  Stream.__skip_rows_by_numbers
-            """
+            '''
             rows_to_skip = [n for n in self.__skip_rows_by_numbers if n < 0]
             buffer_size = abs(min(rows_to_skip))
             # collections.deque - takes O[1] time to push/pop values from any side.

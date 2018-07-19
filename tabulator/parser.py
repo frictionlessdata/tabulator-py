@@ -12,51 +12,88 @@ from abc import ABCMeta, abstractmethod
 
 @add_metaclass(ABCMeta)
 class Parser(object):
+    '''Abstract class implemented by the data parsers.
+
+    The parsers inherit and implement this class' methods to add support for a
+    new file type.
+
+    Args:
+        loader (tabulator.Loader): Loader instance to read the file.
+        force_parse (bool): When `True`, the parser yields an empty extended
+            row tuple `(row_number, None, [])` when there is an error parsing a
+            row. Otherwise, it stops the iteration by raising the exception
+            `tabulator.exceptions.SourceError`.
+        **options (dict): Loader options
+
+    Returns:
+        Parser: Parser instance.
+    '''
 
     # Public
 
     options = []
 
     def __init__(self, loader, force_parse, **options):
-        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
-        """
         pass
 
     @property
     @abstractmethod
     def closed(self):
-        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
-        """
+        '''Flag telling if the parser is closed.'''
         pass  # pragma: no cover
 
     @abstractmethod
     def open(self, source, encoding=None):
-        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
-        """
+        '''Open underlying file stream in the beginning of the file.
+
+        The parser gets a byte or text stream from the `tabulator.Loader`
+        instance and start emitting items.
+
+        Args:
+            source (str): Path to source table.
+            encoding (str, optional): Source encoding. Auto-detect by default.
+
+        Returns:
+            None
+        '''
         pass  # pragma: no cover
 
     @abstractmethod
     def close(self):
-        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
-        """
+        '''Closes underlying file stream.'''
         pass  # pragma: no cover
 
     @abstractmethod
     def reset(self):
-        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
-        """
+        '''Resets underlying stream and current items list.
+
+        After `reset()` is called, iterating over the items will start from the
+        beginning.
+        '''
         pass  # pragma: no cover
 
     @property
     @abstractmethod
     def encoding(self):
-        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
-        """
         pass  # pragma: no cover
 
     @property
     @abstractmethod
     def extended_rows(self):
-        """https://github.com/frictionlessdata/tabulator-py#custom-parsers
-        """
+        '''Returns extended rows iterator.
+
+        The extended rows are tuples containing `(row_number, headers, row)`,
+
+        Yields:
+            Tuple[int, List[str], List[Any]]: Extended rows containing
+                `(row_number, headers, row)`, where `headers` is a list of the
+                header names (can be `None`), and `row` is a list of row
+                values.
+
+        Raises:
+            `tabulator.exceptions.SourceError`: If `force_parse` is `False` and
+                a row can't be parsed, this exception will be raised.
+                Otherwise, an empty extended row is returned (i.e.
+                `(row_number, None, [])`).
+        '''
         pass  # pragma: no cover
