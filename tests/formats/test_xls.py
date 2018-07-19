@@ -65,6 +65,23 @@ def test_stream_xlsx_merged_cells_fill():
         assert stream.read() == [['data', 'data'], ['data', 'data'], ['data', 'data']]
 
 
+def test_stream_xls_with_boolean():
+    with Stream('data/special/table-with-booleans.xls') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'boolean'], [1.0, True], [2.0, False]]
+
+
+def test_stream_xlsx_merged_cells_boolean():
+    source = 'data/special/merged-cells-boolean.xls'
+    with Stream(source) as stream:
+        assert stream.read() == [[True, ''], ['', ''], ['', '']]
+
+
+def test_stream_xlsx_merged_cells_fill_boolean():
+    source = 'data/special/merged-cells-boolean.xls'
+    with Stream(source, fill_merged_cells=True) as stream:
+        assert stream.read() == [[True, True], [True, True], [True, True]]
+
 # Parser
 
 def test_parser_xls():

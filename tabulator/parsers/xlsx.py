@@ -64,7 +64,7 @@ class XLSXParser(Parser):
         # Get sheet
         try:
             if isinstance(self.__sheet_pointer, six.string_types):
-                self.__sheet = self.__book.get_sheet_by_name(self.__sheet_pointer)
+                self.__sheet = self.__book[self.__sheet_pointer]
             else:
                 self.__sheet = self.__book.worksheets[self.__sheet_pointer - 1]
         except (KeyError, IndexError):

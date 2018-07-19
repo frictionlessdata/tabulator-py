@@ -769,6 +769,13 @@ $ make test
 
 ## Changelog
 
+Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+### v1.14
+
+Updated behaviour:
+- Now `xls` booleans will be parsed as booleans not integers
+
 ### v1.13
 
 New API added:
