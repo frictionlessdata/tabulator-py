@@ -75,6 +75,7 @@ setup(
     },
     zip_safe=False,
     long_description=README,
+    long_description_content_type='text/markdown',
     description='Consistent interface for stream reading and writing tabular data (csv/xls/json/etc)',
     author='Open Knowledge Foundation',
     author_email='info@okfn.org',
