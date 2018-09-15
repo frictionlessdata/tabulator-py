@@ -471,6 +471,7 @@ class Stream(object):
 
         # Ignore blank headers
         if self.__ignore_blank_headers:
+            self.__blank_header_indexes = []
             raw_headers, self.__headers = self.__headers, []
             for index, header in list(enumerate(raw_headers)):
                 if header in ['', None]:

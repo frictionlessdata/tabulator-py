@@ -253,6 +253,9 @@ def test_stream_ignore_blank_headers_true():
         assert stream.sample == [['value1', 'value3']]
         assert stream.sample == [['value1', 'value3']]
         assert stream.read(keyed=True) == data
+        stream.close()
+        stream.open()
+        assert stream.read(keyed=True) == data
 
 
 # Force strings
