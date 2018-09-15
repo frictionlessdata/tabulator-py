@@ -523,7 +523,7 @@ class Stream(object):
                 if self.__blank_header_indexes:
                     for index in self.__blank_header_indexes:
                         if index < len(row):
-                            del row[index]
+                            row = row[:index] + row[index+1:]
 
                 yield (row_number, headers, row)
 
