@@ -478,6 +478,7 @@ class Stream(object):
                     self.__blank_header_indexes.append(index)
                     continue
                 self.__headers.append(header)
+            self.__blank_header_indexes = sorted(self.__blank_header_indexes, reverse=True)
 
         # Remove headers from data
         if not keyed_source:
