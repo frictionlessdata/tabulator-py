@@ -710,8 +710,8 @@ class CustomWriter(Writer):
   def __init__(self, **options):
       pass
 
-  def save(self, source, target, headers=None, encoding=None):
-      # save logic
+  def write(self, source, target, headers=None, encoding=None):
+      # write logic
 
 with Stream(source, custom_writers={'custom': CustomWriter}) as stream:
   stream.save(target)
