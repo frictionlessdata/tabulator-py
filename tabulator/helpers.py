@@ -10,7 +10,7 @@ import six
 import codecs
 from copy import copy
 from importlib import import_module
-from six.moves.urllib.parse import urlparse, urlunparse
+from six.moves.urllib.parse import parse_qs, urlparse, urlunparse
 from . import exceptions
 from . import config
 
@@ -51,6 +51,12 @@ def detect_scheme_and_format(source):
     if len(scheme) < 2:
         scheme = config.DEFAULT_SCHEME
     format = os.path.splitext(parsed.path or parsed.netloc)[1][1:].lower() or None
+    if format is None:
+        # Test if query string contains a "format=" parameter.
+        query_string = parse_qs(parsed.query)
+        query_string_format = query_string.get("format")
+        if query_string_format is not None and len(query_string_format) == 1:
+            format = query_string_format[0]
 
     # Format: datapackage
     if parsed.path.endswith('datapackage.json'):
