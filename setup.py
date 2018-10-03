@@ -22,7 +22,7 @@ PACKAGE = 'tabulator'
 INSTALL_REQUIRES = [
     # General
     'six>=1.9,<2.0',
-    'click>=6.0,<7.0',
+    'click>=7.0,<8.0',
     'requests>=2.8,<3.0',
     'cchardet>=1.0,<2.0',
     # Format: csv
