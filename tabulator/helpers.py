@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import os
 import re
+import requests
 import six
 import codecs
 from copy import copy
@@ -16,6 +17,19 @@ from . import config
 
 
 # Module API
+
+# Maps mime-type to format
+CONTENT_TYPE_FORMAT = {
+    'application/csv': 'csv',
+    'text/csv': 'csv',
+    'text/x-csv': 'csv',
+
+    'application/x-vnd.oasis.opendocument.spreadsheet': 'ods',
+
+    'application/vnd.ms-excel': 'xls',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xslx',
+}
+
 
 def detect_scheme_and_format(source):
     """Detect scheme and format based on source and return as a tuple.
@@ -57,6 +71,14 @@ def detect_scheme_and_format(source):
         query_string_format = query_string.get("format")
         if query_string_format is not None and len(query_string_format) == 1:
             format = query_string_format[0]
+
+        # Test if format info can be extracted from Content-type header
+        elif source.startswith('http'):
+            req = requests.head(source, allow_redirects=True)
+            if req.status_code == requests.codes.ok:
+                content_type = req.headers.get('Content-type')
+                if not content_type is None:
+                    format = CONTENT_TYPE_FORMAT.get(content_type)
 
     # Format: datapackage
     if parsed.path.endswith('datapackage.json'):
