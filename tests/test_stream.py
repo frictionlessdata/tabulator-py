@@ -227,7 +227,7 @@ def test_stream_sample():
 def test_stream_bytes_sample_size():
     source = 'data/special/latin1.csv'
     with Stream(source) as stream:
-        assert stream.encoding == 'iso8859-2'
+        assert stream.encoding == 'cp1252'
     with Stream(source, sample_size=0, bytes_sample_size=10) as stream:
         assert stream.encoding == 'utf-8'
 
