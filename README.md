@@ -773,6 +773,11 @@ $ make test
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+### v1.17
+
+Updated behaviour:
+- Added support for Python 3.7
+
 ### v1.16
 
 New API added:
