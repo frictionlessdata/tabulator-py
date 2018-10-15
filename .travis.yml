@@ -1,8 +1,6 @@
-sudo:
-  false
-
-language:
-  python
+language: python
+sudo: required
+dist: xenial
 
 python:
   - 2.7
@@ -10,6 +8,7 @@ python:
   # - 3.4
   - 3.5
   - 3.6
+  - 3.7
 
 env:
   global:

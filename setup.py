@@ -24,7 +24,7 @@ INSTALL_REQUIRES = [
     'six>=1.9,<2.0',
     'click>=6.0,<8.0',
     'requests>=2.8,<3.0',
-    'cchardet>=1.0,<2.0',
+    'cchardet>=1.0,<3.0',
     # Format: csv
     'unicodecsv>=0.14,<2.0',
     # Format: json
@@ -45,7 +45,7 @@ INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
 ]
 INSTALL_FORMAT_ODS_REQUIRES = [
     'ezodf>=0.3,<2.0',
-    'lxml>=3.0,<4.0',
+    'lxml>=3.0,<5.0',
 ]
 TESTS_REQUIRE = [
     'tox',
@@ -97,6 +97,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
