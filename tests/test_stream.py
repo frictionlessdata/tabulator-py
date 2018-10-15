@@ -328,6 +328,12 @@ def test_stream_skip_rows_no_double_skip():
     with Stream(source, skip_rows=[4, -1]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ["# it's a comment!"]]
 
+def test_stream_skip_rows_excel_empty_column():
+    source = 'data/special/skip-rows.xlsx'
+    with Stream(source, headers=1, skip_rows=['']) as stream:
+        assert stream.read() == [['A', 'B'], [8, 9]]
+
+
 
 # Post parse
 

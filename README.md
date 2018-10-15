@@ -374,7 +374,9 @@ with Stream([[1], 'bad', [3]], force_parse=True) as stream:
 
 ##### Skip rows
 
-List of row numbers and/or strings to skip. If it's a string, all rows that begin with it will be skipped (e.g. '#' and '//').
+List of row numbers and/or strings to skip. 
+If it's a string, all rows that begin with it will be skipped (e.g. '#' and '//').
+If it's the empty string, all rows that begin with an empty column will be skipped.
 
 ```python
 source = [['John', 1], ['Alex', 2], ['#Sam', 3], ['Mike', 4], ['John', 5]]

@@ -517,8 +517,12 @@ class Stream(object):
                     continue
 
                 # Skip row by comments
-                match = lambda comment: row[0].startswith(comment)
-                if list(filter(match, self.__skip_rows_by_comments)):
+                match = lambda comment: (
+                    (isinstance(row[0], six.string_types) and
+                     row[0].startswith(comment)) if len(comment) > 0
+                    else row[0] in ('', None)
+                )
+                if any(map(match, self.__skip_rows_by_comments)):
                     continue
 
                 # Ignore blank headers
