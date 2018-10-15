@@ -30,6 +30,7 @@ from tabulator import helpers, config
     ('path', 'file', None),
     ('path.CsV', 'file', 'csv'),
     ('http://someplace.com/foo/path.csv?foo=bar#baz', 'http', 'csv'),
+    ('http://someplace.com/foo/path?foo=bar&format=csv#baz', 'http', 'csv'),
     ('https://docs.google.com/spreadsheets/d/X/edit?usp=sharing', None, 'gsheet'),
     ('https://docs.google.com/spreadsheets/d/X/export?format=csv&gid=0&single=true', 'https', 'csv'),
     ('https://docs.google.com/spreadsheets/d/X/pub?gid=0&single=true&output=csv', 'https', 'csv'),

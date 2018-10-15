@@ -107,7 +107,7 @@ The `Stream` class represents a tabular stream. It takes the file path as the
 ```
 
 It uses this path to determine the file format (e.g. CSV or XLS) and scheme
-(e.g. HTTP or postgresql). If necessary, you also can define these explicitly.
+(e.g. HTTP or postgresql). It also supports format extraction from URLs like `http://example.com?format=csv`. If necessary, you also can define these explicitly.
 
 Let's try it out. First, we create a `Stream` object passing the path to a CSV file.
 
@@ -710,8 +710,8 @@ class CustomWriter(Writer):
   def __init__(self, **options):
       pass
 
-  def save(self, source, target, headers=None, encoding=None):
-      # save logic
+  def write(self, source, target, headers=None, encoding=None):
+      # write logic
 
 with Stream(source, custom_writers={'custom': CustomWriter}) as stream:
   stream.save(target)
@@ -770,6 +770,11 @@ $ make test
 ## Changelog
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+### v1.15
+
+New API added:
+- Format will be extracted from URLs like `http://example.com?format=csv`
 
 ### v1.14
 

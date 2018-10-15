@@ -244,12 +244,20 @@ def test_stream_ignore_blank_headers_false():
 
 
 def test_stream_ignore_blank_headers_true():
-    source = 'text://header1,,header3\nvalue1,value2,value3'
-    with Stream(source, format='csv', headers=1, ignore_blank_headers=True) as stream:
-        assert stream.headers == ['header1', 'header3']
-        assert stream.read(keyed=True) == [
-            {'header1': 'value1', 'header3': 'value3'},
+    source = 'text://header1,,header3,,header5\nvalue1,value2,value3,value4,value5'
+    data = [
+            {'header1': 'value1', 
+             'header3': 'value3',
+             'header5': 'value5'},
         ]
+    with Stream(source, format='csv', headers=1, ignore_blank_headers=True) as stream:
+        assert stream.headers == ['header1', 'header3', 'header5']
+        assert stream.sample == [['value1', 'value3', 'value5']]
+        assert stream.sample == [['value1', 'value3', 'value5']]
+        assert stream.read(keyed=True) == data
+        stream.close()
+        stream.open()
+        assert stream.read(keyed=True) == data
 
 
 # Force strings
