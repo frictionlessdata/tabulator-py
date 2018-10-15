@@ -45,7 +45,7 @@ INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
 ]
 INSTALL_FORMAT_ODS_REQUIRES = [
     'ezodf>=0.3,<2.0',
-    'lxml>=3.0,<4.0',
+    'lxml>=3.0,<5.0',
 ]
 TESTS_REQUIRE = [
     'tox',
