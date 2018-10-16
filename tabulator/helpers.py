@@ -4,9 +4,9 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import mimetypes
 import os
 import re
-import requests
 import six
 import codecs
 from copy import copy
@@ -18,20 +18,8 @@ from . import config
 
 # Module API
 
-# Maps mime-type to format
-CONTENT_TYPE_FORMAT = {
-    'application/csv': 'csv',
-    'text/csv': 'csv',
-    'text/x-csv': 'csv',
 
-    'application/x-vnd.oasis.opendocument.spreadsheet': 'ods',
-
-    'application/vnd.ms-excel': 'xls',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xslx',
-}
-
-
-def detect_scheme_and_format(source):
+def detect_scheme_and_format(source, use_http_content_type=False):
     """Detect scheme and format based on source and return as a tuple.
 
     Scheme is a minimum 2 letters before `://` (will be lower cased).
@@ -73,12 +61,25 @@ def detect_scheme_and_format(source):
             format = query_string_format[0]
 
         # Test if format info can be extracted from Content-type header
-        elif source.startswith('http'):
-            req = requests.head(source, allow_redirects=True)
-            if req.status_code == requests.codes.ok:
+        elif source.startswith('http') and use_http_content_type:
+            import requests
+            try:
+                req = requests.head(source, allow_redirects=True)
+            except requests.exceptions.RequestException as e:
+                message = 'Can\'t retrieve source http headers'
+                raise exceptions.TabulatorException(message)
+
+            if req.ok:
                 content_type = req.headers.get('Content-type')
-                if not content_type is None:
-                    format = CONTENT_TYPE_FORMAT.get(content_type)
+
+                if content_type:
+                    # Removes extra content, e.g. '; charset=utf-8'
+                    if ';' in content_type:
+                        content_type = content_type[:content_type.find(';')]
+                    ext = mimetypes.guess_extension(content_type)
+                    if ext is not None:
+                        # Remove dot: .csv -> csv
+                        format = ext[1:]
 
     # Format: datapackage
     if parsed.path.endswith('datapackage.json'):
