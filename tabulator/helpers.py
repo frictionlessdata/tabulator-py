@@ -199,6 +199,8 @@ def extract_options(options, names):
 def stringify_value(value):
     """Convert any value to string.
     """
+    if value is None:
+        return u''
     isoformat = getattr(value, 'isoformat', None)
     if isoformat is not None:
         value = isoformat()

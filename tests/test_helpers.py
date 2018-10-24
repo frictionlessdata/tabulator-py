@@ -118,3 +118,7 @@ def test_stringify_value():
     sample = '\u4e9c'.encode('utf-8-sig').decode("utf-8")
     assert helpers.stringify_value(sample) == sample
 
+
+def test_stringify_value_none():
+    assert helpers.stringify_value(None) == ''
+
