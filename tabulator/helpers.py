@@ -65,7 +65,7 @@ def detect_scheme_and_format(source, use_http_content_type=False):
             import requests
             try:
                 req = requests.head(source, allow_redirects=True)
-            except requests.exceptions.RequestException as e:
+            except requests.exceptions.RequestException:
                 message = 'Can\'t retrieve source http headers'
                 raise exceptions.TabulatorException(message)
 
@@ -166,7 +166,8 @@ def requote_uri(uri):
     if six.PY2:
         def url_encode_non_ascii(bytes):
             pattern = '[\x80-\xFF]'
-            replace = lambda c: ('%%%02x' % ord(c.group(0))).upper()
+
+            def replace(c): return ('%%%02x' % ord(c.group(0))).upper()
             return re.sub(pattern, replace, bytes)
         parts = urlparse(uri)
         uri = urlunparse(
