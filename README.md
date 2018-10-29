@@ -344,7 +344,7 @@ with Stream(source, format='csv', headers=1, ignore_blank_headers=True) as strea
 ##### Force strings
 
 When `True`, all rows' values will be converted to strings (defaults to
-`False`).
+`False`). `None` values will be converted to empty strings.
 
 ```python
 # Default behaviour
