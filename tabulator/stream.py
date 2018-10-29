@@ -178,16 +178,19 @@ class Stream(object):
         '''Opens the stream for reading.'''
         options = copy(self.__options)
 
-        # Get scheme and format
-        detected_scheme, detected_format = helpers.detect_scheme_and_format(self.__source)
-        scheme = self.__scheme or detected_scheme
-        format = self.__format or detected_format
-
-        # Get compression
+        # Get scheme and format if not already given
         compression = None
-        for type in config.SUPPORTED_COMPRESSION:
-            if self.__compression == type or detected_format == type:
-                compression = type
+        if self.__scheme is None or self.__format is None:
+            detected_scheme, detected_format = helpers.detect_scheme_and_format(self.__source)
+            scheme = self.__scheme or detected_scheme
+            format = self.__format or detected_format
+            # Get compression
+            for type in config.SUPPORTED_COMPRESSION:
+                if self.__compression == type or detected_format == type:
+                    compression = type
+        else:
+            scheme = self.__scheme
+            format = self.__format
 
         # Initiate loader
         self.__loader = None

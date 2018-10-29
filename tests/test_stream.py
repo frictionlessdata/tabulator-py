@@ -114,6 +114,19 @@ def test_stream_headers_strip_and_non_strings():
         assert stream.read() == [['value1', 'value2', 'value3', 'value4']]
 
 
+# Compression errors
+
+def test_stream_compression_error_gz():
+    source = 'id,filename\n\1,dump.tar.gz'
+    stream = Stream(source, scheme='text', format='csv')
+    stream.open()
+
+def test_stream_compression_error_zip():
+    source = 'id,filename\n1,archive.zip'
+    stream = Stream(source, scheme='text', format='csv')
+    stream.open()
+
+
 # Scheme
 
 def test_stream_scheme_file():
