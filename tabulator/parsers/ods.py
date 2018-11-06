@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from datetime import datetime
 
 import six
 import ezodf
@@ -78,5 +79,26 @@ class ODSParser(Parser):
     # Private
 
     def __iter_extended_rows(self):
+
+        def type_value(cell):
+            """Detects int value, date and datetime"""
+
+            ctype = cell.value_type
+            value = cell.value
+
+            # ods numbers are float only
+            # float with no decimals can be cast into int
+            if isinstance(value, float) and value == value // 1:
+                return int(value)
+
+            # Date or datetime
+            if ctype == 'date':
+                if len(value) == 10:
+                    return datetime.strptime(value, '%Y-%m-%d').date()
+                else:
+                    return datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+
+            return value
+
         for row_number, row in enumerate(self.__sheet.rows(), start=1):
-            yield row_number, None, [cell.value for cell in row]
+            yield row_number, None, [type_value(cell) for cell in row]
