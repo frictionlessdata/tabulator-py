@@ -30,6 +30,7 @@ from tabulator import helpers, config
     ('path', 'file', None),
     ('path.CsV', 'file', 'csv'),
     ('http://someplace.com/foo/path.csv?foo=bar#baz', 'http', 'csv'),
+    ('http://someplace.com/foo/path?foo=bar&format=csv#baz', 'http', 'csv'),
     ('https://docs.google.com/spreadsheets/d/X/edit?usp=sharing', None, 'gsheet'),
     ('https://docs.google.com/spreadsheets/d/X/export?format=csv&gid=0&single=true', 'https', 'csv'),
     ('https://docs.google.com/spreadsheets/d/X/pub?gid=0&single=true&output=csv', 'https', 'csv'),
@@ -39,8 +40,9 @@ def test_detect_scheme_and_format(source, scheme, format):
 
 
 def test_detect_encoding():
-    sample = io.open('README.md', 'rb').read(config.DEFAULT_BYTES_SAMPLE_SIZE)
-    assert helpers.detect_encoding(sample) == 'utf-8'
+    with io.open('Makefile', 'rb') as fp:
+        sample = fp.read(config.DEFAULT_BYTES_SAMPLE_SIZE)
+        assert helpers.detect_encoding(sample) == 'utf-8'
 
 
 def test_detect_encoding_windows_1252():
@@ -115,4 +117,8 @@ def test_detect_html(sample):
 def test_stringify_value():
     sample = '\u4e9c'.encode('utf-8-sig').decode("utf-8")
     assert helpers.stringify_value(sample) == sample
+
+
+def test_stringify_value_none():
+    assert helpers.stringify_value(None) == ''
 

@@ -83,18 +83,34 @@ class XLSParser(Parser):
     # Private
 
     def __iter_extended_rows(self):
+
+        def type_value(ctype, value):
+            """ Detects boolean value, int value, datetime """
+
+            # Boolean
+            if ctype == xlrd.XL_CELL_BOOLEAN:
+                return bool(value)
+
+            # Excel numbers are only float
+            # Float with no decimals can be cast into int
+            if ctype == xlrd.XL_CELL_NUMBER and value == value // 1:
+                return int(value)
+
+            # Datetime
+            if ctype == xlrd.XL_CELL_DATE:
+                return xlrd.xldate.xldate_as_datetime(value, self.__book.datemode)
+
+            return value
+
         for x in range(0, self.__sheet.nrows):
             row_number = x + 1
             row = []
             for y, value in enumerate(self.__sheet.row_values(x)):
-                # hacky way to parse booleans (cell values are integers (0/1) other way)
-                if self.__sheet.cell(x, y).ctype == xlrd.XL_CELL_BOOLEAN:
-                    value = bool(value)
+                value = type_value(self.__sheet.cell(x, y).ctype, value)
                 if self.__fill_merged_cells:
                     for xlo, xhi, ylo, yhi in self.__sheet.merged_cells:
                         if x in range(xlo, xhi) and y in range(ylo, yhi):
-                            value = self.__sheet.cell_value(xlo, ylo)
-                            if self.__sheet.cell(xlo, ylo).ctype == xlrd.XL_CELL_BOOLEAN:
-                                value = bool(value)
+                            value = type_value(self.__sheet.cell(xlo, ylo).ctype,
+                                               self.__sheet.cell_value(xlo, ylo))
                 row.append(value)
             yield (row_number, None, row)

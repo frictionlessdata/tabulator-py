@@ -8,44 +8,34 @@ from __future__ import unicode_literals
 # Module API
 
 class TabulatorException(Exception):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
+    '''Base class for all tabulator exceptions.'''
     pass
 
 
 class IOError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
     pass
 
 
-class HTTPError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
+class HTTPError(IOError):
     pass
 
 
 class SourceError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
+    '''The source file could not be parsed correctly.'''
     pass
 
 
 class SchemeError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
+    '''The file scheme is not supported.'''
     pass
 
 
 class FormatError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
+    '''The file format is unsupported or invalid.'''
     pass
 
 
 class EncodingError(TabulatorException):
-    """https://github.com/frictionlessdata/tabulator-py#exceptions
-    """
     pass
 
 

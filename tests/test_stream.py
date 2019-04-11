@@ -114,6 +114,19 @@ def test_stream_headers_strip_and_non_strings():
         assert stream.read() == [['value1', 'value2', 'value3', 'value4']]
 
 
+# Compression errors
+
+def test_stream_compression_error_gz():
+    source = 'id,filename\n\1,dump.tar.gz'
+    stream = Stream(source, scheme='text', format='csv')
+    stream.open()
+
+def test_stream_compression_error_zip():
+    source = 'id,filename\n1,archive.zip'
+    stream = Stream(source, scheme='text', format='csv')
+    stream.open()
+
+
 # Scheme
 
 def test_stream_scheme_file():
@@ -227,7 +240,7 @@ def test_stream_sample():
 def test_stream_bytes_sample_size():
     source = 'data/special/latin1.csv'
     with Stream(source) as stream:
-        assert stream.encoding == 'iso8859-2'
+        assert stream.encoding == 'cp1252'
     with Stream(source, sample_size=0, bytes_sample_size=10) as stream:
         assert stream.encoding == 'utf-8'
 
@@ -244,12 +257,20 @@ def test_stream_ignore_blank_headers_false():
 
 
 def test_stream_ignore_blank_headers_true():
-    source = 'text://header1,,header3\nvalue1,value2,value3'
-    with Stream(source, format='csv', headers=1, ignore_blank_headers=True) as stream:
-        assert stream.headers == ['header1', 'header3']
-        assert stream.read(keyed=True) == [
-            {'header1': 'value1', 'header3': 'value3'},
+    source = 'text://header1,,header3,,header5\nvalue1,value2,value3,value4,value5'
+    data = [
+            {'header1': 'value1', 
+             'header3': 'value3',
+             'header5': 'value5'},
         ]
+    with Stream(source, format='csv', headers=1, ignore_blank_headers=True) as stream:
+        assert stream.headers == ['header1', 'header3', 'header5']
+        assert stream.sample == [['value1', 'value3', 'value5']]
+        assert stream.sample == [['value1', 'value3', 'value5']]
+        assert stream.read(keyed=True) == data
+        stream.close()
+        stream.open()
+        assert stream.read(keyed=True) == data
 
 
 # Force strings
@@ -324,6 +345,12 @@ def test_stream_skip_rows_no_double_skip():
     # no double skip at the very last row
     with Stream(source, skip_rows=[4, -1]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ["# it's a comment!"]]
+
+def test_stream_skip_rows_excel_empty_column():
+    source = 'data/special/skip-rows.xlsx'
+    with Stream(source, headers=1, skip_rows=['']) as stream:
+        assert stream.read() == [['A', 'B'], [8, 9]]
+
 
 
 # Post parse

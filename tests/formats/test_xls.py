@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import io
 import pytest
+from datetime import datetime
 from mock import Mock
 from tabulator import parsers
 from tabulator import Stream, exceptions
@@ -18,19 +19,19 @@ BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 def test_stream_local_xls():
     with Stream('data/table.xls') as stream:
         assert stream.headers is None
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
 def test_stream_remote_xls():
     with Stream(BASE_URL % 'data/table.xls') as stream:
         assert stream.headers is None
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
 def test_stream_xls_sheet_by_index():
     source = 'data/special/sheet2.xls'
     with Stream(source, sheet=2) as stream:
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
 def test_stream_xls_sheet_by_index_not_existent():
@@ -43,7 +44,7 @@ def test_stream_xls_sheet_by_index_not_existent():
 def test_stream_xls_sheet_by_name():
     source = 'data/special/sheet2.xls'
     with Stream(source, sheet='Sheet2') as stream:
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+        assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
 def test_stream_xls_sheet_by_name_not_existent():
@@ -68,7 +69,7 @@ def test_stream_xlsx_merged_cells_fill():
 def test_stream_xls_with_boolean():
     with Stream('data/special/table-with-booleans.xls') as stream:
         assert stream.headers is None
-        assert stream.read() == [['id', 'boolean'], [1.0, True], [2.0, False]]
+        assert stream.read() == [['id', 'boolean'], [1, True], [2, False]]
 
 
 def test_stream_xlsx_merged_cells_boolean():
@@ -81,6 +82,15 @@ def test_stream_xlsx_merged_cells_fill_boolean():
     source = 'data/special/merged-cells-boolean.xls'
     with Stream(source, fill_merged_cells=True) as stream:
         assert stream.read() == [[True, True], [True, True], [True, True]]
+
+
+def test_stream_xls_with_ints_floats_dates():
+    source = 'data/special/table-with-ints-floats-dates.xls'
+    with Stream(source) as stream:
+        assert stream.read() == [['Int', 'Float', 'Date'],
+                                 [2013, 3.3, datetime(2009, 8, 16)],
+                                 [1997, 5.6, datetime(2009, 9, 20)],
+                                 [1969, 11.7, datetime(2012, 8, 23)]]
 
 # Parser
 
@@ -98,8 +108,8 @@ def test_parser_xls():
 
     assert list(parser.extended_rows) == [
         (1, None, ['id', 'name']),
-        (2, None, [1.0, 'english']),
-        (3, None, [2.0, '中国人'])]
+        (2, None, [1, 'english']),
+        (3, None, [2, '中国人'])]
 
     assert len(list(parser.extended_rows)) == 0
     parser.reset()

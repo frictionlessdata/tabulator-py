@@ -20,8 +20,6 @@ import tabulator
 @click.option('--limit', type=click.INT)
 @click.version_option(tabulator.__version__, message='%(version)s')
 def cli(source, limit, **options):
-    """https://github.com/frictionlessdata/tabulator-py#cli
-    """
     options = {key: value for key, value in options.items() if value is not None}
     with tabulator.Stream(source, **options) as stream:
         cast = str
@@ -30,7 +28,7 @@ def cli(source, limit, **options):
         if stream.headers:
             click.echo(click.style(', '.join(map(cast, stream.headers)), bold=True))
         for count, row in enumerate(stream, start=1):
-            click.echo(', '.join(map(cast, row)))
+            click.echo(','.join(map(cast, row)))
             if count == limit:
                 break
 
