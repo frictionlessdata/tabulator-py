@@ -282,7 +282,12 @@ def test_stream_force_strings():
     source = [['John', 21, 1.5, temp, date, time]]
     with Stream(source, force_strings=True) as stream:
         assert stream.read() == [
-            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01', '17:00:00']
+            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01',
+             '17:00:00']
+        ]
+        assert stream.sample == [
+            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01',
+             '17:00:00']
         ]
 
 
