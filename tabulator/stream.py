@@ -216,6 +216,9 @@ class Stream(object):
             source = self.__loader.load(self.__source, mode='b')
             with zipfile.ZipFile(source) as archive:
                 name = archive.namelist()[0]
+                if 'filename' in options.keys():
+                    name = options['filename']
+                    del options['filename']
                 with archive.open(name) as file:
                     source = tempfile.NamedTemporaryFile(suffix='.' + name)
                     for line in file:
