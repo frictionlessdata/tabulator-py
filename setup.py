@@ -21,31 +21,31 @@ def read(*paths):
 PACKAGE = 'tabulator'
 INSTALL_REQUIRES = [
     # General
-    'six>=1.9,<2.0',
-    'click>=6.0,<8.0',
-    'requests>=2.8,<3.0',
-    'cchardet>=1.0,<3.0',
+    'six>=1.9',
+    'click>=6.0',
+    'requests>=2.8',
+    'cchardet>=1.0',
     # Format: csv
-    'unicodecsv>=0.14,<2.0',
+    'unicodecsv>=0.14',
     # Format: json
-    'ijson>=2.0,<3.0',
+    'ijson>=2.0',
     # Format: ndjson
-    'jsonlines>=1.1,<2.0',
+    'jsonlines>=1.1',
     # Format: sql
-    'sqlalchemy>=0.9.6,<2.0',
+    'sqlalchemy>=0.9.6',
     # Format: tsv
-    'linear-tsv>=1.0,<2.0',
+    'linear-tsv>=1.0',
     # Format: xls
-    'xlrd>=1.0,<2.0',
+    'xlrd>=1.0',
     # Format: xlsx
     'openpyxl>=2.4,<2.5',
 ]
 INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
-    'datapackage>=1.1.3,<2.0',
+    'datapackage>=1.1.3',
 ]
 INSTALL_FORMAT_ODS_REQUIRES = [
-    'ezodf>=0.3,<2.0',
-    'lxml>=3.0,<5.0',
+    'ezodf>=0.3',
+    'lxml>=3.0',
 ]
 TESTS_REQUIRE = [
     'tox',
