@@ -626,6 +626,15 @@ def test_stream_local_csv_zip():
         assert stream.headers is None
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_local_csv_zip_multiple_files():
+    with Stream('data/2-files.zip', filename = 'table.csv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream('data/2-files.zip', filename = 'table-reverse.csv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', '中国人'], ['2', 'english']]
+
 
 @pytest.mark.skipif(six.PY2, reason='Support only for Python3')
 def test_stream_local_csv_gz():
