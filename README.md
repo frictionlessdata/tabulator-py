@@ -277,6 +277,9 @@ You can also set it explicitly:
 with Stream('data.csv.ext', compression='gz') as stream:
   stream.read()
 ```
+###### Options
+
+- **filename**: filename in zip file to process (default is first file)
 
 ##### Allow html
 
