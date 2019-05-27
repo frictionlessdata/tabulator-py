@@ -25,7 +25,7 @@ from tabulator import helpers, config
     ('XX://path', 'xx', None),
     ('c://path', 'file', None),
     ('c:\\path', 'file', None),
-    ('c:\path', 'file', None),
+    (r'c:\path', 'file', None),
     ('http//path', 'file', None),
     ('path', 'file', None),
     ('path.CsV', 'file', 'csv'),
