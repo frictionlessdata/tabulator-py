@@ -524,6 +524,7 @@ stream = Stream('data.xls', sheet=1)
 - **fill_merged_cells**: if `True` it will unmerge and fill all merged cells by
   a visible value. With this option enabled the parser can't stream data and
   load the whole document into memory.
+- **preserve_formatting**: if `True` it will try to preserve text formatting of numeric and temporal cells returning it as strings according to how it looks in a spreadsheet (EXPERIMETAL)
 
 #### ods (read only)
 
