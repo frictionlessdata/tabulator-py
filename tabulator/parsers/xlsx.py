@@ -25,12 +25,15 @@ class XLSXParser(Parser):
     options = [
         'sheet',
         'fill_merged_cells',
+        'preserve_formatting',
     ]
 
-    def __init__(self, loader, force_parse=False, sheet=1, fill_merged_cells=False):
+    def __init__(self, loader, force_parse=False, sheet=1,
+            fill_merged_cells=False, preserve_formatting=False):
         self.__loader = loader
         self.__sheet_pointer = sheet
         self.__fill_merged_cells = fill_merged_cells
+        self.__preserve_formatting = preserve_formatting
         self.__extended_rows = None
         self.__encoding = None
         self.__force_parse = force_parse
@@ -95,7 +98,7 @@ class XLSXParser(Parser):
 
     def __iter_extended_rows(self):
         for row_number, row in enumerate(self.__sheet.iter_rows(), start=1):
-            yield (row_number, None, list(cell.value for cell in row))
+            yield (row_number, None, extract_row_values(row, self.__preserve_formatting))
 
     def __process_merged_cells(self):
         if self.__fill_merged_cells:
@@ -106,3 +109,28 @@ class XLSXParser(Parser):
                 for coordinate in coordinates:
                     cell = self.__sheet[coordinate]
                     cell.value = value
+
+
+# Internal
+
+NUMERIC_FORMATS = {
+    '0': '{d}',
+    '0.00': '{:.2f}',
+}
+TEMPORAL_FORMATS = {
+    'd-mmm': '%d-%b',
+}
+
+def extract_row_values(row, preserve_formatting=False):
+    if preserve_formatting:
+        values = []
+        for cell in row:
+            if cell.number_format in NUMERIC_FORMATS:
+                value = NUMERIC_FORMATS[cell.number_format].format(cell.value)
+            elif cell.number_format in TEMPORAL_FORMATS:
+                value = cell.value.strftime(TEMPORAL_FORMATS[cell.number_format])
+            else:
+                value = cell.value
+            values.append(value)
+        return values
+    return list(cell.value for cell in row)
