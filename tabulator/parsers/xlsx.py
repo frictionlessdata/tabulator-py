@@ -115,10 +115,15 @@ class XLSXParser(Parser):
 # Internal
 
 NUMERIC_FORMATS = {
-    '0': '{d}',
-    '0.00': '{:.2f}',
+    '0': '{0:.0f}',
+    '0.00': '{0:.2f}',
+    '#,##0': '{0:,.0f}',
+    '#,##0.00': '{0:,.2f}',
+    '#,###.00': '{0:,.2f}',
 }
 TEMPORAL_FORMATS = {
+    'm/d/yy': '%-m/%d/%y',
+    'mm/dd/yy': '%m/%d/%y',
     'd-mmm': '%d-%b',
 }
 
@@ -126,9 +131,11 @@ def extract_row_values(row, preserve_formatting=False):
     if preserve_formatting:
         values = []
         for cell in row:
-            numeric_format = NUMERIC_FORMATS.get(cell.number_format)
-            temporal_format = TEMPORAL_FORMATS.get(cell.number_format)
-            if isinstance(cell.value, float) and numeric_format:
+            number_format = (cell.number_format or '').lower()
+            number_format = number_format.replace('\\', '')
+            numeric_format = NUMERIC_FORMATS.get(number_format)
+            temporal_format = TEMPORAL_FORMATS.get(number_format)
+            if isinstance(cell.value, (int, float)) and numeric_format:
                 value = numeric_format.format(cell.value)
             elif isinstance(cell.value, datetime.datetime) and temporal_format:
                 value = cell.value.strftime(temporal_format)
