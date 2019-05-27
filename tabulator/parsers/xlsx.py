@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import six
 import shutil
 import openpyxl
+import datetime
 from itertools import chain
 from tempfile import TemporaryFile
 from ..parser import Parser
@@ -125,10 +126,12 @@ def extract_row_values(row, preserve_formatting=False):
     if preserve_formatting:
         values = []
         for cell in row:
-            if cell.number_format in NUMERIC_FORMATS:
-                value = NUMERIC_FORMATS[cell.number_format].format(cell.value)
-            elif cell.number_format in TEMPORAL_FORMATS:
-                value = cell.value.strftime(TEMPORAL_FORMATS[cell.number_format])
+            numeric_format = NUMERIC_FORMATS.get(cell.number_format)
+            temporal_format = TEMPORAL_FORMATS.get(cell.number_format)
+            if isinstance(cell.value, float) and numeric_format:
+                value = numeric_format.format(cell.value)
+            elif isinstance(cell.value, datetime.datetime) and temporal_format:
+                value = cell.value.strftime(temporal_format)
             else:
                 value = cell.value
             values.append(value)
