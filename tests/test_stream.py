@@ -259,7 +259,7 @@ def test_stream_ignore_blank_headers_false():
 def test_stream_ignore_blank_headers_true():
     source = 'text://header1,,header3,,header5\nvalue1,value2,value3,value4,value5'
     data = [
-            {'header1': 'value1', 
+            {'header1': 'value1',
              'header3': 'value3',
              'header5': 'value5'},
         ]
@@ -315,42 +315,47 @@ def test_stream_force_parse_json():
 
 # Skip rows
 
-
 def test_stream_skip_rows():
     source = 'data/special/skip-rows.csv'
-    with Stream(source, skip_rows=['#', 4]) as stream:
+    with Stream(source, skip_rows=['#', 5]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english']]
-
-
-def test_stream_skip_rows_with_headers():
-    source = 'data/special/skip-rows.csv'
-    with Stream(source, headers=2, skip_rows=['#', 1]) as stream:
-        assert stream.read() == [['2', '中国人']]
 
 
 def test_stream_skip_rows_from_the_end():
     source = 'data/special/skip-rows.csv'
-    with Stream(source, skip_rows=[-2, 1]) as stream:
-        assert stream.read() == [['1', 'english'], ['2', '中国人']]
-
-    with Stream(source, skip_rows=[-1, -2]) as stream:
+    with Stream(source, skip_rows=[1, -2]) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream(source, skip_rows=[1, -1, -2]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english']]
 
 
 def test_stream_skip_rows_no_double_skip():
     source = 'data/special/skip-rows.csv'
-    with Stream(source, skip_rows=[3, -2]) as stream:
+    with Stream(source, skip_rows=[1, 4, -2]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
-
     # no double skip at the very last row
-    with Stream(source, skip_rows=[4, -1]) as stream:
+    with Stream(source, skip_rows=[1, 5, -1]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ["# it's a comment!"]]
+
 
 def test_stream_skip_rows_excel_empty_column():
     source = 'data/special/skip-rows.xlsx'
     with Stream(source, headers=1, skip_rows=['']) as stream:
         assert stream.read() == [['A', 'B'], [8, 9]]
 
+
+def test_stream_skip_rows_with_headers():
+    source = 'data/special/skip-rows.csv'
+    with Stream(source, headers=1, skip_rows=['#']) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read() == [['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_skip_rows_with_headers_example_from_readme():
+    source = [['#comment'], ['name', 'order'], ['John', 1], ['Alex', 2]]
+    with Stream(source, headers=1, skip_rows=['#']) as stream:
+        assert stream.headers == ['name', 'order']
+        assert stream.read() == [['John', 1], ['Alex', 2]]
 
 
 # Post parse

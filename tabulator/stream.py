@@ -437,6 +437,10 @@ class Stream(object):
         for _ in range(self.__sample_size):
             try:
                 row_number, headers, row = next(self.__parser.extended_rows)
+                if self.__headers_row and self.__headers_row >= row_number:
+                    if self.__check_if_row_for_skipping(row_number, headers, row):
+                        self.__headers_row += 1
+                        self.__headers_row_last += 1
                 self.__sample_extended_rows.append((row_number, headers, row))
             except StopIteration:
                 break
@@ -516,17 +520,8 @@ class Stream(object):
                         row = [keyed_row.get(header) for header in self.__headers]
                     headers = self.__headers
 
-                # Skip row by numbers
-                if row_number in self.__skip_rows_by_numbers:
-                    continue
-
-                # Skip row by comments
-                match = lambda comment: (
-                    (isinstance(row[0], six.string_types) and
-                     row[0].startswith(comment)) if len(comment) > 0
-                    else row[0] in ('', None)
-                )
-                if any(map(match, self.__skip_rows_by_comments)):
+                # Skip rows by numbers/comments
+                if self.__check_if_row_for_skipping(row_number, headers, row):
                     continue
 
                 # Ignore blank headers
@@ -582,3 +577,20 @@ class Stream(object):
             iterator = processor(iterator)
 
         return iterator
+
+    def __check_if_row_for_skipping(self, row_number, headers, row):
+
+        # Skip by number
+        if row_number in self.__skip_rows_by_numbers:
+            return True
+
+        # Skip by comment
+        match = lambda comment: (
+            (isinstance(row[0], six.string_types) and
+             row[0].startswith(comment)) if len(comment) > 0
+            else row[0] in ('', None)
+        )
+        if any(map(match, self.__skip_rows_by_comments)):
+            return True
+
+        return False

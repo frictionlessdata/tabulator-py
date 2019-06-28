@@ -387,6 +387,15 @@ with Stream(source, skip_rows=[1, 2, -1, '#']) as stream:
   stream.read() # [['Mike', 4]]
 ```
 
+If the `headers` parameter is also set to be an integer, it will use the first not skipped row as a headers.
+
+```python
+source = [['#comment'], ['name', 'order'], ['John', 1], ['Alex', 2]]
+with Stream(source, headers=1, skip_rows=['#']) as stream:
+  stream.headers # [['name', 'order']]
+  stream.read() # [['Jogn', 1], ['Alex', 2]]
+```
+
 ##### Post parse
 
 List of functions that can filter or transform rows after they are parsed. These
