@@ -291,6 +291,10 @@ class Stream(object):
     def headers(self):
         return self.__headers
 
+    @headers.setter
+    def headers(self, headers):
+        self.__headers = headers
+
     @property
     def scheme(self):
         return self.__actual_scheme

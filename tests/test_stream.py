@@ -114,6 +114,15 @@ def test_stream_headers_strip_and_non_strings():
         assert stream.read() == [['value1', 'value2', 'value3', 'value4']]
 
 
+def test_stream_headers_set_property():
+    with Stream('data/table.csv', headers=1) as stream:
+        stream.headers = ['number', 'language']
+        assert stream.headers == ['number', 'language']
+        assert list(stream.iter(keyed=True)) == [
+            {'number': '1', 'language': 'english'},
+            {'number': '2', 'language': '中国人'}]
+
+
 # Compression errors
 
 def test_stream_compression_error_gz():
