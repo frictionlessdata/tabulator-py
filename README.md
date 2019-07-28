@@ -27,19 +27,18 @@ A library for reading and writing tabular data (csv/xls/json/etc).
     - [Running on Python](#running-on-python)
   - [Documentation](#documentation)
     - [Stream](#stream)
-      - [Options](#options)
-        - [Headers](#headers)
-        - [Encoding](#encoding)
-        - [Compression (Python3-only)](#compression-python3-only)
-        - [Allow html](#allow-html)
-        - [Sample size](#sample-size)
-        - [Bytes sample size](#bytes-sample-size)
-        - [Ignore blank headers](#ignore-blank-headers)
-        - [Force strings](#force-strings)
-        - [Force parse](#force-parse)
-        - [Skip rows](#skip-rows)
-        - [Post parse](#post-parse)
-        - [Keyed and extended rows](#keyed-and-extended-rows)
+      - [Headers](#headers)
+      - [Encoding](#encoding)
+      - [Compression (Python3-only)](#compression-python3-only)
+      - [Allow html](#allow-html)
+      - [Sample size](#sample-size)
+      - [Bytes sample size](#bytes-sample-size)
+      - [Ignore blank headers](#ignore-blank-headers)
+      - [Force strings](#force-strings)
+      - [Force parse](#force-parse)
+      - [Skip rows](#skip-rows)
+      - [Post parse](#post-parse)
+      - [Keyed and extended rows](#keyed-and-extended-rows)
     - [Supported schemes](#supported-schemes)
       - [file](#file)
       - [http/https/ftp/ftps](#httphttpsftpftps)
@@ -218,12 +217,7 @@ This is the preferred way, as Python closes the stream automatically, even if so
 
 The full API documentation is available as docstrings in the [Stream source code][stream.py].
 
-#### Options
-
-On this section, we'll see all different options supported by the `Stream`
-class.
-
-##### Headers
+#### Headers
 
 By default, tabulator considers that all file rows are values (i.e. there is no
 header).
@@ -260,7 +254,7 @@ with Stream('data.xlsx', headers=[1, 3], fill_merged_cells=True) as stream:
   stream.read() # [['value1', 'value2', 'value3']]
 ```
 
-##### Encoding
+#### Encoding
 
 You can specify the file encoding (e.g. `utf-8` and `latin1`) via the `encoding`
 argument.
@@ -274,7 +268,7 @@ If this argument isn't set, Tabulator will try to infer it from the data. If you
 get a `UnicodeDecodeError` while loading a file, try setting the encoding to
 `utf-8`.
 
-##### Compression (Python3-only)
+#### Compression (Python3-only)
 
 Tabulator supports both ZIP and GZIP compression methods. By default it'll infer from the file name:
 
@@ -293,7 +287,7 @@ with Stream('data.csv.ext', compression='gz') as stream:
 
 - **filename**: filename in zip file to process (default is first file)
 
-##### Allow html
+#### Allow html
 
 The `Stream` class raises `tabulator.exceptions.FormatError` if it detects HTML
 contents. This helps avoiding the relatively common mistake of trying to load a
@@ -306,7 +300,7 @@ with Stream(source_with_html, allow_html=True) as stream:
   stream.read() # no exception on open
 ```
 
-##### Sample size
+#### Sample size
 
 To detect the file's headers, and run other checks like validating that the file
 doesn't contain HTML, Tabulator reads a sample of rows on the `stream.open()`
@@ -322,7 +316,7 @@ with Stream(two_rows_source, sample_size=1) as stream:
 You can disable this by setting `sample_size` to zero. This way, no data will be
 read on `stream.open()`.
 
-##### Bytes sample size
+#### Bytes sample size
 
 Tabulator needs to read a part of the file to infer its encoding. The
 `bytes_sample_size` arguments controls how many bytes will be read for this
@@ -337,7 +331,7 @@ with Stream(source) as stream:
 You can disable this by setting `bytes_sample_size` to zero, in which case it'll
 use the machine locale's default encoding.
 
-##### Ignore blank headers
+#### Ignore blank headers
 
 When `True`, tabulator will ignore columns that have blank headers (defaults to
 `False`).
@@ -356,7 +350,7 @@ with Stream(source, format='csv', headers=1, ignore_blank_headers=True) as strea
     stream.read(keyed=True) # {'header1': 'value1', 'header3': 'value3'}
 ```
 
-##### Force strings
+#### Force strings
 
 When `True`, all rows' values will be converted to strings (defaults to
 `False`). `None` values will be converted to empty strings.
@@ -371,7 +365,7 @@ with Stream([['string', 1]], force_strings=True) as stream:
   stream.read() # [['string', '1', '2017-12-01 17:00:00']]
 ```
 
-##### Force parse
+#### Force parse
 
 When `True`, don't raise an exception when parsing a malformed row, but simply
 return an empty row. Otherwise, tabulator raises
@@ -387,7 +381,7 @@ with Stream([[1], 'bad', [3]], force_parse=True) as stream:
   stream.read() # [[1], [], [3]]
 ```
 
-##### Skip rows
+#### Skip rows
 
 List of row numbers and/or strings to skip.
 If it's a string, all rows that begin with it will be skipped (e.g. '#' and '//').
@@ -408,7 +402,7 @@ with Stream(source, headers=1, skip_rows=['#']) as stream:
   stream.read() # [['Jogn', 1], ['Alex', 2]]
 ```
 
-##### Post parse
+#### Post parse
 
 List of functions that can filter or transform rows after they are parsed. These
 functions receive the `extended_rows` containing the row's number, headers
@@ -439,7 +433,7 @@ with Stream(rows, post_parse=[skip_odd_rows, multiply_by_two]) as stream:
 These functions are applied in order, as a simple data pipeline. In the example
 above, `multiply_by_two` just sees the rows yielded by `skip_odd_rows`.
 
-##### Keyed and extended rows
+#### Keyed and extended rows
 
 The methods `stream.iter()` and `stream.read()` accept the `keyed` and
 `extended` flag arguments to modify how the rows are returned.
