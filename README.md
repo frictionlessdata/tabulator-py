@@ -17,44 +17,56 @@ A library for reading and writing tabular data (csv/xls/json/etc).
 - **Extensible**: You can add support for custom file formats and loaders (e.g.
   FTP).
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-## Table of Contents
+## Contents
 
-- [Features](#features)
-- [Getting started](#getting-started)
+<!--TOC-->
+
+  - [Getting started](#getting-started)
     - [Installation](#installation)
     - [Running on CLI](#running-on-cli)
     - [Running on Python](#running-on-python)
-- [Documentation](#documentation)
+  - [Documentation](#documentation)
     - [Stream](#stream)
-        - [Options](#options)
+      - [Options](#options)
+        - [Headers](#headers)
+        - [Encoding](#encoding)
+        - [Compression (Python3-only)](#compression-python3-only)
+        - [Allow html](#allow-html)
+        - [Sample size](#sample-size)
+        - [Bytes sample size](#bytes-sample-size)
+        - [Ignore blank headers](#ignore-blank-headers)
+        - [Force strings](#force-strings)
+        - [Force parse](#force-parse)
+        - [Skip rows](#skip-rows)
+        - [Post parse](#post-parse)
+        - [Keyed and extended rows](#keyed-and-extended-rows)
     - [Supported schemes](#supported-schemes)
-        - [file](#file)
-        - [http/https/ftp/ftps](#httphttpsftpftps)
-        - [stream](#stream)
-        - [text](#text)
+      - [file](#file)
+      - [http/https/ftp/ftps](#httphttpsftpftps)
+      - [stream](#stream-1)
+      - [text](#text)
     - [Supported file formats](#supported-file-formats)
-        - [csv (read & write)](#csv-read--write)
-        - [xls/xlsx (read only)](#xlsxlsx-read-only)
-        - [ods (read only)](#ods-read-only)
-        - [gsheet (read only)](#gsheet-read-only)
-        - [sql (read only)](#sql-read-only)
-        - [Data Package (read only)](#data-package-read-only)
-        - [inline (read only)](#inline-read-only)
-        - [json (read only)](#json-read-only)
-        - [ndjson (read only)](#ndjson-read-only)
-        - [tsv (read only)](#tsv-read-only)
+      - [csv (read & write)](#csv-read--write)
+      - [xls/xlsx (read only)](#xlsxlsx-read-only)
+      - [ods (read only)](#ods-read-only)
+      - [gsheet (read only)](#gsheet-read-only)
+      - [sql (read only)](#sql-read-only)
+      - [Data Package (read only)](#data-package-read-only)
+      - [inline (read only)](#inline-read-only)
+      - [json (read only)](#json-read-only)
+      - [ndjson (read only)](#ndjson-read-only)
+      - [tsv (read only)](#tsv-read-only)
     - [Adding support for new file sources, formats, and writers](#adding-support-for-new-file-sources-formats-and-writers)
-        - [Custom loaders](#custom-loaders)
-        - [Custom parsers](#custom-parsers)
-        - [Custom writers](#custom-writers)
+      - [Custom loaders](#custom-loaders)
+      - [Custom parsers](#custom-parsers)
+      - [Custom writers](#custom-writers)
     - [Validate](#validate)
     - [Exceptions](#exceptions)
-- [API Reference](#api-reference)
-- [Contributing](#contributing)
-- [Changelog](#changelog)
+  - [API Reference](#api-reference)
+  - [Contributing](#contributing)
+  - [Changelog](#changelog)
 
-<!-- markdown-toc end -->
+<!--TOC-->
 
 ## Getting started
 
@@ -277,7 +289,7 @@ You can also set it explicitly:
 with Stream('data.csv.ext', compression='gz') as stream:
   stream.read()
 ```
-###### Options
+####### Options
 
 - **filename**: filename in zip file to process (default is first file)
 
@@ -474,7 +486,7 @@ stream = Stream('data.csv')
 stream = Stream('https://example.com/data.csv')
 ```
 
-##### Options
+###### Options
 - **http\_session** - a `requests.Session` object. Read more in the [requests docs][requests-session].
 - **http\_stream** - Enables or disables HTTP streaming, when possible (enabled by default). Disable it if you'd like to preload the whole file into memory.
 
@@ -513,7 +525,7 @@ while others support both reading and writing.
 stream = Stream('data.csv', delimiter=',')
 ```
 
-##### Options
+###### Options
 
 It supports all options from the Python CSV library. Check [their
 documentation][pydoc-csv] for more information.
@@ -527,7 +539,7 @@ documentation][pydoc-csv] for more information.
 stream = Stream('data.xls', sheet=1)
 ```
 
-##### Options
+###### Options
 
 - **sheet**: Sheet name or number (starting from 1)
 - **fill_merged_cells**: if `True` it will unmerge and fill all merged cells by
@@ -545,7 +557,7 @@ Source should be a valid Open Office document.
 stream = Stream('data.ods', sheet=1)
 ```
 
-##### Options
+###### Options
 
 - **sheet**: Sheet name or number (starting from 1)
 
@@ -566,7 +578,7 @@ Any database URL supported by [sqlalchemy][sqlalchemy].
 stream = Stream('postgresql://name:pass@host:5432/database', table='data')
 ```
 
-##### Options
+###### Options
 
 - **table (required)**: Database table name
 - **order_by**: SQL expression for row ordering (e.g. `name DESC`)
@@ -582,7 +594,7 @@ A [Tabular Data Package][tdp].
 stream = Stream('datapackage.json', resource=1)
 ```
 
-##### Options
+###### Options
 
 - **resource**: Resource name or index (starting from 0)
 
@@ -605,7 +617,7 @@ names to their respective values (see the `inline` format for an example).
 stream = Stream('data.json', property='key1.key2')
 ```
 
-##### Options
+###### Options
 
 - **property**: JSON Path to the property containing the tabular data. For example, considering the JSON `{"response": {"data": [...]}}`, the `property` should be set to `response.data`.
 
@@ -786,107 +798,107 @@ $ make test
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
-### v1.23
+###### v1.23
 
 - Added a setter for the `stream.headers` property
 
-### v1.22
+###### v1.22
 
 - The `headers` parameter will now use the first not skipped row if the `skip_rows` parameter is provided and there are comments on the top of a data source (see #264)
 
-### v1.21
+###### v1.21
 
 - Implemented experimental `preserve_formatting` for xlsx
 
-### v1.20
+###### v1.20
 
 - Added support for specifying filename in zip source
 
-### v1.19
+###### v1.19
 
 Updated behaviour:
 - For `ods` format the boolean, integer and datatime native types are detected now
 
-### v1.18
+###### v1.18
 
 Updated behaviour:
 - For `xls` format the boolean, integer and datatime native types are detected now
 
-### v1.17
+###### v1.17
 
 Updated behaviour:
 - Added support for Python 3.7
 
-### v1.16
+###### v1.16
 
 New API added:
 - `skip_rows` support for an empty string to skip rows with an empty first column
 
-### v1.15
+###### v1.15
 
 New API added:
 - Format will be extracted from URLs like `http://example.com?format=csv`
 
-### v1.14
+###### v1.14
 
 Updated behaviour:
 - Now `xls` booleans will be parsed as booleans not integers
 
-### v1.13
+###### v1.13
 
 New API added:
 - The `skip_rows` argument now supports negative numbers to skip rows starting from the end
 
-### v1.12
+###### v1.12
 
 Updated behaviour:
 - Instead of raising an exception, a `UserWarning` warning will be emitted if an option isn't recognized.
 
-### v1.11
+###### v1.11
 
 New API added:
 - Added `http_session` argument for the `http/https` format (it uses `requests` now)
 - Added support for multiline headers: `headers` argument accept ranges like `[1,3]`
 
-### v1.10
+###### v1.10
 
 New API added:
 - Added support for compressed files i.e. `zip` and `gz` on Python3
 - The `Stream` constructor now accepts a `compression` argument
 - The `http/https` scheme now accepts a `http_stream` flag
 
-### v1.9
+###### v1.9
 
 Improved behaviour:
 - The `headers` argument allows to set the order for keyed sources and cherry-pick values
 
-### v1.8
+###### v1.8
 
 New API added:
 - Formats `XLS/XLSX/ODS` supports sheet names passed via the `sheet` argument
 - The `Stream` constructor accepts an `ignore_blank_headers` option
 
-### v1.7
+###### v1.7
 
 Improved behaviour:
 - Rebased `datapackage` format on `datapackage@1` library
 
-### v1.6
+###### v1.6
 
 New API added:
 - Argument `source` for the `Stream` constructor can be a `pathlib.Path`
 
-### v1.5
+###### v1.5
 
 New API added:
 - Argument `bytes_sample_size` for the `Stream` constructor
 
-### v1.4
+###### v1.4
 
 Improved behaviour:
 - Updated encoding name to a canonical form
 
-### v1.3
+###### v1.3
 
 New API added:
 - `stream.scheme`
@@ -899,17 +911,17 @@ Promoted provisional API to stable API:
 - `Writer` (custom writers)
 - `validate`
 
-### v1.2
+###### v1.2
 
 Improved behaviour:
 - Autodetect common CSV delimiters
 
-### v1.1
+###### v1.1
 
 New API added:
 - Added `fill_merged_cells` option to `xls/xlsx` formats
 
-### v1.0
+###### v1.0
 
 New API added:
 - published `Loader/Parser/Writer` API
@@ -924,7 +936,7 @@ Deprecated API removal:
 Provisional API changed:
 - Updated the `Loader/Parser/Writer` API - please use an updated version
 
-### v0.15
+###### v0.15
 
 Provisional API added:
 - Unofficial support for `Stream` arguments `custom_loaders/parsers`

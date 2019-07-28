@@ -13,6 +13,11 @@ install:
 list:
 	@grep '^\.PHONY' Makefile | cut -d' ' -f2- | tr ' ' '\n'
 
+readme:
+	pip install md-toc
+	md_toc -p README.md github --header-levels 5
+	sed -i '/(#tabulator-py)/,+2d' README.md
+
 test:
 	tox
 

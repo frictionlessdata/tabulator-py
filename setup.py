@@ -48,6 +48,9 @@ INSTALL_FORMAT_ODS_REQUIRES = [
     'lxml>=3.0',
 ]
 TESTS_REQUIRE = [
+    'pylama',
+    'pytest',
+    'mock',
     'tox',
 ]
 README = read('README.md')
