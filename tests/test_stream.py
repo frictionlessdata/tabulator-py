@@ -114,6 +114,15 @@ def test_stream_headers_strip_and_non_strings():
         assert stream.read() == [['value1', 'value2', 'value3', 'value4']]
 
 
+def test_stream_headers_set_property():
+    with Stream('data/table.csv', headers=1) as stream:
+        stream.headers = ['number', 'language']
+        assert stream.headers == ['number', 'language']
+        assert list(stream.iter(keyed=True)) == [
+            {'number': '1', 'language': 'english'},
+            {'number': '2', 'language': '中国人'}]
+
+
 # Compression errors
 
 def test_stream_compression_error_gz():
@@ -259,7 +268,7 @@ def test_stream_ignore_blank_headers_false():
 def test_stream_ignore_blank_headers_true():
     source = 'text://header1,,header3,,header5\nvalue1,value2,value3,value4,value5'
     data = [
-            {'header1': 'value1', 
+            {'header1': 'value1',
              'header3': 'value3',
              'header5': 'value5'},
         ]
@@ -282,7 +291,12 @@ def test_stream_force_strings():
     source = [['John', 21, 1.5, temp, date, time]]
     with Stream(source, force_strings=True) as stream:
         assert stream.read() == [
-            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01', '17:00:00']
+            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01',
+             '17:00:00']
+        ]
+        assert stream.sample == [
+            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01',
+             '17:00:00']
         ]
 
 
@@ -310,42 +324,47 @@ def test_stream_force_parse_json():
 
 # Skip rows
 
-
 def test_stream_skip_rows():
     source = 'data/special/skip-rows.csv'
-    with Stream(source, skip_rows=['#', 4]) as stream:
+    with Stream(source, skip_rows=['#', 5]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english']]
-
-
-def test_stream_skip_rows_with_headers():
-    source = 'data/special/skip-rows.csv'
-    with Stream(source, headers=2, skip_rows=['#', 1]) as stream:
-        assert stream.read() == [['2', '中国人']]
 
 
 def test_stream_skip_rows_from_the_end():
     source = 'data/special/skip-rows.csv'
-    with Stream(source, skip_rows=[-2, 1]) as stream:
-        assert stream.read() == [['1', 'english'], ['2', '中国人']]
-
-    with Stream(source, skip_rows=[-1, -2]) as stream:
+    with Stream(source, skip_rows=[1, -2]) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream(source, skip_rows=[1, -1, -2]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english']]
 
 
 def test_stream_skip_rows_no_double_skip():
     source = 'data/special/skip-rows.csv'
-    with Stream(source, skip_rows=[3, -2]) as stream:
+    with Stream(source, skip_rows=[1, 4, -2]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
-
     # no double skip at the very last row
-    with Stream(source, skip_rows=[4, -1]) as stream:
+    with Stream(source, skip_rows=[1, 5, -1]) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ["# it's a comment!"]]
+
 
 def test_stream_skip_rows_excel_empty_column():
     source = 'data/special/skip-rows.xlsx'
     with Stream(source, headers=1, skip_rows=['']) as stream:
         assert stream.read() == [['A', 'B'], [8, 9]]
 
+
+def test_stream_skip_rows_with_headers():
+    source = 'data/special/skip-rows.csv'
+    with Stream(source, headers=1, skip_rows=['#']) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read() == [['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_skip_rows_with_headers_example_from_readme():
+    source = [['#comment'], ['name', 'order'], ['John', 1], ['Alex', 2]]
+    with Stream(source, headers=1, skip_rows=['#']) as stream:
+        assert stream.headers == ['name', 'order']
+        assert stream.read() == [['John', 1], ['Alex', 2]]
 
 
 # Post parse
@@ -620,6 +639,15 @@ def test_stream_local_csv_zip():
     with Stream('data/table.csv.zip') as stream:
         assert stream.headers is None
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_local_csv_zip_multiple_files():
+    with Stream('data/2-files.zip', filename = 'table.csv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    with Stream('data/2-files.zip', filename = 'table-reverse.csv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', '中国人'], ['2', 'english']]
 
 
 @pytest.mark.skipif(six.PY2, reason='Support only for Python3')

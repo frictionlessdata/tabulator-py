@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import six
 import shutil
 import openpyxl
+import datetime
 from itertools import chain
 from tempfile import TemporaryFile
 from ..parser import Parser
@@ -25,12 +26,15 @@ class XLSXParser(Parser):
     options = [
         'sheet',
         'fill_merged_cells',
+        'preserve_formatting',
     ]
 
-    def __init__(self, loader, force_parse=False, sheet=1, fill_merged_cells=False):
+    def __init__(self, loader, force_parse=False, sheet=1,
+            fill_merged_cells=False, preserve_formatting=False):
         self.__loader = loader
         self.__sheet_pointer = sheet
         self.__fill_merged_cells = fill_merged_cells
+        self.__preserve_formatting = preserve_formatting
         self.__extended_rows = None
         self.__encoding = None
         self.__force_parse = force_parse
@@ -95,7 +99,7 @@ class XLSXParser(Parser):
 
     def __iter_extended_rows(self):
         for row_number, row in enumerate(self.__sheet.iter_rows(), start=1):
-            yield (row_number, None, list(cell.value for cell in row))
+            yield (row_number, None, extract_row_values(row, self.__preserve_formatting))
 
     def __process_merged_cells(self):
         if self.__fill_merged_cells:
@@ -106,3 +110,37 @@ class XLSXParser(Parser):
                 for coordinate in coordinates:
                     cell = self.__sheet[coordinate]
                     cell.value = value
+
+
+# Internal
+
+NUMERIC_FORMATS = {
+    '0': '{0:.0f}',
+    '0.00': '{0:.2f}',
+    '#,##0': '{0:,.0f}',
+    '#,##0.00': '{0:,.2f}',
+    '#,###.00': '{0:,.2f}',
+}
+TEMPORAL_FORMATS = {
+    'm/d/yy': '%-m/%d/%y',
+    'mm/dd/yy': '%m/%d/%y',
+    'd-mmm': '%d-%b',
+}
+
+def extract_row_values(row, preserve_formatting=False):
+    if preserve_formatting:
+        values = []
+        for cell in row:
+            number_format = (cell.number_format or '').lower()
+            number_format = number_format.replace('\\', '')
+            numeric_format = NUMERIC_FORMATS.get(number_format)
+            temporal_format = TEMPORAL_FORMATS.get(number_format)
+            if isinstance(cell.value, (int, float)) and numeric_format:
+                value = numeric_format.format(cell.value)
+            elif isinstance(cell.value, datetime.datetime) and temporal_format:
+                value = cell.value.strftime(temporal_format)
+            else:
+                value = cell.value
+            values.append(value)
+        return values
+    return list(cell.value for cell in row)

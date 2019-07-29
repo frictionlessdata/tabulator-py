@@ -216,6 +216,9 @@ class Stream(object):
             source = self.__loader.load(self.__source, mode='b')
             with zipfile.ZipFile(source) as archive:
                 name = archive.namelist()[0]
+                if 'filename' in options.keys():
+                    name = options['filename']
+                    del options['filename']
                 with archive.open(name) as file:
                     source = tempfile.NamedTemporaryFile(suffix='.' + name)
                     for line in file:
@@ -288,6 +291,10 @@ class Stream(object):
     def headers(self):
         return self.__headers
 
+    @headers.setter
+    def headers(self, headers):
+        self.__headers = headers
+
     @property
     def scheme(self):
         return self.__actual_scheme
@@ -353,8 +360,6 @@ class Stream(object):
 
         # Yield rows from iterator
         for row_number, headers, row in iterator:
-            if self.__force_strings:
-                row = list(map(helpers.stringify_value, row))
             if row_number > self.__row_number:
                 self.__row_number = row_number
                 if extended:
@@ -436,6 +441,10 @@ class Stream(object):
         for _ in range(self.__sample_size):
             try:
                 row_number, headers, row = next(self.__parser.extended_rows)
+                if self.__headers_row and self.__headers_row >= row_number:
+                    if self.__check_if_row_for_skipping(row_number, headers, row):
+                        self.__headers_row += 1
+                        self.__headers_row_last += 1
                 self.__sample_extended_rows.append((row_number, headers, row))
             except StopIteration:
                 break
@@ -515,17 +524,8 @@ class Stream(object):
                         row = [keyed_row.get(header) for header in self.__headers]
                     headers = self.__headers
 
-                # Skip row by numbers
-                if row_number in self.__skip_rows_by_numbers:
-                    continue
-
-                # Skip row by comments
-                match = lambda comment: (
-                    (isinstance(row[0], six.string_types) and
-                     row[0].startswith(comment)) if len(comment) > 0
-                    else row[0] in ('', None)
-                )
-                if any(map(match, self.__skip_rows_by_comments)):
+                # Skip rows by numbers/comments
+                if self.__check_if_row_for_skipping(row_number, headers, row):
                     continue
 
                 # Ignore blank headers
@@ -560,6 +560,12 @@ class Stream(object):
                 if i - n not in rows_to_skip:
                     yield row
 
+        # Force values to strings processor
+        def force_strings_processor(extended_rows):
+            for row_number, headers, row in extended_rows:
+                row = list(map(helpers.stringify_value, row))
+                yield (row_number, headers, row)
+
         # Form a processors list
         processors = [builtin_processor]
         # if we have to delete some rows with negative index (counting from the end)
@@ -567,9 +573,28 @@ class Stream(object):
             processors.insert(0, skip_negative_rows)
         if self.__post_parse:
             processors += self.__post_parse
+        if self.__force_strings:
+            processors.append(force_strings_processor)
 
         # Apply processors to iterator
         for processor in processors:
             iterator = processor(iterator)
 
         return iterator
+
+    def __check_if_row_for_skipping(self, row_number, headers, row):
+
+        # Skip by number
+        if row_number in self.__skip_rows_by_numbers:
+            return True
+
+        # Skip by comment
+        match = lambda comment: (
+            (isinstance(row[0], six.string_types) and
+             row[0].startswith(comment)) if len(comment) > 0
+            else row[0] in ('', None)
+        )
+        if any(map(match, self.__skip_rows_by_comments)):
+            return True
+
+        return False
