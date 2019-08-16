@@ -792,6 +792,10 @@ $ make test
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+###### v1.24
+
+- Added support for compressed file-like objects
+
 ###### v1.23
 
 - Added a setter for the `stream.headers` property
