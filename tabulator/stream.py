@@ -231,7 +231,9 @@ class Stream(object):
 
         # Gzip compression
         elif compression == 'gz' and six.PY3:
-            name = self.__source.replace('.gz', '')
+            name = ''
+            if isinstance(self.__source, str):
+                name = self.__source.replace('.gz', '')
             self.__source = gzip.open(self.__loader.load(self.__source, mode='b'))
             self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
             format = self.__format or helpers.detect_scheme_and_format(name)[1]

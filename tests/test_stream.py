@@ -640,6 +640,7 @@ def test_stream_local_csv_zip():
         assert stream.headers is None
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
+
 @pytest.mark.skipif(six.PY2, reason='Support only for Python3')
 def test_stream_local_csv_zip_multiple_files():
     with Stream('data/2-files.zip', filename = 'table.csv') as stream:
@@ -655,6 +656,22 @@ def test_stream_local_csv_gz():
     with Stream('data/table.csv.gz') as stream:
         assert stream.headers is None
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_filelike_csv_zip():
+    with open('data/table.csv.zip', 'rb') as file:
+        with Stream(file, format='csv', compression='zip') as stream:
+            assert stream.headers is None
+            assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_filelike_csv_gz():
+    with open('data/table.csv.gz', 'rb') as file:
+        with Stream(file, format='csv', compression='gz') as stream:
+            assert stream.headers is None
+            assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 # Issues
