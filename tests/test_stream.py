@@ -652,6 +652,20 @@ def test_stream_local_csv_zip_multiple_files():
 
 
 @pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_local_csv_zip_multiple_open():
+    # That's how `tableschema.iter()` acts
+    stream = Stream('data/table.csv.zip')
+    stream.open()
+    assert stream.headers is None
+    assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    stream.close()
+    stream.open()
+    assert stream.headers is None
+    assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+    stream.close()
+
+
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
 def test_stream_local_csv_gz():
     with Stream('data/table.csv.gz') as stream:
         assert stream.headers is None
