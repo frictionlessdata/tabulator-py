@@ -176,12 +176,13 @@ class Stream(object):
 
     def open(self):
         '''Opens the stream for reading.'''
+        source = self.__source
         options = copy(self.__options)
 
         # Get scheme and format if not already given
         compression = None
         if self.__scheme is None or self.__format is None:
-            detected_scheme, detected_format = helpers.detect_scheme_and_format(self.__source)
+            detected_scheme, detected_format = helpers.detect_scheme_and_format(source)
             scheme = self.__scheme or detected_scheme
             format = self.__format or detected_format
             # Get compression
@@ -213,7 +214,8 @@ class Stream(object):
 
         # Zip compression
         if compression == 'zip' and six.PY3:
-            source = self.__loader.load(self.__source, mode='b')
+            self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
+            source = self.__loader.load(source, mode='b')
             with zipfile.ZipFile(source) as archive:
                 name = archive.namelist()[0]
                 if 'filename' in options.keys():
@@ -224,18 +226,16 @@ class Stream(object):
                     for line in file:
                         source.write(line)
                     source.seek(0)
-            self.__source = source
-            self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
             format = self.__format or helpers.detect_scheme_and_format(source.name)[1]
             scheme = 'stream'
 
         # Gzip compression
         elif compression == 'gz' and six.PY3:
-            name = ''
-            if isinstance(self.__source, str):
-                name = self.__source.replace('.gz', '')
-            self.__source = gzip.open(self.__loader.load(self.__source, mode='b'))
             self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
+            name = ''
+            if isinstance(source, str):
+                name = source.replace('.gz', '')
+            source = gzip.open(self.__loader.load(source, mode='b'))
             format = self.__format or helpers.detect_scheme_and_format(name)[1]
             scheme = 'stream'
 
@@ -263,7 +263,7 @@ class Stream(object):
             warnings.warn(message, UserWarning)
 
         # Open and setup
-        self.__parser.open(self.__source, encoding=self.__encoding)
+        self.__parser.open(source, encoding=self.__encoding)
         self.__extract_sample()
         self.__extract_headers()
         if not self.__allow_html:
