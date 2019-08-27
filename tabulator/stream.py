@@ -214,7 +214,6 @@ class Stream(object):
 
         # Zip compression
         if compression == 'zip' and six.PY3:
-            self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
             source = self.__loader.load(source, mode='b')
             with zipfile.ZipFile(source) as archive:
                 name = archive.namelist()[0]
@@ -226,16 +225,19 @@ class Stream(object):
                     for line in file:
                         source.write(line)
                     source.seek(0)
+            # We redefine loader/format/schema after decompression
+            self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
             format = self.__format or helpers.detect_scheme_and_format(source.name)[1]
             scheme = 'stream'
 
         # Gzip compression
         elif compression == 'gz' and six.PY3:
-            self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
             name = ''
             if isinstance(source, str):
                 name = source.replace('.gz', '')
             source = gzip.open(self.__loader.load(source, mode='b'))
+            # We redefine loader/format/schema after decompression
+            self.__loader = StreamLoader(bytes_sample_size=self.__bytes_sample_size)
             format = self.__format or helpers.detect_scheme_and_format(name)[1]
             scheme = 'stream'
 

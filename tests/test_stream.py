@@ -688,6 +688,22 @@ def test_stream_filelike_csv_gz():
             assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_remote_csv_zip():
+    source = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/data/table.csv.zip'
+    with Stream(source) as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
+def test_stream_remote_csv_gz():
+    source = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/data/table.csv.gz'
+    with Stream(source) as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
 # Issues
 
 def test_stream_reset_on_close_issue_190():
