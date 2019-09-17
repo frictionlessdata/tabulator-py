@@ -9,33 +9,56 @@ import boto3
 import pytest
 import string
 import random
+import subprocess
 from moto import mock_s3
 from tabulator import Stream
 
 # Setup
 
-os.environ['S3_ENDPOINT_URL'] = 'http://localhost:5000'
+S3_ENDPOINT_URL = os.environ['S3_ENDPOINT_URL'] = 'http://localhost:5000'
 
 
 # Stream
 
-def test_stream_s3_1(s3_client, bucket):
-    assert True
+def test_stream_s3(s3_client, bucket):
+
+    # Upload a file
+    s3_client.put_object(
+        ACL='private',
+        Body=open('data/table.csv', 'rb'),
+        Bucket=bucket,
+        ContentType='text/csv',
+        Key='table.csv')
+
+    # Check the file
+    with Stream('s3://%s/table.csv' % bucket) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-def test_stream_s3_2(s3_client, bucket):
-    assert True
+def test_stream_s3_endpoint_url(s3_client, bucket):
+
+    # Upload a file
+    s3_client.put_object(
+        ACL='private',
+        Body=open('data/table.csv', 'rb'),
+        Bucket=bucket,
+        ContentType='text/csv',
+        Key='table.csv')
+
+    # Check the file
+    with Stream('s3://%s/table.csv' % bucket, s3_endpoint_url=S3_ENDPOINT_URL) as stream:
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
 # Fixtures
 
 @pytest.fixture(scope='module')
 def s3_client():
-    s3_server = mock_s3()
-    s3_server.start()
-    s3_client = boto3.client('s3', endpoint_url=os.environ.get('S3_ENDPOINT_URL'))
+    # TODO: rebase to normal patching; doens't work for now
+    subprocess.Popen('moto_server', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    s3_client = boto3.client('s3', endpoint_url=S3_ENDPOINT_URL)
     yield s3_client
-    s3_server.stop()
+    os.system('pkill moto_server')
 
 
 @pytest.fixture

@@ -4,9 +4,12 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
 import io
 import six
+import boto3
 import requests
+from urllib.parse import urlparse
 from ..loader import Loader
 from .. import exceptions
 from .. import helpers
@@ -15,35 +18,25 @@ from .. import config
 
 # Module API
 
-class RemoteLoader(Loader):
-    """Loader to load source from the web.
+class AWSLoader(Loader):
+    """Loader to load source from the AWS.
     """
 
     # Public
 
     options = [
-        'http_session',
-        'http_stream',
+        's3_endpoint_url',
     ]
 
     def __init__(self,
                  bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE,
-                 http_session=None,
-                 http_stream=True):
-
-        # Create default session
-        if not http_session:
-            http_session = requests.Session()
-            http_session.headers.update(config.HTTP_HEADERS)
-
-        # No stream support
-        if six.PY2:
-            http_stream = False
-
-        # Set attributes
+                 s3_endpoint_url=None):
         self.__bytes_sample_size = bytes_sample_size
-        self.__http_session = http_session
-        self.__http_stream = http_stream
+        self.__s3_endpoint_url = (
+            s3_endpoint_url or
+            os.environ.get('S3_ENDPOINT_URL') or
+            config.S3_DEFAULT_ENDPOINT_URL)
+        self.__s3_client = boto3.client('s3', endpoint_url=self.__s3_endpoint_url)
 
     def load(self, source, mode='t', encoding=None):
 
@@ -52,14 +45,14 @@ class RemoteLoader(Loader):
 
         # Prepare bytes
         try:
-            bytes = _RemoteStream(source, self.__http_session).open()
-            if not self.__http_stream:
-                buffer = io.BufferedRandom(io.BytesIO())
-                buffer.write(bytes.read())
-                buffer.seek(0)
-                bytes = buffer
-        except IOError as exception:
-            raise exceptions.HTTPError(str(exception))
+            parts = urlparse(source, allow_fragments=False)
+            response = self.__s3_client.get_object(Bucket=parts.netloc, Key=parts.path[1:])
+            # TODO: rebase on streaming
+            bytes = io.BufferedRandom(io.BytesIO())
+            bytes.write(response['Body'].read())
+            bytes.seek(0)
+        except Exception as exception:
+            raise exceptions.IOError(str(exception))
 
         # Return bytes
         if mode == 'b':

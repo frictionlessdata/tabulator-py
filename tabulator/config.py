@@ -21,10 +21,12 @@ HTTP_HEADERS = {
 CSV_SAMPLE_LINES = 100
 # http://docs.sqlalchemy.org/en/latest/dialects/index.html
 SQL_SCHEMES = ['firebird', 'mssql', 'mysql', 'oracle', 'postgresql', 'sqlite', 'sybase']
+S3_DEFAULT_ENDPOINT_URL = 'https://s3.amazonaws.com'
 
 # Loaders
 
 LOADERS = {
+    's3': 'tabulator.loaders.aws.AWSLoader',
     'file': 'tabulator.loaders.local.LocalLoader',
     'http': 'tabulator.loaders.remote.RemoteLoader',
     'https': 'tabulator.loaders.remote.RemoteLoader',
