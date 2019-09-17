@@ -147,6 +147,12 @@ def test_stream_csv_dialect_should_not_persist_if_sniffing_fails_issue_goodtable
         assert stream.headers == ['a', 'b', 'c']
 
 
+def test_stream_csv_quotechar_is_empty_string():
+    source = 'value1,value2",value3'
+    with Stream(source, scheme='text', format='csv', quotechar='') as stream:
+        stream.read() == ['value1', 'value2"', 'value3']
+
+
 # Parser
 
 def test_parser_csv():
