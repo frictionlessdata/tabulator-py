@@ -9,7 +9,7 @@ import io
 import six
 import boto3
 import requests
-from six.moves.urllib.parse import urlunparse
+from six.moves.urllib.parse import urlparse
 from ..loader import Loader
 from .. import exceptions
 from .. import helpers
