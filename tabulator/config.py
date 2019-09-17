@@ -26,12 +26,12 @@ S3_DEFAULT_ENDPOINT_URL = 'https://s3.amazonaws.com'
 # Loaders
 
 LOADERS = {
-    's3': 'tabulator.loaders.aws.AWSLoader',
     'file': 'tabulator.loaders.local.LocalLoader',
     'http': 'tabulator.loaders.remote.RemoteLoader',
     'https': 'tabulator.loaders.remote.RemoteLoader',
     'ftp': 'tabulator.loaders.remote.RemoteLoader',
     'ftps': 'tabulator.loaders.remote.RemoteLoader',
+    's3': 'tabulator.loaders.aws.AWSLoader',
     'stream': 'tabulator.loaders.stream.StreamLoader',
     'text': 'tabulator.loaders.text.TextLoader',
 }
