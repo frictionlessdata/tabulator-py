@@ -11,7 +11,7 @@ import string
 import random
 import subprocess
 from moto import mock_s3
-from tabulator import Stream
+from tabulator import Stream, exceptions
 
 # Setup
 
@@ -48,6 +48,11 @@ def test_stream_s3_endpoint_url(s3_client, bucket):
     # Check the file
     with Stream('s3://%s/table.csv' % bucket, s3_endpoint_url=S3_ENDPOINT_URL) as stream:
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_s3_non_existent_file(s3_client, bucket):
+    with pytest.raises(exceptions.IOError):
+        Stream('s3://%s/table.csv' % bucket).open()
 
 
 # Fixtures
