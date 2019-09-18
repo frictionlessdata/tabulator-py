@@ -10,7 +10,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
 ## Features
 
 - **Supports most common tabular formats**: CSV, XLS, ODS, JSON, Google Sheets, SQL, and others. See complete list [below](#supported-file-formats).
-- **Loads local and remote data**: Supports HTTP and FTP.
+- **Loads local and remote data**: Supports HTTP, FTP and S3.
 - **Low memory usage**: Only the current row is kept in memory, so you can
   large datasets.
 - **Supports compressed files**: Using ZIP or GZIP algorithms.
@@ -805,6 +805,10 @@ $ make test
 ## Changelog
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+###### v1.25
+
+- Added support for the `s3` file scheme (data loading from AWS S3)
 
 ###### v1.24
 
