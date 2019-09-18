@@ -464,6 +464,18 @@ with Stream([['name', 'age'], ['Alex', 21]]) as stream:
 
 ### Supported schemes
 
+#### s3
+
+It loads data from AWS S3. For private files you should provide credentials supported by the `boto3` library, for example, corresponding environment variables. Read more about [configuring `boto3`](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html).
+
+```python
+stream = Stream('s3://bucket/data.csv')
+```
+
+###### Options
+
+- **s3\_endpoint\_url** - the endpoint URL to use. By default it's `https://s3.amazonaws.com`. For complex use cases, for example, `goodtables`'s runs on a data package this option can be provided as an environment variable `S3_ENDPOINT_URL`.
+
 #### file
 
 The default scheme, a file in the local filesystem.
@@ -481,6 +493,7 @@ stream = Stream('https://example.com/data.csv')
 ```
 
 ###### Options
+
 - **http\_session** - a `requests.Session` object. Read more in the [requests docs][requests-session].
 - **http\_stream** - Enables or disables HTTP streaming, when possible (enabled by default). Disable it if you'd like to preload the whole file into memory.
 
