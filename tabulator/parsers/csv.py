@@ -123,5 +123,8 @@ class CSVParser(Parser):
                 pass
         for key, value in self.__options.items():
             setattr(dialect, key, value)
+        # https://github.com/frictionlessdata/FrictionlessDarwinCore/issues/1
+        if getattr(dialect, 'quotechar', None) == '':
+            setattr(dialect, 'quoting', csv.QUOTE_NONE)
 
         return sample, dialect
