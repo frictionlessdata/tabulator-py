@@ -39,7 +39,7 @@ INSTALL_REQUIRES = [
     # Format: xls
     'xlrd>=1.0',
     # Format: xlsx
-    'openpyxl>=2.4,<2.5',
+    'openpyxl>=2.6',
 ]
 INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
     'datapackage>=1.1.3',
