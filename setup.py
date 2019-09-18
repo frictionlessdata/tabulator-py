@@ -25,6 +25,7 @@ INSTALL_REQUIRES = [
     'click>=6.0',
     'requests>=2.8',
     'cchardet>=1.0',
+    'boto3>=1.9',
     # Format: csv
     'unicodecsv>=0.14',
     # Format: json
@@ -52,6 +53,7 @@ TESTS_REQUIRE = [
     'pytest',
     'mock',
     'tox',
+    'moto[server]',
 ]
 README = read('README.md')
 VERSION = read(PACKAGE, 'VERSION')
