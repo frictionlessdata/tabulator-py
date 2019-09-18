@@ -40,6 +40,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
       - [Post parse](#post-parse)
       - [Keyed and extended rows](#keyed-and-extended-rows)
     - [Supported schemes](#supported-schemes)
+      - [s3](#s3)
       - [file](#file)
       - [http/https/ftp/ftps](#httphttpsftpftps)
       - [stream](#stream-1)
