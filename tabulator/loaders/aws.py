@@ -47,7 +47,7 @@ class AWSLoader(Loader):
         try:
             parts = urlparse(source, allow_fragments=False)
             response = self.__s3_client.get_object(Bucket=parts.netloc, Key=parts.path[1:])
-            # TODO: rebase on streaming
+            # https://github.com/frictionlessdata/tabulator-py/issues/271
             bytes = io.BufferedRandom(io.BytesIO())
             bytes.write(response['Body'].read())
             bytes.seek(0)

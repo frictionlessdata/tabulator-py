@@ -54,7 +54,7 @@ def test_stream_s3_endpoint_url(s3_client, bucket):
 
 @pytest.fixture(scope='module')
 def s3_client():
-    # TODO: rebase to normal patching; doens't work for now
+    # https://github.com/frictionlessdata/tabulator-py/issues/271
     subprocess.Popen('moto_server', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     s3_client = boto3.client('s3', endpoint_url=S3_ENDPOINT_URL)
     yield s3_client
