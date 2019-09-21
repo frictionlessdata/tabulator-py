@@ -806,6 +806,10 @@ $ make test
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+###### v1.26
+
+- Added `stream.fragment` field showing e.g. Excel sheet's or DP resource's name
+
 ###### v1.25
 
 - Added support for the `s3` file scheme (data loading from AWS S3)
