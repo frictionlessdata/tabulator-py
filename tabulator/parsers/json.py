@@ -28,26 +28,26 @@ class JSONParser(Parser):
         self.__force_parse = force_parse
         self.__extended_rows = None
         self.__encoding = None
-        self.__chars = None
+        self.__bytes = None
 
     @property
     def closed(self):
-        return self.__chars is None or self.__chars.closed
+        return self.__bytes is None or self.__bytes.closed
 
     def open(self, source, encoding=None):
         self.close()
-        self.__chars = self.__loader.load(source, encoding=encoding)
-        self.__encoding = getattr(self.__chars, 'encoding', encoding)
+        self.__encoding = encoding
+        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
         if self.__encoding:
             self.__encoding.lower()
         self.reset()
 
     def close(self):
         if not self.closed:
-            self.__chars.close()
+            self.__bytes.close()
 
     def reset(self):
-        helpers.reset_stream(self.__chars)
+        helpers.reset_stream(self.__bytes)
         self.__extended_rows = self.__iter_extended_rows()
 
     @property
@@ -64,7 +64,7 @@ class JSONParser(Parser):
         path = 'item'
         if self.__property is not None:
             path = '%s.item' % self.__property
-        items = ijson.items(self.__chars, path)
+        items = ijson.items(self.__bytes, path)
         for row_number, item in enumerate(items, start=1):
             if isinstance(item, (tuple, list)):
                 yield (row_number, None, list(item))
