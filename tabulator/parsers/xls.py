@@ -32,6 +32,7 @@ class XLSParser(Parser):
         self.__force_parse = force_parse
         self.__extended_rows = None
         self.__encoding = None
+        self.__fragment = None
         self.__bytes = None
 
     @property
@@ -60,6 +61,7 @@ class XLSParser(Parser):
         except (xlrd.XLRDError, IndexError):
             message = 'Excel document "%s" doesn\'t have a sheet "%s"'
             raise exceptions.SourceError(message % (source, self.__sheet_pointer))
+        self.__fragment = self.__sheet.name
 
         # Reset parser
         self.reset()
@@ -75,6 +77,10 @@ class XLSParser(Parser):
     @property
     def encoding(self):
         return self.__encoding
+
+    @property
+    def fragment(self):
+        return self.__fragment
 
     @property
     def extended_rows(self):

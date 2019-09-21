@@ -37,6 +37,7 @@ class XLSXParser(Parser):
         self.__preserve_formatting = preserve_formatting
         self.__extended_rows = None
         self.__encoding = None
+        self.__fragment = None
         self.__force_parse = force_parse
         self.__bytes = None
 
@@ -74,6 +75,7 @@ class XLSXParser(Parser):
         except (KeyError, IndexError):
             message = 'Excel document "%s" doesn\'t have a sheet "%s"'
             raise exceptions.SourceError(message % (source, self.__sheet_pointer))
+        self.__fragment = self.__sheet.title
         self.__process_merged_cells()
 
         # Reset parser
@@ -90,6 +92,10 @@ class XLSXParser(Parser):
     @property
     def encoding(self):
         return self.__encoding
+
+    @property
+    def fragment(self):
+        return self.__fragment
 
     @property
     def extended_rows(self):

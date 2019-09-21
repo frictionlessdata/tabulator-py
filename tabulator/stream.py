@@ -304,6 +304,12 @@ class Stream(object):
         return self.__actual_scheme
 
     @property
+    def fragment(self):
+        if self.__parser:
+            return getattr(self.__parser, 'fragment', None)
+        return None
+
+    @property
     def format(self):
         return self.__actual_format
 

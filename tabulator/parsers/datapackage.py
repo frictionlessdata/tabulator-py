@@ -27,6 +27,7 @@ class DataPackageParser(Parser):
         self.__resource_pointer = resource
         self.__extended_rows = None
         self.__encoding = None
+        self.__fragment = None
         self.__resource = None
 
     @property
@@ -48,6 +49,7 @@ class DataPackageParser(Parser):
             raise exceptions.SourceError(message % (source, self.__resource_pointer))
         self.__resource.infer()
         self.__encoding = self.__resource.descriptor.get('encoding')
+        self.__fragment = self.__resource.name
         self.reset()
 
     def close(self):
@@ -60,6 +62,10 @@ class DataPackageParser(Parser):
     @property
     def encoding(self):
         return self.__encoding
+
+    @property
+    def fragment(self):
+        return self.__fragment
 
     @property
     def extended_rows(self):

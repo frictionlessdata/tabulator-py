@@ -17,6 +17,7 @@ from tabulator.parsers.datapackage import DataPackageParser
 
 def test_stream_datapackage():
     with Stream('data/datapackage.json', resource=0, headers=1) as stream:
+        assert stream.fragment == 'first-resource'
         assert stream.headers == ['id', 'name']
         assert stream.read(keyed=True) == [
             {'id': 1, 'name': 'english'},
@@ -25,6 +26,7 @@ def test_stream_datapackage():
 
 def test_second_resource():
     with Stream('data/datapackage.json', resource=1, headers=1) as stream:
+        assert stream.fragment == 'number-two'
         assert stream.headers == ['id', 'name']
         assert stream.read(keyed=True) == [
             {'id': 1, 'name': '中国人'},
@@ -37,6 +39,7 @@ def test_named_resource():
     try:
         os.chdir('data/')
         with Stream('datapackage.json', resource='number-two', headers=1) as stream:
+            assert stream.fragment == 'number-two'
             assert stream.headers == ['id', 'name']
             assert stream.read(keyed=True) == [
                 {'id': 1, 'name': '中国人'},

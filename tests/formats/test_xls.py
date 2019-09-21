@@ -31,6 +31,7 @@ def test_stream_remote_xls():
 def test_stream_xls_sheet_by_index():
     source = 'data/special/sheet2.xls'
     with Stream(source, sheet=2) as stream:
+        assert stream.fragment == 'Sheet2'
         assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
@@ -44,6 +45,7 @@ def test_stream_xls_sheet_by_index_not_existent():
 def test_stream_xls_sheet_by_name():
     source = 'data/special/sheet2.xls'
     with Stream(source, sheet='Sheet2') as stream:
+        assert stream.fragment == 'Sheet2'
         assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
