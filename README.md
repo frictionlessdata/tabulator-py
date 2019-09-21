@@ -2,8 +2,8 @@
 
 [![Travis](https://img.shields.io/travis/frictionlessdata/tabulator-py/master.svg)](https://travis-ci.org/frictionlessdata/tabulator-py)
 [![Coveralls](http://img.shields.io/coveralls/frictionlessdata/tabulator-py.svg?branch=master)](https://coveralls.io/r/frictionlessdata/tabulator-py?branch=master)
-[![Github](https://img.shields.io/badge/github-master-brightgreen)](https://github.com/frictionlessdata/tabulator-py)
 [![PyPi](https://img.shields.io/pypi/v/tabulator.svg)](https://pypi.python.org/pypi/tabulator)
+[![Github](https://img.shields.io/badge/github-master-brightgreen)](https://github.com/frictionlessdata/tabulator-py)
 [![Gitter](https://img.shields.io/gitter/room/frictionlessdata/chat.svg)](https://gitter.im/frictionlessdata/chat)
 
 A library for reading and writing tabular data (csv/xls/json/etc).
