@@ -49,11 +49,12 @@ INSTALL_FORMAT_ODS_REQUIRES = [
     'lxml>=3.0',
 ]
 TESTS_REQUIRE = [
+    'mock',
     'pylama',
     'pytest',
-    'mock',
-    'tox',
+    'pytest-cov',
     'moto[server]',
+    'tox',
 ]
 README = read('README.md')
 VERSION = read(PACKAGE, 'VERSION')
