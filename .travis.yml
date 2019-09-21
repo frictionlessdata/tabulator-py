@@ -1,11 +1,14 @@
-language: python
-sudo: required
-dist: xenial
+dist:
+  xenial
+
+sudo:
+  required
+
+language:
+  python
 
 python:
   - 2.7
-  # - 3.3  # pytest does not support 3.3 any more
-  # - 3.4
   - 3.5
   - 3.6
   - 3.7
