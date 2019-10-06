@@ -19,6 +19,7 @@ readme:
 	sed -i '/(#$(PACKAGE)-py)/,+2d' README.md
 
 test:
+	pylama $(PACKAGE)
 	tox
 
 version:
