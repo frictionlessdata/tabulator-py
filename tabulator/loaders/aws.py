@@ -6,9 +6,7 @@ from __future__ import unicode_literals
 
 import os
 import io
-import six
 import boto3
-import requests
 from six.moves.urllib.parse import urlparse
 from ..loader import Loader
 from .. import exceptions

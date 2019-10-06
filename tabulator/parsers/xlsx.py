@@ -135,6 +135,7 @@ TEMPORAL_FORMATS = {
     'd-mmm': '%d-%b',
 }
 
+
 def extract_row_values(row, preserve_formatting=False):
     if preserve_formatting:
         values = []
