@@ -57,4 +57,5 @@ PARSERS = {
 
 WRITERS = {
     'csv': 'tabulator.writers.csv.CSVWriter',
+    'json': 'tabulator.writers.json.JSONWriter',
 }
