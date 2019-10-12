@@ -45,5 +45,5 @@ class JSONWriter(Writer):
             for i in range(len(row)):
                 dict1.update({headers[i]: row[i]})
             out.append(dict1.copy())
-        json.dump(out, jsonfile, ensure_ascii=False, encoding='utf8')
+        json.dump(out, jsonfile, ensure_ascii=False)
         jsonfile.write('\n')

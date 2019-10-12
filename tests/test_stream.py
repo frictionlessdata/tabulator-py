@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import os
 import ast
 import six
 import sys
@@ -485,6 +486,11 @@ def test_stream_save_custom_writers1(tmpdir):
 
     with Stream(jsonf, format='json', encoding='utf8') as stream:
         assert stream.read() == [['1', 'english'], ['2', 'French']]
+
+    if os.path.exists(jsonf):
+        os.remove(jsonf)
+    else:
+        pass
 
 # Loader/parser options
 
