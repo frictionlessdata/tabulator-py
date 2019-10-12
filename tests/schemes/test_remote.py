@@ -7,6 +7,9 @@ from __future__ import unicode_literals
 import pytest
 from tabulator import Stream
 from tabulator.loaders.remote import RemoteLoader
+from tabulator.exceptions import HTTPError
+from time import time
+
 BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
@@ -36,3 +39,19 @@ def test_loader_remote_b():
     loader = RemoteLoader()
     chars = loader.load(BASE_URL % 'data/table.csv', mode='b', encoding='utf-8')
     assert chars.read() == b'id,name\n1,english\n2,' + spec + b'\n'
+
+def test_loader_no_timeout():
+    loader = RemoteLoader()
+    t = time()
+    chars = loader.load('https://httpstat.us/200?sleep=5000', mode='b', encoding='utf-8')
+    assert time() - t > 5
+    assert chars.read() == b'200 OK'
+    t = time()
+
+def test_loader_has_timeout():
+    loader = RemoteLoader(http_timeout=1)
+    t = time()
+    with pytest.raises(HTTPError):
+        chars = loader.load('https://httpstat.us/200?sleep=5000', mode='b', encoding='utf-8')
+    assert time() - t < 5
+    assert time() - t > 1
