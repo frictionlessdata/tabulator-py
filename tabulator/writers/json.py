@@ -4,9 +4,11 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import io
 import six
-import unicodecsv
+import json
+
+# from tabulator import Stream
+
 from ..writer import Writer
 from .. import helpers
 
@@ -36,9 +38,12 @@ class JSONWriter(Writer):
 
     def write(self, source, target, headers=None, encoding=None):
         helpers.ensure_dir(target)
-        with io.open(target, 'wb') as file:
-            writer = unicodecsv.writer(file, encoding=encoding, **self.__options)
-            if headers:
-                writer.writerow(headers)
-            for row in source:
-                writer.writerow(row)
+        jsonfile = open(target, 'w')
+        out = []
+        dict1 = {}
+        for row in source:
+            for i in range(len(row)):
+                dict1.update({headers[i]: row[i]})
+            out.append(dict1.copy())
+        json.dump(out, jsonfile, ensure_ascii=False, encoding='utf8')
+        jsonfile.write('\n')

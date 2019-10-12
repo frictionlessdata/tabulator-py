@@ -10,13 +10,12 @@ import six
 import sys
 import pytest
 import datetime
-from sqlalchemy import create_engine
+import json
+
 from tabulator import Stream, exceptions
 from tabulator.loaders.local import LocalLoader
 from tabulator.parsers.csv import CSVParser
 from tabulator.writers.csv import CSVWriter
-from tabulator.parsers.json import JSONParser
-from tabulator.writers.json import JSONWriter
 BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
@@ -479,17 +478,13 @@ def test_stream_save_custom_writers(tmpdir):
             (3, ['id', 'name'], ['2', '中国人'])]
 
 def test_stream_save_custom_writers1(tmpdir):
-    source = 'data/table.csv'
-    target = str(tmpdir.join('table.csv'))
-    class CustomWriter(JSONWriter): pass
-    with Stream(source, headers=1, custom_writers={'json': CustomWriter}) as stream:
-        stream.save(target)
-    with Stream(target, headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read(extended=True) == [
-            (2, ['id', 'name'], ['1', 'english']),
-            (3, ['id', 'name'], ['2', '中国人'])]
+    source = 'data/writejson.csv'
+    jsonf = 'data/file.json'
+    with Stream(source, headers=1, encoding='utf-8') as stream:
+        stream.save(jsonf, encoding='utf-8')
 
+    with Stream(jsonf, format='json', encoding='utf8') as stream:
+        assert stream.read() == [['1', 'english'], ['2', 'French']]
 
 # Loader/parser options
 
