@@ -498,6 +498,7 @@ stream = Stream('https://example.com/data.csv')
 
 - **http\_session** - a `requests.Session` object. Read more in the [requests docs][requests-session].
 - **http\_stream** - Enables or disables HTTP streaming, when possible (enabled by default). Disable it if you'd like to preload the whole file into memory.
+- **http\_timeout** - This timeout will be used for a `requests` session construction.
 
 #### stream
 
@@ -806,6 +807,10 @@ $ make test
 ## Changelog
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+###### v1.27
+
+- Added `http_timeout` argument for the `http/https` format
 
 ###### v1.26
 
