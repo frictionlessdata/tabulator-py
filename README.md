@@ -51,7 +51,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
       - [xls/xlsx (read only)](#xlsxlsx-read-only)
       - [ods (read only)](#ods-read-only)
       - [gsheet (read only)](#gsheet-read-only)
-      - [sql (read only)](#sql-read-only)
+      - [sql (read & write)](#sql-read--write)
       - [Data Package (read only)](#data-package-read-only)
       - [inline (read only)](#inline-read-only)
       - [json (read only)](#json-read-only)
@@ -579,7 +579,7 @@ stream = Stream('https://docs.google.com/spreadsheets/d/<id>?usp=sharing')
 stream = Stream('https://docs.google.com/spreadsheets/d/<id>edit#gid=<gid>')
 ```
 
-#### sql (read only)
+#### sql (read & write)
 
 Any database URL supported by [sqlalchemy][sqlalchemy].
 

@@ -704,6 +704,14 @@ def test_stream_remote_csv_gz():
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+def test_stream_save_sqlite(database_url):
+    source = 'data/table.csv'
+    with Stream(source, headers=1) as stream:
+        stream.save(database_url, table='test_stream_save_sqlite')
+    with Stream(database_url, table='test_stream_save_sqlite', order_by='id', headers=1) as stream:
+        assert stream.read() == [['1', 'english'], ['2', '中国人']]
+        assert stream.headers == ['id', 'name']
+
 # Issues
 
 def test_stream_reset_on_close_issue_190():
