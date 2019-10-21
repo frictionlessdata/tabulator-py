@@ -34,7 +34,7 @@ class CSVWriter(Writer):
         # Set attributes
         self.__options = options
 
-    def write(self, source, target, headers=None, encoding=None):
+    def write(self, source, target, headers, encoding=None):
         helpers.ensure_dir(target)
         with io.open(target, 'wb') as file:
             writer = unicodecsv.writer(file, encoding=encoding, **self.__options)

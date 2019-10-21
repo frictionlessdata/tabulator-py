@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import six
 from six import add_metaclass
 from abc import ABCMeta, abstractmethod
 
@@ -29,16 +30,23 @@ class Writer(object):
     options = []
 
     def __init__(self, **options):
-        pass
+        # Make bytes
+        if six.PY2:
+            for key, value in options.items():
+                if isinstance(value, six.string_types):
+                    options[key] = str(value)
+
+        # Set attributes
+        self.__options = options
 
     @abstractmethod
-    def write(self, source, target, headers=None, encoding=None):
+    def write(self, source, target, headers, encoding=None):
         '''Writes source data to target.
 
         Args:
             source (str): Source data.
             target (str): Write target.
-            headers (List[str], optional): List of header names.
+            headers (List[str]): List of header names.
             encoding (str, optional): Source file encoding.
         '''
         pass
