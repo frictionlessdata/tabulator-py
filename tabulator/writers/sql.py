@@ -22,11 +22,11 @@ class SQLWriter(Writer):
     ]
 
     def __init__(self, table=None, **options):
+
         # Ensure table
         if table is None:
             raise exceptions.TabulatorException('Format `sql` requires `table` option.')
 
-        super(SQLWriter, self).__init__(**options)
         self.__table = table
 
     def write(self, source, target, headers, encoding=None):

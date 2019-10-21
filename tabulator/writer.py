@@ -30,14 +30,7 @@ class Writer(object):
     options = []
 
     def __init__(self, **options):
-        # Make bytes
-        if six.PY2:
-            for key, value in options.items():
-                if isinstance(value, six.string_types):
-                    options[key] = str(value)
-
-        # Set attributes
-        self.__options = options
+        pass
 
     @abstractmethod
     def write(self, source, target, headers, encoding=None):
