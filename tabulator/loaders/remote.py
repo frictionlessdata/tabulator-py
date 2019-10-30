@@ -47,6 +47,10 @@ class RemoteLoader(Loader):
         self.__http_session = http_session
         self.__http_stream = http_stream
         self.__http_timeout = http_timeout
+        self.__stats = None
+
+    def attach_stats(self, stats):
+        self.__stats = stats
 
     def load(self, source, mode='t', encoding=None):
 
@@ -61,6 +65,8 @@ class RemoteLoader(Loader):
                 buffer.write(bytes.read())
                 buffer.seek(0)
                 bytes = buffer
+            if self.__stats:
+                bytes = helpers.BytesStatsWrapper(bytes, self.__stats)
         except IOError as exception:
             raise exceptions.HTTPError(str(exception))
 
@@ -124,6 +130,9 @@ class _RemoteStream(object):
         pass
 
     def read(self, size=None):
+        return self.__response.raw.read(size)
+
+    def read1(self, size=None):
         return self.__response.raw.read(size)
 
     def seek(self, offset, whence=0):

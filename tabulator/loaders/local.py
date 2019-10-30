@@ -23,6 +23,10 @@ class LocalLoader(Loader):
 
     def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE):
         self.__bytes_sample_size = bytes_sample_size
+        self.__stats = None
+
+    def attach_stats(self, stats):
+        self.__stats = stats
 
     def load(self, source, mode='t', encoding=None):
 
@@ -34,6 +38,8 @@ class LocalLoader(Loader):
         # Prepare bytes
         try:
             bytes = io.open(source, 'rb')
+            if self.__stats:
+                bytes = helpers.BytesStatsWrapper(bytes, self.__stats)
         except IOError as exception:
             raise exceptions.IOError(str(exception))
 

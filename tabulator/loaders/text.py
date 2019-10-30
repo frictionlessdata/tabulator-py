@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import io
 from ..loader import Loader
+from .. import helpers
 from .. import config
 
 
@@ -21,6 +22,10 @@ class TextLoader(Loader):
 
     def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE):
         self.__bytes_sample_size = bytes_sample_size
+        self.__stats = None
+
+    def attach_stats(self, stats):
+        self.__stats = stats
 
     def load(self, source, mode='t', encoding=None):
 
@@ -33,6 +38,8 @@ class TextLoader(Loader):
         bytes = io.BufferedRandom(io.BytesIO())
         bytes.write(source.encode(encoding or config.DEFAULT_ENCODING))
         bytes.seek(0)
+        if self.__stats:
+            bytes = helpers.BytesStatsWrapper(bytes, self.__stats)
 
         # Return bytes
         if mode == 'b':
