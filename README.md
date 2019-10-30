@@ -808,6 +808,10 @@ $ make test
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+###### v1.29
+
+- Implemented the `stream.size` and `stream.hash` properties
+
 ###### v1.28
 
 - Added SQL writer
