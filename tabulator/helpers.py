@@ -8,6 +8,7 @@ import os
 import re
 import six
 import codecs
+import hashlib
 from copy import copy
 from importlib import import_module
 from six.moves.urllib.parse import parse_qs, urlparse, urlunparse
@@ -182,3 +183,33 @@ def stringify_value(value):
     if isoformat is not None:
         value = isoformat()
     return type(u'')(value)
+
+
+class BytesStatsWrapper(object):
+    """This class is intended to be used as
+
+    stats = {'size': 0, 'hash': ''}
+    bytes = BytesStatsWrapper(bytes, stats)
+
+    It will be updating the stats during reading.
+
+    """
+
+    def __init__(self, bytes, stats):
+        self.__hasher = hashlib.sha256()
+        self.__bytes = bytes
+        self.__stats = stats
+
+    def __getattr__(self, name):
+        return getattr(self.__bytes, name)
+
+    @property
+    def closed(self):
+        return self.__bytes.closed
+
+    def read1(self, size=None):
+        chunk = self.__bytes.read1(size)
+        self.__hasher.update(chunk)
+        self.__stats['size'] += len(chunk)
+        self.__stats['hash'] = self.__hasher.hexdigest()
+        return chunk

@@ -156,6 +156,7 @@ class Stream(object):
         self.__loader = None
         self.__parser = None
         self.__row_number = 0
+        self.__stats = None
 
     def __enter__(self):
         if self.closed:
@@ -246,6 +247,11 @@ class Stream(object):
             message = 'Compression "%s" is not supported for your Python version'
             raise exceptions.TabulatorException(message % compression)
 
+        # Attach stats to the loader
+        if getattr(self.__loader, 'attach_stats', None):
+            self.__stats = {'size': 0, 'hash': ''}
+            getattr(self.__loader, 'attach_stats')(self.__stats)
+
         # Initiate parser
         parser_class = self.__custom_parsers.get(format)
         if parser_class is None:
@@ -286,6 +292,7 @@ class Stream(object):
     def reset(self):
         '''Resets the stream pointer to the beginning of the file.'''
         if self.__row_number > self.__sample_size:
+            self.__stats = {'size': 0, 'hash': ''}
             self.__parser.reset()
             self.__extract_sample()
             self.__extract_headers()
@@ -316,6 +323,16 @@ class Stream(object):
     @property
     def encoding(self):
         return self.__actual_encoding
+
+    @property
+    def size(self):
+        if self.__stats:
+            return self.__stats['size']
+
+    @property
+    def hash(self):
+        if self.__stats:
+            return self.__stats['hash']
 
     @property
     def sample(self):

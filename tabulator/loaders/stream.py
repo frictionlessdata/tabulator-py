@@ -23,6 +23,10 @@ class StreamLoader(Loader):
 
     def __init__(self, bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE):
         self.__bytes_sample_size = bytes_sample_size
+        self.__stats = None
+
+    def attach_stats(self, stats):
+        self.__stats = stats
 
     def load(self, source, mode='t', encoding=None):
 
@@ -33,6 +37,8 @@ class StreamLoader(Loader):
 
         # Prepare bytes
         bytes = source
+        if self.__stats:
+            bytes = helpers.BytesStatsWrapper(bytes, self.__stats)
 
         # Return bytes
         if mode == 'b':
