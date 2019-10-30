@@ -544,6 +544,12 @@ def test_stream_size():
         assert stream.size == 7346
 
 
+def test_stream_size_compressed():
+    with Stream('data/special/doublequote.csv.zip') as stream:
+        rows = stream.read()
+        assert stream.size == 7346
+
+
 def test_stream_size_remote():
     with Stream(BASE_URL % 'data/special/doublequote.csv') as stream:
         rows = stream.read()
@@ -552,6 +558,12 @@ def test_stream_size_remote():
 
 def test_stream_hash():
     with Stream('data/special/doublequote.csv') as stream:
+        rows = stream.read()
+        assert stream.hash == '41fdde1d8dbcb3b2d4a1410acd7ad842781f076076a73b049863d6c1c73868db'
+
+
+def test_stream_hash_compressed():
+    with Stream('data/special/doublequote.csv.zip') as stream:
         rows = stream.read()
         assert stream.hash == '41fdde1d8dbcb3b2d4a1410acd7ad842781f076076a73b049863d6c1c73868db'
 
