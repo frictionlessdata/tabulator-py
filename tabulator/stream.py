@@ -326,11 +326,15 @@ class Stream(object):
 
     @property
     def size(self):
+        """Returns the BYTE count of the read chunks if available
+        """
         if self.__stats:
             return self.__stats['size']
 
     @property
     def hash(self):
+        """Returns the SHA256 hash of the read chunks if available
+        """
         if self.__stats:
             return self.__stats['hash']
 
