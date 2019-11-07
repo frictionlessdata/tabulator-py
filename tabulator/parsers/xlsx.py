@@ -108,7 +108,9 @@ class XLSXParser(Parser):
 
     def __iter_extended_rows(self):
         for row_number, row in enumerate(self.__sheet.iter_rows(), start=1):
-            yield (row_number, None, extract_row_values(row, self.__preserve_formatting, self.__adjust_floating_point_error))
+            yield (row_number, None,
+                extract_row_values(row, self.__preserve_formatting,
+                    self.__adjust_floating_point_error))
 
     def __process_merged_cells(self):
         if self.__fill_merged_cells:
@@ -161,7 +163,6 @@ def extract_row_values(row, preserve_formatting=False, adjust_floating_point_err
                 # Calculate the number of integer digits
                 integer_digits = len(str(int(cell.value)))
                 # Set the precision to 15 minus the number of integer digits
-                # (this because there is less space in memory for the mantissa when there are more integer digits)
                 precision = 15 - (integer_digits)
                 value = round(cell.value, precision)
 
