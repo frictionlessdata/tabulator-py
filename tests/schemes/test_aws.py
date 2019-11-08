@@ -20,6 +20,7 @@ S3_ENDPOINT_URL = os.environ['S3_ENDPOINT_URL'] = 'http://localhost:5000'
 
 # Stream
 
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
 def test_stream_s3(s3_client, bucket):
 
     # Upload a file
@@ -35,6 +36,7 @@ def test_stream_s3(s3_client, bucket):
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+@pytest.mark.skipif(six.PY2, reason='Support only for Python3')
 def test_stream_s3_endpoint_url(s3_client, bucket):
 
     # Upload a file
