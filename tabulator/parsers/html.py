@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 
 from pyquery import PyQuery as pq
 from ..parser import Parser
-from .. import exceptions
 from .. import helpers
 
 
@@ -73,7 +72,7 @@ class HTMLTableParser(Parser):
         headers = [pq(th).text() for th in first_row.find('th,td')]
 
         # Extract rows
-        rows = [[pq(td).text() 
+        rows = [[pq(td).text()
                  for td in pq(tr).find('td')]
                 for tr in table.find('tr')[1:]]
 
