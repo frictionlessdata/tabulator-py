@@ -15,6 +15,7 @@ from tabulator import Stream, exceptions
 from tabulator.loaders.local import LocalLoader
 from tabulator.parsers.csv import CSVParser
 from tabulator.writers.csv import CSVWriter
+from tabulator.writers.xlsx import XLSXWriter
 BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
@@ -639,6 +640,30 @@ def test_stream_save_csv(tmpdir):
     with Stream(source, headers=1) as stream:
         stream.save(target)
     with Stream(target, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_stream_save_xlsx(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.xlsx'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target)
+    with Stream(target, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_stream_save_xlsx_sheet_name(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.xlsx'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target, sheet='my-data')
+    with Stream(target, headers=1, sheet='my-data') as stream:
         assert stream.headers == ['id', 'name']
         assert stream.read(extended=True) == [
             (2, ['id', 'name'], ['1', 'english']),

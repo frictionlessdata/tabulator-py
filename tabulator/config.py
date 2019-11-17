@@ -57,5 +57,6 @@ PARSERS = {
 
 WRITERS = {
     'csv': 'tabulator.writers.csv.CSVWriter',
+    'xlsx': 'tabulator.writers.xlsx.XLSXWriter',
     'sql': 'tabulator.writers.sql.SQLWriter',
 }
