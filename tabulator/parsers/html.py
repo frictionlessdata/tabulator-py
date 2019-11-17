@@ -69,8 +69,8 @@ class HTMLTableParser(Parser):
 
         # Extract headers
         rows = (
-            table.children('thead').children('tr') + 
-            table.children('tr') + 
+            table.children('thead').children('tr') +
+            table.children('tr') +
             table.children('tbody').children('tr')
         )
         rows = [pq(r) for r in rows]
