@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import os
 import six
 import sys
+import time
 import boto3
 import pytest
 import string
@@ -65,6 +66,7 @@ def test_stream_s3_non_existent_file(s3_client, bucket):
 def s3_client():
     # https://github.com/frictionlessdata/tabulator-py/issues/271
     subprocess.Popen('moto_server', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    time.sleep(1)
     s3_client = boto3.client('s3', endpoint_url=S3_ENDPOINT_URL)
     yield s3_client
     os.system('pkill moto_server')
