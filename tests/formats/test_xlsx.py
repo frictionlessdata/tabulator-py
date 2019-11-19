@@ -67,6 +67,25 @@ def test_stream_xlsx_merged_cells_fill():
         assert stream.read() == [['data', 'data'], ['data', 'data'], ['data', 'data']]
 
 
+def test_stream_xlsx_adjust_floating_point_error():
+    source = 'data/special/adjust_floating_point_error.xlsx'
+    with Stream(
+        source,
+        headers=1,
+        ignore_blank_headers=True,
+        preserve_formatting=True,
+    ) as stream:
+        assert stream.read(keyed=True)[1]['actual PO4 (values)'] == 274.65999999999997
+    with Stream(
+        source,
+        headers=1,
+        ignore_blank_headers=True,
+        preserve_formatting=True,
+        adjust_floating_point_error=True,
+    ) as stream:
+        assert stream.read(keyed=True)[1]['actual PO4 (values)'] == 274.66
+
+
 def test_stream_xlsx_preserve_formatting():
     source = 'data/special/preserve-formatting.xlsx'
     with Stream(source, headers=1,
