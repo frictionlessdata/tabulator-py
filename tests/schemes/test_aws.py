@@ -22,7 +22,8 @@ S3_ENDPOINT_URL = os.environ['S3_ENDPOINT_URL'] = 'http://localhost:5000'
 
 # Stream
 
-@pytest.mark.skipif(sys.version_info[:2] != (3, 7), reason='Cannot test in parallel')
+# https://github.com/frictionlessdata/tabulator-py/issues/271
+@pytest.mark.skipif(os.environ.get('TRAVIS') == 'true', reason='See issue #271')
 def test_stream_s3(s3_client, bucket):
 
     # Upload a file
@@ -38,7 +39,8 @@ def test_stream_s3(s3_client, bucket):
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-@pytest.mark.skipif(sys.version_info[:2] != (3, 7), reason='Cannot test in parallel')
+# https://github.com/frictionlessdata/tabulator-py/issues/271
+@pytest.mark.skipif(os.environ.get('TRAVIS') == 'true', reason='See issue #271')
 def test_stream_s3_endpoint_url(s3_client, bucket):
 
     # Upload a file
@@ -54,6 +56,8 @@ def test_stream_s3_endpoint_url(s3_client, bucket):
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+# https://github.com/frictionlessdata/tabulator-py/issues/271
+@pytest.mark.skipif(os.environ.get('TRAVIS') == 'true', reason='See issue #271')
 def test_stream_s3_non_existent_file(s3_client, bucket):
     with pytest.raises(exceptions.IOError):
         Stream('s3://%s/table.csv' % bucket).open()
@@ -63,7 +67,6 @@ def test_stream_s3_non_existent_file(s3_client, bucket):
 
 @pytest.fixture(scope='module')
 def s3_client():
-    # https://github.com/frictionlessdata/tabulator-py/issues/271
     subprocess.Popen('moto_server', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     s3_client = boto3.client('s3', endpoint_url=S3_ENDPOINT_URL)
     yield s3_client
