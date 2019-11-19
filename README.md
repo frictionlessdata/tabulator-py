@@ -556,6 +556,7 @@ stream = Stream('data.xls', sheet=1)
   a visible value. With this option enabled the parser can't stream data and
   load the whole document into memory.
 - **preserve_formatting**: if `True` it will try to preserve text formatting of numeric and temporal cells returning it as strings according to how it looks in a spreadsheet (EXPERIMETAL)
+- **adjust_floating_point_error**: if `True` it will correct the Excel behaviour regarding floating point numbers
 
 #### ods (read only)
 
@@ -807,6 +808,10 @@ $ make test
 ## Changelog
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+###### v1.30
+
+- Added `adjust_floating_point_error` parameter to the `xlsx` parser
 
 ###### v1.29
 
