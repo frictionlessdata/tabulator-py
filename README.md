@@ -540,7 +540,7 @@ stream = Stream('data.csv', delimiter=',')
 It supports all options from the Python CSV library. Check [their
 documentation][pydoc-csv] for more information.
 
-#### xls/xlsx (read only)
+#### xls/xlsx (read & write)
 
 > Tabulator is unable to stream `xls` files, so the entire file is loaded in
 > memory. Streaming is supported for `xlsx` files.
@@ -551,7 +551,7 @@ stream = Stream('data.xls', sheet=1)
 
 ###### Options
 
-- **sheet**: Sheet name or number (starting from 1)
+- **sheet**: Sheet name or number (starting from 1). 
 - **fill_merged_cells**: if `True` it will unmerge and fill all merged cells by
   a visible value. With this option enabled the parser can't stream data and
   load the whole document into memory.
@@ -643,6 +643,25 @@ stream = Stream('data.ndjson')
 ```python
 stream = Stream('data.tsv')
 ```
+
+#### html (read only)
+
+
+> This format is not included to package by default. To use it please install `tabulator` with the `html` extra: `$ pip install tabulator[html]`
+
+An HTML table element residing inside and HTML document.
+
+Supports simple tables (no merged cells) with any legal combination of the td, th, tbody & thead elements.
+
+Usually `foramt='html'` would need to be specified explicitly as web URLs don't always use the `.html` extension.
+
+```python
+stream = Stream('http://example.com/some/page.aspx', format='html' property='key1.key2')
+```
+
+###### Options
+
+- **selector**: CSS selector for specifying which `table` element to extract. By default it's `table`, which takes the first `table` element in the document.
 
 ### Adding support for new file sources, formats, and writers
 
