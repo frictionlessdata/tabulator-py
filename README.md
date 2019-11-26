@@ -650,14 +650,14 @@ stream = Stream('data.tsv')
 
 > This format is not included to package by default. To use it please install `tabulator` with the `html` extra: `$ pip install tabulator[html]`
 
-An HTML table element residing inside and HTML document.
+An HTML table element residing inside an HTML document.
 
 Supports simple tables (no merged cells) with any legal combination of the td, th, tbody & thead elements.
 
 Usually `foramt='html'` would need to be specified explicitly as web URLs don't always use the `.html` extension.
 
 ```python
-stream = Stream('http://example.com/some/page.aspx', format='html' property='key1.key2')
+stream = Stream('http://example.com/some/page.aspx', format='html' selector='.content .data table#id1')
 ```
 
 ###### Options
