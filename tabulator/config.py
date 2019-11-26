@@ -42,6 +42,7 @@ PARSERS = {
     'csv': 'tabulator.parsers.csv.CSVParser',
     'datapackage': 'tabulator.parsers.datapackage.DataPackageParser',
     'gsheet': 'tabulator.parsers.gsheet.GsheetParser',
+    'html': 'tabulator.parsers.html.HTMLTableParser',
     'inline': 'tabulator.parsers.inline.InlineParser',
     'json': 'tabulator.parsers.json.JSONParser',
     'jsonl': 'tabulator.parsers.ndjson.NDJSONParser',
@@ -57,5 +58,6 @@ PARSERS = {
 
 WRITERS = {
     'csv': 'tabulator.writers.csv.CSVWriter',
+    'xlsx': 'tabulator.writers.xlsx.XLSXWriter',
     'sql': 'tabulator.writers.sql.SQLWriter',
 }
