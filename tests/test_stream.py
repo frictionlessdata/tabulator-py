@@ -190,6 +190,10 @@ def test_stream_format_xlsx():
     with Stream('data/table.xlsx') as stream:
         assert stream.format == 'xlsx'
 
+def test_stream_format_html():
+    with Stream('data/table1.html') as stream:
+        assert stream.format == 'html'
+
 
 # Encoding
 

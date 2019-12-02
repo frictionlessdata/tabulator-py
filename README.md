@@ -48,7 +48,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
       - [text](#text)
     - [Supported file formats](#supported-file-formats)
       - [csv (read & write)](#csv-read--write)
-      - [xls/xlsx (read only)](#xlsxlsx-read-only)
+      - [xls/xlsx (read & write)](#xlsxlsx-read-only)
       - [ods (read only)](#ods-read-only)
       - [gsheet (read only)](#gsheet-read-only)
       - [sql (read & write)](#sql-read--write)
@@ -57,6 +57,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
       - [json (read only)](#json-read-only)
       - [ndjson (read only)](#ndjson-read-only)
       - [tsv (read only)](#tsv-read-only)
+      - [html (read only)](#html-read-only)
     - [Adding support for new file sources, formats, and writers](#adding-support-for-new-file-sources-formats-and-writers)
       - [Custom loaders](#custom-loaders)
       - [Custom parsers](#custom-parsers)
@@ -540,7 +541,7 @@ stream = Stream('data.csv', delimiter=',')
 It supports all options from the Python CSV library. Check [their
 documentation][pydoc-csv] for more information.
 
-#### xls/xlsx (read only)
+#### xls/xlsx (read & write)
 
 > Tabulator is unable to stream `xls` files, so the entire file is loaded in
 > memory. Streaming is supported for `xlsx` files.
@@ -551,11 +552,12 @@ stream = Stream('data.xls', sheet=1)
 
 ###### Options
 
-- **sheet**: Sheet name or number (starting from 1)
+- **sheet**: Sheet name or number (starting from 1). 
 - **fill_merged_cells**: if `True` it will unmerge and fill all merged cells by
   a visible value. With this option enabled the parser can't stream data and
   load the whole document into memory.
 - **preserve_formatting**: if `True` it will try to preserve text formatting of numeric and temporal cells returning it as strings according to how it looks in a spreadsheet (EXPERIMETAL)
+- **adjust_floating_point_error**: if `True` it will correct the Excel behaviour regarding floating point numbers
 
 #### ods (read only)
 
@@ -642,6 +644,25 @@ stream = Stream('data.ndjson')
 ```python
 stream = Stream('data.tsv')
 ```
+
+#### html (read only)
+
+
+> This format is not included to package by default. To use it please install `tabulator` with the `html` extra: `$ pip install tabulator[html]`
+
+An HTML table element residing inside an HTML document.
+
+Supports simple tables (no merged cells) with any legal combination of the td, th, tbody & thead elements.
+
+Usually `foramt='html'` would need to be specified explicitly as web URLs don't always use the `.html` extension.
+
+```python
+stream = Stream('http://example.com/some/page.aspx', format='html' selector='.content .data table#id1')
+```
+
+###### Options
+
+- **selector**: CSS selector for specifying which `table` element to extract. By default it's `table`, which takes the first `table` element in the document.
 
 ### Adding support for new file sources, formats, and writers
 
@@ -807,6 +828,10 @@ $ make test
 ## Changelog
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+###### v1.30
+
+- Added `adjust_floating_point_error` parameter to the `xlsx` parser
 
 ###### v1.29
 

@@ -48,6 +48,9 @@ INSTALL_FORMAT_ODS_REQUIRES = [
     'ezodf>=0.3',
     'lxml>=3.0',
 ]
+INSTALL_PARSER_HTML_REQUIRES = [
+    'pyquery<2',
+]
 TESTS_REQUIRE = [
     'mock',
     'pylama',
@@ -73,6 +76,7 @@ setup(
         'datapackage': INSTALL_FORMAT_DATAPACKAGE_REQUIRES,
         'develop': TESTS_REQUIRE,
         'ods': INSTALL_FORMAT_ODS_REQUIRES,
+        'html': INSTALL_PARSER_HTML_REQUIRES,
     },
     entry_points={
         'console_scripts': [
