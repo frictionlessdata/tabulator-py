@@ -552,7 +552,7 @@ stream = Stream('data.xls', sheet=1)
 
 ###### Options
 
-- **sheet**: Sheet name or number (starting from 1). 
+- **sheet**: Sheet name or number (starting from 1).
 - **fill_merged_cells**: if `True` it will unmerge and fill all merged cells by
   a visible value. With this option enabled the parser can't stream data and
   load the whole document into memory.
@@ -828,6 +828,11 @@ $ make test
 ## Changelog
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+###### v1.31
+
+- Added `xlsx` writer
+- Added `html` reader
 
 ###### v1.30
 
