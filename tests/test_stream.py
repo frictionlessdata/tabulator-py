@@ -792,3 +792,10 @@ def test_stream_reset_on_close_issue_190():
     stream.open()
     stream.read(limit=1) == [['1', 'english']]
     stream.close()
+
+
+def test_stream_skip_blank_at_the_end_issue_bco_dmo_33():
+    source = 'data/special/skip-blank-at-the-end.csv'
+    with Stream(source, headers=1, skip_rows=['#']) as stream:
+        assert stream.headers == ['test1', 'test2']
+        assert stream.read() == [['1', '2'], []]

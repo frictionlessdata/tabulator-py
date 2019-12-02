@@ -620,6 +620,8 @@ class Stream(object):
             return True
 
         # Skip by comment
+        if not row:
+            return False
         match = lambda comment: (
             (isinstance(row[0], six.string_types) and
              row[0].startswith(comment)) if len(comment) > 0

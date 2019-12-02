@@ -9,7 +9,7 @@ LEAD := $(shell head -n 1 LEAD.md)
 all: list
 
 install:
-	pip install --upgrade -e .[datapackage,develop,ods]
+	pip install --upgrade -e .[datapackage,develop,ods,html]
 
 list:
 	@grep '^\.PHONY' Makefile | cut -d' ' -f2- | tr ' ' '\n'
