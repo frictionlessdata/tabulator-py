@@ -802,10 +802,6 @@ looking into the [tabulator.exceptions][tabulator.exceptions] module.
 
 ## API Reference
 
-The API reference is written as docstrings in the tabulator classes. A good
-place to start is the [Stream](tabulator/stream.py) class, which manages all
-loading and parsing of data files.
-
 ## Contributing
 
 This project follows the [Open Knowledge International coding standards](https://github.com/okfn/coding-standards).
