@@ -7,19 +7,36 @@ from __future__ import absolute_import
 import six
 import click
 import tabulator
+from . import config
 
 
 # Module API
 
-@click.command()
+@click.command(help='')
 @click.argument('source')
 @click.option('--headers', type=click.INT)
 @click.option('--scheme')
 @click.option('--format')
 @click.option('--encoding')
 @click.option('--limit', type=click.INT)
-@click.version_option(tabulator.__version__, message='%(version)s')
+@click.version_option(config.VERSION, message='%(version)s')
 def cli(source, limit, **options):
+    """Command-line interface
+
+    ```
+    Usage: tabulator [OPTIONS] SOURCE
+
+    Options:
+      --headers INTEGER
+      --scheme TEXT
+      --format TEXT
+      --encoding TEXT
+      --limit INTEGER
+      --version          Show the version and exit.
+      --help             Show this message and exit.
+    ```
+
+    """
     options = {key: value for key, value in options.items() if value is not None}
     with tabulator.Stream(source, **options) as stream:
         cast = str
@@ -31,9 +48,3 @@ def cli(source, limit, **options):
             click.echo(','.join(map(cast, row)))
             if count == limit:
                 break
-
-
-# Main program
-
-if __name__ == '__main__':
-    cli()

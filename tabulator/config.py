@@ -4,9 +4,13 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import io
+import os
+
 
 # General
 
+VERSION = io.open(os.path.join(os.path.dirname(__file__), 'VERSION')).read().strip()
 DEFAULT_SCHEME = 'file'
 DEFAULT_ENCODING = 'utf-8'
 DEFAULT_SAMPLE_SIZE = 100

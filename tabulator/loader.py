@@ -12,18 +12,16 @@ from abc import ABCMeta, abstractmethod
 
 @add_metaclass(ABCMeta)
 class Loader(object):
-    '''Abstract class implemented by the data loaders
+    """Abstract class implemented by the data loaders
 
     The loaders inherit and implement this class' methods to add support for a
     new scheme (e.g. ssh).
 
-    Args:
+    # Arguments
         bytes_sample_size (int): Sample size in bytes
         **options (dict): Loader options
 
-    Returns:
-        Loader: Loader instance.
-    '''
+    """
 
     # Public
 
@@ -34,15 +32,17 @@ class Loader(object):
 
     @abstractmethod
     def load(self, source, mode='t', encoding=None):
-        '''Load source file.
+        """Load source file.
 
-        Args:
+        # Arguments
             source (str): Path to tabular source file.
-            mode (str, optional): Text stream mode, `t` (text) or `b` (binary).
-                Defaults to `t`.
-            encoding (str, optional): Source encoding. Auto-detect by default.
+            mode (str, optional):
+                Text stream mode, `t` (text) or `b` (binary).  Defaults to `t`.
+            encoding (str, optional):
+                Source encoding. Auto-detect by default.
 
-        Returns:
+        # Returns
             Union[TextIO, BinaryIO]: I/O stream opened either as text or binary.
-        '''
+
+        """
         pass

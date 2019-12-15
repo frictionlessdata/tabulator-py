@@ -8,34 +8,44 @@ from __future__ import unicode_literals
 # Module API
 
 class TabulatorException(Exception):
-    '''Base class for all tabulator exceptions.'''
+    """Base class for all tabulator exceptions.
+    """
     pass
 
 
 class IOError(TabulatorException):
+    """Local loading error
+    """
     pass
 
 
 class HTTPError(IOError):
+    """Remote loading error
+    """
     pass
 
 
 class SourceError(TabulatorException):
-    '''The source file could not be parsed correctly.'''
+    """The source file could not be parsed correctly.
+    """
     pass
 
 
 class SchemeError(TabulatorException):
-    '''The file scheme is not supported.'''
+    """The file scheme is not supported.
+    """
     pass
 
 
 class FormatError(TabulatorException):
-    '''The file format is unsupported or invalid.'''
+    """The file format is unsupported or invalid.
+    """
     pass
 
 
 class EncodingError(TabulatorException):
+    """Encoding error
+    """
     pass
 
 
