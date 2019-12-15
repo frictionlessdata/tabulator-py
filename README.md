@@ -62,8 +62,6 @@ A library for reading and writing tabular data (csv/xls/json/etc).
       - [Custom loaders](#custom-loaders)
       - [Custom parsers](#custom-parsers)
       - [Custom writers](#custom-writers)
-    - [Validate](#validate)
-    - [Exceptions](#exceptions)
   - [API Reference](#api-reference)
     - [`cli`](#cli)
     - [`Stream`](#stream-2)
@@ -96,7 +94,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
     - [`Writer`](#writer)
       - [`writer.options`](#writeroptions)
       - [`writer.write`](#writerwrite)
-    - [`validate`](#validate-1)
+    - [`validate`](#validate)
     - [`TabulatorException`](#tabulatorexception)
     - [`IOError`](#ioerror)
     - [`HTTPError`](#httperror)
@@ -815,28 +813,6 @@ with Stream(source, custom_writers={'custom': CustomWriter}) as stream:
 
 You can see examples of how parsers are implemented by looking in the
 `tabulator.writers` module.
-
-### Validate
-
-You can check if a source can be loaded by tabulator using the `validate` function.
-
-```python
-from tabulator import validate, exceptions
-
-try:
-    tabular = validate('data.csv')
-except exceptions.SchemeError:
-    # The file scheme isn't supported
-except exceptions.FormatError:
-    # The file format isn't supported
-```
-
-### Exceptions
-
-All the exceptions thrown by tabulator inherit from
-`tabulator.exceptions.TabulatorException`, so you can use it as a way to catch
-any tabulator exception. You can learn about the other exceptions thrown by
-looking into the [tabulator.exceptions][tabulator.exceptions] module.
 
 ## API Reference
 
