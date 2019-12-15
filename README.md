@@ -791,9 +791,9 @@ to stream its parsed contents.
 __Arguments__
 
 - __source (str)__:
-- __Path to file as ``<scheme>__://path/to/file.<format>``. If
-        not explicitly set, the scheme (file, http, ...) and format (csv, xls,
-        ...) are inferred from the source string.
+        Path to file as ``<scheme>://path/to/file.<format>``.
+        If not explicitly set, the scheme (file, http, ...) and
+        format (csv, xls, ...) are inferred from the source string.
 - __headers (Union[int, List[int], List[str]], optional)__:
         Either a row
         number or list of row numbers (in case of multi-line headers) to be

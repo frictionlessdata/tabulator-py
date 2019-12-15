@@ -29,9 +29,9 @@ class Stream(object):
     # Arguments
 
         source (str):
-            Path to file as ``<scheme>://path/to/file.<format>``. If
-            not explicitly set, the scheme (file, http, ...) and format (csv, xls,
-            ...) are inferred from the source string.
+            Path to file as ``<scheme>\\://path/to/file.<format>``.
+            If not explicitly set, the scheme (file, http, ...) and
+            format (csv, xls, ...) are inferred from the source string.
 
         headers (Union[int, List[int], List[str]], optional):
             Either a row
