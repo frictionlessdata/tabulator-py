@@ -18,7 +18,7 @@ readme:
 	pip install md-toc
 	pip install referencer
 	referencer $(PACKAGE) README.md --in-place
-	md_toc -p README.md github --header-levels 3
+	md_toc -p README.md github --header-levels 4
 	sed -i '/(#$(PACKAGE)-py)/,+2d' README.md
 
 release:

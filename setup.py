@@ -80,7 +80,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'tabulator = tabulator.cli:cli',
+            'tabulator = tabulator.__main__:cli',
         ]
     },
     zip_safe=False,

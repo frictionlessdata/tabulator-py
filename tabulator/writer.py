@@ -12,17 +12,15 @@ from abc import ABCMeta, abstractmethod
 
 @add_metaclass(ABCMeta)
 class Writer(object):
-    '''Abstract class implemented by the data writers.
+    """Abstract class implemented by the data writers.
 
     The writers inherit and implement this class' methods to add support for a
     new file destination.
 
-    Args:
+    # Arguments
         **options (dict): Writer options.
 
-    Returns:
-        Writer: Writer instance.
-    '''
+    """
 
     # Public
 
@@ -33,12 +31,13 @@ class Writer(object):
 
     @abstractmethod
     def write(self, source, target, headers, encoding=None):
-        '''Writes source data to target.
+        """Writes source data to target.
 
-        Args:
+        # Arguments
             source (str): Source data.
             target (str): Write target.
             headers (List[str]): List of header names.
             encoding (str, optional): Source file encoding.
-        '''
+
+        """
         pass

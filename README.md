@@ -48,7 +48,7 @@ A library for reading and writing tabular data (csv/xls/json/etc).
       - [text](#text)
     - [Supported file formats](#supported-file-formats)
       - [csv (read & write)](#csv-read--write)
-      - [xls/xlsx (read & write)](#xlsxlsx-read-only)
+      - [xls/xlsx (read & write)](#xlsxlsx-read--write)
       - [ods (read only)](#ods-read-only)
       - [gsheet (read only)](#gsheet-read-only)
       - [sql (read & write)](#sql-read--write)
@@ -65,6 +65,44 @@ A library for reading and writing tabular data (csv/xls/json/etc).
     - [Validate](#validate)
     - [Exceptions](#exceptions)
   - [API Reference](#api-reference)
+    - [`cli`](#cli)
+    - [`Stream`](#stream-2)
+      - [`stream.closed`](#streamclosed)
+      - [`stream.encoding`](#streamencoding)
+      - [`stream.format`](#streamformat)
+      - [`stream.fragment`](#streamfragment)
+      - [`stream.hash`](#streamhash)
+      - [`stream.headers`](#streamheaders)
+      - [`stream.sample`](#streamsample)
+      - [`stream.scheme`](#streamscheme)
+      - [`stream.size`](#streamsize)
+      - [`stream.open`](#streamopen)
+      - [`stream.close`](#streamclose)
+      - [`stream.reset`](#streamreset)
+      - [`stream.iter`](#streamiter)
+      - [`stream.read`](#streamread)
+      - [`stream.save`](#streamsave)
+    - [`Loader`](#loader)
+      - [`loader.options`](#loaderoptions)
+      - [`loader.load`](#loaderload)
+    - [`Parser`](#parser)
+      - [`parser.closed`](#parserclosed)
+      - [`parser.encoding`](#parserencoding)
+      - [`parser.extended_rows`](#parserextended_rows)
+      - [`parser.options`](#parseroptions)
+      - [`parser.open`](#parseropen)
+      - [`parser.close`](#parserclose)
+      - [`parser.reset`](#parserreset)
+    - [`Writer`](#writer)
+      - [`writer.options`](#writeroptions)
+      - [`writer.write`](#writerwrite)
+    - [`validate`](#validate-1)
+    - [`TabulatorException`](#tabulatorexception)
+    - [`IOError`](#ioerror)
+    - [`HTTPError`](#httperror)
+    - [`SourceError`](#sourceerror)
+    - [`FormatError`](#formaterror)
+    - [`EncodingError`](#encodingerror)
   - [Contributing](#contributing)
   - [Changelog](#changelog)
 
@@ -801,6 +839,483 @@ any tabulator exception. You can learn about the other exceptions thrown by
 looking into the [tabulator.exceptions][tabulator.exceptions] module.
 
 ## API Reference
+
+### `cli`
+```python
+cli(source, limit, **options)
+```
+Command-line interface
+
+```
+Usage: tabulator [OPTIONS] SOURCE
+
+Options:
+  --headers INTEGER
+  --scheme TEXT
+  --format TEXT
+  --encoding TEXT
+  --limit INTEGER
+  --version          Show the version and exit.
+  --help             Show this message and exit.
+```
+
+
+### `Stream`
+```python
+Stream(self, source, headers=None, scheme=None, format=None, encoding=None, compression=None, allow_html=False, sample_size=100, bytes_sample_size=10000, ignore_blank_headers=False, force_strings=False, force_parse=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)
+```
+Stream of tabular data.
+
+This is the main `tabulator` class. It loads a data source, and allows you
+to stream its parsed contents.
+
+__Arguments__
+
+- __source (str)__:
+- __Path to file as ``<scheme>__://path/to/file.<format>``. If
+        not explicitly set, the scheme (file, http, ...) and format (csv, xls,
+        ...) are inferred from the source string.
+- __headers (Union[int, List[int], List[str]], optional)__:
+        Either a row
+        number or list of row numbers (in case of multi-line headers) to be
+        considered as headers (rows start counting at 1), or the actual
+        headers defined a list of strings. If not set, all rows will be
+        treated as containing values.
+- __scheme (str, optional)__:
+        Scheme for loading the file (file, http, ...).
+        If not set, it'll be inferred from `source`.
+- __format (str, optional)__:
+        File source's format (csv, xls, ...). If not
+        set, it'll be inferred from `source`. inferred
+- __encoding (str, optional)__:
+        Source encoding. If not set, it'll be inferred.
+- __compression (str, optional)__:
+        Source file compression (zip, ...). If not set, it'll be inferred.
+- __allow_html (bool, optional)__:
+        Allow the file source to be an HTML page.
+        If False, raises ``exceptions.FormatError`` if the loaded file is
+        an HTML page. Defaults to False.
+- __sample_size (int, optional)__:
+        Controls the number of sample rows used to
+        infer properties from the data (headers, encoding, etc.). Set to
+        ``0`` to disable sampling, in which case nothing will be inferred
+        from the data. Defaults to ``config.DEFAULT_SAMPLE_SIZE``.
+- __bytes_sample_size (int, optional)__:
+        Same as `sample_size`, but instead
+        of number of rows, controls number of bytes. Defaults to
+        ``config.DEFAULT_BYTES_SAMPLE_SIZE``.
+- __ignore_blank_headers (bool, optional)__:
+        When True, ignores all columns
+        that have blank headers. Defaults to False.
+- __force_strings (bool, optional)__:
+        When True, casts all data to strings.
+        Defaults to False.
+- __force_parse (bool, optional)__:
+        When True, don't raise exceptions when
+        parsing malformed rows, simply returning an empty value. Defaults
+        to False.
+- __skip_rows (List[Union[int, str]], optional)__:
+        List of row numbers and
+        strings to skip. If a string, it'll skip rows that begin with it
+        (e.g. '#' and '//').
+- __post_parse (List[function], optional)__:
+        List of generator functions that
+        receives a list of rows and headers, processes them, and yields
+        them (or not). Useful to pre-process the data. Defaults to None.
+- __custom_loaders (dict, optional)__:
+        Dictionary with keys as scheme names,
+        and values as their respective ``Loader`` class implementations.
+        Defaults to None.
+- __custom_parsers (dict, optional)__:
+        Dictionary with keys as format names,
+        and values as their respective ``Parser`` class implementations.
+        Defaults to None.
+- __custom_loaders (dict, optional)__:
+        Dictionary with keys as writer format
+        names, and values as their respective ``Writer`` class
+        implementations. Defaults to None.
+- __**options (Any, optional)__: Extra options passed to the loaders and parsers.
+
+
+#### `stream.closed`
+Returns True if the underlying stream is closed, False otherwise.
+
+__Returns__
+
+`bool`: whether closed
+
+
+#### `stream.encoding`
+Stream's encoding
+
+__Returns__
+
+`str`: encoding
+
+
+#### `stream.format`
+Path's format
+
+__Returns__
+
+`str`: format
+
+
+#### `stream.fragment`
+Path's fragment
+
+__Returns__
+
+`str`: fragment
+
+
+#### `stream.hash`
+Returns the SHA256 hash of the read chunks if available
+
+__Returns__
+
+`str/None`: SHA256 hash
+
+
+#### `stream.headers`
+Headers
+
+__Returns__
+
+`str[]/None`: headers if available
+
+
+#### `stream.sample`
+Returns the stream's rows used as sample.
+
+These sample rows are used internally to infer characteristics of the
+source file (e.g. encoding, headers, ...).
+
+__Returns__
+
+`list[]`: sample
+
+
+#### `stream.scheme`
+Path's scheme
+
+__Returns__
+
+`str`: scheme
+
+
+#### `stream.size`
+Returns the BYTE count of the read chunks if available
+
+__Returns__
+
+`int/None`: BYTE count
+
+
+#### `stream.open`
+```python
+stream.open(self)
+```
+Opens the stream for reading.
+
+__Raises:__
+
+    TabulatorException: if an error
+
+
+#### `stream.close`
+```python
+stream.close(self)
+```
+Closes the stream.
+
+#### `stream.reset`
+```python
+stream.reset(self)
+```
+Resets the stream pointer to the beginning of the file.
+
+#### `stream.iter`
+```python
+stream.iter(self, keyed=False, extended=False)
+```
+Iterate over the rows.
+
+Each row is returned in a format that depends on the arguments `keyed`
+and `extended`. By default, each row is returned as list of their
+values.
+
+__Arguments__
+- __keyed (bool, optional)__:
+        When True, each returned row will be a
+        `dict` mapping the header name to its value in the current row.
+        For example, `[{'name': 'J Smith', 'value': '10'}]`. Ignored if
+        ``extended`` is True. Defaults to False.
+- __extended (bool, optional)__:
+        When True, returns each row as a tuple
+        with row number (starts at 1), list of headers, and list of row
+        values. For example, `(1, ['name', 'value'], ['J Smith', '10'])`.
+        Defaults to False.
+
+__Raises__
+- `exceptions.TabulatorException`: If the stream is closed.
+
+__Returns__
+
+`Iterator[Union[List[Any], Dict[str, Any], Tuple[int, List[str], List[Any]]]]`:
+        The row itself. The format depends on the values of `keyed` and
+        `extended` arguments.
+
+
+#### `stream.read`
+```python
+stream.read(self, keyed=False, extended=False, limit=None)
+```
+Returns a list of rows.
+
+__Arguments__
+- __keyed (bool, optional)__: See :func:`Stream.iter`.
+- __extended (bool, optional)__: See :func:`Stream.iter`.
+- __limit (int, optional)__:
+        Number of rows to return. If None, returns all rows. Defaults to None.
+
+__Returns__
+
+`List[Union[List[Any], Dict[str, Any], Tuple[int, List[str], List[Any]]]]`:
+        The list of rows. The format depends on the values of `keyed`
+        and `extended` arguments.
+
+#### `stream.save`
+```python
+stream.save(self, target, format=None, encoding=None, **options)
+```
+Save stream to the local filesystem.
+
+__Arguments:__
+
+    target (str): Path where to save the stream.
+    format (str, optional):
+        The format the stream will be saved as. If
+        None, detects from the ``target`` path. Defaults to None.
+    encoding (str, optional):
+        Saved file encoding. Defaults to ``config.DEFAULT_ENCODING``.
+    **options: Extra options passed to the writer.
+
+
+### `Loader`
+```python
+Loader(self, bytes_sample_size, **options)
+```
+Abstract class implemented by the data loaders
+
+The loaders inherit and implement this class' methods to add support for a
+new scheme (e.g. ssh).
+
+__Arguments__
+- __bytes_sample_size (int)__: Sample size in bytes
+- __**options (dict)__: Loader options
+
+
+#### `loader.options`
+Built-in mutable sequence.
+
+If no argument is given, the constructor creates a new empty list.
+The argument must be an iterable if specified.
+#### `loader.load`
+```python
+loader.load(self, source, mode='t', encoding=None)
+```
+Load source file.
+
+__Arguments__
+- __source (str)__: Path to tabular source file.
+- __mode (str, optional)__:
+        Text stream mode, `t` (text) or `b` (binary).  Defaults to `t`.
+- __encoding (str, optional)__:
+        Source encoding. Auto-detect by default.
+
+__Returns__
+
+`Union[TextIO, BinaryIO]`: I/O stream opened either as text or binary.
+
+
+### `Parser`
+```python
+Parser(self, loader, force_parse, **options)
+```
+Abstract class implemented by the data parsers.
+
+The parsers inherit and implement this class' methods to add support for a
+new file type.
+
+__Arguments__
+- __loader (tabulator.Loader)__: Loader instance to read the file.
+- __force_parse (bool)__:
+        When `True`, the parser yields an empty extended
+        row tuple `(row_number, None, [])` when there is an error parsing a
+        row. Otherwise, it stops the iteration by raising the exception
+        `tabulator.exceptions.SourceError`.
+- __**options (dict)__: Loader options
+
+
+#### `parser.closed`
+Flag telling if the parser is closed.
+
+__Returns__
+
+`bool`: whether closed
+
+
+#### `parser.encoding`
+Encoding
+
+__Returns__
+
+`str`: encoding
+
+
+#### `parser.extended_rows`
+Returns extended rows iterator.
+
+The extended rows are tuples containing `(row_number, headers, row)`,
+
+__Raises__
+- `SourceError`:
+        If `force_parse` is `False` and
+        a row can't be parsed, this exception will be raised.
+        Otherwise, an empty extended row is returned (i.e.
+        `(row_number, None, [])`).
+- `Returns`:
+- `Iterator[Tuple[int, List[str], List[Any]]]`:
+        Extended rows containing
+        `(row_number, headers, row)`, where `headers` is a list of the
+        header names (can be `None`), and `row` is a list of row
+        values.
+
+
+#### `parser.options`
+Built-in mutable sequence.
+
+If no argument is given, the constructor creates a new empty list.
+The argument must be an iterable if specified.
+#### `parser.open`
+```python
+parser.open(self, source, encoding=None)
+```
+Open underlying file stream in the beginning of the file.
+
+The parser gets a byte or text stream from the `tabulator.Loader`
+instance and start emitting items.
+
+__Arguments__
+- __source (str)__: Path to source table.
+- __encoding (str, optional)__: Source encoding. Auto-detect by default.
+
+__Returns__
+
+    None
+
+
+#### `parser.close`
+```python
+parser.close(self)
+```
+Closes underlying file stream.
+
+#### `parser.reset`
+```python
+parser.reset(self)
+```
+Resets underlying stream and current items list.
+
+After `reset()` is called, iterating over the items will start from the beginning.
+
+### `Writer`
+```python
+Writer(self, **options)
+```
+Abstract class implemented by the data writers.
+
+The writers inherit and implement this class' methods to add support for a
+new file destination.
+
+__Arguments__
+- __**options (dict)__: Writer options.
+
+
+#### `writer.options`
+Built-in mutable sequence.
+
+If no argument is given, the constructor creates a new empty list.
+The argument must be an iterable if specified.
+#### `writer.write`
+```python
+writer.write(self, source, target, headers, encoding=None)
+```
+Writes source data to target.
+
+__Arguments__
+- __source (str)__: Source data.
+- __target (str)__: Write target.
+- __headers (List[str])__: List of header names.
+- __encoding (str, optional)__: Source file encoding.
+
+
+### `validate`
+```python
+validate(source, scheme=None, format=None)
+```
+Check if tabulator is able to load the source.
+
+__Arguments__
+- __source (Union[str, IO])__: The source path or IO object.
+- __scheme (str, optional)__: The source scheme. Auto-detect by default.
+- __format (str, optional)__: The source file format. Auto-detect by default.
+
+__Raises__
+- `SchemeError`: The file scheme is not supported.
+- `FormatError`: The file format is not supported.
+
+__Returns__
+
+`bool`: Whether tabulator is able to load the source file.
+
+
+### `TabulatorException`
+```python
+TabulatorException(self, /, *args, **kwargs)
+```
+Base class for all tabulator exceptions.
+
+### `IOError`
+```python
+IOError(self, /, *args, **kwargs)
+```
+Local loading error
+
+### `HTTPError`
+```python
+HTTPError(self, /, *args, **kwargs)
+```
+Remote loading error
+
+### `SourceError`
+```python
+SourceError(self, /, *args, **kwargs)
+```
+The source file could not be parsed correctly.
+
+### `FormatError`
+```python
+FormatError(self, /, *args, **kwargs)
+```
+The file format is unsupported or invalid.
+
+### `EncodingError`
+```python
+EncodingError(self, /, *args, **kwargs)
+```
+Encoding error
 
 ## Contributing
 
