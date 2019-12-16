@@ -8,7 +8,6 @@ import six
 import shutil
 import openpyxl
 import datetime
-import re
 from itertools import chain
 from tempfile import TemporaryFile
 from ..parser import Parser
