@@ -12,22 +12,21 @@ from abc import ABCMeta, abstractmethod
 
 @add_metaclass(ABCMeta)
 class Parser(object):
-    '''Abstract class implemented by the data parsers.
+    """Abstract class implemented by the data parsers.
 
     The parsers inherit and implement this class' methods to add support for a
     new file type.
 
-    Args:
+    # Arguments
         loader (tabulator.Loader): Loader instance to read the file.
-        force_parse (bool): When `True`, the parser yields an empty extended
+        force_parse (bool):
+            When `True`, the parser yields an empty extended
             row tuple `(row_number, None, [])` when there is an error parsing a
             row. Otherwise, it stops the iteration by raising the exception
             `tabulator.exceptions.SourceError`.
         **options (dict): Loader options
 
-    Returns:
-        Parser: Parser instance.
-    '''
+    """
 
     # Public
 
@@ -39,61 +38,76 @@ class Parser(object):
     @property
     @abstractmethod
     def closed(self):
-        '''Flag telling if the parser is closed.'''
+        """Flag telling if the parser is closed.
+
+        # Returns
+            bool: whether closed
+
+        """
         pass  # pragma: no cover
 
     @abstractmethod
     def open(self, source, encoding=None):
-        '''Open underlying file stream in the beginning of the file.
+        """Open underlying file stream in the beginning of the file.
 
         The parser gets a byte or text stream from the `tabulator.Loader`
         instance and start emitting items.
 
-        Args:
+        # Arguments
             source (str): Path to source table.
             encoding (str, optional): Source encoding. Auto-detect by default.
 
-        Returns:
+        # Returns
             None
-        '''
+
+        """
         pass  # pragma: no cover
 
     @abstractmethod
     def close(self):
-        '''Closes underlying file stream.'''
+        """Closes underlying file stream.
+        """
         pass  # pragma: no cover
 
     @abstractmethod
     def reset(self):
-        '''Resets underlying stream and current items list.
+        """Resets underlying stream and current items list.
 
-        After `reset()` is called, iterating over the items will start from the
-        beginning.
-        '''
+        After `reset()` is called, iterating over the items will start from the beginning.
+        """
         pass  # pragma: no cover
 
     @property
     @abstractmethod
     def encoding(self):
+        """Encoding
+
+        # Returns
+            str: encoding
+
+        """
         pass  # pragma: no cover
 
     @property
     @abstractmethod
     def extended_rows(self):
-        '''Returns extended rows iterator.
+        """Returns extended rows iterator.
 
         The extended rows are tuples containing `(row_number, headers, row)`,
 
-        Yields:
-            Tuple[int, List[str], List[Any]]: Extended rows containing
+        # Raises
+            SourceError:
+                If `force_parse` is `False` and
+                a row can't be parsed, this exception will be raised.
+                Otherwise, an empty extended row is returned (i.e.
+                `(row_number, None, [])`).
+
+        Returns:
+            Iterator[Tuple[int, List[str], List[Any]]]:
+                Extended rows containing
                 `(row_number, headers, row)`, where `headers` is a list of the
                 header names (can be `None`), and `row` is a list of row
                 values.
 
-        Raises:
-            `tabulator.exceptions.SourceError`: If `force_parse` is `False` and
-                a row can't be parsed, this exception will be raised.
-                Otherwise, an empty extended row is returned (i.e.
-                `(row_number, None, [])`).
-        '''
+        """
         pass  # pragma: no cover

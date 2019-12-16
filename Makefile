@@ -9,14 +9,16 @@ LEAD := $(shell head -n 1 LEAD.md)
 all: list
 
 install:
-	pip install --upgrade -e .[datapackage,develop,ods]
+	pip install --upgrade -e .[datapackage,develop,ods,html]
 
 list:
 	@grep '^\.PHONY' Makefile | cut -d' ' -f2- | tr ' ' '\n'
 
 readme:
 	pip install md-toc
-	md_toc -p README.md github --header-levels 5
+	pip install referencer
+	referencer $(PACKAGE) README.md --in-place
+	md_toc -p README.md github --header-levels 3
 	sed -i '/(#$(PACKAGE)-py)/,+2d' README.md
 
 release:

@@ -27,14 +27,17 @@ class XLSXParser(Parser):
         'sheet',
         'fill_merged_cells',
         'preserve_formatting',
+        'adjust_floating_point_error',
     ]
 
     def __init__(self, loader, force_parse=False, sheet=1,
-            fill_merged_cells=False, preserve_formatting=False):
+            fill_merged_cells=False, preserve_formatting=False,
+            adjust_floating_point_error=False):
         self.__loader = loader
         self.__sheet_pointer = sheet
         self.__fill_merged_cells = fill_merged_cells
         self.__preserve_formatting = preserve_formatting
+        self.__adjust_floating_point_error = adjust_floating_point_error
         self.__extended_rows = None
         self.__encoding = None
         self.__fragment = None
@@ -105,7 +108,9 @@ class XLSXParser(Parser):
 
     def __iter_extended_rows(self):
         for row_number, row in enumerate(self.__sheet.iter_rows(), start=1):
-            yield (row_number, None, extract_row_values(row, self.__preserve_formatting))
+            yield (row_number, None,
+                extract_row_values(row, self.__preserve_formatting,
+                    self.__adjust_floating_point_error))
 
     def __process_merged_cells(self):
         if self.__fill_merged_cells:
@@ -321,7 +326,7 @@ def convert_excel_number_format_string(excel_number, value):
 
     return new_value
 
-def extract_row_values(row, preserve_formatting=False):
+def extract_row_values(row, preserve_formatting=False, adjust_floating_point_error=False):
     if preserve_formatting:
         values = []
         for cell in row:
@@ -332,6 +337,17 @@ def extract_row_values(row, preserve_formatting=False):
                 temporal_format = convert_excel_date_format_string(number_format)
                 if temporal_format:
                     value = cell.value.strftime(temporal_format)
+            elif (
+                adjust_floating_point_error
+                and isinstance(cell.value, float)
+                and number_format == 'general'
+            ):
+                # We have a float with format General
+                # Calculate the number of integer digits
+                integer_digits = len(str(int(cell.value)))
+                # Set the precision to 15 minus the number of integer digits
+                precision = 15 - (integer_digits)
+                value = round(cell.value, precision)
             elif isinstance(cell.value, (int, float)):
                 new_value = convert_excel_number_format_string(number_format, cell.value)
                 if new_value:

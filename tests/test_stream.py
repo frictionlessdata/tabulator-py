@@ -15,6 +15,7 @@ from tabulator import Stream, exceptions
 from tabulator.loaders.local import LocalLoader
 from tabulator.parsers.csv import CSVParser
 from tabulator.writers.csv import CSVWriter
+from tabulator.writers.xlsx import XLSXWriter
 BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
@@ -188,6 +189,10 @@ def test_stream_format_xls():
 def test_stream_format_xlsx():
     with Stream('data/table.xlsx') as stream:
         assert stream.format == 'xlsx'
+
+def test_stream_format_html():
+    with Stream('data/table1.html') as stream:
+        assert stream.format == 'html'
 
 
 # Encoding
@@ -645,6 +650,30 @@ def test_stream_save_csv(tmpdir):
             (3, ['id', 'name'], ['2', '中国人'])]
 
 
+def test_stream_save_xlsx(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.xlsx'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target)
+    with Stream(target, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_stream_save_xlsx_sheet_name(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.xlsx'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target, sheet='my-data')
+    with Stream(target, headers=1, sheet='my-data') as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
 def test_stream_save_inline_keyed_with_headers_argument(tmpdir):
     source = [{'key1': 'value1', 'key2': 'value2'}]
     target = str(tmpdir.join('table.csv'))
@@ -763,3 +792,10 @@ def test_stream_reset_on_close_issue_190():
     stream.open()
     stream.read(limit=1) == [['1', 'english']]
     stream.close()
+
+
+def test_stream_skip_blank_at_the_end_issue_bco_dmo_33():
+    source = 'data/special/skip-blank-at-the-end.csv'
+    with Stream(source, headers=1, skip_rows=['#']) as stream:
+        assert stream.headers == ['test1', 'test2']
+        assert stream.read() == [['1', '2'], []]
