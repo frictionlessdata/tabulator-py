@@ -8,6 +8,7 @@ import six
 import shutil
 import openpyxl
 import datetime
+import re
 from itertools import chain
 from tempfile import TemporaryFile
 from ..parser import Parser
@@ -121,19 +122,6 @@ class XLSXParser(Parser):
 
 
 # Internal
-
-NUMERIC_FORMATS = {
-    '0': '{0:.0f}',
-    '0.00': '{0:.2f}',
-    '#,##0': '{0:,.0f}',
-    '#,##0.00': '{0:,.2f}',
-    '#,###.00': '{0:,.2f}',
-}
-TEMPORAL_FORMATS = {
-    'm/d/yy': '%-m/%d/%y',
-    'mm/dd/yy': '%m/%d/%y',
-    'd-mmm': '%d-%b',
-}
 
 EXCEL_CODES = {
         'yyyy': '%Y',
@@ -299,25 +287,56 @@ def convert_excel_date_format_string(excel_date):
             return None
     return python_date
 
+def convert_excel_number_format_string(excel_number, value):
+    '''
+    A basic attempt to convert excel number_format to a number string
+
+    The important goal here is to get proper amount of rounding
+    '''
+    if excel_number == 'General':
+        return value
+    code = excel_number.split('.')
+    if len(code) > 2:
+        return None
+    if len(code) < 2:
+        # No decimals
+        return '{0:.0f}'.format(value)
+    decimal_section = code[1]
+    # Only pay attention to the 0, # and ? characters as they provide precision information
+    decimal_section = ''.join(d for d in decimal_section if d in ['0', '#', '?'])
+
+    # Count the number of hashes at the end of the decimal_section in order to know how
+    # the number should be truncated
+    number_hash = 0
+    for i in reversed(range(len(decimal_section))):
+        if decimal_section[i] == '#':
+            number_hash += 1
+        else:
+            break
+    string_format_code = f'{{0:.{len(decimal_section)}f}}'
+    new_value = string_format_code.format(value)
+    if number_hash > 0:
+        for i in range(number_hash):
+            if new_value.endswith('0'):
+                new_value = new_value[:-1]
+
+    return new_value
 
 def extract_row_values(row, preserve_formatting=False):
     if preserve_formatting:
         values = []
         for cell in row:
             number_format = (cell.number_format or '')
-            #print(f'FORMAT {number_format}, {type(cell.value)} {cell.value}')
-            #number_format = number_format.replace('\\', '')
-            numeric_format = NUMERIC_FORMATS.get(number_format)
+            value = cell.value
+
             if isinstance(cell.value, datetime.datetime) or isinstance(cell.value, datetime.time):
                 temporal_format = convert_excel_date_format_string(number_format)
                 if temporal_format:
                     value = cell.value.strftime(temporal_format)
-                else:
-                    value = cell.value
-            elif isinstance(cell.value, (int, float)) and numeric_format:
-                value = numeric_format.format(cell.value)
-            else:
-                value = cell.value
+            elif isinstance(cell.value, (int, float)):
+                new_value = convert_excel_number_format_string(number_format, cell.value)
+                if new_value:
+                    value = new_value
             values.append(value)
         return values
     return list(cell.value for cell in row)
