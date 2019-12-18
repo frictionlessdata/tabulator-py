@@ -232,8 +232,22 @@ def convert_excel_date_format_string(excel_date):
         is_escape_char = c == EXCEL_ESCAPE_CHAR
         # The am/pm and a/p code add some complications, need to make sure we are not that code
         is_misc_char = c in EXCEL_MISC_CHARS and (c != '/' or (ec != 'am' and ec != 'a'))
+        new_excel_code = False
+
+        # Handle a new code without a different characeter in between
+        if (
+            ec and not is_escape_char and not is_misc_char
+            # If the code does not start with c, we are in a new code
+            and not ec.startswith(c.lower())
+            # other than the case where we are building up
+            # am/pm (minus the case where it is fully built), we are in a new code
+            and (not ec.startswith('a') or ec == 'am/pm')
+        ):
+            print(f'Inside new excel code. c: {c}, ec: {ec}, python_date: {python_date}')
+            new_excel_code = True
+
         # Code is finished, check if it is a proper code
-        if (is_escape_char or is_misc_char) and ec:
+        if (is_escape_char or is_misc_char or new_excel_code) and ec:
             # Checking if the previous code should have been minute or month
             if checking_minute_or_month:
                 if ec == 'ss' or ec == 's':
