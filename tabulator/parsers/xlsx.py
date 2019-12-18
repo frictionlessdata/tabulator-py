@@ -343,7 +343,7 @@ def extract_row_values(row, preserve_formatting=False, adjust_floating_point_err
             elif (
                 adjust_floating_point_error
                 and isinstance(cell.value, float)
-                and number_format == 'general'
+                and number_format == 'General'
             ):
                 # We have a float with format General
                 # Calculate the number of integer digits
