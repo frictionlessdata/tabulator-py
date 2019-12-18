@@ -319,7 +319,7 @@ def convert_excel_number_format_string(excel_number, value):
             number_hash += 1
         else:
             break
-    string_format_code = f'{{0:.{len(decimal_section)}f}}'
+    string_format_code = '{0:.' + str(len(decimal_section)) + 'f}'
     new_value = string_format_code.format(value)
     if number_hash > 0:
         for i in range(number_hash):
