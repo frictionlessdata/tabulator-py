@@ -181,6 +181,7 @@ EXCEL_MISC_CHARS = [
 EXCEL_ESCAPE_CHAR = '\\'
 EXCEL_SECTION_DIVIDER = ';'
 
+
 def convert_excel_date_format_string(excel_date):
     '''
     Created using documentation here:
@@ -291,6 +292,7 @@ def convert_excel_date_format_string(excel_date):
             return None
     return python_date
 
+
 def convert_excel_number_format_string(excel_number, value):
     '''
     A basic attempt to convert excel number_format to a number string
@@ -325,6 +327,7 @@ def convert_excel_number_format_string(excel_number, value):
                 new_value = new_value[:-1]
 
     return new_value
+
 
 def extract_row_values(row, preserve_formatting=False, adjust_floating_point_error=False):
     if preserve_formatting:
