@@ -243,7 +243,6 @@ def convert_excel_date_format_string(excel_date):
             # am/pm (minus the case where it is fully built), we are in a new code
             and (not ec.startswith('a') or ec == 'am/pm')
         ):
-            print(f'Inside new excel code. c: {c}, ec: {ec}, python_date: {python_date}')
             new_excel_code = True
 
         # Code is finished, check if it is a proper code
