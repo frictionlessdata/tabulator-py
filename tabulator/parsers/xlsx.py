@@ -127,47 +127,247 @@ class XLSXParser(Parser):
 
 # Internal
 
-NUMERIC_FORMATS = {
-    '0': '{0:.0f}',
-    '0.00': '{0:.2f}',
-    '#,##0': '{0:,.0f}',
-    '#,##0.00': '{0:,.2f}',
-    '#,###.00': '{0:,.2f}',
+EXCEL_CODES = {
+        'yyyy': '%Y',
+        'yy': '%y',
+        'dddd': '%A',
+        'ddd': '%a',
+        'dd': '%d',
+        'd': '%-d',
+        # Different from excel as there is no J-D in strftime
+        'mmmmmm': '%b',
+        'mmmm': '%B',
+        'mmm': '%b',
+        'hh': '%H',
+        'h': '%-H',
+        'ss': '%S',
+        's': '%-S',
+        # Possibly different from excel as there is no am/pm in strftime
+        'am/pm': '%p',
+        # Different from excel as there is no A/P or a/p in strftime
+        'a/p': '%p',
 }
-TEMPORAL_FORMATS = {
-    'm/d/yy': '%-m/%d/%y',
-    'mm/dd/yy': '%m/%d/%y',
-    'd-mmm': '%d-%b',
+
+EXCEL_MINUTE_CODES = {
+    'mm': '%M',
+    'm': '%-M',
 }
+EXCEL_MONTH_CODES = {
+    'mm': '%m',
+    'm': '%-m',
+}
+
+EXCEL_MISC_CHARS = [
+    '$',
+    '+',
+    '(',
+    ':',
+    '^',
+    '\'',
+    '{',
+    '<',
+    '=',
+    '-',
+    '/',
+    ')',
+    '!',
+    '&',
+    '~',
+    '}',
+    '>',
+    ' ',
+]
+
+EXCEL_ESCAPE_CHAR = '\\'
+EXCEL_SECTION_DIVIDER = ';'
+
+
+def convert_excel_date_format_string(excel_date):
+    '''
+    Created using documentation here:
+    https://support.office.com/en-us/article/review-guidelines-for-customizing-a-number-format-c0a1d1fa-d3f4-4018-96b7-9c9354dd99f5
+
+    '''
+    # The python date string that is being built
+    python_date = ''
+    # The excel code currently being parsed
+    excel_code = ''
+    prev_code = ''
+    # If the previous character was the escape character
+    char_escaped = False
+    # If we are in a quotation block (surrounded by "")
+    quotation_block = False
+    # Variables used for checking if a code should be a minute or a month
+    checking_minute_or_month = False
+    minute_or_month_buffer = ''
+
+    for c in excel_date:
+        ec = excel_code.lower()
+        # The previous character was an escape, the next character should be added normally
+        if char_escaped:
+            if checking_minute_or_month:
+                minute_or_month_buffer += c
+            else:
+                python_date += c
+            char_escaped = False
+            continue
+        # Inside a quotation block
+        if quotation_block:
+            if c == '"':
+                # Quotation block should now end
+                quotation_block = False
+            elif checking_minute_or_month:
+                minute_or_month_buffer += c
+            else:
+                python_date += c
+            continue
+        # The start of a quotation block
+        if c == '"':
+            quotation_block = True
+            continue
+        if c == EXCEL_SECTION_DIVIDER:
+            # We ignore excel sections for datetimes
+            break
+
+        is_escape_char = c == EXCEL_ESCAPE_CHAR
+        # The am/pm and a/p code add some complications, need to make sure we are not that code
+        is_misc_char = c in EXCEL_MISC_CHARS and (c != '/' or (ec != 'am' and ec != 'a'))
+        new_excel_code = False
+
+        # Handle a new code without a different characeter in between
+        if (
+            ec and not is_escape_char and not is_misc_char
+            # If the code does not start with c, we are in a new code
+            and not ec.startswith(c.lower())
+            # other than the case where we are building up
+            # am/pm (minus the case where it is fully built), we are in a new code
+            and (not ec.startswith('a') or ec == 'am/pm')
+        ):
+            new_excel_code = True
+
+        # Code is finished, check if it is a proper code
+        if (is_escape_char or is_misc_char or new_excel_code) and ec:
+            # Checking if the previous code should have been minute or month
+            if checking_minute_or_month:
+                if ec == 'ss' or ec == 's':
+                    # It should be a minute!
+                    minute_or_month_buffer = EXCEL_MINUTE_CODES[prev_code] + minute_or_month_buffer
+                else:
+                    # It should be a months!
+                    minute_or_month_buffer = EXCEL_MONTH_CODES[prev_code] + minute_or_month_buffer
+                python_date += minute_or_month_buffer
+                checking_minute_or_month = False
+                minute_or_month_buffer = ''
+
+            if ec in EXCEL_CODES:
+                python_date += EXCEL_CODES[ec]
+            # Handle months/minutes differently
+            elif ec in EXCEL_MINUTE_CODES:
+                # If preceded by hours, we know this is referring to minutes
+                if prev_code == 'h' or prev_code == 'hh':
+                    python_date += EXCEL_MINUTE_CODES[ec]
+                else:
+                    # Have to check if the next code is ss or s
+                    checking_minute_or_month = True
+                    minute_or_month_buffer = ''
+            else:
+                # Have to abandon this attempt to convert because the code is not recognized
+                return None
+            prev_code = ec
+            excel_code = ''
+        if is_escape_char:
+            char_escaped = True
+        elif is_misc_char:
+            # Add the misc char
+            if checking_minute_or_month:
+                minute_or_month_buffer += c
+            else:
+                python_date += c
+        else:
+            # Just add to the code
+            excel_code += c
+
+    # Complete, check if there is still a buffer
+    if checking_minute_or_month:
+        # We know it's a month because there were no more codes after
+        minute_or_month_buffer = EXCEL_MONTH_CODES[prev_code] + minute_or_month_buffer
+        python_date += minute_or_month_buffer
+    if excel_code:
+        ec = excel_code.lower()
+        if ec in EXCEL_CODES:
+            python_date += EXCEL_CODES[ec]
+        elif ec in EXCEL_MINUTE_CODES:
+            if prev_code == 'h' or prev_code == 'hh':
+                python_date += EXCEL_MINUTE_CODES[ec]
+            else:
+                python_date += EXCEL_MONTH_CODES[ec]
+        else:
+            return None
+    return python_date
+
+
+def convert_excel_number_format_string(excel_number, value):
+    '''
+    A basic attempt to convert excel number_format to a number string
+
+    The important goal here is to get proper amount of rounding
+    '''
+    if excel_number == 'General':
+        return value
+    code = excel_number.split('.')
+    if len(code) > 2:
+        return None
+    if len(code) < 2:
+        # No decimals
+        return '{0:.0f}'.format(value)
+    decimal_section = code[1]
+    # Only pay attention to the 0, # and ? characters as they provide precision information
+    decimal_section = ''.join(d for d in decimal_section if d in ['0', '#', '?'])
+
+    # Count the number of hashes at the end of the decimal_section in order to know how
+    # the number should be truncated
+    number_hash = 0
+    for i in reversed(range(len(decimal_section))):
+        if decimal_section[i] == '#':
+            number_hash += 1
+        else:
+            break
+    string_format_code = '{0:.' + str(len(decimal_section)) + 'f}'
+    new_value = string_format_code.format(value)
+    if number_hash > 0:
+        for i in range(number_hash):
+            if new_value.endswith('0'):
+                new_value = new_value[:-1]
+
+    return new_value
 
 
 def extract_row_values(row, preserve_formatting=False, adjust_floating_point_error=False):
     if preserve_formatting:
         values = []
         for cell in row:
-            number_format = (cell.number_format or '').lower()
-            number_format = number_format.replace('\\', '')
-            numeric_format = NUMERIC_FORMATS.get(number_format)
-            temporal_format = TEMPORAL_FORMATS.get(number_format)
-            if isinstance(cell.value, (int, float)) and numeric_format:
-                value = numeric_format.format(cell.value)
-            elif isinstance(cell.value, datetime.datetime) and temporal_format:
-                value = cell.value.strftime(temporal_format)
+            number_format = (cell.number_format or '')
+            value = cell.value
+
+            if isinstance(cell.value, datetime.datetime) or isinstance(cell.value, datetime.time):
+                temporal_format = convert_excel_date_format_string(number_format)
+                if temporal_format:
+                    value = cell.value.strftime(temporal_format)
             elif (
                 adjust_floating_point_error
                 and isinstance(cell.value, float)
-                and number_format == 'general'
+                and number_format == 'General'
             ):
                 # We have a float with format General
-
                 # Calculate the number of integer digits
                 integer_digits = len(str(int(cell.value)))
                 # Set the precision to 15 minus the number of integer digits
                 precision = 15 - (integer_digits)
                 value = round(cell.value, precision)
-
-            else:
-                value = cell.value
+            elif isinstance(cell.value, (int, float)):
+                new_value = convert_excel_number_format_string(number_format, cell.value)
+                if new_value:
+                    value = new_value
             values.append(value)
         return values
     return list(cell.value for cell in row)
