@@ -23,7 +23,7 @@ S3_ENDPOINT_URL = os.environ['S3_ENDPOINT_URL'] = 'http://localhost:5000'
 # Stream
 
 # https://github.com/frictionlessdata/tabulator-py/issues/271
-@pytest.mark.skipif(os.environ.get('TRAVIS') == 'true', reason='See issue #271')
+@pytest.mark.skip
 def test_stream_s3(s3_client, bucket):
 
     # Upload a file
@@ -40,7 +40,7 @@ def test_stream_s3(s3_client, bucket):
 
 
 # https://github.com/frictionlessdata/tabulator-py/issues/271
-@pytest.mark.skipif(os.environ.get('TRAVIS') == 'true', reason='See issue #271')
+@pytest.mark.skip
 def test_stream_s3_endpoint_url(s3_client, bucket):
 
     # Upload a file
@@ -57,7 +57,7 @@ def test_stream_s3_endpoint_url(s3_client, bucket):
 
 
 # https://github.com/frictionlessdata/tabulator-py/issues/271
-@pytest.mark.skipif(os.environ.get('TRAVIS') == 'true', reason='See issue #271')
+@pytest.mark.skip
 def test_stream_s3_non_existent_file(s3_client, bucket):
     with pytest.raises(exceptions.IOError):
         Stream('s3://%s/table.csv' % bucket).open()
