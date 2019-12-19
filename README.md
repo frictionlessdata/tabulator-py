@@ -1238,18 +1238,16 @@ Encoding error
 
 ## Contributing
 
-This project follows the [Open Knowledge International coding standards](https://github.com/okfn/coding-standards).
+> The project follows the [Open Knowledge International coding standards](https://github.com/okfn/coding-standards).
 
-We recommend you to use `virtualenv` to isolate this project from the rest of the
-packages in your machine.
-
-To install the project and its development dependencies, run:
+Recommended way to get started is to create and activate a project virtual environment.
+To install package and development dependencies into active environment:
 
 ```bash
 $ make install
 ```
 
-To run the tests, use:
+To run tests with linting and coverage:
 
 ```bash
 $ make test
