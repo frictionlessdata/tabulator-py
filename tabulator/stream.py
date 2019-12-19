@@ -88,7 +88,7 @@ class Stream(object):
             List of row numbers, strings and regex patterns to skip.
             If a string, it'll skip rows that begin with it e.g. '#' and '//'.
             To provide a regext pattern start it with `^` e.g. `^skip_me.*`
-            For example: `skip_rows=[1, '# comment', '^# (regex|comment)']
+            For example: `skip_rows=[1, '# comment', '^# (regex|comment)']`
 
         post_parse (List[function], optional):
             List of generator functions that
