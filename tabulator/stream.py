@@ -74,6 +74,14 @@ class Stream(object):
             When True, ignores all columns
             that have blank headers. Defaults to False.
 
+        ignore_listed_headers (List[str], optional):
+            When passed, ignores all columns with headers
+            that the given list includes
+
+        ignore_not_listed_headers (List[str], optional):
+            When passed, ignores all columns with headers
+            that the given list DOES NOT include
+
         force_strings (bool, optional):
             When True, casts all data to strings.
             Defaults to False.
@@ -125,6 +133,8 @@ class Stream(object):
                  sample_size=config.DEFAULT_SAMPLE_SIZE,
                  bytes_sample_size=config.DEFAULT_BYTES_SAMPLE_SIZE,
                  ignore_blank_headers=False,
+                 ignore_listed_headers=None,
+                 ignore_not_listed_headers=None,
                  force_strings=False,
                  force_parse=False,
                  skip_rows=[],
@@ -173,7 +183,9 @@ class Stream(object):
         self.__sample_size = sample_size
         self.__bytes_sample_size = bytes_sample_size
         self.__ignore_blank_headers = ignore_blank_headers
-        self.__blank_header_indexes = []
+        self.__ignore_listed_headers = ignore_listed_headers
+        self.__ignore_not_listed_headers = ignore_not_listed_headers
+        self.__ignored_headers_indexes = []
         self.__force_strings = force_strings
         self.__force_parse = force_parse
         self.__post_parse = copy(post_parse)
@@ -609,16 +621,31 @@ class Stream(object):
             if row_number == self.__headers_row_last:
                 break
 
-        # Ignore blank headers
-        if self.__ignore_blank_headers:
-            self.__blank_header_indexes = []
+        # Ignore headers
+        if (self.__ignore_blank_headers or
+                self.__ignore_listed_headers is not None or
+                self.__ignore_not_listed_headers is not None):
+            self.__ignored_headers_indexes = []
             raw_headers, self.__headers = self.__headers, []
             for index, header in list(enumerate(raw_headers)):
+                ignore = False
+                # Ignore blank headers
                 if header in ['', None]:
-                    self.__blank_header_indexes.append(index)
+                    ignore = True
+                # Ignore listed headers
+                if self.__ignore_listed_headers is not None:
+                    if header in self.__ignore_listed_headers:
+                        ignore = True
+                # Ignore not-listed headers
+                if self.__ignore_not_listed_headers is not None:
+                    if header not in self.__ignore_not_listed_headers:
+                        ignore = True
+                # Add to the list and skip
+                if ignore:
+                    self.__ignored_headers_indexes.append(index)
                     continue
                 self.__headers.append(header)
-            self.__blank_header_indexes = sorted(self.__blank_header_indexes, reverse=True)
+            self.__ignored_headers_indexes = sorted(self.__ignored_headers_indexes, reverse=True)
 
         # Remove headers from data
         if not keyed_source:
@@ -656,9 +683,9 @@ class Stream(object):
                 if self.__check_if_row_for_skipping(row_number, headers, row):
                     continue
 
-                # Ignore blank headers
-                if self.__blank_header_indexes:
-                    for index in self.__blank_header_indexes:
+                # Ignore headers
+                if self.__ignored_headers_indexes:
+                    for index in self.__ignored_headers_indexes:
                         if index < len(row):
                             row = row[:index] + row[index+1:]
 
