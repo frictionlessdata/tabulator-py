@@ -849,11 +849,11 @@ __Arguments__
         When True, ignores all columns
         that have blank headers. Defaults to False.
 - __ignore_listed_headers (List[str], optional)__:
-        When passed, ignores all columns
-        that listed in the given list
+        When passed, ignores all columns with headers
+        that the given list includes
 - __ignore_not_listed_headers (List[str], optional)__:
-        When passed, ignores all columns
-        that NOT listed in the given list
+        When passed, ignores all columns with headers
+        that the given list DOES NOT include
 - __force_strings (bool, optional)__:
         When True, casts all data to strings.
         Defaults to False.

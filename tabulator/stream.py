@@ -75,12 +75,12 @@ class Stream(object):
             that have blank headers. Defaults to False.
 
         ignore_listed_headers (List[str], optional):
-            When passed, ignores all columns
-            that listed in the given list
+            When passed, ignores all columns with headers
+            that the given list includes
 
         ignore_not_listed_headers (List[str], optional):
-            When passed, ignores all columns
-            that NOT listed in the given list
+            When passed, ignores all columns with headers
+            that the given list DOES NOT include
 
         force_strings (bool, optional):
             When True, casts all data to strings.
