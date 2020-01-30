@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import re
 import six
 import gzip
 import zipfile
@@ -91,10 +92,11 @@ class Stream(object):
             parsing malformed rows, simply returning an empty value. Defaults
             to False.
 
-        skip_rows (List[Union[int, str]], optional):
-            List of row numbers and
-            strings to skip. If a string, it'll skip rows that begin with it
-            (e.g. '#' and '//').
+        skip_rows (List[Union[int, str, dict]], optional):
+            List of row numbers, strings and regex patterns as dicts to skip.
+            If a string, it'll skip rows that their first cells begin with it e.g. '#' and '//'.
+            To provide a regex pattern use an object like `{'type'\\: 'regex', 'value'\\: '^#'}`
+            For example\\: `skip_rows=[1, '# comment', {'type'\\: 'regex', 'value'\\: '^# (regex|comment)'}]`
 
         post_parse (List[function], optional):
             List of generator functions that
@@ -162,10 +164,14 @@ class Stream(object):
 
         # Set skip rows
         self.__skip_rows_by_numbers = []
+        self.__skip_rows_by_patterns = []
         self.__skip_rows_by_comments = []
         for directive in copy(skip_rows):
             if isinstance(directive, int):
                 self.__skip_rows_by_numbers.append(directive)
+            elif isinstance(directive, dict):
+                assert directive['type'] == 'regex'
+                self.__skip_rows_by_patterns.append(re.compile(directive['value']))
             else:
                 self.__skip_rows_by_comments.append(str(directive))
 
@@ -743,15 +749,21 @@ class Stream(object):
         if row_number in self.__skip_rows_by_numbers:
             return True
 
+        # Get first cell
+        cell = row[0] if row else None
+
+        # Handle empty cell
+        if cell is None:
+            return '' in self.__skip_rows_by_comments
+
+        # Skip by pattern
+        for pattern in self.__skip_rows_by_patterns:
+            if bool(pattern.match(cell)):
+                return True
+
         # Skip by comment
-        if not row:
-            return False
-        match = lambda comment: (
-            (isinstance(row[0], six.string_types) and
-             row[0].startswith(comment)) if len(comment) > 0
-            else row[0] in ('', None)
-        )
-        if any(map(match, self.__skip_rows_by_comments)):
-            return True
+        for comment in filter(None, self.__skip_rows_by_comments):
+            if cell.startswith(comment):
+                return True
 
         return False
