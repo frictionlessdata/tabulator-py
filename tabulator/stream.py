@@ -95,8 +95,8 @@ class Stream(object):
         skip_rows (List[Union[int, str, dict]], optional):
             List of row numbers, strings and regex patterns as dicts to skip.
             If a string, it'll skip rows that begin with it e.g. '#' and '//'.
-            To provide a regex pattern use an object like `{'type'\: 'regex', 'value'\: '^#'}`
-            For example\: `skip_rows=[1, '# comment', {'type'\: 'regex', 'value'\: '^# (regex|comment)'}]`
+            To provide a regex pattern use an object like `{'type'\\: 'regex', 'value'\\: '^#'}`
+            For example\\: `skip_rows=[1, '# comment', {'type'\\: 'regex', 'value'\\: '^# (regex|comment)'}]`
 
         post_parse (List[function], optional):
             List of generator functions that
