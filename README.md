@@ -1286,6 +1286,10 @@ $ make test
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+#### v1.33
+
+- Added support for regex patterns in `skip_rows` (#290)
+
 #### v1.32
 
 - Added ability to skip columns (#293)
