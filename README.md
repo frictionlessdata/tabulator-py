@@ -861,10 +861,11 @@ __Arguments__
         When True, don't raise exceptions when
         parsing malformed rows, simply returning an empty value. Defaults
         to False.
-- __skip_rows (List[Union[int, str]], optional)__:
-        List of row numbers and
-        strings to skip. If a string, it'll skip rows that begin with it
-        (e.g. '#' and '//').
+- __skip_rows (List[Union[int, str, dict]], optional)__:
+        List of row numbers, strings and regex patterns as dicts to skip.
+        If a string, it'll skip rows that begin with it e.g. '#' and '//'.
+        To provide a regex pattern use an object like `{'type': 'regex', 'value': '^#'}`
+        For example: `skip_rows=[1, '# comment', {'type': 'regex', 'value': '^# (regex|comment)'}]`
 - __post_parse (List[function], optional)__:
         List of generator functions that
         receives a list of rows and headers, processes them, and yields

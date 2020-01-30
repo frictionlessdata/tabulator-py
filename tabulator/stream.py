@@ -92,11 +92,11 @@ class Stream(object):
             parsing malformed rows, simply returning an empty value. Defaults
             to False.
 
-        skip_rows (List[Union[int, str]], optional):
-            List of row numbers, strings and regex patterns to skip.
+        skip_rows (List[Union[int, str, dict]], optional):
+            List of row numbers, strings and regex patterns as dicts to skip.
             If a string, it'll skip rows that begin with it e.g. '#' and '//'.
-            To provide a regext pattern start it with `^` e.g. `^skip_me.*`
-            For example: `skip_rows=[1, '# comment', '^# (regex|comment)']`
+            To provide a regex pattern use an object like `{'type'\: 'regex', 'value'\: '^#'}`
+            For example\: `skip_rows=[1, '# comment', {'type'\: 'regex', 'value'\: '^# (regex|comment)'}]`
 
         post_parse (List[function], optional):
             List of generator functions that
@@ -169,8 +169,9 @@ class Stream(object):
         for directive in copy(skip_rows):
             if isinstance(directive, int):
                 self.__skip_rows_by_numbers.append(directive)
-            elif directive.startswith('^'):
-                self.__skip_rows_by_patterns.append(re.compile(directive))
+            elif isinstance(directive, dict):
+                assert directive['type'] == 'regex'
+                self.__skip_rows_by_patterns.append(re.compile(directive['value']))
             else:
                 self.__skip_rows_by_comments.append(str(directive))
 
