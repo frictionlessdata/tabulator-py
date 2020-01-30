@@ -863,7 +863,7 @@ __Arguments__
         to False.
 - __skip_rows (List[Union[int, str, dict]], optional)__:
         List of row numbers, strings and regex patterns as dicts to skip.
-        If a string, it'll skip rows that begin with it e.g. '#' and '//'.
+        If a string, it'll skip rows that their first cells begin with it e.g. '#' and '//'.
         To provide a regex pattern use an object like `{'type': 'regex', 'value': '^#'}`
         For example: `skip_rows=[1, '# comment', {'type': 'regex', 'value': '^# (regex|comment)'}]`
 - __post_parse (List[function], optional)__:
