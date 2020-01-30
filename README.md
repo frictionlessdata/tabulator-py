@@ -332,6 +332,28 @@ with Stream(source, format='csv', headers=1, ignore_blank_headers=True) as strea
     stream.read(keyed=True) # {'header1': 'value1', 'header3': 'value3'}
 ```
 
+#### Ignore listed/not-listed headers
+
+The option is similar to the `ignore_blank_headers`. It removes arbitrary columns from the data based on the corresponding column names:
+
+```python
+# Ignore listed headers (omit columns)
+source = 'text://header1,header2,header3\nvalue1,value2,value3'
+with Stream(source, format='csv', headers=1, ignore_listed_headers=['header2']) as stream:
+    assert stream.headers == ['header1', 'header3']
+    assert stream.read(keyed=True) == [
+        {'header1': 'value1', 'header3': 'value3'},
+    ]
+
+# Ignore NOT listed headers (pick colums)
+source = 'text://header1,header2,header3\nvalue1,value2,value3'
+with Stream(source, format='csv', headers=1, ignore_not_listed_headers=['header2']) as stream:
+    assert stream.headers == ['header2']
+    assert stream.read(keyed=True) == [
+        {'header2': 'value2'},
+    ]
+```
+
 #### Force strings
 
 When `True`, all rows' values will be converted to strings (defaults to
@@ -781,7 +803,7 @@ Options:
 
 ### `Stream`
 ```python
-Stream(self, source, headers=None, scheme=None, format=None, encoding=None, compression=None, allow_html=False, sample_size=100, bytes_sample_size=10000, ignore_blank_headers=False, force_strings=False, force_parse=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)
+Stream(self, source, headers=None, scheme=None, format=None, encoding=None, compression=None, allow_html=False, sample_size=100, bytes_sample_size=10000, ignore_blank_headers=False, ignore_listed_headers=None, ignore_not_listed_headers=None, force_strings=False, force_parse=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)
 ```
 Stream of tabular data.
 
@@ -826,6 +848,12 @@ __Arguments__
 - __ignore_blank_headers (bool, optional)__:
         When True, ignores all columns
         that have blank headers. Defaults to False.
+- __ignore_listed_headers (List[str], optional)__:
+        When passed, ignores all columns with headers
+        that the given list includes
+- __ignore_not_listed_headers (List[str], optional)__:
+        When passed, ignores all columns with headers
+        that the given list DOES NOT include
 - __force_strings (bool, optional)__:
         When True, casts all data to strings.
         Defaults to False.
@@ -1256,6 +1284,10 @@ $ make test
 ## Changelog
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
+
+#### v1.32
+
+- Added ability to skip columns (#293)
 
 #### v1.31
 

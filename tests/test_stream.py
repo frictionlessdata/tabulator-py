@@ -287,6 +287,25 @@ def test_stream_ignore_blank_headers_true():
         assert stream.read(keyed=True) == data
 
 
+# Ignore listed/not_listed headers
+
+def test_stream_ignore_listed_headers():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, ignore_listed_headers=['header2']) as stream:
+        assert stream.headers == ['header1', 'header3']
+        assert stream.read(keyed=True) == [
+            {'header1': 'value1', 'header3': 'value3'},
+        ]
+
+def test_stream_ignore_not_listed_headers():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, ignore_not_listed_headers=['header2']) as stream:
+        assert stream.headers == ['header2']
+        assert stream.read(keyed=True) == [
+            {'header2': 'value2'},
+        ]
+
+
 # Force strings
 
 def test_stream_force_strings():
