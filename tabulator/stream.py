@@ -83,6 +83,11 @@ class Stream(object):
             When passed, ignores all columns with headers
             that the given list DOES NOT include
 
+        multiline_headers_joiner (str, optional):
+            When passed, it's used to join multiline headers
+            as `<passed-value>.join(header1_1, header1_2)`
+            Defaults to ' ' (space).
+
         force_strings (bool, optional):
             When True, casts all data to strings.
             Defaults to False.
@@ -137,6 +142,7 @@ class Stream(object):
                  ignore_blank_headers=False,
                  ignore_listed_headers=None,
                  ignore_not_listed_headers=None,
+                 multiline_headers_joiner=' ',
                  force_strings=False,
                  force_parse=False,
                  skip_rows=[],
@@ -191,6 +197,7 @@ class Stream(object):
         self.__ignore_blank_headers = ignore_blank_headers
         self.__ignore_listed_headers = ignore_listed_headers
         self.__ignore_not_listed_headers = ignore_not_listed_headers
+        self.__multiline_headers_joiner = multiline_headers_joiner
         self.__ignored_headers_indexes = []
         self.__force_strings = force_strings
         self.__force_parse = force_parse
@@ -622,8 +629,11 @@ class Stream(object):
                     if len(headers) > index and headers[index] is not None:
                         if not self.__headers[index]:
                             self.__headers[index] = headers[index]
-                        elif not self.__headers[index].endswith(headers[index]):
-                            self.__headers[index] += ' ' + headers[index]
+                        else:
+                            # https://github.com/frictionlessdata/tabulator-py/issues/292
+                            if (not self.__options.get('fill_merged_cells') or
+                                    not self.__headers[index].endswith(headers[index])):
+                                self.__headers[index] += self.__multiline_headers_joiner + headers[index]
             if row_number == self.__headers_row_last:
                 break
 

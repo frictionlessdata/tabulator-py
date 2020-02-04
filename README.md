@@ -803,7 +803,7 @@ Options:
 
 ### `Stream`
 ```python
-Stream(self, source, headers=None, scheme=None, format=None, encoding=None, compression=None, allow_html=False, sample_size=100, bytes_sample_size=10000, ignore_blank_headers=False, ignore_listed_headers=None, ignore_not_listed_headers=None, force_strings=False, force_parse=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)
+Stream(self, source, headers=None, scheme=None, format=None, encoding=None, compression=None, allow_html=False, sample_size=100, bytes_sample_size=10000, ignore_blank_headers=False, ignore_listed_headers=None, ignore_not_listed_headers=None, multiline_headers_joiner=' ', force_strings=False, force_parse=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)
 ```
 Stream of tabular data.
 
@@ -854,6 +854,10 @@ __Arguments__
 - __ignore_not_listed_headers (List[str], optional)__:
         When passed, ignores all columns with headers
         that the given list DOES NOT include
+- __multiline_headers_joiner (str, optional)__:
+        When passed, it's used to join multiline headers
+        as `<passed-value>.join(header1_1, header1_2)`
+        Defaults to ' ' (space).
 - __force_strings (bool, optional)__:
         When True, casts all data to strings.
         Defaults to False.
