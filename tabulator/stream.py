@@ -103,6 +103,13 @@ class Stream(object):
             To provide a regex pattern use an object like `{'type'\\: 'regex', 'value'\\: '^#'}`
             For example\\: `skip_rows=[1, '# comment', {'type'\\: 'regex', 'value'\\: '^# (regex|comment)'}]`
 
+        skip_columns (str[]):
+            Alias for `ignore_listed_headers`.
+            If it contains an empty string it will activate `ignore_blank_headers`
+
+        pick_columns (str[]):
+            Alias for `ignore_not_listed_headers`.
+
         post_parse (List[function], optional):
             List of generator functions that
             receives a list of rows and headers, processes them, and yields
@@ -146,6 +153,8 @@ class Stream(object):
                  force_strings=False,
                  force_parse=False,
                  skip_rows=[],
+                 skip_columns=None,
+                 pick_columns=None,
                  post_parse=[],
                  custom_loaders={},
                  custom_parsers={},
@@ -167,6 +176,14 @@ class Stream(object):
                 self.__headers_row_last = headers[1]
             else:
                 self.__headers = list(headers)
+
+        # Translate aliases
+        if pick_columns is not None:
+            ignore_not_listed_headers = pick_columns
+        if skip_columns is not None:
+            ignore_listed_headers = skip_columns
+            if '' in skip_columns:
+                ignore_blank_headers = True
 
         # Set skip rows
         self.__skip_rows_by_numbers = []
@@ -763,7 +780,7 @@ class Stream(object):
         cell = row[0] if row else None
 
         # Handle empty cell
-        if cell is None:
+        if cell in [None, '']:
             return '' in self.__skip_rows_by_comments
 
         # Skip by pattern

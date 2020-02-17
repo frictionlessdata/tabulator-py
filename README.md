@@ -803,7 +803,7 @@ Options:
 
 ### `Stream`
 ```python
-Stream(self, source, headers=None, scheme=None, format=None, encoding=None, compression=None, allow_html=False, sample_size=100, bytes_sample_size=10000, ignore_blank_headers=False, ignore_listed_headers=None, ignore_not_listed_headers=None, multiline_headers_joiner=' ', force_strings=False, force_parse=False, skip_rows=[], post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)
+Stream(self, source, headers=None, scheme=None, format=None, encoding=None, compression=None, allow_html=False, sample_size=100, bytes_sample_size=10000, ignore_blank_headers=False, ignore_listed_headers=None, ignore_not_listed_headers=None, multiline_headers_joiner=' ', force_strings=False, force_parse=False, skip_rows=[], skip_columns=None, pick_columns=None, post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)
 ```
 Stream of tabular data.
 
@@ -870,6 +870,11 @@ __Arguments__
         If a string, it'll skip rows that their first cells begin with it e.g. '#' and '//'.
         To provide a regex pattern use an object like `{'type': 'regex', 'value': '^#'}`
         For example: `skip_rows=[1, '# comment', {'type': 'regex', 'value': '^# (regex|comment)'}]`
+- __skip_columns (str[])__:
+        Alias for `ignore_listed_headers`.
+        If it contains an empty string it will activate `ignore_blank_headers`
+- __pick_columns (str[])__:
+        Alias for `ignore_not_listed_headers`.
 - __post_parse (List[function], optional)__:
         List of generator functions that
         receives a list of rows and headers, processes them, and yields
