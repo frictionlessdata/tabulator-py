@@ -763,7 +763,7 @@ class Stream(object):
         cell = row[0] if row else None
 
         # Handle empty cell
-        if cell is None:
+        if cell in [None, '']:
             return '' in self.__skip_rows_by_comments
 
         # Skip by pattern
