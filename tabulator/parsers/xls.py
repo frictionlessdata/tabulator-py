@@ -45,12 +45,22 @@ class XLSParser(Parser):
         self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
 
         # Get book
-        self.__book = xlrd.open_workbook(
-            file_contents=self.__bytes.read(),
-            encoding_override=encoding,
-            formatting_info=True,
-            logfile=sys.stderr
-        )
+        file_contents=self.__bytes.read()
+        try:
+            self.__book = xlrd.open_workbook(
+                file_contents=file_contents,
+                encoding_override=encoding,
+                formatting_info=True,
+                logfile=sys.stderr
+            )
+        except NotImplementedError:
+            self.__book = xlrd.open_workbook(
+                file_contents=file_contents,
+                encoding_override=encoding,
+                formatting_info=False,
+                logfile=sys.stderr
+            )
+
 
         # Get sheet
         try:
