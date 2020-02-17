@@ -45,7 +45,7 @@ class XLSParser(Parser):
         self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
 
         # Get book
-        file_contents=self.__bytes.read()
+        file_contents = self.__bytes.read()
         try:
             self.__book = xlrd.open_workbook(
                 file_contents=file_contents,
@@ -60,7 +60,6 @@ class XLSParser(Parser):
                 formatting_info=False,
                 logfile=sys.stderr
             )
-
 
         # Get sheet
         try:
