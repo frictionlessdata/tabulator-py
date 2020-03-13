@@ -440,6 +440,14 @@ def test_stream_skip_rows_regex():
         assert stream.read() == [['John', 1], ['Alex', 2]]
 
 
+def test_stream_skip_rows_preset():
+    source = [['name', 'order'], ['', ''], [], ['John', 1], ['Alex', 2]]
+    skip_rows = [{'type': 'preset', 'value': 'blank'}]
+    with Stream(source, headers=1, skip_rows=skip_rows) as stream:
+        assert stream.headers == ['name', 'order']
+        assert stream.read() == [['John', 1], ['Alex', 2]]
+
+
 # Post parse
 
 def test_stream_post_parse_headers():
