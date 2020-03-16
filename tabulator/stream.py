@@ -100,7 +100,8 @@ class Stream(object):
         skip_rows (List[Union[int, str, dict]], optional):
             List of row numbers, strings and regex patterns as dicts to skip.
             If a string, it'll skip rows that their first cells begin with it e.g. '#' and '//'.
-            To provide a regex pattern use an object like `{'type'\\: 'regex', 'value'\\: '^#'}`
+            To skip only completely blank rows use `{'type'\\: 'preset', 'value'\\: 'blank'}`
+            To provide a regex pattern use  `{'type'\\: 'regex', 'value'\\: '^#'}`
             For example\\: `skip_rows=[1, '# comment', {'type'\\: 'regex', 'value'\\: '^# (regex|comment)'}]`
 
         skip_columns (str[]):
@@ -189,12 +190,17 @@ class Stream(object):
         self.__skip_rows_by_numbers = []
         self.__skip_rows_by_patterns = []
         self.__skip_rows_by_comments = []
+        self.__skip_rows_by_presets = {}
         for directive in copy(skip_rows):
             if isinstance(directive, int):
                 self.__skip_rows_by_numbers.append(directive)
             elif isinstance(directive, dict):
-                assert directive['type'] == 'regex'
-                self.__skip_rows_by_patterns.append(re.compile(directive['value']))
+                if directive['type'] == 'regex':
+                    self.__skip_rows_by_patterns.append(re.compile(directive['value']))
+                elif directive['type'] == 'preset' and directive['value'] == 'blank':
+                    self.__skip_rows_by_presets['blank'] = True
+                else:
+                    raise ValueError('Not supported skip rows: %s' % directive)
             else:
                 self.__skip_rows_by_comments.append(str(directive))
 
@@ -779,9 +785,14 @@ class Stream(object):
         # Get first cell
         cell = row[0] if row else None
 
-        # Handle empty cell
+        # Handle blank cell/row
         if cell in [None, '']:
-            return '' in self.__skip_rows_by_comments
+            if '' in self.__skip_rows_by_comments:
+                return True
+            if self.__skip_rows_by_presets.get('blank'):
+                if not list(filter(lambda cell: cell not in [None, ''], row)):
+                    return True
+            return False
 
         # Skip by pattern
         for pattern in self.__skip_rows_by_patterns:
