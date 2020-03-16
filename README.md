@@ -1296,9 +1296,13 @@ $ make test
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+#### v1.36
+
+- Implemented `blank` preset for `skip_rows` (#302)
+
 #### v1.35
 
-- Added `skip/pick_columns` aliases for #293
+- Added `skip/pick_columns` aliases for (#293)
 
 #### v1.34
 
