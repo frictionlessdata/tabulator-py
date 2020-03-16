@@ -441,11 +441,11 @@ def test_stream_skip_rows_regex():
 
 
 def test_stream_skip_rows_preset():
-    source = [['name', 'order'], ['', ''], [], ['John', 1], ['Alex', 2]]
+    source = [['name', 'order'], ['', ''], [], ['Ray', 0], ['John', 1], ['Alex', 2], ['', 3], [None, 4], ['', None]]
     skip_rows = [{'type': 'preset', 'value': 'blank'}]
     with Stream(source, headers=1, skip_rows=skip_rows) as stream:
         assert stream.headers == ['name', 'order']
-        assert stream.read() == [['John', 1], ['Alex', 2]]
+        assert stream.read() == [['Ray', 0], ['John', 1], ['Alex', 2], ['', 3], [None, 4]]
 
 
 # Post parse

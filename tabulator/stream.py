@@ -790,7 +790,7 @@ class Stream(object):
             if '' in self.__skip_rows_by_comments:
                 return True
             if self.__skip_rows_by_presets.get('blank'):
-                if not any(row):
+                if not list(filter(lambda cell: cell not in [None, ''], row)):
                     return True
             return False
 
