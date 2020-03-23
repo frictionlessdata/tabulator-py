@@ -1368,12 +1368,12 @@ Here described only breaking and the most important changes. The full changelog 
 #### v1.19
 
 Updated behaviour:
-- For `ods` format the boolean, integer and datatime native types are detected now
+- For `ods` format the boolean, integer and datetime native types are detected now
 
 #### v1.18
 
 Updated behaviour:
-- For `xls` format the boolean, integer and datatime native types are detected now
+- For `xls` format the boolean, integer and datetime native types are detected now
 
 #### v1.17
 
