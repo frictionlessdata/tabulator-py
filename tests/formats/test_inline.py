@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import pytest
+from collections import OrderedDict
 from tabulator import Stream, exceptions
 
 
@@ -55,5 +56,15 @@ def test_stream_inline_keyed():
 def test_stream_inline_keyed_with_headers_argument():
     source = [{'id': '1', 'name': 'english'}, {'id': '2', 'name': '中国人'}]
     with Stream(source, format='inline', headers=['name', 'id']) as stream:
+        assert stream.headers == ['name', 'id']
+        assert stream.read() == [['english', '1'], ['中国人', '2']]
+
+
+def test_stream_inline_ordered_dict():
+    source = [
+        OrderedDict([('name', 'english'), ('id', '1')]),
+        OrderedDict([('name', '中国人'), ('id', '2')]),
+    ]
+    with Stream(source, headers=1) as stream:
         assert stream.headers == ['name', 'id']
         assert stream.read() == [['english', '1'], ['中国人', '2']]

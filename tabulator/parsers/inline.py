@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import six
+from collections import OrderedDict
 from ..parser import Parser
 from .. import exceptions
 
@@ -65,7 +66,10 @@ class InlineParser(Parser):
             elif isinstance(item, dict):
                 keys = []
                 values = []
-                for key in sorted(item.keys()):
+                iterator = item.keys()
+                if not isinstance(item, OrderedDict):
+                    iterator = sorted(iterator)
+                for key in iterator:
                     keys.append(key)
                     values.append(item[key])
                 yield (row_number, list(keys), list(values))
