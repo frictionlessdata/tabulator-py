@@ -583,17 +583,17 @@ def test_stream_format_error_html():
 
 
 def test_stream_scheme_error():
-    stream = Stream('', scheme='bad_scheme')
+    stream = Stream('', scheme='bad-scheme')
     with pytest.raises(exceptions.SchemeError) as excinfo:
         stream.open()
-    assert 'bad_scheme' in str(excinfo.value)
+    assert 'bad-scheme' in str(excinfo.value)
 
 
 def test_stream_format_error():
-    stream = Stream('', format='bad_format')
+    stream = Stream('data/special/table.bad-format')
     with pytest.raises(exceptions.FormatError) as excinfo:
         stream.open()
-    assert 'bad_format' in str(excinfo.value)
+    assert 'bad-format' in str(excinfo.value)
 
 
 @pytest.mark.skipif(sys.version_info < (3, 5), reason='not supported')
@@ -875,3 +875,15 @@ def test_stream_skip_blank_at_the_end_issue_bco_dmo_33():
     with Stream(source, headers=1, skip_rows=['#']) as stream:
         assert stream.headers == ['test1', 'test2']
         assert stream.read() == [['1', '2'], []]
+
+
+def test_stream_not_existent_local_file_with_no_format_issue_287():
+    with pytest.raises(exceptions.IOError) as excinfo:
+        Stream('bad-path').open()
+    assert 'bad-path' in str(excinfo.value)
+
+
+def test_stream_not_existent_remote_file_with_no_format_issue_287():
+    with pytest.raises(exceptions.HTTPError) as excinfo:
+        Stream('http://example.com/bad-path').open()
+    assert 'bad-path' in str(excinfo.value)
