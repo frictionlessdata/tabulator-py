@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
 import re
 import six
 import gzip
@@ -346,6 +347,11 @@ class Stream(object):
         parser_class = self.__custom_parsers.get(format)
         if parser_class is None:
             if format not in config.PARSERS:
+                # If not existent it's a not-found error
+                # Next line will raise IOError/HTTPError
+                chars = self.__loader.load(source)
+                chars.close()
+                # Otherwise it's a format error
                 message = 'Format "%s" is not supported' % format
                 raise exceptions.FormatError(message)
             parser_class = helpers.import_attribute(config.PARSERS[format])
