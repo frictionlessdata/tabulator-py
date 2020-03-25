@@ -24,7 +24,7 @@ INSTALL_REQUIRES = [
     'six>=1.9',
     'click>=6.0',
     'requests>=2.8',
-    'cchardet>=1.0',
+    'chardet>=3.0',
     'boto3>=1.9',
     # Format: csv
     'unicodecsv>=0.14',
@@ -42,7 +42,7 @@ INSTALL_REQUIRES = [
     'openpyxl>=2.6',
 ]
 INSTALL_FORMAT_DATAPACKAGE_REQUIRES = [
-    'datapackage>=1.1.3',
+    'datapackage>=1.12',
 ]
 INSTALL_FORMAT_ODS_REQUIRES = [
     'ezodf>=0.3',
@@ -50,6 +50,9 @@ INSTALL_FORMAT_ODS_REQUIRES = [
 ]
 INSTALL_PARSER_HTML_REQUIRES = [
     'pyquery<2',
+]
+INSTALL_CCHARDET_REQUIRES = [
+    'cchardet>=2.0',
 ]
 TESTS_REQUIRE = [
     'mock',
@@ -77,6 +80,7 @@ setup(
         'develop': TESTS_REQUIRE,
         'ods': INSTALL_FORMAT_ODS_REQUIRES,
         'html': INSTALL_PARSER_HTML_REQUIRES,
+        'cchardet': INSTALL_CCHARDET_REQUIRES,
     },
     entry_points={
         'console_scripts': [

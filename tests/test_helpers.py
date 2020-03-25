@@ -47,7 +47,11 @@ def test_detect_encoding():
 
 def test_detect_encoding_windows_1252():
     sample = b'A\n' * 300 + b'\xff\xff'
-    assert helpers.detect_encoding(sample) == 'cp1252'
+    try:
+        import cchardet
+        assert helpers.detect_encoding(sample) == 'cp1252'
+    except ImportError:
+        assert helpers.detect_encoding(sample) == 'iso8859-1'
 
 
 def test_detect_encoding_utf_16_be():

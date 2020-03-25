@@ -66,11 +66,15 @@ def detect_scheme_and_format(source):
     return (scheme, format)
 
 
+# TODO: consider merging cp1252/iso8859-1
 def detect_encoding(sample, encoding=None):
     """Detect encoding of a byte string sample.
     """
     # To reduce tabulator import time
-    from cchardet import detect
+    try:
+        from cchardet import detect
+    except ImportError:
+        from chardet import detect
     if encoding is not None:
         return normalize_encoding(sample, encoding)
     result = detect(sample)

@@ -268,7 +268,11 @@ def test_stream_sample():
 def test_stream_bytes_sample_size():
     source = 'data/special/latin1.csv'
     with Stream(source) as stream:
-        assert stream.encoding == 'cp1252'
+        try:
+            import cchardet
+            assert stream.encoding == 'cp1252'
+        except ImportError:
+            assert stream.encoding == 'iso8859-1'
     with Stream(source, sample_size=0, bytes_sample_size=10) as stream:
         assert stream.encoding == 'utf-8'
 
@@ -887,3 +891,10 @@ def test_stream_not_existent_remote_file_with_no_format_issue_287():
     with pytest.raises(exceptions.HTTPError) as excinfo:
         Stream('http://example.com/bad-path').open()
     assert 'bad-path' in str(excinfo.value)
+
+
+@pytest.mark.skip
+def test_stream_wrong_encoding_detection_issue_265():
+    with Stream('data/special/accent.csv') as stream:
+        assert stream.encoding == 'utf-8'
+
