@@ -893,6 +893,11 @@ def test_stream_not_existent_remote_file_with_no_format_issue_287():
     assert 'bad-path' in str(excinfo.value)
 
 
+def test_stream_chardet_raises_issue_305():
+    with Stream('data/special/issue305.csv', headers=1) as stream:
+        assert stream.encoding == 'utf-8'
+
+
 @pytest.mark.skip
 def test_stream_wrong_encoding_detection_issue_265():
     with Stream('data/special/accent.csv') as stream:
