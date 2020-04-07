@@ -896,6 +896,7 @@ def test_stream_not_existent_remote_file_with_no_format_issue_287():
 def test_stream_chardet_raises_issue_305():
     with Stream('data/special/issue305.csv', headers=1) as stream:
         assert stream.encoding == 'utf-8'
+        assert len(stream.read()) == 338
 
 
 @pytest.mark.skip
