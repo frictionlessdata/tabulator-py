@@ -893,10 +893,11 @@ def test_stream_not_existent_remote_file_with_no_format_issue_287():
     assert 'bad-path' in str(excinfo.value)
 
 
-def test_stream_chardet_raises_issue_305():
-    with Stream('data/special/issue305.csv', headers=1) as stream:
+def test_stream_chardet_raises_remote_issue_305():
+    source = 'https://gist.githubusercontent.com/roll/56b91d7d998c4df2d4b4aeeefc18cab5/raw/a7a577cd30139b3396151d43ba245ac94d8ddf53/tabulator-issue-305.csv'
+    with Stream(source, headers=1) as stream:
         assert stream.encoding == 'utf-8'
-        assert len(stream.read()) == 338
+        assert len(stream.read()) == 343
 
 
 @pytest.mark.skip
