@@ -76,7 +76,7 @@ class RemoteLoader(Loader):
 
         # Detect encoding
         if self.__bytes_sample_size:
-            sample = bytes.read(self.__bytes_sample_size)
+            sample = bytes.read(self.__bytes_sample_size)[:self.__bytes_sample_size]
             bytes.seek(0)
             encoding = helpers.detect_encoding(sample, encoding)
 
