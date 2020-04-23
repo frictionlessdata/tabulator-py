@@ -29,7 +29,7 @@ INSTALL_REQUIRES = [
     # Format: csv
     'unicodecsv>=0.14',
     # Format: json
-    'ijson>=2.5,<3.0.2',
+    'ijson>=3.0.3',
     # Format: ndjson
     'jsonlines>=1.1',
     # Format: sql
