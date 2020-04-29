@@ -31,6 +31,7 @@ class SQLWriter(Writer):
 
     def write(self, source, target, headers, encoding=None):
         engine = create_engine(target)
+        count = 0
         with engine.begin() as conn:
             meta = MetaData()
             columns = [Column(header, String()) for header in headers]
@@ -38,3 +39,5 @@ class SQLWriter(Writer):
             meta.create_all(conn)
             for row in source:
                 conn.execute(table.insert(tuple(row)))
+                count += 1
+        return count

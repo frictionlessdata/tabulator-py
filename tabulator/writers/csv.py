@@ -36,9 +36,12 @@ class CSVWriter(Writer):
 
     def write(self, source, target, headers, encoding=None):
         helpers.ensure_dir(target)
+        count = 0
         with io.open(target, 'wb') as file:
             writer = unicodecsv.writer(file, encoding=encoding, **self.__options)
             if headers:
                 writer.writerow(headers)
             for row in source:
+                count += 1
                 writer.writerow(row)
+        return count

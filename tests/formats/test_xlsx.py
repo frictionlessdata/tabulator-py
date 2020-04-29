@@ -14,7 +14,6 @@ BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 # Read
 
-
 def test_stream_xlsx_stream():
     source = io.open('data/table.xlsx', mode='rb')
     with Stream(source, format='xlsx') as stream:
@@ -114,13 +113,13 @@ def test_stream_xlsx_preserve_formatting():
         }]
 
 
-# Internal
+# Write
 
 def test_stream_save_xlsx(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.xlsx'))
     with Stream(source, headers=1) as stream:
-        stream.save(target)
+        assert stream.save(target) == 2
     with Stream(target, headers=1) as stream:
         assert stream.headers == ['id', 'name']
         assert stream.read(extended=True) == [
@@ -132,7 +131,7 @@ def test_stream_save_xlsx_sheet_name(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.xlsx'))
     with Stream(source, headers=1) as stream:
-        stream.save(target, sheet='my-data')
+        assert stream.save(target, sheet='my-data') == 2
     with Stream(target, headers=1, sheet='my-data') as stream:
         assert stream.headers == ['id', 'name']
         assert stream.read(extended=True) == [

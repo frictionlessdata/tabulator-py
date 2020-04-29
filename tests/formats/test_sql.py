@@ -35,3 +35,14 @@ def test_stream_format_sql_headers(database_url):
     with Stream(database_url, table='data', headers=1) as stream:
         assert stream.headers == ['id', 'name']
         assert stream.read() == [[1, 'english'], [2, '中国人']]
+
+
+# Write
+
+def test_stream_save_sqlite(database_url):
+    source = 'data/table.csv'
+    with Stream(source, headers=1) as stream:
+        assert stream.save(database_url, table='test_stream_save_sqlite') == 2
+    with Stream(database_url, table='test_stream_save_sqlite', order_by='id', headers=1) as stream:
+        assert stream.read() == [['1', 'english'], ['2', '中国人']]
+        assert stream.headers == ['id', 'name']

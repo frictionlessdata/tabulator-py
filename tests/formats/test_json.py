@@ -68,7 +68,7 @@ def test_stream_save_json(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.json'))
     with Stream(source, headers=1) as stream:
-        stream.save(target)
+        assert stream.save(target) == 2
     with open(target) as file:
         assert json.load(file) == [
             ['id', 'name'],
@@ -81,7 +81,7 @@ def test_stream_save_json_keyed(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.json'))
     with Stream(source, headers=1) as stream:
-        stream.save(target, keyed=True)
+        assert stream.save(target, keyed=True) == 2
     with open(target) as file:
         assert json.load(file) == [
             {'id': '1', 'name': 'english'},

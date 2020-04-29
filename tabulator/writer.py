@@ -39,5 +39,8 @@ class Writer(object):
             headers (List[str]): List of header names.
             encoding (str, optional): Source file encoding.
 
+        # Returns
+            count (int?): Written rows count if available
+
         """
         pass
