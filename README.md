@@ -804,7 +804,30 @@ Options:
 
 ### `Stream`
 ```python
-Stream(self, source, headers=None, scheme=None, format=None, encoding=None, compression=None, allow_html=False, sample_size=100, bytes_sample_size=10000, ignore_blank_headers=False, ignore_listed_headers=None, ignore_not_listed_headers=None, multiline_headers_joiner=' ', force_strings=False, force_parse=False, skip_rows=[], skip_columns=None, pick_columns=None, post_parse=[], custom_loaders={}, custom_parsers={}, custom_writers={}, **options)
+Stream(self,
+       source,
+       headers=None,
+       scheme=None,
+       format=None,
+       encoding=None,
+       compression=None,
+       allow_html=False,
+       sample_size=100,
+       bytes_sample_size=10000,
+       ignore_blank_headers=False,
+       ignore_listed_headers=None,
+       ignore_not_listed_headers=None,
+       multiline_headers_joiner=' ',
+       force_strings=False,
+       force_parse=False,
+       skip_rows=[],
+       skip_columns=None,
+       pick_columns=None,
+       post_parse=[],
+       custom_loaders={},
+       custom_parsers={},
+       custom_writers={},
+       **options)
 ```
 Stream of tabular data.
 
@@ -813,87 +836,111 @@ to stream its parsed contents.
 
 __Arguments__
 
-- __source (str)__:
+
+    source (str):
         Path to file as ``<scheme>://path/to/file.<format>``.
         If not explicitly set, the scheme (file, http, ...) and
         format (csv, xls, ...) are inferred from the source string.
-- __headers (Union[int, List[int], List[str]], optional)__:
+
+    headers (Union[int, List[int], List[str]], optional):
         Either a row
         number or list of row numbers (in case of multi-line headers) to be
         considered as headers (rows start counting at 1), or the actual
         headers defined a list of strings. If not set, all rows will be
         treated as containing values.
-- __scheme (str, optional)__:
+
+    scheme (str, optional):
         Scheme for loading the file (file, http, ...).
         If not set, it'll be inferred from `source`.
-- __format (str, optional)__:
+
+    format (str, optional):
         File source's format (csv, xls, ...). If not
         set, it'll be inferred from `source`. inferred
-- __encoding (str, optional)__:
+
+    encoding (str, optional):
         Source encoding. If not set, it'll be inferred.
-- __compression (str, optional)__:
+
+    compression (str, optional):
         Source file compression (zip, ...). If not set, it'll be inferred.
-- __allow_html (bool, optional)__:
+
+    allow_html (bool, optional):
         Allow the file source to be an HTML page.
         If False, raises ``exceptions.FormatError`` if the loaded file is
         an HTML page. Defaults to False.
-- __sample_size (int, optional)__:
+
+    sample_size (int, optional):
         Controls the number of sample rows used to
         infer properties from the data (headers, encoding, etc.). Set to
         ``0`` to disable sampling, in which case nothing will be inferred
         from the data. Defaults to ``config.DEFAULT_SAMPLE_SIZE``.
-- __bytes_sample_size (int, optional)__:
+
+    bytes_sample_size (int, optional):
         Same as `sample_size`, but instead
         of number of rows, controls number of bytes. Defaults to
         ``config.DEFAULT_BYTES_SAMPLE_SIZE``.
-- __ignore_blank_headers (bool, optional)__:
+
+    ignore_blank_headers (bool, optional):
         When True, ignores all columns
         that have blank headers. Defaults to False.
-- __ignore_listed_headers (List[str], optional)__:
+
+    ignore_listed_headers (List[str], optional):
         When passed, ignores all columns with headers
         that the given list includes
-- __ignore_not_listed_headers (List[str], optional)__:
+
+    ignore_not_listed_headers (List[str], optional):
         When passed, ignores all columns with headers
         that the given list DOES NOT include
-- __multiline_headers_joiner (str, optional)__:
+
+    multiline_headers_joiner (str, optional):
         When passed, it's used to join multiline headers
         as `<passed-value>.join(header1_1, header1_2)`
         Defaults to ' ' (space).
-- __force_strings (bool, optional)__:
+
+    force_strings (bool, optional):
         When True, casts all data to strings.
         Defaults to False.
-- __force_parse (bool, optional)__:
+
+    force_parse (bool, optional):
         When True, don't raise exceptions when
         parsing malformed rows, simply returning an empty value. Defaults
         to False.
-- __skip_rows (List[Union[int, str, dict]], optional)__:
+
+    skip_rows (List[Union[int, str, dict]], optional):
         List of row numbers, strings and regex patterns as dicts to skip.
         If a string, it'll skip rows that their first cells begin with it e.g. '#' and '//'.
         To skip only completely blank rows use `{'type': 'preset', 'value': 'blank'}`
         To provide a regex pattern use  `{'type': 'regex', 'value': '^#'}`
         For example: `skip_rows=[1, '# comment', {'type': 'regex', 'value': '^# (regex|comment)'}]`
-- __skip_columns (str[])__:
+
+    skip_columns (str[]):
         Alias for `ignore_listed_headers`.
         If it contains an empty string it will activate `ignore_blank_headers`
-- __pick_columns (str[])__:
+
+    pick_columns (str[]):
         Alias for `ignore_not_listed_headers`.
-- __post_parse (List[function], optional)__:
+
+    post_parse (List[function], optional):
         List of generator functions that
         receives a list of rows and headers, processes them, and yields
         them (or not). Useful to pre-process the data. Defaults to None.
-- __custom_loaders (dict, optional)__:
+
+    custom_loaders (dict, optional):
         Dictionary with keys as scheme names,
         and values as their respective ``Loader`` class implementations.
         Defaults to None.
-- __custom_parsers (dict, optional)__:
+
+    custom_parsers (dict, optional):
         Dictionary with keys as format names,
         and values as their respective ``Parser`` class implementations.
         Defaults to None.
-- __custom_loaders (dict, optional)__:
+
+    custom_loaders (dict, optional):
         Dictionary with keys as writer format
         names, and values as their respective ``Writer`` class
         implementations. Defaults to None.
-- __**options (Any, optional)__: Extra options passed to the loaders and parsers.
+
+    **options (Any, optional): Extra options passed to the loaders and parsers.
+
 
 
 #### `stream.closed`
@@ -904,12 +951,14 @@ __Returns__
 `bool`: whether closed
 
 
+
 #### `stream.encoding`
 Stream's encoding
 
 __Returns__
 
 `str`: encoding
+
 
 
 #### `stream.format`
@@ -920,12 +969,14 @@ __Returns__
 `str`: format
 
 
+
 #### `stream.fragment`
 Path's fragment
 
 __Returns__
 
 `str`: fragment
+
 
 
 #### `stream.hash`
@@ -936,12 +987,14 @@ __Returns__
 `str/None`: SHA256 hash
 
 
+
 #### `stream.headers`
 Headers
 
 __Returns__
 
 `str[]/None`: headers if available
+
 
 
 #### `stream.sample`
@@ -955,12 +1008,14 @@ __Returns__
 `list[]`: sample
 
 
+
 #### `stream.scheme`
 Path's scheme
 
 __Returns__
 
 `str`: scheme
+
 
 
 #### `stream.size`
@@ -971,9 +1026,10 @@ __Returns__
 `int/None`: BYTE count
 
 
+
 #### `stream.open`
 ```python
-stream.open(self)
+stream.open()
 ```
 Opens the stream for reading.
 
@@ -982,21 +1038,24 @@ __Raises:__
     TabulatorException: if an error
 
 
+
 #### `stream.close`
 ```python
-stream.close(self)
+stream.close()
 ```
 Closes the stream.
 
+
 #### `stream.reset`
 ```python
-stream.reset(self)
+stream.reset()
 ```
 Resets the stream pointer to the beginning of the file.
 
+
 #### `stream.iter`
 ```python
-stream.iter(self, keyed=False, extended=False)
+stream.iter(keyed=False, extended=False)
 ```
 Iterate over the rows.
 
@@ -1026,9 +1085,10 @@ __Returns__
         `extended` arguments.
 
 
+
 #### `stream.read`
 ```python
-stream.read(self, keyed=False, extended=False, limit=None)
+stream.read(keyed=False, extended=False, limit=None)
 ```
 Returns a list of rows.
 
@@ -1044,22 +1104,27 @@ __Returns__
         The list of rows. The format depends on the values of `keyed`
         and `extended` arguments.
 
+
 #### `stream.save`
 ```python
-stream.save(self, target, format=None, encoding=None, **options)
+stream.save(target, format=None, encoding=None, **options)
 ```
 Save stream to the local filesystem.
 
-__Arguments:__
-
-    target (str): Path where to save the stream.
-    format (str, optional):
+__Arguments__
+- __target (str)__: Path where to save the stream.
+- __format (str, optional)__:
         The format the stream will be saved as. If
         None, detects from the ``target`` path. Defaults to None.
-    encoding (str, optional):
+- __encoding (str, optional)__:
         Saved file encoding. Defaults to ``config.DEFAULT_ENCODING``.
-    **options: Extra options passed to the writer.
+- __**options__: Extra options passed to the writer.
 
+__Returns__
+
+`count (int?)`: Written rows count if available
+Building index...
+Started generating documentation...
 
 ### `Loader`
 ```python
@@ -1075,14 +1140,13 @@ __Arguments__
 - __**options (dict)__: Loader options
 
 
-#### `loader.options`
-Built-in mutable sequence.
 
-If no argument is given, the constructor creates a new empty list.
-The argument must be an iterable if specified.
+#### `loader.options`
+
+
 #### `loader.load`
 ```python
-loader.load(self, source, mode='t', encoding=None)
+loader.load(source, mode='t', encoding=None)
 ```
 Load source file.
 
@@ -1117,6 +1181,7 @@ __Arguments__
 - __**options (dict)__: Loader options
 
 
+
 #### `parser.closed`
 Flag telling if the parser is closed.
 
@@ -1125,12 +1190,14 @@ __Returns__
 `bool`: whether closed
 
 
+
 #### `parser.encoding`
 Encoding
 
 __Returns__
 
 `str`: encoding
+
 
 
 #### `parser.extended_rows`
@@ -1144,22 +1211,22 @@ __Raises__
         a row can't be parsed, this exception will be raised.
         Otherwise, an empty extended row is returned (i.e.
         `(row_number, None, [])`).
-- `Returns`:
-- `Iterator[Tuple[int, List[str], List[Any]]]`:
+
+Returns:
+    Iterator[Tuple[int, List[str], List[Any]]]:
         Extended rows containing
         `(row_number, headers, row)`, where `headers` is a list of the
         header names (can be `None`), and `row` is a list of row
         values.
 
 
-#### `parser.options`
-Built-in mutable sequence.
 
-If no argument is given, the constructor creates a new empty list.
-The argument must be an iterable if specified.
+#### `parser.options`
+
+
 #### `parser.open`
 ```python
-parser.open(self, source, encoding=None)
+parser.open(source, encoding=None)
 ```
 Open underlying file stream in the beginning of the file.
 
@@ -1175,15 +1242,17 @@ __Returns__
     None
 
 
+
 #### `parser.close`
 ```python
-parser.close(self)
+parser.close()
 ```
 Closes underlying file stream.
 
+
 #### `parser.reset`
 ```python
-parser.reset(self)
+parser.reset()
 ```
 Resets underlying stream and current items list.
 
@@ -1202,14 +1271,13 @@ __Arguments__
 - __**options (dict)__: Writer options.
 
 
-#### `writer.options`
-Built-in mutable sequence.
 
-If no argument is given, the constructor creates a new empty list.
-The argument must be an iterable if specified.
+#### `writer.options`
+
+
 #### `writer.write`
 ```python
-writer.write(self, source, target, headers, encoding=None)
+writer.write(source, target, headers, encoding=None)
 ```
 Writes source data to target.
 
@@ -1218,6 +1286,10 @@ __Arguments__
 - __target (str)__: Write target.
 - __headers (List[str])__: List of header names.
 - __encoding (str, optional)__: Source file encoding.
+
+__Returns__
+
+`count (int?)`: Written rows count if available
 
 
 ### `validate`
@@ -1242,37 +1314,42 @@ __Returns__
 
 ### `TabulatorException`
 ```python
-TabulatorException(self, /, *args, **kwargs)
+TabulatorException()
 ```
 Base class for all tabulator exceptions.
 
+
 ### `IOError`
 ```python
-IOError(self, /, *args, **kwargs)
+IOError()
 ```
 Local loading error
 
+
 ### `HTTPError`
 ```python
-HTTPError(self, /, *args, **kwargs)
+HTTPError()
 ```
 Remote loading error
 
+
 ### `SourceError`
 ```python
-SourceError(self, /, *args, **kwargs)
+SourceError()
 ```
 The source file could not be parsed correctly.
 
+
 ### `FormatError`
 ```python
-FormatError(self, /, *args, **kwargs)
+FormatError()
 ```
 The file format is unsupported or invalid.
 
+
 ### `EncodingError`
 ```python
-EncodingError(self, /, *args, **kwargs)
+EncodingError()
 ```
 Encoding error
 
