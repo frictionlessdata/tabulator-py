@@ -1296,7 +1296,7 @@ $ make test
 To run tests without Internet:
 
 ```
-pytest -m 'not remote
+$ pytest -m 'not remote
 ```
 
 ## Changelog
