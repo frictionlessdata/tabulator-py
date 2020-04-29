@@ -237,6 +237,13 @@ def test_stream_encoding_utf_16():
         assert stream.read() == [[u'en', u'English'], [u'ja', u'日本語']]
 
 
+def test_stream_encoding_missmatch_handle_errors():
+    with pytest.raises(exceptions.EncodingError) as excinfo:
+        with Stream('data/table.csv', encoding='ascii') as stream:
+            stream.read()
+    assert str(excinfo.value) == 'Cannot parse the source "data/table.csv" using "ascii" encoding at "20"'
+
+
 # Allow html
 
 def test_stream_html_content():
