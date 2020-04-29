@@ -9,7 +9,7 @@ from collections import OrderedDict
 from tabulator import Stream, exceptions
 
 
-# Stream
+# Read
 
 def test_stream_inline():
     source = [['id', 'name'], ['1', 'english'], ['2', '中国人']]
@@ -68,3 +68,15 @@ def test_stream_inline_ordered_dict():
     with Stream(source, headers=1) as stream:
         assert stream.headers == ['name', 'id']
         assert stream.read() == [['english', '1'], ['中国人', '2']]
+
+
+# Write
+
+def test_stream_save_inline_keyed_with_headers_argument(tmpdir):
+    source = [{'key1': 'value1', 'key2': 'value2'}]
+    target = str(tmpdir.join('table.csv'))
+    with Stream(source, headers=['key2', 'key1']) as stream:
+        stream.save(target)
+    with Stream(target, headers=1) as stream:
+        assert stream.headers == ['key2', 'key1']
+        assert stream.read() == [['value2', 'value1']]

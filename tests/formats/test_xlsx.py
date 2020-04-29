@@ -12,7 +12,7 @@ from tabulator.parsers.xlsx import XLSXParser
 BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 
-# Stream
+# Read
 
 def test_stream_xlsx_remote():
     source = BASE_URL % 'data/table.xlsx'
@@ -112,7 +112,33 @@ def test_stream_xlsx_preserve_formatting():
         }]
 
 
-# Parser
+# Internal
+
+def test_stream_save_xlsx(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.xlsx'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target)
+    with Stream(target, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
+def test_stream_save_xlsx_sheet_name(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.xlsx'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target, sheet='my-data')
+    with Stream(target, headers=1, sheet='my-data') as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
+# Internal
 
 def test_parser_xlsx():
 

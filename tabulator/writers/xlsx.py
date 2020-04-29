@@ -13,7 +13,7 @@ from .. import helpers
 # Module API
 
 class XLSXWriter(Writer):
-    """XLXX writer.
+    """XLSX writer.
     """
 
     # Public

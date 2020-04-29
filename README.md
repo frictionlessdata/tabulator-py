@@ -621,7 +621,7 @@ stream = Stream([['name', 'age'], ['John', 21], ['Alex', 33]])
 stream = Stream([{'name': 'John', 'age': 21}, {'name': 'Alex', 'age': 33}])
 ```
 
-#### json (read only)
+#### json (read & write)
 
 JSON document containing a list of lists, or a list of dicts mapping the column
 names to their respective values (see the `inline` format for an example).
@@ -633,6 +633,7 @@ stream = Stream('data.json', property='key1.key2')
 **Options**
 
 - **property**: JSON Path to the property containing the tabular data. For example, considering the JSON `{"response": {"data": [...]}}`, the `property` should be set to `response.data`.
+- **keyed** (write): Save as array of arrays (default) or as array of dicts (keyed).
 
 #### ndjson (read only)
 

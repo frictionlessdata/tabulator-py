@@ -11,7 +11,7 @@ from six import StringIO
 from tabulator import exceptions, Stream
 
 
-# Stream
+# Read
 
 @pytest.mark.parametrize('source, selector', [
     ('data/table1.html', 'table'),

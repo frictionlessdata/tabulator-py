@@ -14,7 +14,7 @@ from tabulator.parsers.xls import XLSParser
 BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 
-# Stream
+# Read
 
 def test_stream_local_xls():
     with Stream('data/table.xls') as stream:
@@ -99,7 +99,7 @@ def test_fix_for_2007_xls():
     with Stream(source) as stream:
         assert len(stream.read()) > 10
 
-# Parser
+# Internal
 
 def test_parser_xls():
 

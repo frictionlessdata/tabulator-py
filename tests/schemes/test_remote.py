@@ -13,7 +13,7 @@ from time import time
 BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
-# Stream
+# Read
 
 def test_stream_https():
     with Stream(BASE_URL % 'data/table.csv') as stream:
@@ -26,7 +26,7 @@ def test_stream_https_latin1():
         assert stream.read()
 
 
-# Loader
+# Internal
 
 def test_loader_remote_t():
     loader = RemoteLoader()

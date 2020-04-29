@@ -8,7 +8,7 @@ import io
 from tabulator import Stream
 
 
-# Stream
+# Read
 
 def test_stream_stream():
     source = io.open('data/table.csv', mode='rb')

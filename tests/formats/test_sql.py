@@ -8,7 +8,7 @@ import pytest
 from tabulator import Stream, exceptions
 
 
-# Stream
+# Read
 
 def test_stream_format_sql(database_url):
     with Stream(database_url, table='data') as stream:

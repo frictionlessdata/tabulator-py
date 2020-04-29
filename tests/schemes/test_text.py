@@ -8,7 +8,7 @@ from tabulator import Stream
 from tabulator.loaders.text import TextLoader
 
 
-# Stream
+# Read
 
 def test_stream_text():
     source = 'text://value1,value2\nvalue3,value4'
@@ -16,7 +16,7 @@ def test_stream_text():
         assert stream.read() == [['value1', 'value2'], ['value3', 'value4']]
 
 
-# Loader
+# Internal
 
 def test_load_t():
     loader = TextLoader()
