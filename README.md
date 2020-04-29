@@ -1297,6 +1297,10 @@ $ make test
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+#### v1.39
+
+- Implemented JSON writer (#311)
+
 #### v1.38
 
 - Use `chardet` for encoding detection by default. For `cchardet`: `pip install tabulator[cchardet]`. Due to a great deal of problems caused by `ccharted` for non-Linux/Conda installations we're returning back to using `chardet` by default.
