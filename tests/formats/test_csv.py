@@ -12,7 +12,7 @@ from tabulator.parsers.csv import CSVParser
 BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 
-# Stream
+# Read
 
 def test_stream_local_csv():
     with Stream('data/table.csv') as stream:
@@ -153,7 +153,21 @@ def test_stream_csv_quotechar_is_empty_string():
         stream.read() == ['value1', 'value2"', 'value3']
 
 
-# Parser
+# Write
+
+def test_stream_save_csv(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.csv'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target)
+    with Stream(target, headers=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(extended=True) == [
+            (2, ['id', 'name'], ['1', 'english']),
+            (3, ['id', 'name'], ['2', '中国人'])]
+
+
+# Internal
 
 def test_parser_csv():
 

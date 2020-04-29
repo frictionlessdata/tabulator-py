@@ -20,7 +20,7 @@ from tabulator import Stream, exceptions
 S3_ENDPOINT_URL = os.environ['S3_ENDPOINT_URL'] = 'http://localhost:5000'
 
 
-# Stream
+# Read
 
 # https://github.com/frictionlessdata/tabulator-py/issues/271
 @pytest.mark.skip

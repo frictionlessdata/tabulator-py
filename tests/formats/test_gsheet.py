@@ -8,7 +8,7 @@ import pytest
 from tabulator import Stream, exceptions
 
 
-# Stream
+# Read
 
 def test_stream_gsheet():
     source = 'https://docs.google.com/spreadsheets/d/1mHIWnDvW9cALRMq9OdNfRwjAthCUFUOACPp0Lkyl7b4/edit?usp=sharing'

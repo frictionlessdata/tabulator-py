@@ -12,7 +12,7 @@ from tabulator import exceptions, Stream
 from tabulator.parsers.ndjson import NDJSONParser
 
 
-# Stream
+# Read
 
 def test_stream_ndjson():
     with Stream('data/table.ndjson', headers=1) as stream:
@@ -22,7 +22,7 @@ def test_stream_ndjson():
             {'id': 2, 'name': '中国人'}]
 
 
-# Parser
+# Internal
 
 def test_parser_ndjson():
 

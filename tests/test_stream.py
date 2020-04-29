@@ -718,52 +718,6 @@ def test_stream_reset_generator():
 
 # Save
 
-def test_stream_save_csv(tmpdir):
-    source = 'data/table.csv'
-    target = str(tmpdir.join('table.csv'))
-    with Stream(source, headers=1) as stream:
-        stream.save(target)
-    with Stream(target, headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read(extended=True) == [
-            (2, ['id', 'name'], ['1', 'english']),
-            (3, ['id', 'name'], ['2', '中国人'])]
-
-
-def test_stream_save_xlsx(tmpdir):
-    source = 'data/table.csv'
-    target = str(tmpdir.join('table.xlsx'))
-    with Stream(source, headers=1) as stream:
-        stream.save(target)
-    with Stream(target, headers=1) as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read(extended=True) == [
-            (2, ['id', 'name'], ['1', 'english']),
-            (3, ['id', 'name'], ['2', '中国人'])]
-
-
-def test_stream_save_xlsx_sheet_name(tmpdir):
-    source = 'data/table.csv'
-    target = str(tmpdir.join('table.xlsx'))
-    with Stream(source, headers=1) as stream:
-        stream.save(target, sheet='my-data')
-    with Stream(target, headers=1, sheet='my-data') as stream:
-        assert stream.headers == ['id', 'name']
-        assert stream.read(extended=True) == [
-            (2, ['id', 'name'], ['1', 'english']),
-            (3, ['id', 'name'], ['2', '中国人'])]
-
-
-def test_stream_save_inline_keyed_with_headers_argument(tmpdir):
-    source = [{'key1': 'value1', 'key2': 'value2'}]
-    target = str(tmpdir.join('table.csv'))
-    with Stream(source, headers=['key2', 'key1']) as stream:
-        stream.save(target)
-    with Stream(target, headers=1) as stream:
-        assert stream.headers == ['key2', 'key1']
-        assert stream.read() == [['value2', 'value1']]
-
-
 def test_stream_save_xls_not_supported(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.xls'))

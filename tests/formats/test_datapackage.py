@@ -12,7 +12,7 @@ from tabulator import Stream
 from tabulator.parsers.datapackage import DataPackageParser
 
 
-# Stream
+# Read
 
 
 def test_stream_datapackage():
@@ -49,7 +49,7 @@ def test_named_resource():
         os.chdir(curdir)
 
 
-# Parser
+# Internal
 
 def test_datapackage_parser():
 

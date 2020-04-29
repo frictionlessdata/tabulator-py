@@ -11,7 +11,7 @@ from importlib import import_module
 from tabulator.loaders.local import LocalLoader
 
 
-# Stream
+# Read
 
 def test_stream_file():
     with Stream('data/table.csv') as stream:
@@ -25,7 +25,7 @@ def test_stream_file_pathlib_path():
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-# Loader
+# Internal
 
 def test_loader_local_t():
     loader = LocalLoader()

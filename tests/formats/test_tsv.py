@@ -6,10 +6,19 @@ from __future__ import unicode_literals
 
 import io
 from mock import Mock
+from tabulator import Stream
 from tabulator.parsers.tsv import TSVParser
 
 
-# Parser
+# Read
+
+def test_stream_format_tsv():
+    with Stream('data/table.tsv') as stream:
+        assert stream.headers is None
+        assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人'], ['3', None]]
+
+
+# Internal
 
 def test_parser_tsv():
 

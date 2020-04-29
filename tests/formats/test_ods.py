@@ -13,7 +13,7 @@ from tabulator.parsers.ods import ODSParser
 BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 
-# Stream
+# Read
 
 def test_stream_ods():
     with Stream('data/table.ods', headers=1) as stream:
@@ -67,7 +67,7 @@ def test_stream_ods_with_ints_floats_dates():
                                  [1969, 11.7, datetime(2012, 8, 23).date(), datetime(2012, 8, 23, 20, 40, 59)]]
 
 
-# Parser
+# Internal
 
 def test_parser_ods():
 

@@ -11,7 +11,7 @@ from tabulator.parsers.json import JSONParser
 BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 
-# Stream
+# Read
 
 def test_stream_local_json_dicts():
     with Stream('data/table-dicts.json') as stream:
@@ -58,7 +58,7 @@ def test_stream_remote_json_lists():
         assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
-# Parser
+# Internal
 
 def test_parser_json():
 
