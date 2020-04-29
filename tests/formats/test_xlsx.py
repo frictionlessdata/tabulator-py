@@ -14,16 +14,18 @@ BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
 
 # Read
 
-def test_stream_xlsx_remote():
-    source = BASE_URL % 'data/table.xlsx'
-    with Stream(source) as stream:
-        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
-
 
 def test_stream_xlsx_stream():
     source = io.open('data/table.xlsx', mode='rb')
     with Stream(source, format='xlsx') as stream:
         assert stream.headers is None
+        assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
+
+
+@pytest.mark.remote
+def test_stream_xlsx_remote():
+    source = BASE_URL % 'data/table.xlsx'
+    with Stream(source) as stream:
         assert stream.read() == [['id', 'name'], [1.0, 'english'], [2.0, '中国人']]
 
 
