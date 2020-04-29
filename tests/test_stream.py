@@ -158,6 +158,7 @@ def test_stream_scheme_file():
         assert stream.scheme == 'file'
 
 
+@pytest.mark.remote
 def test_stream_scheme_https():
     with Stream(BASE_URL % 'data/table.csv') as stream:
         assert stream.scheme == 'https'
@@ -246,6 +247,7 @@ def test_stream_encoding_missmatch_handle_errors():
 
 # Allow html
 
+@pytest.mark.remote
 def test_stream_html_content():
     # Link to html file containing information about csv file
     source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
@@ -254,6 +256,7 @@ def test_stream_html_content():
     assert 'HTML' in str(excinfo.value)
 
 
+@pytest.mark.remote
 def test_stream_html_content_with_allow_html():
     # Link to html file containing information about csv file
     source = 'https://github.com/frictionlessdata/tabulator-py/blob/master/data/table.csv'
@@ -643,6 +646,7 @@ def test_stream_size_compressed():
         assert stream.size == 7346
 
 
+@pytest.mark.remote
 def test_stream_size_remote():
     with Stream(BASE_URL % 'data/special/doublequote.csv') as stream:
         rows = stream.read()
@@ -662,6 +666,7 @@ def test_stream_hash_compressed():
         assert stream.hash == '41fdde1d8dbcb3b2d4a1410acd7ad842781f076076a73b049863d6c1c73868db'
 
 
+@pytest.mark.remote
 def test_stream_hash_remote():
     with Stream(BASE_URL % 'data/special/doublequote.csv') as stream:
         rows = stream.read()
@@ -799,6 +804,7 @@ def test_stream_filelike_csv_gz():
             assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+@pytest.mark.remote
 @pytest.mark.skipif(six.PY2, reason='Support only for Python3')
 def test_stream_remote_csv_zip():
     source = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/data/table.csv.zip'
@@ -807,6 +813,7 @@ def test_stream_remote_csv_zip():
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+@pytest.mark.remote
 @pytest.mark.skipif(six.PY2, reason='Support only for Python3')
 def test_stream_remote_csv_gz():
     source = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/data/table.csv.gz'
@@ -854,6 +861,7 @@ def test_stream_not_existent_remote_file_with_no_format_issue_287():
     assert 'bad-path' in str(excinfo.value)
 
 
+@pytest.mark.remote
 def test_stream_chardet_raises_remote_issue_305():
     source = 'https://gist.githubusercontent.com/roll/56b91d7d998c4df2d4b4aeeefc18cab5/raw/a7a577cd30139b3396151d43ba245ac94d8ddf53/tabulator-issue-305.csv'
     with Stream(source, headers=1) as stream:

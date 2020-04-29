@@ -80,12 +80,14 @@ def test_stream_text_csv():
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+@pytest.mark.remote
 def test_stream_remote_csv():
     with Stream(BASE_URL % 'data/table.csv') as stream:
         assert stream.headers is None
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
+@pytest.mark.remote
 def test_stream_remote_csv_non_ascii_url():
     with Stream('http://data.defra.gov.uk/ops/government_procurement_card/over_£500_GPC_apr_2013.csv') as stream:
         assert stream.sample[0] == [

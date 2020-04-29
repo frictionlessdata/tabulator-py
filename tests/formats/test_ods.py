@@ -24,6 +24,7 @@ def test_stream_ods():
         ]
 
 
+@pytest.mark.remote
 def test_stream_ods_remote():
     source = BASE_URL % 'data/table.ods'
     with Stream(source) as stream:

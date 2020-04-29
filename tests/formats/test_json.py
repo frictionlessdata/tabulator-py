@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import io
 import json
+import pytest
 from mock import Mock
 from tabulator import Stream, exceptions
 from tabulator.parsers.json import JSONParser
@@ -47,12 +48,14 @@ def test_stream_text_json_lists():
         assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
 
 
+@pytest.mark.remote
 def test_stream_remote_json_dicts():
     with Stream(BASE_URL % 'data/table-dicts.json') as stream:
         assert stream.headers is None
         assert stream.read() == [[1, 'english'], [2, '中国人']]
 
 
+@pytest.mark.remote
 def test_stream_remote_json_lists():
     with Stream(BASE_URL % 'data/table-lists.json') as stream:
         assert stream.headers is None
