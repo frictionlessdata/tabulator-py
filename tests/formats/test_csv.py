@@ -164,7 +164,8 @@ def test_stream_save_csv(tmpdir):
         assert stream.headers == ['id', 'name']
         assert stream.read(extended=True) == [
             (2, ['id', 'name'], ['1', 'english']),
-            (3, ['id', 'name'], ['2', '中国人'])]
+            (3, ['id', 'name'], ['2', '中国人']),
+        ]
 
 
 # Internal

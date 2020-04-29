@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import io
+import json
 from mock import Mock
 from tabulator import Stream, exceptions
 from tabulator.parsers.json import JSONParser
@@ -56,6 +57,33 @@ def test_stream_remote_json_lists():
     with Stream(BASE_URL % 'data/table-lists.json') as stream:
         assert stream.headers is None
         assert stream.read() == [['id', 'name'], [1, 'english'], [2, '中国人']]
+
+
+# Write
+
+def test_stream_save_json(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.json'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target)
+    with open(target) as file:
+        assert json.load(file) == [
+            ['id', 'name'],
+            ['1', 'english'],
+            ['2', '中国人'],
+        ]
+
+
+def test_stream_save_json_keyed(tmpdir):
+    source = 'data/table.csv'
+    target = str(tmpdir.join('table.json'))
+    with Stream(source, headers=1) as stream:
+        stream.save(target, keyed=True)
+    with open(target) as file:
+        assert json.load(file) == [
+            {'id': '1', 'name': 'english'},
+            {'id': '2', 'name': '中国人'},
+        ]
 
 
 # Internal

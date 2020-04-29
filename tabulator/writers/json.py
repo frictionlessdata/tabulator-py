@@ -32,7 +32,7 @@ class JSONWriter(Writer):
             data.append(headers)
         for row in source:
             if self.__keyed:
-                row = zip(headers, row)
+                row = dict(zip(headers, row))
             data.append(row)
         with open(target, 'w') as file:
             json.dump(data, file, indent=2)
