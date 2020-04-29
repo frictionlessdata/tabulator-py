@@ -579,7 +579,7 @@ class Stream(object):
     def save(self, target, format=None,  encoding=None, **options):
         """Save stream to the local filesystem.
 
-        # Arguments:
+        # Arguments
             target (str): Path where to save the stream.
             format (str, optional):
                 The format the stream will be saved as. If
@@ -588,6 +588,8 @@ class Stream(object):
                 Saved file encoding. Defaults to ``config.DEFAULT_ENCODING``.
             **options: Extra options passed to the writer.
 
+        # Returns
+            count (int?): Written rows count if available
         """
 
         # Get encoding/format
@@ -613,7 +615,7 @@ class Stream(object):
 
         # Write data to target
         writer = writer_class(**writer_options)
-        writer.write(self.iter(), target, headers=self.headers, encoding=encoding)
+        return writer.write(self.iter(), target, headers=self.headers, encoding=encoding)
 
     # Private
 

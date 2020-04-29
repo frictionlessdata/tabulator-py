@@ -161,7 +161,7 @@ def test_stream_save_csv(tmpdir):
     source = 'data/table.csv'
     target = str(tmpdir.join('table.csv'))
     with Stream(source, headers=1) as stream:
-        stream.save(target)
+        assert stream.save(target) == 2
     with Stream(target, headers=1) as stream:
         assert stream.headers == ['id', 'name']
         assert stream.read(extended=True) == [

@@ -35,9 +35,12 @@ class XLSXWriter(Writer):
 
     def write(self, source, target, headers, encoding=None):
         helpers.ensure_dir(target)
+        count = 0
         wb = openpyxl.Workbook(write_only=True)
         ws = wb.create_sheet(title=self.__options.get('sheet'))
         ws.append(headers)
         for row in source:
             ws.append(row)
+            count += 1
         wb.save(target)
+        return count
