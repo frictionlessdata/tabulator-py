@@ -538,15 +538,21 @@ class Stream(object):
         iterator = self.__apply_processors(iterator)
 
         # Yield rows from iterator
-        for row_number, headers, row in iterator:
-            if row_number > self.__row_number:
-                self.__row_number = row_number
-                if extended:
-                    yield (row_number, headers, row)
-                elif keyed:
-                    yield dict(zip(headers, row))
-                else:
-                    yield row
+        try:
+            for row_number, headers, row in iterator:
+                if row_number > self.__row_number:
+                    self.__row_number = row_number
+                    if extended:
+                        yield (row_number, headers, row)
+                    elif keyed:
+                        yield dict(zip(headers, row))
+                    else:
+                        yield row
+        except UnicodeError as error:
+            message = 'Cannot parse the source "%s" using "%s" encoding at "%s"'
+            raise exceptions.EncodingError(message % (self.__source, error.encoding, error.start))
+        except Exception as error:
+            raise exceptions.SourceError(str(error))
 
     def read(self, keyed=False, extended=False, limit=None):
         """Returns a list of rows.
@@ -629,6 +635,11 @@ class Stream(object):
                 self.__sample_extended_rows.append((row_number, headers, row))
             except StopIteration:
                 break
+            except UnicodeError as error:
+                message = 'Cannot parse the source "%s" using "%s" encoding at "%s"'
+                raise exceptions.EncodingError(message % (self.__source, error.encoding, error.start))
+            except Exception as error:
+                raise exceptions.SourceError(str(error))
 
     def __extract_headers(self):
 
