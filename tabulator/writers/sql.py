@@ -32,12 +32,19 @@ class SQLWriter(Writer):
     def write(self, source, target, headers, encoding=None):
         engine = create_engine(target)
         count = 0
+        buffer = []
+        buffer_size = 1000
         with engine.begin() as conn:
             meta = MetaData()
             columns = [Column(header, String()) for header in headers]
             table = Table(self.__table, meta, *columns)
             meta.create_all(conn)
             for row in source:
-                conn.execute(table.insert(tuple(row)))
                 count += 1
+                buffer.append(row)
+                if len(buffer) > buffer_size:
+                    conn.execute(table.insert().values(buffer))
+                    buffer = []
+            if len(buffer):
+                conn.execute(table.insert().values(buffer))
         return count
