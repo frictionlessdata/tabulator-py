@@ -21,6 +21,7 @@ from . import config
 
 # Module API
 
+# TODO: merge pick/skip rows logic
 class Stream(object):
     """Stream of tabular data.
 
@@ -153,14 +154,23 @@ class Stream(object):
                  multiline_headers_joiner=' ',
                  force_strings=False,
                  force_parse=False,
-                 skip_rows=[],
-                 skip_columns=None,
+                 pick_rows=None,
+                 skip_rows=None,
                  pick_columns=None,
+                 skip_columns=None,
                  post_parse=[],
                  custom_loaders={},
                  custom_parsers={},
                  custom_writers={},
                  **options):
+
+        # Translate aliases
+        if pick_columns is not None:
+            ignore_not_listed_headers = pick_columns
+        if skip_columns is not None:
+            ignore_listed_headers = skip_columns
+            if '' in skip_columns:
+                ignore_blank_headers = True
 
         # Set headers
         self.__headers = None
@@ -178,20 +188,32 @@ class Stream(object):
             else:
                 self.__headers = list(headers)
 
-        # Translate aliases
-        if pick_columns is not None:
-            ignore_not_listed_headers = pick_columns
-        if skip_columns is not None:
-            ignore_listed_headers = skip_columns
-            if '' in skip_columns:
-                ignore_blank_headers = True
+        # Set pick rows
+        self.__pick_rows = pick_rows
+        self.__pick_rows_by_numbers = []
+        self.__pick_rows_by_patterns = []
+        self.__pick_rows_by_comments = []
+        self.__pick_rows_by_presets = {}
+        for directive in copy(pick_rows or []):
+            if isinstance(directive, int):
+                self.__pick_rows_by_numbers.append(directive)
+            elif isinstance(directive, dict):
+                if directive['type'] == 'regex':
+                    self.__pick_rows_by_patterns.append(re.compile(directive['value']))
+                elif directive['type'] == 'preset' and directive['value'] == 'blank':
+                    self.__pick_rows_by_presets['blank'] = True
+                else:
+                    raise ValueError('Not supported pick rows: %s' % directive)
+            else:
+                self.__pick_rows_by_comments.append(str(directive))
 
         # Set skip rows
+        self.__skip_rows = skip_rows
         self.__skip_rows_by_numbers = []
         self.__skip_rows_by_patterns = []
         self.__skip_rows_by_comments = []
         self.__skip_rows_by_presets = {}
-        for directive in copy(skip_rows):
+        for directive in copy(skip_rows or []):
             if isinstance(directive, int):
                 self.__skip_rows_by_numbers.append(directive)
             elif isinstance(directive, dict):
@@ -796,30 +818,69 @@ class Stream(object):
 
     def __check_if_row_for_skipping(self, row_number, headers, row):
 
-        # Skip by number
-        if row_number in self.__skip_rows_by_numbers:
+        # Pick rows
+        if self.__pick_rows:
+
+            # Skip by number
+            if row_number in self.__pick_rows_by_numbers:
+                return True
+
+            # Get first cell
+            cell = row[0] if row else None
+
+            # Handle blank cell/row
+            if cell in [None, '']:
+                if '' in self.__pick_rows_by_comments:
+                    return False
+                if self.__pick_rows_by_presets.get('blank'):
+                    if not list(filter(lambda cell: cell not in [None, ''], row)):
+                        return False
+                return True
+
+            # Pick by pattern
+            for pattern in self.__pick_rows_by_patterns:
+                if bool(pattern.match(cell)):
+                    return False
+
+            # Pick by comment
+            for comment in filter(None, self.__pick_rows_by_comments):
+                if cell.startswith(comment):
+                    return False
+
+            # Default
             return True
 
-        # Get first cell
-        cell = row[0] if row else None
+        # Skip rows
+        if self.__skip_rows:
 
-        # Handle blank cell/row
-        if cell in [None, '']:
-            if '' in self.__skip_rows_by_comments:
+            # Skip by number
+            if row_number in self.__skip_rows_by_numbers:
                 return True
-            if self.__skip_rows_by_presets.get('blank'):
-                if not list(filter(lambda cell: cell not in [None, ''], row)):
+
+            # Get first cell
+            cell = row[0] if row else None
+
+            # Handle blank cell/row
+            if cell in [None, '']:
+                if '' in self.__skip_rows_by_comments:
                     return True
+                if self.__skip_rows_by_presets.get('blank'):
+                    if not list(filter(lambda cell: cell not in [None, ''], row)):
+                        return True
+                return False
+
+            # Skip by pattern
+            for pattern in self.__skip_rows_by_patterns:
+                if bool(pattern.match(cell)):
+                    return True
+
+            # Skip by comment
+            for comment in filter(None, self.__skip_rows_by_comments):
+                if cell.startswith(comment):
+                    return True
+
+            # Default
             return False
 
-        # Skip by pattern
-        for pattern in self.__skip_rows_by_patterns:
-            if bool(pattern.match(cell)):
-                return True
-
-        # Skip by comment
-        for comment in filter(None, self.__skip_rows_by_comments):
-            if cell.startswith(comment):
-                return True
-
+        # No pick/skip
         return False

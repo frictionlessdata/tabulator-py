@@ -401,6 +401,22 @@ def test_stream_force_parse_json():
         ]
 
 
+# Pick rows
+
+def test_stream_pick_rows():
+    source = 'data/special/skip-rows.csv'
+    with Stream(source, pick_rows=['1', '2']) as stream:
+        assert stream.read() == [['1', 'english'], ['2', '中国人']]
+
+
+def test_stream_pick_rows_regex():
+    source = [['# comment'], ['name', 'order'], ['# cat'], ['# dog'], ['John', 1], ['Alex', 2]]
+    pick_rows = [{'type': 'regex', 'value': r'^(name|John|Alex)'}]
+    with Stream(source, headers=1, pick_rows=pick_rows) as stream:
+        assert stream.headers == ['name', 'order']
+        assert stream.read() == [['John', 1], ['Alex', 2]]
+
+
 # Skip rows
 
 def test_stream_skip_rows():
