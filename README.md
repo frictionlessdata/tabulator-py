@@ -820,9 +820,10 @@ Stream(self,
        multiline_headers_joiner=' ',
        force_strings=False,
        force_parse=False,
-       skip_rows=[],
-       skip_columns=None,
+       pick_rows=None,
+       skip_rows=None,
        pick_columns=None,
+       skip_columns=None,
        post_parse=[],
        custom_loaders={},
        custom_parsers={},
@@ -905,6 +906,9 @@ __Arguments__
         parsing malformed rows, simply returning an empty value. Defaults
         to False.
 
+    pick_rows (List[Union[int, str, dict]], optional):
+        The same as `skip_rows` but it's for picking rows instead of skipping.
+
     skip_rows (List[Union[int, str, dict]], optional):
         List of row numbers, strings and regex patterns as dicts to skip.
         If a string, it'll skip rows that their first cells begin with it e.g. '#' and '//'.
@@ -912,12 +916,12 @@ __Arguments__
         To provide a regex pattern use  `{'type': 'regex', 'value': '^#'}`
         For example: `skip_rows=[1, '# comment', {'type': 'regex', 'value': '^# (regex|comment)'}]`
 
+    pick_columns (str[]):
+        Alias for `ignore_not_listed_headers`.
+
     skip_columns (str[]):
         Alias for `ignore_listed_headers`.
         If it contains an empty string it will activate `ignore_blank_headers`
-
-    pick_columns (str[]):
-        Alias for `ignore_not_listed_headers`.
 
     post_parse (List[function], optional):
         List of generator functions that
