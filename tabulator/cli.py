@@ -21,14 +21,14 @@ from . import exceptions
 @click.option('--encoding')
 @click.option('--limit', type=click.INT)
 @click.option('--sheet')
-@click.option('--fill_merged_cells', type=click.BOOL)
-@click.option('--preserve_formatting', type=click.BOOL)
-@click.option('--adjust_floating_point_error', type=click.BOOL)
+@click.option('--fill-merged-cells', is_flag=True, default=None)
+@click.option('--preserve-formatting', is_flag=True, default=None)
+@click.option('--adjust-floating-point-error', is_flag=True, default=None)
 @click.option('--table')
 @click.option('--order_by')
 @click.option('--resource')
 @click.option('--property')
-@click.option('--keyed', type=click.BOOL)
+@click.option('--keyed', is_flag=True, default=None)
 @click.version_option(config.VERSION, message='%(version)s')
 def cli(source, limit, **options):
     """Command-line interface
@@ -43,9 +43,9 @@ def cli(source, limit, **options):
       --encoding TEXT
       --limit INTEGER
       --sheet TEXT/INTEGER (excel)
-      --fill_merged_cells BOOLEAN (excel)
-      --preserve_formatting BOOLEAN (excel)
-      --adjust_floating_point_error BOOLEAN (excel)
+      --fill-merged-cells BOOLEAN (excel)
+      --preserve-formatting BOOLEAN (excel)
+      --adjust-floating-point-error BOOLEAN (excel)
       --table TEXT (sql)
       --order_by TEXT (sql)
       --resource TEXT/INTEGER (datapackage)
