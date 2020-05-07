@@ -421,6 +421,16 @@ class Stream(object):
         self.__row_number = 0
 
     @property
+    def source(self):
+        """Source
+
+        # Returns
+            any: stream source
+
+        """
+        return self.__source
+
+    @property
     def headers(self):
         """Headers
 

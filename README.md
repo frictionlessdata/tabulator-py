@@ -797,6 +797,15 @@ Options:
   --format TEXT
   --encoding TEXT
   --limit INTEGER
+  --sheet TEXT/INTEGER (excel)
+  --fill-merged-cells BOOLEAN (excel)
+  --preserve-formatting BOOLEAN (excel)
+  --adjust-floating-point-error BOOLEAN (excel)
+  --table TEXT (sql)
+  --order_by TEXT (sql)
+  --resource TEXT/INTEGER (datapackage)
+  --property TEXT (json)
+  --keyed BOOLEAN (json)
   --version          Show the version and exit.
   --help             Show this message and exit.
 ```
@@ -1028,6 +1037,15 @@ Returns the BYTE count of the read chunks if available
 __Returns__
 
 `int/None`: BYTE count
+
+
+
+#### `stream.source`
+Source
+
+__Returns__
+
+`any`: stream source
 
 
 

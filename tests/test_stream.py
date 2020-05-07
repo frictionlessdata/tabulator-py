@@ -19,6 +19,13 @@ from tabulator.writers.xlsx import XLSXWriter
 BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
+# Source
+
+def test_stream_source():
+    with Stream('data/table.csv') as stream:
+        assert stream.source == 'data/table.csv'
+
+
 # Headers
 
 def test_stream_headers():
