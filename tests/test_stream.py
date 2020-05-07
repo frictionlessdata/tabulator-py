@@ -19,11 +19,15 @@ from tabulator.writers.xlsx import XLSXWriter
 BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
-# Source
+# General
 
-def test_stream_source():
+def test_stream():
     with Stream('data/table.csv') as stream:
         assert stream.source == 'data/table.csv'
+        assert stream.scheme == 'file'
+        assert stream.format == 'csv'
+        assert stream.encoding == 'utf-8'
+        assert stream.compression == 'no'
 
 
 # Headers
@@ -777,6 +781,7 @@ def test_stream_read_closed():
 def test_stream_local_csv_zip():
     with Stream('data/table.csv.zip') as stream:
         assert stream.headers is None
+        assert stream.compression == 'zip'
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 

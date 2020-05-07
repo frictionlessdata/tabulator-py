@@ -965,6 +965,15 @@ __Returns__
 
 
 
+#### `stream.compression`
+Stream's compression
+
+__Returns__
+
+`str`: compression
+
+
+
 #### `stream.encoding`
 Stream's encoding
 

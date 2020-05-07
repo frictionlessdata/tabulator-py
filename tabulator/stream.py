@@ -256,6 +256,7 @@ class Stream(object):
         self.__actual_scheme = scheme
         self.__actual_format = format
         self.__actual_encoding = encoding
+        self.__actual_compression = compression
         self.__options = options
         self.__sample_extended_rows = []
         self.__loader = None
@@ -401,6 +402,7 @@ class Stream(object):
         self.__actual_scheme = scheme
         self.__actual_format = format
         self.__actual_encoding = self.__parser.encoding
+        self.__actual_compression = compression or 'no'
 
         return self
 
@@ -491,6 +493,16 @@ class Stream(object):
 
         """
         return self.__actual_encoding
+
+    @property
+    def compression(self):
+        """Stream's compression ("no" if no compression)
+
+        # Returns
+            str: compression
+
+        """
+        return self.__actual_compression
 
     @property
     def size(self):
