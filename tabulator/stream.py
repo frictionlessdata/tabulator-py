@@ -255,6 +255,7 @@ class Stream(object):
         self.__actual_compression = compression
         self.__options = options
         self.__sample_extended_rows = []
+        self.__field_positions = None
         self.__loader = None
         self.__parser = None
         self.__row_number = 0
@@ -542,13 +543,13 @@ class Stream(object):
 
     @property
     def field_positions(self):
-        if not self.__headers:
-            return []
-        field_positions = []
-        for index in range(len(self.__headers) + 1):
-            if index not in self.__ignored_headers_indexes:
-                field_positions.append(index + 1)
-        return field_positions
+        if self.__field_positions is None:
+            self.__field_positions = []
+            if self.__headers:
+                for index in range(len(self.__headers) + 1):
+                    if index not in self.__ignored_headers_indexes:
+                        self.__field_positions.append(index + 1)
+        return self.__field_positions
 
     def iter(self, keyed=False, extended=False):
         """Iterate over the rows.
