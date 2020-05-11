@@ -336,10 +336,43 @@ def test_stream_ignore_listed_headers():
             {'header1': 'value1', 'header3': 'value3'},
         ]
 
+
 def test_stream_ignore_not_listed_headers():
     source = 'text://header1,header2,header3\nvalue1,value2,value3'
     with Stream(source, format='csv', headers=1, ignore_not_listed_headers=['header2']) as stream:
         assert stream.headers == ['header2']
+        assert stream.read(keyed=True) == [
+            {'header2': 'value2'},
+        ]
+
+
+# Skip/pick fields
+
+def test_stream_skip_fields():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, skip_fields=['header2']) as stream:
+        assert stream.headers == ['header1', 'header3']
+        assert stream.field_positions == [1, 3]
+        assert stream.read(keyed=True) == [
+            {'header1': 'value1', 'header3': 'value3'},
+        ]
+
+
+def test_stream_skip_fields_blank_header():
+    source = 'text://header1,,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, skip_fields=['']) as stream:
+        assert stream.headers == ['header1', 'header3']
+        assert stream.field_positions == [1, 3]
+        assert stream.read(keyed=True) == [
+            {'header1': 'value1', 'header3': 'value3'},
+        ]
+
+
+def test_stream_pick_fields():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, pick_fields=['header2']) as stream:
+        assert stream.headers == ['header2']
+        assert stream.field_positions == [2]
         assert stream.read(keyed=True) == [
             {'header2': 'value2'},
         ]
@@ -355,6 +388,7 @@ def test_stream_skip_columns():
             {'header1': 'value1', 'header3': 'value3'},
         ]
 
+
 def test_stream_skip_columns_blank_header():
     source = 'text://header1,,header3\nvalue1,value2,value3'
     with Stream(source, format='csv', headers=1, skip_columns=['']) as stream:
@@ -362,6 +396,7 @@ def test_stream_skip_columns_blank_header():
         assert stream.read(keyed=True) == [
             {'header1': 'value1', 'header3': 'value3'},
         ]
+
 
 def test_stream_pick_columns():
     source = 'text://header1,header2,header3\nvalue1,value2,value3'

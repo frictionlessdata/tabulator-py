@@ -831,6 +831,8 @@ Stream(self,
        force_parse=False,
        pick_rows=None,
        skip_rows=None,
+       pick_fields=None,
+       skip_fields=None,
        pick_columns=None,
        skip_columns=None,
        post_parse=[],
@@ -873,10 +875,24 @@ __Arguments__
     compression (str, optional):
         Source file compression (zip, ...). If not set, it'll be inferred.
 
-    allow_html (bool, optional):
-        Allow the file source to be an HTML page.
-        If False, raises ``exceptions.FormatError`` if the loaded file is
-        an HTML page. Defaults to False.
+    pick_rows (List[Union[int, str, dict]], optional):
+        The same as `skip_rows` but it's for picking rows instead of skipping.
+
+    skip_rows (List[Union[int, str, dict]], optional):
+        List of row numbers, strings and regex patterns as dicts to skip.
+        If a string, it'll skip rows that their first cells begin with it e.g. '#' and '//'.
+        To skip only completely blank rows use `{'type': 'preset', 'value': 'blank'}`
+        To provide a regex pattern use  `{'type': 'regex', 'value': '^#'}`
+        For example: `skip_rows=[1, '# comment', {'type': 'regex', 'value': '^# (regex|comment)'}]`
+
+    pick_fields (str[]):
+        When passed, ignores all columns with headers
+        that the given list DOES NOT include
+
+    skip_fields (str[]):
+        When passed, ignores all columns with headers
+        that the given list includes. If it contains an empty string it will skip
+        empty headers
 
     sample_size (int, optional):
         Controls the number of sample rows used to
@@ -889,17 +905,10 @@ __Arguments__
         of number of rows, controls number of bytes. Defaults to
         ``config.DEFAULT_BYTES_SAMPLE_SIZE``.
 
-    ignore_blank_headers (bool, optional):
-        When True, ignores all columns
-        that have blank headers. Defaults to False.
-
-    ignore_listed_headers (List[str], optional):
-        When passed, ignores all columns with headers
-        that the given list includes
-
-    ignore_not_listed_headers (List[str], optional):
-        When passed, ignores all columns with headers
-        that the given list DOES NOT include
+    allow_html (bool, optional):
+        Allow the file source to be an HTML page.
+        If False, raises ``exceptions.FormatError`` if the loaded file is
+        an HTML page. Defaults to False.
 
     multiline_headers_joiner (str, optional):
         When passed, it's used to join multiline headers
@@ -914,23 +923,6 @@ __Arguments__
         When True, don't raise exceptions when
         parsing malformed rows, simply returning an empty value. Defaults
         to False.
-
-    pick_rows (List[Union[int, str, dict]], optional):
-        The same as `skip_rows` but it's for picking rows instead of skipping.
-
-    skip_rows (List[Union[int, str, dict]], optional):
-        List of row numbers, strings and regex patterns as dicts to skip.
-        If a string, it'll skip rows that their first cells begin with it e.g. '#' and '//'.
-        To skip only completely blank rows use `{'type': 'preset', 'value': 'blank'}`
-        To provide a regex pattern use  `{'type': 'regex', 'value': '^#'}`
-        For example: `skip_rows=[1, '# comment', {'type': 'regex', 'value': '^# (regex|comment)'}]`
-
-    pick_columns (str[]):
-        Alias for `ignore_not_listed_headers`.
-
-    skip_columns (str[]):
-        Alias for `ignore_listed_headers`.
-        If it contains an empty string it will activate `ignore_blank_headers`
 
     post_parse (List[function], optional):
         List of generator functions that
@@ -966,7 +958,7 @@ __Returns__
 
 
 #### `stream.compression`
-Stream's compression
+Stream's compression ("no" if no compression)
 
 __Returns__
 
