@@ -546,7 +546,8 @@ class Stream(object):
         if self.__field_positions is None:
             self.__field_positions = []
             if self.__headers:
-                for index in range(len(self.__headers) + 1):
+                size = len(self.__headers) + len(self.__ignored_headers_indexes)
+                for index in range(size):
                     if index not in self.__ignored_headers_indexes:
                         self.__field_positions.append(index + 1)
         return self.__field_positions

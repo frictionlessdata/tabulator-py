@@ -735,6 +735,12 @@ def test_stream_hash_remote():
         assert stream.hash == '41fdde1d8dbcb3b2d4a1410acd7ad842781f076076a73b049863d6c1c73868db'
 
 
+# Field positions
+
+def test_stream_field_positions():
+    with Stream('data/table.csv', headers=1) as stream:
+        assert stream.field_positions == [1, 2]
+
 
 # Reset
 
