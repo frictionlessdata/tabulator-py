@@ -56,7 +56,7 @@ class AWSLoader(Loader):
             if self.__stats:
                 bytes = helpers.BytesStatsWrapper(bytes, self.__stats)
         except Exception as exception:
-            raise exceptions.IOError(str(exception))
+            raise exceptions.LoadingError(str(exception))
 
         # Return bytes
         if mode == 'b':

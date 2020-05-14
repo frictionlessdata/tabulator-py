@@ -13,13 +13,21 @@ class TabulatorException(Exception):
     pass
 
 
+# Deprecated
 class IOError(TabulatorException):
     """Local loading error
     """
     pass
 
 
-class HTTPError(IOError):
+class LoadingError(IOError):
+    """Local loading error
+    """
+    pass
+
+
+# Deprecated
+class HTTPError(LoadingError):
     """Remote loading error
     """
     pass
