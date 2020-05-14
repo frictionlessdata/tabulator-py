@@ -862,7 +862,7 @@ class Stream(object):
 
             # Skip by number
             if row_number in self.__pick_rows_by_numbers:
-                return True
+                return False
 
             # Get first cell
             cell = row[0] if row else None

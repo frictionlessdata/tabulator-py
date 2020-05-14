@@ -455,6 +455,12 @@ def test_stream_pick_rows():
         assert stream.read() == [['1', 'english'], ['2', '中国人']]
 
 
+def test_stream_pick_rows_number():
+    source = 'data/special/skip-rows.csv'
+    with Stream(source, pick_rows=[3, 5]) as stream:
+        assert stream.read() == [['1', 'english'], ['2', '中国人']]
+
+
 def test_stream_pick_rows_regex():
     source = [['# comment'], ['name', 'order'], ['# cat'], ['# dog'], ['John', 1], ['Alex', 2]]
     pick_rows = [{'type': 'regex', 'value': r'^(name|John|Alex)'}]
