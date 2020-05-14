@@ -39,11 +39,14 @@ A library for reading and writing tabular data (csv/xls/json/etc).
     - [`Writer`](#writer)
     - [`validate`](#validate)
     - [`TabulatorException`](#tabulatorexception)
-    - [`IOError`](#ioerror)
-    - [`HTTPError`](#httperror)
     - [`SourceError`](#sourceerror)
+    - [`SchemeError`](#schemeerror)
     - [`FormatError`](#formaterror)
     - [`EncodingError`](#encodingerror)
+    - [`CompressionError`](#compressionerror)
+    - [`IOError`](#ioerror)
+    - [`LoadingError`](#loadingerror)
+    - [`HTTPError`](#httperror)
   - [Contributing](#contributing)
   - [Changelog](#changelog)
 
@@ -1342,25 +1345,18 @@ TabulatorException()
 Base class for all tabulator exceptions.
 
 
-### `IOError`
-```python
-IOError()
-```
-Local loading error
-
-
-### `HTTPError`
-```python
-HTTPError()
-```
-Remote loading error
-
-
 ### `SourceError`
 ```python
 SourceError()
 ```
 The source file could not be parsed correctly.
+
+
+### `SchemeError`
+```python
+SchemeError()
+```
+The file scheme is not supported.
 
 
 ### `FormatError`
@@ -1375,6 +1371,34 @@ The file format is unsupported or invalid.
 EncodingError()
 ```
 Encoding error
+
+
+### `CompressionError`
+```python
+CompressionError()
+```
+Compression error
+
+
+### `IOError`
+```python
+IOError()
+```
+Local loading error
+
+
+### `LoadingError`
+```python
+LoadingError()
+```
+Local loading error
+
+
+### `HTTPError`
+```python
+HTTPError()
+```
+Remote loading error
 
 ## Contributing
 

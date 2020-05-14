@@ -13,26 +13,6 @@ class TabulatorException(Exception):
     pass
 
 
-# Deprecated
-class IOError(TabulatorException):
-    """Local loading error
-    """
-    pass
-
-
-class LoadingError(IOError):
-    """Local loading error
-    """
-    pass
-
-
-# Deprecated
-class HTTPError(LoadingError):
-    """Remote loading error
-    """
-    pass
-
-
 class SourceError(TabulatorException):
     """The source file could not be parsed correctly.
     """
@@ -67,3 +47,21 @@ class CompressionError(TabulatorException):
 
 OptionsError = TabulatorException
 ResetError = TabulatorException
+
+
+class IOError(SchemeError):
+    """Local loading error
+    """
+    pass
+
+
+class LoadingError(IOError):
+    """Local loading error
+    """
+    pass
+
+
+class HTTPError(LoadingError):
+    """Remote loading error
+    """
+    pass
