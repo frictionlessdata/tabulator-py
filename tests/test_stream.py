@@ -358,6 +358,26 @@ def test_stream_skip_fields():
         ]
 
 
+def test_stream_skip_fields_position():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, skip_fields=[2]) as stream:
+        assert stream.headers == ['header1', 'header3']
+        assert stream.field_positions == [1, 3]
+        assert stream.read(keyed=True) == [
+            {'header1': 'value1', 'header3': 'value3'},
+        ]
+
+
+def test_stream_skip_fields_position_and_prefix():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, skip_fields=[2, 'header3']) as stream:
+        assert stream.headers == ['header1']
+        assert stream.field_positions == [1]
+        assert stream.read(keyed=True) == [
+            {'header1': 'value1'},
+        ]
+
+
 def test_stream_skip_fields_blank_header():
     source = 'text://header1,,header3\nvalue1,value2,value3'
     with Stream(source, format='csv', headers=1, skip_fields=['']) as stream:
@@ -375,6 +395,26 @@ def test_stream_pick_fields():
         assert stream.field_positions == [2]
         assert stream.read(keyed=True) == [
             {'header2': 'value2'},
+        ]
+
+
+def test_stream_pick_fields_position():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, pick_fields=[2]) as stream:
+        assert stream.headers == ['header2']
+        assert stream.field_positions == [2]
+        assert stream.read(keyed=True) == [
+            {'header2': 'value2'},
+        ]
+
+
+def test_stream_pick_fields_position_and_prefix():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, pick_fields=[2, 'header3']) as stream:
+        assert stream.headers == ['header2', 'header3']
+        assert stream.field_positions == [2, 3]
+        assert stream.read(keyed=True) == [
+            {'header2': 'value2', 'header3': 'value3'},
         ]
 
 

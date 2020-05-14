@@ -752,11 +752,13 @@ class Stream(object):
                     ignore = True
                 # Ignore listed headers
                 if self.__ignore_listed_headers is not None:
-                    if header in self.__ignore_listed_headers:
+                    if (header in self.__ignore_listed_headers or
+                            index + 1 in self.__ignore_listed_headers):
                         ignore = True
                 # Ignore not-listed headers
                 if self.__ignore_not_listed_headers is not None:
-                    if header not in self.__ignore_not_listed_headers:
+                    if (header not in self.__ignore_not_listed_headers and
+                            index + 1 not in self.__ignore_not_listed_headers):
                         ignore = True
                 # Add to the list and skip
                 if ignore:
