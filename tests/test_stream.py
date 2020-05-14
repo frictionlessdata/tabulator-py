@@ -807,6 +807,15 @@ def test_stream_save_xls_not_supported(tmpdir):
         assert 'xls' in str(excinfo.value)
 
 
+def test_stream_save_sqlite(database_url):
+    source = 'data/table.csv'
+    with Stream(source, headers=1) as stream:
+        stream.save(database_url, table='test_stream_save_sqlite')
+    with Stream(database_url, table='test_stream_save_sqlite', order_by='id', headers=1) as stream:
+        assert stream.read() == [['1', 'english'], ['2', '中国人']]
+        assert stream.headers == ['id', 'name']
+
+
 # Reading closed
 
 def test_stream_read_closed():
@@ -891,13 +900,11 @@ def test_stream_remote_csv_gz():
         assert stream.read() == [['id', 'name'], ['1', 'english'], ['2', '中国人']]
 
 
-def test_stream_save_sqlite(database_url):
-    source = 'data/table.csv'
-    with Stream(source, headers=1) as stream:
-        stream.save(database_url, table='test_stream_save_sqlite')
-    with Stream(database_url, table='test_stream_save_sqlite', order_by='id', headers=1) as stream:
-        assert stream.read() == [['1', 'english'], ['2', '中国人']]
-        assert stream.headers == ['id', 'name']
+def test_stream_compression_invalid():
+    with pytest.raises(exceptions.CompressionError) as excinfo:
+        Stream('table.csv', compression='bad')
+    assert 'bad' in str(excinfo.value)
+
 
 # Issues
 

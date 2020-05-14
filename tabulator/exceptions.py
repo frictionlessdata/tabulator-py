@@ -49,6 +49,12 @@ class EncodingError(TabulatorException):
     pass
 
 
+class CompressionError(TabulatorException):
+    """Compression error
+    """
+    pass
+
+
 # Deprecated
 
 OptionsError = TabulatorException

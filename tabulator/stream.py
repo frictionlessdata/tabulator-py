@@ -159,6 +159,12 @@ class Stream(object):
                  custom_writers={},
                  **options):
 
+        # Validate compression
+        if compression:
+            if compression not in config.SUPPORTED_COMPRESSION:
+                message = 'Not supported compression "%s"' % compression
+                raise exceptions.CompressionError(message)
+
         # Translate aliases
         if pick_fields is not None:
             pick_columns = pick_fields
