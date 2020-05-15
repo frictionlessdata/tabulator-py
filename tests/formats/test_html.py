@@ -20,7 +20,7 @@ from tabulator import exceptions, Stream
     ('data/table4.html', ''),
 ])
 def test_stream_html(source, selector):
-    with Stream(source, selector=selector, headers=1) as stream:
+    with Stream(source, selector=selector, headers=1, encoding='utf8') as stream:
         assert stream.headers == ['id', 'name']
         assert stream.read(keyed=True) == [
             {'id': '1', 'name': 'english'},
