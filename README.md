@@ -667,7 +667,7 @@ stream = Stream('http://example.com/some/page.aspx', format='html' selector='.co
 
 **Options**
 
-- **selector**: CSS selector for specifying which `table` element to extract. By default it's `table`, which takes the first `table` element in the document.
+- **selector**: CSS selector for specifying which `table` element to extract. By default it's `table`, which takes the first `table` element in the document. If empty, will assume the entire page is the table to be extracted (useful with some Excel formats).
 
 ### Custom file sources and formats
 

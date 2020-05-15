@@ -65,7 +65,10 @@ class HTMLTableParser(Parser):
         page = pq(self.__bytes.read())
 
         # Find required table
-        table = pq(page.find(self.__selector)[0])
+        if self.__selector:
+            table = pq(page.find(self.__selector)[0])
+        else:
+            table = page
 
         # Extract headers
         rows = (
