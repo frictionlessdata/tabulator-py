@@ -27,26 +27,26 @@ class HTMLTableParser(Parser):
         self.__force_parse = force_parse
         self.__extended_rows = None
         self.__encoding = None
-        self.__bytes = None
+        self.__chars = None
 
     @property
     def closed(self):
-        return self.__bytes is None or self.__bytes.closed
+        return self.__chars is None or self.__chars.closed
 
     def open(self, source, encoding=None):
         self.close()
         self.__encoding = encoding
-        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
+        self.__chars = self.__loader.load(source, encoding=encoding)
         if self.__encoding:
             self.__encoding.lower()
         self.reset()
 
     def close(self):
         if not self.closed:
-            self.__bytes.close()
+            self.__chars.close()
 
     def reset(self):
-        helpers.reset_stream(self.__bytes)
+        helpers.reset_stream(self.__chars)
         self.__extended_rows = self.__iter_extended_rows()
 
     @property
@@ -62,25 +62,29 @@ class HTMLTableParser(Parser):
     def __iter_extended_rows(self):
 
         # Get Page content
-        page = pq(self.__bytes.read())
+        page = pq(self.__chars.read(), parser='html')
 
         # Find required table
-        table = pq(page.find(self.__selector)[0])
+        if self.__selector:
+            table = pq(page.find(self.__selector)[0])
+        else:
+            table = page
 
         # Extract headers
         rows = (
             table.children('thead').children('tr') +
+            table.children('thead') +
             table.children('tr') +
             table.children('tbody').children('tr')
         )
-        rows = [pq(r) for r in rows]
+        rows = [pq(r) for r in rows if len(r) > 0]
         first_row = rows.pop(0)
         headers = [pq(th).text() for th in first_row.find('th,td')]
 
         # Extract rows
-        rows = [[pq(td).text()
-                 for td in pq(tr).find('td')]
-                for tr in rows]
+        rows = [pq(tr).find('td') for tr in rows]
+        rows = [[pq(td).text() for td in tr]
+                for tr in rows if len(tr) > 0]
 
         # Yield rows
         for row_number, row in enumerate(rows, start=1):
