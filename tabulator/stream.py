@@ -885,7 +885,7 @@ class Stream(object):
 
             # Pick by comment
             for comment in filter(None, self.__pick_rows_by_comments):
-                if cell.startswith(comment):
+                if six.text_type(cell).startswith(comment):
                     return False
 
             # Default
@@ -917,7 +917,7 @@ class Stream(object):
 
             # Skip by comment
             for comment in filter(None, self.__skip_rows_by_comments):
-                if cell.startswith(comment):
+                if six.text_type(cell).startswith(comment):
                     return True
 
             # Default

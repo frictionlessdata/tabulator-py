@@ -996,3 +996,10 @@ def test_stream_wrong_encoding_detection_issue_265():
     with Stream('data/special/accent.csv') as stream:
         assert stream.encoding == 'utf-8'
 
+
+def test_stream_skip_rows_non_string_cell_issue_322():
+    source = [['id', 'name'], [1, 'english'], [2, 'spanish']]
+    with Stream(source, headers=1, skip_rows='1') as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read() == [[2, 'spanish']]
+
