@@ -830,6 +830,7 @@ Stream(self,
        ignore_listed_headers=None,
        ignore_not_listed_headers=None,
        multiline_headers_joiner=' ',
+       multiline_headers_duplicates=False,
        force_strings=False,
        force_parse=False,
        pick_rows=None,
@@ -917,6 +918,12 @@ __Arguments__
         When passed, it's used to join multiline headers
         as `<passed-value>.join(header1_1, header1_2)`
         Defaults to ' ' (space).
+
+    multiline_headers_duplicates (bool, optional):
+        By default tabulator will exclude a cell of a miltilne header from joining
+        if it's exactly the same as the previous seen value in this field.
+        Enabling this option will force duplicates inclusion
+        Defaults to False.
 
     force_strings (bool, optional):
         When True, casts all data to strings.

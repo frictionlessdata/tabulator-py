@@ -96,6 +96,12 @@ class Stream(object):
             as `<passed-value>.join(header1_1, header1_2)`
             Defaults to ' ' (space).
 
+        multiline_headers_duplicates (bool, optional):
+            By default tabulator will exclude a cell of a miltilne header from joining
+            if it's exactly the same as the previous seen value in this field.
+            Enabling this option will force duplicates inclusion
+            Defaults to False.
+
         force_strings (bool, optional):
             When True, casts all data to strings.
             Defaults to False.
@@ -145,6 +151,7 @@ class Stream(object):
                  ignore_listed_headers=None,
                  ignore_not_listed_headers=None,
                  multiline_headers_joiner=' ',
+                 multiline_headers_duplicates=False,
                  force_strings=False,
                  force_parse=False,
                  pick_rows=None,
@@ -248,6 +255,7 @@ class Stream(object):
         self.__ignore_listed_headers = ignore_listed_headers
         self.__ignore_not_listed_headers = ignore_not_listed_headers
         self.__multiline_headers_joiner = multiline_headers_joiner
+        self.__multiline_headers_duplicates = multiline_headers_duplicates
         self.__ignored_headers_indexes = []
         self.__force_strings = force_strings
         self.__force_parse = force_parse
@@ -717,6 +725,7 @@ class Stream(object):
             raise exceptions.TabulatorException(message)
 
         # Get headers from data
+        last_merged = {}
         keyed_source = False
         for row_number, headers, row in self.__sample_extended_rows:
             keyed_source = keyed_source or headers is not None
@@ -726,16 +735,18 @@ class Stream(object):
                     headers[index] = six.text_type(header).strip()
             if row_number == self.__headers_row:
                 self.__headers = headers
+                last_merged = {index: header for index, header in enumerate(headers)}
             if row_number > self.__headers_row:
                 for index in range(0, len(self.__headers)):
                     if len(headers) > index and headers[index] is not None:
                         if not self.__headers[index]:
                             self.__headers[index] = headers[index]
                         else:
-                            # https://github.com/frictionlessdata/tabulator-py/issues/292
-                            if (not self.__options.get('fill_merged_cells') or
-                                    not self.__headers[index].endswith(headers[index])):
-                                self.__headers[index] += self.__multiline_headers_joiner + headers[index]
+                            if (self.__multiline_headers_duplicates or
+                                    last_merged.get(index) != headers[index]):
+                                self.__headers[index] += (
+                                    self.__multiline_headers_joiner + headers[index])
+                        last_merged[index] = headers[index]
             if row_number == self.__headers_row_last:
                 break
 
