@@ -1434,6 +1434,11 @@ $ pytest -m 'not remote
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+#### v1.46
+
+- Fixed multiline headers merging
+- Introduced a `multiline_headers_duplicates` flag
+
 #### v1.45
 
 - HTML format: adds support for empty selector (#321)
