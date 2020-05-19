@@ -114,7 +114,7 @@ class XLSXParser(Parser):
 
     def __process_merged_cells(self):
         if self.__fill_merged_cells:
-            for merged_cell_range in self.__sheet.merged_cells.ranges:
+            for merged_cell_range in list(self.__sheet.merged_cells.ranges):
                 merged_cell_range = str(merged_cell_range)
                 self.__sheet.unmerge_cells(merged_cell_range)
                 merged_rows = openpyxl.utils.rows_from_range(merged_cell_range)

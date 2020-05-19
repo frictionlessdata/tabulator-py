@@ -1005,7 +1005,6 @@ def test_stream_skip_rows_non_string_cell_issue_322():
         assert stream.read() == [[2, 'spanish']]
 
 
-@pytest.mark.skip('Openpyxl 3.0.3 "sheet.merged_cells.ranges" bug')
 def test_stream_skip_rows_non_string_cell_issue_320():
     with Stream('data/special/issue320.xlsx', headers=[10, 12], fill_merged_cells=True) as stream:
         assert stream.headers[7] == 'Current Population Analysed % of total county Pop'
