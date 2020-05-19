@@ -120,17 +120,17 @@ def test_stream_headers_xls_multiline():
         ]
 
 
-def test_stream_headers_csv_multiline_issue_292():
-    source = 'text://k1\nk1\nv1\nv2\nv3'
-    with Stream(source, format='csv', headers=[1, 2], multiline_headers_duplicates=True) as stream:
-        assert stream.headers == ['k1 k1']
-        assert stream.read() == [['v1'], ['v2'], ['v3']]
-
-
 def test_stream_headers_csv_multiline_headers_joiner():
     source = 'text://k1\nk2\nv1\nv2\nv3'
     with Stream(source, format='csv', headers=[1, 2], multiline_headers_joiner=':') as stream:
         assert stream.headers == ['k1:k2']
+        assert stream.read() == [['v1'], ['v2'], ['v3']]
+
+
+def test_stream_headers_csv_multiline_headers_duplicates():
+    source = 'text://k1\nk1\nv1\nv2\nv3'
+    with Stream(source, format='csv', headers=[1, 2], multiline_headers_duplicates=True) as stream:
+        assert stream.headers == ['k1 k1']
         assert stream.read() == [['v1'], ['v2'], ['v3']]
 
 
@@ -1005,7 +1005,7 @@ def test_stream_skip_rows_non_string_cell_issue_322():
         assert stream.read() == [[2, 'spanish']]
 
 
+@pytest.mark.skip('Openpyxl 3.0.3 "sheet.merged_cells.ranges" bug')
 def test_stream_skip_rows_non_string_cell_issue_320():
-    with Stream('data/special/issue320.xlsx', headers=[10,12], fill_merged_cells=True) as stream:
-        print(stream.headers)
-
+    with Stream('data/special/issue320.xlsx', headers=[10, 12], fill_merged_cells=True) as stream:
+        assert stream.headers[7] == 'Current Population Analysed % of total county Pop'
