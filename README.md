@@ -1434,6 +1434,10 @@ $ pytest -m 'not remote
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+#### v1.48
+
+- Published `stream.hashing_algorithm` property
+
 #### v1.47
 
 - Added `hashing_algorithm` parameter
