@@ -200,7 +200,7 @@ class BytesStatsWrapper(object):
     """
 
     def __init__(self, bytes, stats):
-        self.__hasher = hashlib.sha256()
+        self.__hasher = getattr(hashlib, stats['hashing_algorithm'])()
         self.__bytes = bytes
         self.__stats = stats
 

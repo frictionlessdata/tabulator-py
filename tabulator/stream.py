@@ -102,6 +102,10 @@ class Stream(object):
             Enabling this option will force duplicates inclusion
             Defaults to False.
 
+        hashing_algorithm (func, optional):
+            It supports: md5, sha1, sha256, sha512
+            Defaults to sha256
+
         force_strings (bool, optional):
             When True, casts all data to strings.
             Defaults to False.
@@ -152,6 +156,7 @@ class Stream(object):
                  ignore_not_listed_headers=None,
                  multiline_headers_joiner=' ',
                  multiline_headers_duplicates=False,
+                 hashing_algorithm='sha256',
                  force_strings=False,
                  force_parse=False,
                  pick_rows=None,
@@ -165,6 +170,9 @@ class Stream(object):
                  custom_parsers={},
                  custom_writers={},
                  **options):
+
+        # Programming error assertions
+        assert hashing_algorithm in config.SUPPORTED_HASHING_ALGORITHMS
 
         # Validate compression
         if compression:
@@ -257,6 +265,7 @@ class Stream(object):
         self.__multiline_headers_joiner = multiline_headers_joiner
         self.__multiline_headers_duplicates = multiline_headers_duplicates
         self.__ignored_headers_indexes = []
+        self.__hashing_algorithm = hashing_algorithm
         self.__force_strings = force_strings
         self.__force_parse = force_parse
         self.__post_parse = copy(post_parse)
@@ -376,7 +385,7 @@ class Stream(object):
 
         # Attach stats to the loader
         if getattr(self.__loader, 'attach_stats', None):
-            self.__stats = {'size': 0, 'hash': ''}
+            self.__stats = {'size': 0, 'hash': '', 'hashing_algorithm': self.__hashing_algorithm}
             getattr(self.__loader, 'attach_stats')(self.__stats)
 
         # Initiate parser
@@ -528,10 +537,11 @@ class Stream(object):
 
     @property
     def hash(self):
-        """Returns the SHA256 hash of the read chunks if available
+        """Returns the SHA256 (or according to the "hashing_algorithm" parameter)
+        hash of the read chunks if available
 
         # Returns
-            str/None: SHA256 hash
+            str/None: bytes hash
 
         """
         if self.__stats:

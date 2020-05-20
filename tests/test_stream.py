@@ -768,6 +768,36 @@ def test_stream_hash():
         assert stream.hash == '41fdde1d8dbcb3b2d4a1410acd7ad842781f076076a73b049863d6c1c73868db'
 
 
+def test_stream_hash_md5():
+    with Stream('data/special/doublequote.csv', hashing_algorithm='md5') as stream:
+        rows = stream.read()
+        assert stream.hash == 'd82306001266c4343a2af4830321ead8'
+
+
+def test_stream_hash_sha1():
+    with Stream('data/special/doublequote.csv', hashing_algorithm='sha1') as stream:
+        rows = stream.read()
+        assert stream.hash == '2842768834a6804d8644dd689da61c7ab71cbb33'
+
+
+def test_stream_hash_sha256():
+    with Stream('data/special/doublequote.csv', hashing_algorithm='sha256') as stream:
+        rows = stream.read()
+        assert stream.hash == '41fdde1d8dbcb3b2d4a1410acd7ad842781f076076a73b049863d6c1c73868db'
+
+
+def test_stream_hash_sha512():
+    with Stream('data/special/doublequote.csv', hashing_algorithm='sha512') as stream:
+        rows = stream.read()
+        assert stream.hash == 'fa555b28a01959c8b03996cd4757542be86293fd49641d61808e4bf9fe4115619754aae9ae6af6a0695585eaade4488ce00dfc40fc4394b6376cd20d6967769c'
+
+
+def test_stream_hash_not_supported():
+    with pytest.raises(AssertionError):
+        with Stream('data/special/doublequote.csv', hashing_algorithm='bad') as stream:
+            rows = stream.read()
+
+
 @pytest.mark.skipif(six.PY2, reason='Support only for Python3')
 def test_stream_hash_compressed():
     with Stream('data/special/doublequote.csv.zip') as stream:
