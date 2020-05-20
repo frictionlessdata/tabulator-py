@@ -576,6 +576,10 @@ class Stream(object):
                         self.__field_positions.append(index + 1)
         return self.__field_positions
 
+    @property
+    def hashing_algorithm(self):
+        return self.__hashing_algorithm
+
     def iter(self, keyed=False, extended=False):
         """Iterate over the rows.
 
