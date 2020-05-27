@@ -4,12 +4,15 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
+import io
 import six
 import shutil
+import atexit
 import openpyxl
 import datetime
 from itertools import chain
-from tempfile import TemporaryFile
+from tempfile import NamedTemporaryFile
 from ..parser import Parser
 from .. import exceptions
 from .. import helpers
@@ -36,6 +39,7 @@ class XLSXParser(Parser):
             adjust_floating_point_error=False):
         self.__loader = loader
         self.__sheet_pointer = sheet
+        self.__workbook_cache = workbook_cache
         self.__fill_merged_cells = fill_merged_cells
         self.__preserve_formatting = preserve_formatting
         self.__adjust_floating_point_error = adjust_floating_point_error
@@ -58,12 +62,20 @@ class XLSXParser(Parser):
         # For remote stream we need local copy (will be deleted on close by Python)
         # https://docs.python.org/3.5/library/tempfile.html#tempfile.TemporaryFile
         if getattr(self.__loader, 'remote', False):
-            source_bytes = self.__loader.load(source, mode='b', encoding=encoding)
-            target_bytes = TemporaryFile()
-            shutil.copyfileobj(source_bytes, target_bytes)
-            source_bytes.close()
-            target_bytes.seek(0)
-            self.__bytes = target_bytes
+            # Cached
+            if self.__workbook_cache is not None and source in self.__workbook_cache:
+                self.__bytes = io.open(self.__workbook_cache[source], 'rb')
+            # Not cached
+            else:
+                source_bytes = self.__loader.load(source, mode='b', encoding=encoding)
+                target_bytes = NamedTemporaryFile(delete=self.__workbook_cache is None)
+                shutil.copyfileobj(source_bytes, target_bytes)
+                source_bytes.close()
+                target_bytes.seek(0)
+                self.__bytes = target_bytes
+                if self.__workbook_cache is not None:
+                    self.__workbook_cache[source] = target_bytes.name
+                    atexit.register(os.remove, target_bytes.name)
 
         # Local
         else:
