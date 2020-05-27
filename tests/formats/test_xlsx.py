@@ -113,6 +113,15 @@ def test_stream_xlsx_preserve_formatting():
         }]
 
 
+def test_stream_xlsx_workbook_cache():
+    workbook_cache = {}
+    source = BASE_URL % 'data/special/sheets.xlsx'
+    for sheet in ['Sheet1', 'Sheet2', 'Sheet3']:
+        with Stream(source, sheet=sheet, workbook_cache=workbook_cache) as stream:
+            assert len(workbook_cache) == 1
+            assert stream.read()
+
+
 # Write
 
 def test_stream_save_xlsx(tmpdir):

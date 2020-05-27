@@ -4,12 +4,15 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
+import io
 import six
 import shutil
+import atexit
 import openpyxl
 import datetime
 from itertools import chain
-from tempfile import TemporaryFile
+from tempfile import NamedTemporaryFile
 from ..parser import Parser
 from .. import exceptions
 from .. import helpers
@@ -25,16 +28,18 @@ class XLSXParser(Parser):
 
     options = [
         'sheet',
+        'workbook_cache',
         'fill_merged_cells',
         'preserve_formatting',
         'adjust_floating_point_error',
     ]
 
-    def __init__(self, loader, force_parse=False, sheet=1,
+    def __init__(self, loader, force_parse=False, sheet=1, workbook_cache=None,
             fill_merged_cells=False, preserve_formatting=False,
             adjust_floating_point_error=False):
         self.__loader = loader
         self.__sheet_pointer = sheet
+        self.__workbook_cache = workbook_cache
         self.__fill_merged_cells = fill_merged_cells
         self.__preserve_formatting = preserve_formatting
         self.__adjust_floating_point_error = adjust_floating_point_error
@@ -51,17 +56,32 @@ class XLSXParser(Parser):
     def open(self, source, encoding=None):
         self.close()
         self.__encoding = encoding
-        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
 
+        # Remote
         # Create copy for remote source
         # For remote stream we need local copy (will be deleted on close by Python)
         # https://docs.python.org/3.5/library/tempfile.html#tempfile.TemporaryFile
-        if getattr(self.__bytes, 'remote', False):
-            new_bytes = TemporaryFile()
-            shutil.copyfileobj(self.__bytes, new_bytes)
-            self.__bytes.close()
-            self.__bytes = new_bytes
-            self.__bytes.seek(0)
+        if getattr(self.__loader, 'remote', False):
+            # Cached
+            if self.__workbook_cache is not None and source in self.__workbook_cache:
+                self.__bytes = io.open(self.__workbook_cache[source], 'rb')
+            # Not cached
+            else:
+                prefix = 'tabulator-'
+                delete = self.__workbook_cache is None
+                source_bytes = self.__loader.load(source, mode='b', encoding=encoding)
+                target_bytes = NamedTemporaryFile(prefix=prefix, delete=delete)
+                shutil.copyfileobj(source_bytes, target_bytes)
+                source_bytes.close()
+                target_bytes.seek(0)
+                self.__bytes = target_bytes
+                if self.__workbook_cache is not None:
+                    self.__workbook_cache[source] = target_bytes.name
+                    atexit.register(os.remove, target_bytes.name)
+
+        # Local
+        else:
+            self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
 
         # Get book
         # To fill merged cells we can't use read-only because

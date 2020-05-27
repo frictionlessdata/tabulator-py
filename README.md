@@ -557,6 +557,7 @@ stream = Stream('data.xls', sheet=1)
 **Options**
 
 - **sheet**: Sheet name or number (starting from 1).
+- **workbook_cache**: An empty dictionary to handle workbook caching. If provided, `tabulator` will fill the dictionary with `source: tmpfile_path` pairs for remote workbooks. Each workbook will be downloaded only once and all the temporary files will be deleted on the process exit. Defauts: None
 - **fill_merged_cells**: if `True` it will unmerge and fill all merged cells by
   a visible value. With this option enabled the parser can't stream data and
   load the whole document into memory.

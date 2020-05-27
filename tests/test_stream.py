@@ -108,7 +108,6 @@ def test_stream_headers_inline_keyed_headers_is_none():
 def test_stream_headers_xls_multiline():
     source = 'data/special/multiline-headers.xlsx'
     with Stream(source, headers=[1, 5], fill_merged_cells=True) as stream:
-        print(stream.headers)
         assert stream.headers == [
             'Region',
             'Caloric contribution (%)',
