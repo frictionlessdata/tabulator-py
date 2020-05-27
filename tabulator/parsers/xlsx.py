@@ -67,8 +67,10 @@ class XLSXParser(Parser):
                 self.__bytes = io.open(self.__workbook_cache[source], 'rb')
             # Not cached
             else:
+                prefix = 'tabulator-'
+                delete = self.__workbook_cache is None
                 source_bytes = self.__loader.load(source, mode='b', encoding=encoding)
-                target_bytes = NamedTemporaryFile(delete=self.__workbook_cache is None)
+                target_bytes = NamedTemporaryFile(prefix=prefix, delete=delete)
                 shutil.copyfileobj(source_bytes, target_bytes)
                 source_bytes.close()
                 target_bytes.seek(0)
