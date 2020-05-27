@@ -9,7 +9,7 @@ import pytest
 from mock import Mock
 from tabulator import Stream, exceptions
 from tabulator.parsers.xlsx import XLSXParser
-BASE_URL = 'https://raw.githubusercontent.com/okfn/tabulator-py/master/%s'
+BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
 # Read
