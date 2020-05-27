@@ -25,12 +25,13 @@ class XLSXParser(Parser):
 
     options = [
         'sheet',
+        'workbook_cache',
         'fill_merged_cells',
         'preserve_formatting',
         'adjust_floating_point_error',
     ]
 
-    def __init__(self, loader, force_parse=False, sheet=1,
+    def __init__(self, loader, force_parse=False, sheet=1, workbook_cache=None,
             fill_merged_cells=False, preserve_formatting=False,
             adjust_floating_point_error=False):
         self.__loader = loader
@@ -51,17 +52,22 @@ class XLSXParser(Parser):
     def open(self, source, encoding=None):
         self.close()
         self.__encoding = encoding
-        self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
 
+        # Remote
         # Create copy for remote source
         # For remote stream we need local copy (will be deleted on close by Python)
         # https://docs.python.org/3.5/library/tempfile.html#tempfile.TemporaryFile
-        if getattr(self.__bytes, 'remote', False):
-            new_bytes = TemporaryFile()
-            shutil.copyfileobj(self.__bytes, new_bytes)
-            self.__bytes.close()
-            self.__bytes = new_bytes
-            self.__bytes.seek(0)
+        if getattr(self.__loader, 'remote', False):
+            source_bytes = self.__loader.load(source, mode='b', encoding=encoding)
+            target_bytes = TemporaryFile()
+            shutil.copyfileobj(source_bytes, target_bytes)
+            source_bytes.close()
+            target_bytes.seek(0)
+            self.__bytes = target_bytes
+
+        # Local
+        else:
+            self.__bytes = self.__loader.load(source, mode='b', encoding=encoding)
 
         # Get book
         # To fill merged cells we can't use read-only because

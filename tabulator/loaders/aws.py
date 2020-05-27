@@ -22,6 +22,7 @@ class AWSLoader(Loader):
 
     # Public
 
+    remote = True
     options = [
         's3_endpoint_url',
     ]

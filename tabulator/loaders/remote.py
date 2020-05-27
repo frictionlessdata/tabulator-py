@@ -21,6 +21,7 @@ class RemoteLoader(Loader):
 
     # Public
 
+    remote = True
     options = [
         'http_session',
         'http_stream',
