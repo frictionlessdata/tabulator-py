@@ -422,7 +422,7 @@ class Stream(object):
         self.__actual_scheme = scheme
         self.__actual_format = format
         self.__actual_encoding = self.__parser.encoding
-        self.__actual_compression = compression or 'no'
+        self.__actual_compression = compression
 
         return self
 
@@ -480,7 +480,37 @@ class Stream(object):
             str: scheme
 
         """
-        return self.__actual_scheme
+        return self.__actual_scheme or 'inline'
+
+    @property
+    def format(self):
+        """Path's format
+
+        # Returns
+            str: format
+
+        """
+        return self.__actual_format or 'inline'
+
+    @property
+    def encoding(self):
+        """Stream's encoding
+
+        # Returns
+            str: encoding
+
+        """
+        return self.__actual_encoding or 'no'
+
+    @property
+    def compression(self):
+        """Stream's compression ("no" if no compression)
+
+        # Returns
+            str: compression
+
+        """
+        return self.__actual_compression or 'no'
 
     @property
     def fragment(self):
@@ -493,36 +523,6 @@ class Stream(object):
         if self.__parser:
             return getattr(self.__parser, 'fragment', None)
         return None
-
-    @property
-    def format(self):
-        """Path's format
-
-        # Returns
-            str: format
-
-        """
-        return self.__actual_format
-
-    @property
-    def encoding(self):
-        """Stream's encoding
-
-        # Returns
-            str: encoding
-
-        """
-        return self.__actual_encoding
-
-    @property
-    def compression(self):
-        """Stream's compression ("no" if no compression)
-
-        # Returns
-            str: compression
-
-        """
-        return self.__actual_compression
 
     @property
     def size(self):
