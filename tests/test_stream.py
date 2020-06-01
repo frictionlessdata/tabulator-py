@@ -983,7 +983,7 @@ def test_stream_remote_csv_gz():
 
 def test_stream_compression_invalid():
     with pytest.raises(exceptions.CompressionError) as excinfo:
-        Stream('table.csv', compression='bad')
+        Stream('table.csv', compression='bad').open()
     assert 'bad' in str(excinfo.value)
 
 

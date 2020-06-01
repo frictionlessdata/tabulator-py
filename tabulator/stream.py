@@ -171,15 +171,6 @@ class Stream(object):
                  custom_writers={},
                  **options):
 
-        # Programming error assertions
-        assert hashing_algorithm in config.SUPPORTED_HASHING_ALGORITHMS
-
-        # Validate compression
-        if compression:
-            if compression not in config.SUPPORTED_COMPRESSION:
-                message = 'Not supported compression "%s"' % compression
-                raise exceptions.CompressionError(message)
-
         # Translate aliases
         if pick_fields is not None:
             pick_columns = pick_fields
@@ -315,6 +306,15 @@ class Stream(object):
         """
         source = self.__source
         options = copy(self.__options)
+
+        # Programming error assertions
+        assert self.__hashing_algorithm in config.SUPPORTED_HASHING_ALGORITHMS
+
+        # Validate compression
+        if self.__compression:
+            if self.__compression not in config.SUPPORTED_COMPRESSION:
+                message = 'Not supported compression "%s"' % self.__compression
+                raise exceptions.CompressionError(message)
 
         # Get scheme and format if not already given
         compression = None
