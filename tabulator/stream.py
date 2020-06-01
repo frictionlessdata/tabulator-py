@@ -796,6 +796,13 @@ class Stream(object):
         if not keyed_source:
             del self.__sample_extended_rows[:self.__headers_row_last]
 
+        # Stringify headers
+        if isinstance(self.__headers, list):
+            str_headers = []
+            for header in self.__headers:
+                str_headers.append(six.text_type(header) if header is not None else '')
+            self.__headers = str_headers
+
     def __detect_html(self):
 
         # Prepare text

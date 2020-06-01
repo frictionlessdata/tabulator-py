@@ -136,7 +136,7 @@ def test_stream_headers_csv_multiline_headers_duplicates():
 def test_stream_headers_strip_and_non_strings():
     source = [[' header ', 2, 3, None], ['value1', 'value2', 'value3', 'value4']]
     with Stream(source, headers=1) as stream:
-        assert stream.headers == ['header', '2', '3', None]
+        assert stream.headers == ['header', '2', '3', '']
         assert stream.read() == [['value1', 'value2', 'value3', 'value4']]
 
 
