@@ -797,11 +797,22 @@ class Stream(object):
                     if (header in self.__ignore_listed_headers or
                             index + 1 in self.__ignore_listed_headers):
                         ignore = True
+                    # Regex
+                    for item in self.__ignore_listed_headers:
+                        print(item)
+                        if isinstance(item, dict) and item.get('type') == 'regex':
+                            if bool(re.search(item['value'], header)):
+                                ignore = True
                 # Ignore not-listed headers
                 if self.__ignore_not_listed_headers is not None:
                     if (header not in self.__ignore_not_listed_headers and
                             index + 1 not in self.__ignore_not_listed_headers):
                         ignore = True
+                    # Regex
+                    for item in self.__ignore_not_listed_headers:
+                        if isinstance(item, dict) and item.get('type') == 'regex':
+                            if bool(re.search(item['value'], header)):
+                                ignore = False
                 # Add to the list and skip
                 if ignore:
                     self.__ignored_headers_indexes.append(index)
@@ -949,7 +960,7 @@ class Stream(object):
 
             # Pick by pattern
             for pattern in self.__pick_rows_by_patterns:
-                if bool(pattern.match(cell)):
+                if bool(pattern.search(cell)):
                     return False
 
             # Pick by comment
@@ -981,7 +992,7 @@ class Stream(object):
 
             # Skip by pattern
             for pattern in self.__skip_rows_by_patterns:
-                if bool(pattern.match(cell)):
+                if bool(pattern.search(cell)):
                     return True
 
             # Skip by comment
