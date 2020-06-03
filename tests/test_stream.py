@@ -346,7 +346,76 @@ def test_stream_ignore_not_listed_headers():
         ]
 
 
-# Skip/pick fields
+# Pick/skip columns
+
+def test_stream_skip_columns():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, skip_columns=['header2']) as stream:
+        assert stream.headers == ['header1', 'header3']
+        assert stream.read(keyed=True) == [
+            {'header1': 'value1', 'header3': 'value3'},
+        ]
+
+
+def test_stream_skip_columns_blank_header():
+    source = 'text://header1,,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, skip_columns=['']) as stream:
+        assert stream.headers == ['header1', 'header3']
+        assert stream.read(keyed=True) == [
+            {'header1': 'value1', 'header3': 'value3'},
+        ]
+
+
+def test_stream_pick_columns():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, pick_columns=['header2']) as stream:
+        assert stream.headers == ['header2']
+        assert stream.read(keyed=True) == [
+            {'header2': 'value2'},
+        ]
+
+
+# Force strings
+
+def test_stream_force_strings():
+    temp = datetime.datetime(2000, 1, 1, 17)
+    date = datetime.date(2000, 1, 1)
+    time = datetime.time(17, 00)
+    source = [['John', 21, 1.5, temp, date, time]]
+    with Stream(source, force_strings=True) as stream:
+        assert stream.read() == [
+            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01',
+             '17:00:00']
+        ]
+        assert stream.sample == [
+            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01',
+             '17:00:00']
+        ]
+
+
+# Force parse
+
+def test_stream_force_parse_inline():
+    source = [['John', 21], 'bad-row', ['Alex', 33]]
+    with Stream(source, force_parse=True) as stream:
+        assert stream.read(extended=True) == [
+            (1, None, ['John', 21]),
+            (2, None, []),
+            (3, None, ['Alex', 33]),
+        ]
+
+
+def test_stream_force_parse_json():
+    source = '[["John", 21], "bad-row", ["Alex", 33]]'
+    with Stream(source, scheme='text', format='json', force_parse=True) as stream:
+        assert stream.read(extended=True) == [
+            (1, None, ['John', 21]),
+            (2, None, []),
+            (3, None, ['Alex', 33]),
+        ]
+
+
+# Skip/pick/limit/offset fields
 
 def test_stream_skip_fields():
     source = 'text://header1,header2,header3\nvalue1,value2,value3'
@@ -418,76 +487,37 @@ def test_stream_pick_fields_position_and_prefix():
         ]
 
 
-# Skip/pick columns
-
-def test_stream_skip_columns():
+def test_stream_limit_fields():
     source = 'text://header1,header2,header3\nvalue1,value2,value3'
-    with Stream(source, format='csv', headers=1, skip_columns=['header2']) as stream:
-        assert stream.headers == ['header1', 'header3']
+    with Stream(source, format='csv', headers=1, limit_fields=1) as stream:
+        assert stream.headers == ['header1']
+        assert stream.field_positions == [1]
         assert stream.read(keyed=True) == [
-            {'header1': 'value1', 'header3': 'value3'},
+            {'header1': 'value1'},
         ]
 
 
-def test_stream_skip_columns_blank_header():
-    source = 'text://header1,,header3\nvalue1,value2,value3'
-    with Stream(source, format='csv', headers=1, skip_columns=['']) as stream:
-        assert stream.headers == ['header1', 'header3']
+def test_stream_offset_fields():
+    source = 'text://header1,header2,header3\nvalue1,value2,value3'
+    with Stream(source, format='csv', headers=1, offset_fields=1) as stream:
+        assert stream.headers == ['header2', 'header3']
+        assert stream.field_positions == [2, 3]
         assert stream.read(keyed=True) == [
-            {'header1': 'value1', 'header3': 'value3'},
+            {'header2': 'value2', 'header3': 'value3'},
         ]
 
 
-def test_stream_pick_columns():
+def test_stream_limit_offset_fields():
     source = 'text://header1,header2,header3\nvalue1,value2,value3'
-    with Stream(source, format='csv', headers=1, pick_columns=['header2']) as stream:
+    with Stream(source, format='csv', headers=1, limit_fields=1, offset_fields=1) as stream:
         assert stream.headers == ['header2']
+        assert stream.field_positions == [2]
         assert stream.read(keyed=True) == [
             {'header2': 'value2'},
         ]
 
 
-# Force strings
-
-def test_stream_force_strings():
-    temp = datetime.datetime(2000, 1, 1, 17)
-    date = datetime.date(2000, 1, 1)
-    time = datetime.time(17, 00)
-    source = [['John', 21, 1.5, temp, date, time]]
-    with Stream(source, force_strings=True) as stream:
-        assert stream.read() == [
-            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01',
-             '17:00:00']
-        ]
-        assert stream.sample == [
-            ['John', '21', '1.5', '2000-01-01T17:00:00', '2000-01-01',
-             '17:00:00']
-        ]
-
-
-# Force parse
-
-def test_stream_force_parse_inline():
-    source = [['John', 21], 'bad-row', ['Alex', 33]]
-    with Stream(source, force_parse=True) as stream:
-        assert stream.read(extended=True) == [
-            (1, None, ['John', 21]),
-            (2, None, []),
-            (3, None, ['Alex', 33]),
-        ]
-
-
-def test_stream_force_parse_json():
-    source = '[["John", 21], "bad-row", ["Alex", 33]]'
-    with Stream(source, scheme='text', format='json', force_parse=True) as stream:
-        assert stream.read(extended=True) == [
-            (1, None, ['John', 21]),
-            (2, None, []),
-            (3, None, ['Alex', 33]),
-        ]
-
-
-# Pick rows
+# Pick/skip/limit/offset rows
 
 def test_stream_pick_rows():
     source = 'data/special/skip-rows.csv'
@@ -508,8 +538,6 @@ def test_stream_pick_rows_regex():
         assert stream.headers == ['name', 'order']
         assert stream.read() == [['John', 1], ['Alex', 2]]
 
-
-# Skip rows
 
 def test_stream_skip_rows():
     source = 'data/special/skip-rows.csv'
@@ -568,6 +596,27 @@ def test_stream_skip_rows_preset():
     with Stream(source, headers=1, skip_rows=skip_rows) as stream:
         assert stream.headers == ['name', 'order']
         assert stream.read() == [['Ray', 0], ['John', 1], ['Alex', 2], ['', 3], [None, 4]]
+
+
+def test_stream_limit_rows():
+    source = 'data/special/long.csv'
+    with Stream(source, headers=1, limit_rows=1) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read() == [['1', 'a']]
+
+
+def test_stream_offset_rows():
+    source = 'data/special/long.csv'
+    with Stream(source, headers=1, offset_rows=5) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read() == [['6', 'f']]
+
+
+def test_stream_limit_offset_rows():
+    source = 'data/special/long.csv'
+    with Stream(source, headers=1, limit_rows=2, offset_rows=2) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read() == [['3', 'c'], ['4', 'd']]
 
 
 # Post parse

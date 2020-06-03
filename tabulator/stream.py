@@ -66,11 +66,11 @@ class Stream(object):
             To provide a regex pattern use  `{'type'\\: 'regex', 'value'\\: '^#'}`
             For example\\: `skip_rows=[1, '# comment', {'type'\\: 'regex', 'value'\\: '^# (regex|comment)'}]`
 
-        pick_fields (str[]):
+        pick_fields (List[Union[int, str]], optional):
             When passed, ignores all columns with headers
             that the given list DOES NOT include
 
-        skip_fields (str[]):
+        skip_fields (List[Union[int, str]], optional):
             When passed, ignores all columns with headers
             that the given list includes. If it contains an empty string it will skip
             empty headers
@@ -159,12 +159,16 @@ class Stream(object):
                  hashing_algorithm='sha256',
                  force_strings=False,
                  force_parse=False,
-                 pick_rows=None,
-                 skip_rows=None,
-                 pick_fields=None,
-                 skip_fields=None,
                  pick_columns=None,
                  skip_columns=None,
+                 pick_fields=None,
+                 skip_fields=None,
+                 limit_fields=None,
+                 offset_fields=None,
+                 pick_rows=None,
+                 skip_rows=None,
+                 limit_rows=None,
+                 offset_rows=None,
                  post_parse=[],
                  custom_loaders={},
                  custom_parsers={},
@@ -259,6 +263,10 @@ class Stream(object):
         self.__hashing_algorithm = hashing_algorithm
         self.__force_strings = force_strings
         self.__force_parse = force_parse
+        self.__limit_fields = limit_fields
+        self.__offset_fields = offset_fields
+        self.__limit_rows = limit_rows
+        self.__offset_rows = offset_rows
         self.__post_parse = copy(post_parse)
         self.__custom_loaders = copy(custom_loaders)
         self.__custom_parsers = copy(custom_parsers)
@@ -622,8 +630,17 @@ class Stream(object):
 
         # Yield rows from iterator
         try:
+            count = 0
             for row_number, headers, row in iterator:
                 if row_number > self.__row_number:
+                    count += 1
+                    if self.__limit_rows or self.__offset_rows:
+                        offset = self.__offset_rows or 0
+                        limit = self.__limit_rows + offset if self.__limit_rows else None
+                        if offset and count <= offset:
+                            continue
+                        if limit and count > limit:
+                            break
                     self.__row_number = row_number
                     if extended:
                         yield (row_number, headers, row)
@@ -790,7 +807,27 @@ class Stream(object):
                     self.__ignored_headers_indexes.append(index)
                     continue
                 self.__headers.append(header)
-            self.__ignored_headers_indexes = sorted(self.__ignored_headers_indexes, reverse=True)
+            self.__ignored_headers_indexes = list(sorted(self.__ignored_headers_indexes, reverse=True))
+
+        # Limit/offset fields
+        if self.__limit_fields or self.__offset_fields:
+            ignore = []
+            headers = []
+            min = self.__offset_fields or 0
+            max = self.__limit_fields + min if self.__limit_fields else len(self.__headers)
+            for position, header in enumerate(self.__headers, start=1):
+                if position <= min:
+                    ignore.append(position - 1)
+                    continue
+                if position > max:
+                    ignore.append(position - 1)
+                    continue
+                headers.append(header)
+            for index in ignore:
+                if index not in self.__ignored_headers_indexes:
+                    self.__ignored_headers_indexes.append(index)
+            self.__ignored_headers_indexes = list(sorted(self.__ignored_headers_indexes, reverse=True))
+            self.__headers = headers
 
         # Remove headers from data
         if not keyed_source:
