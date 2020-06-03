@@ -799,7 +799,6 @@ class Stream(object):
                         ignore = True
                     # Regex
                     for item in self.__ignore_listed_headers:
-                        print(item)
                         if isinstance(item, dict) and item.get('type') == 'regex':
                             if bool(re.search(item['value'], header)):
                                 ignore = True
