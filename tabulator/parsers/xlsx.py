@@ -332,6 +332,11 @@ def convert_excel_number_format_string(excel_number, value):
 
     The important goal here is to get proper amount of rounding
     '''
+    percentage = False
+    if excel_number.endswith('%'):
+        value = value * 100
+        excel_number = excel_number[:-1]
+        percentage = True
     if excel_number == 'General':
         return value
     code = excel_number.split('.')
@@ -339,25 +344,28 @@ def convert_excel_number_format_string(excel_number, value):
         return None
     if len(code) < 2:
         # No decimals
-        return '{0:.0f}'.format(value)
-    decimal_section = code[1]
-    # Only pay attention to the 0, # and ? characters as they provide precision information
-    decimal_section = ''.join(d for d in decimal_section if d in ['0', '#', '?'])
+        new_value = '{0:.0f}'.format(value)
+    else:
+        decimal_section = code[1]
+        # Only pay attention to the 0, # and ? characters as they provide precision information
+        decimal_section = ''.join(d for d in decimal_section if d in ['0', '#', '?'])
 
-    # Count the number of hashes at the end of the decimal_section in order to know how
-    # the number should be truncated
-    number_hash = 0
-    for i in reversed(range(len(decimal_section))):
-        if decimal_section[i] == '#':
-            number_hash += 1
-        else:
-            break
-    string_format_code = '{0:.' + str(len(decimal_section)) + 'f}'
-    new_value = string_format_code.format(value)
-    if number_hash > 0:
-        for i in range(number_hash):
-            if new_value.endswith('0'):
-                new_value = new_value[:-1]
+        # Count the number of hashes at the end of the decimal_section in order to know how
+        # the number should be truncated
+        number_hash = 0
+        for i in reversed(range(len(decimal_section))):
+            if decimal_section[i] == '#':
+                number_hash += 1
+            else:
+                break
+        string_format_code = '{0:.' + str(len(decimal_section)) + 'f}'
+        new_value = string_format_code.format(value)
+        if number_hash > 0:
+            for i in range(number_hash):
+                if new_value.endswith('0'):
+                    new_value = new_value[:-1]
+    if percentage:
+        return f'{new_value}%'
 
     return new_value
 
