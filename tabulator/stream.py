@@ -533,6 +533,18 @@ class Stream(object):
         return None
 
     @property
+    def dialect(self):
+        """Dialect (if available)
+
+        # Returns
+            dict/None: dialect
+
+        """
+        if self.__parser:
+            return getattr(self.__parser, 'dialect', {})
+        return None
+
+    @property
     def size(self):
         """Returns the BYTE count of the read chunks if available
 

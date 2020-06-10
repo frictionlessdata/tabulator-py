@@ -10,12 +10,10 @@ import six
 import sys
 import pytest
 import datetime
-from sqlalchemy import create_engine
 from tabulator import Stream, exceptions
 from tabulator.loaders.local import LocalLoader
 from tabulator.parsers.csv import CSVParser
 from tabulator.writers.csv import CSVWriter
-from tabulator.writers.xlsx import XLSXWriter
 BASE_URL = 'https://raw.githubusercontent.com/frictionlessdata/tabulator-py/master/%s'
 
 
@@ -28,6 +26,13 @@ def test_stream():
         assert stream.format == 'csv'
         assert stream.encoding == 'utf-8'
         assert stream.compression == 'no'
+        assert stream.dialect == {
+            'delimiter': ',',
+            'doubleQuote': True,
+            'lineTerminator': '\r\n',
+            'quoteChar': '"',
+            'skipInitialSpace': False,
+        }
 
 
 # Headers

@@ -45,6 +45,7 @@ class CSVParser(Parser):
         self.__force_parse = force_parse
         self.__extended_rows = None
         self.__encoding = None
+        self.__dialect = None
         self.__chars = None
 
     @property
@@ -70,6 +71,20 @@ class CSVParser(Parser):
     @property
     def encoding(self):
         return self.__encoding
+
+    @property
+    def dialect(self):
+        if self.__dialect:
+            dialect = {
+                'delimiter': self.__dialect.delimiter,
+                'doubleQuote': self.__dialect.doublequote,
+                'lineTerminator': self.__dialect.lineterminator,
+                'quoteChar': self.__dialect.quotechar,
+                'skipInitialSpace': self.__dialect.skipinitialspace,
+            }
+            if self.__dialect.escapechar is not None:
+                dialect['escapeChar'] = self.__dialect.escapechar
+            return dialect
 
     @property
     def extended_rows(self):
@@ -127,4 +142,5 @@ class CSVParser(Parser):
         if getattr(dialect, 'quotechar', None) == '':
             setattr(dialect, 'quoting', csv.QUOTE_NONE)
 
+        self.__dialect = dialect
         return sample, dialect
