@@ -113,6 +113,16 @@ def test_stream_xlsx_preserve_formatting():
         }]
 
 
+
+def test_stream_xlsx_preserve_formatting_number_multicode():
+    source = "data/special/number_format_multicode.xlsx"
+    with Stream(
+        source, headers=1, ignore_blank_headers=True, preserve_formatting=True
+    ) as stream:
+        assert stream.read() == [["4.5"], ["-9.032"], ["15.8"]]
+
+
+
 def test_stream_xlsx_workbook_cache():
     workbook_cache = {}
     source = BASE_URL % 'data/special/sheets.xlsx'

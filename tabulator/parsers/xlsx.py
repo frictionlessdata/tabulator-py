@@ -334,6 +334,12 @@ def convert_excel_number_format_string(excel_number, value):
     '''
     if excel_number == 'General':
         return value
+    multi_codes = excel_number.split(";")
+    if value < 0 and len(multi_codes) > 1:
+        excel_number = multi_codes[1]
+    else:
+        excel_number = multi_codes[0]
+
     code = excel_number.split('.')
     if len(code) > 2:
         return None
