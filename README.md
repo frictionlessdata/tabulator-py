@@ -1435,6 +1435,10 @@ $ pytest -m 'not remote
 
 Here described only breaking and the most important changes. The full changelog and documentation for all released versions could be found in nicely formatted [commit history](https://github.com/frictionlessdata/tabulator-py/commits/master).
 
+#### v1.52
+
+- Published stream.dialect (works only for csv, for now)
+
 #### v1.51
 
 - Added experimental table discovery options
