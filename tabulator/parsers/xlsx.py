@@ -151,7 +151,7 @@ class XLSXParser(Parser):
                 merged_cell_range = str(merged_cell_range)
                 self.__sheet.unmerge_cells(merged_cell_range)
                 merged_rows = openpyxl.utils.rows_from_range(merged_cell_range)
-                coordinates = list(chain(*merged_rows))
+                coordinates = list(chain.from_iterable(merged_rows))
                 value = self.__sheet[coordinates[0]].value
                 for coordinate in coordinates:
                     cell = self.__sheet[coordinate]
