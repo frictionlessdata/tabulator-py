@@ -492,6 +492,22 @@ def test_stream_pick_fields_position_and_prefix():
         ]
 
 
+def test_stream_pick_fields_keyed_source():
+    source = [{'id': 1, 'name': 'london'}, {'id': 2, 'name': 'paris'}]
+    with Stream(source, headers=1, skip_fields=['id']) as stream:
+        assert stream.headers == ['name']
+        assert stream.read() == [['london'], ['paris']]
+    with Stream(source, headers=1, skip_fields=[1]) as stream:
+        assert stream.headers == ['name']
+        assert stream.read() == [['london'], ['paris']]
+    with Stream(source, headers=1, skip_fields=['name']) as stream:
+        assert stream.headers == ['id']
+        assert stream.read() == [[1], [2]]
+    with Stream(source, headers=1, skip_fields=[2]) as stream:
+        assert stream.headers == ['id']
+        assert stream.read() == [[1], [2]]
+
+
 def test_stream_limit_fields():
     source = 'text://header1,header2,header3\nvalue1,value2,value3'
     with Stream(source, format='csv', headers=1, limit_fields=1) as stream:

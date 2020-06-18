@@ -888,17 +888,13 @@ class Stream(object):
                     if headers and self.__headers:
                         keyed_row = dict(zip(headers, row))
                         row = [keyed_row.get(header) for header in self.__headers]
+                    elif self.__ignored_headers_indexes:
+                        row = [value for index, value in enumerate(row) if index not in self.__ignored_headers_indexes]
                     headers = self.__headers
 
                 # Skip rows by numbers/comments
                 if self.__check_if_row_for_skipping(row_number, headers, row):
                     continue
-
-                # Ignore headers
-                if self.__ignored_headers_indexes:
-                    for index in self.__ignored_headers_indexes:
-                        if index < len(row):
-                            row = row[:index] + row[index+1:]
 
                 yield (row_number, headers, row)
 
