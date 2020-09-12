@@ -59,6 +59,9 @@ TESTS_REQUIRE = [
     'pylama',
     'pytest',
     'pytest-cov',
+    # NOTE: Can be removed after a fix:
+    # https://github.com/tobgu/pyrsistent/issues/208
+    'pyrsistent<0.17',
     'moto[server]',
     'tox',
 ]
