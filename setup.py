@@ -57,7 +57,7 @@ INSTALL_CCHARDET_REQUIRES = [
 TESTS_REQUIRE = [
     'mock',
     'pylama',
-    'pytest',
+    'pytest<5',
     'pytest-cov',
     'moto[server]',
     'tox',
