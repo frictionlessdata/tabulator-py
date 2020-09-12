@@ -20,6 +20,9 @@ def read(*paths):
 # Prepare
 PACKAGE = 'tabulator'
 INSTALL_REQUIRES = [
+    # NOTE: Can be removed after a fix:
+    # https://github.com/tobgu/pyrsistent/issues/208
+    'pyrsistent<0.17',
     # General
     'six>=1.9',
     'click>=6.0',
@@ -59,9 +62,6 @@ TESTS_REQUIRE = [
     'pylama',
     'pytest',
     'pytest-cov',
-    # NOTE: Can be removed after a fix:
-    # https://github.com/tobgu/pyrsistent/issues/208
-    'pyrsistent<0.17',
     'moto[server]',
     'tox',
 ]
