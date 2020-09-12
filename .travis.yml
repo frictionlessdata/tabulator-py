@@ -18,8 +18,6 @@ env:
     - TOXENV="py${PYTHON_VERSION//./}"
 
 install:
-  # Requried by: travis/py2
-  - pip install pyrsistent==0.16
   - make install
   - pip install coveralls
 
