@@ -492,6 +492,22 @@ def test_stream_pick_fields_position_and_prefix():
         ]
 
 
+def test_stream_pick_fields_keyed_source():
+    source = [{'id': 1, 'name': 'london'}, {'id': 2, 'name': 'paris'}]
+    with Stream(source, headers=1, skip_fields=['id']) as stream:
+        assert stream.headers == ['name']
+        assert stream.read() == [['london'], ['paris']]
+    with Stream(source, headers=1, skip_fields=[1]) as stream:
+        assert stream.headers == ['name']
+        assert stream.read() == [['london'], ['paris']]
+    with Stream(source, headers=1, skip_fields=['name']) as stream:
+        assert stream.headers == ['id']
+        assert stream.read() == [[1], [2]]
+    with Stream(source, headers=1, skip_fields=[2]) as stream:
+        assert stream.headers == ['id']
+        assert stream.read() == [[1], [2]]
+
+
 def test_stream_limit_fields():
     source = 'text://header1,header2,header3\nvalue1,value2,value3'
     with Stream(source, format='csv', headers=1, limit_fields=1) as stream:
@@ -520,6 +536,48 @@ def test_stream_limit_offset_fields():
         assert stream.read(keyed=True) == [
             {'header2': 'value2'},
         ]
+
+
+def test_stream_matrix_pick_fields():
+    with Stream('data/matrix.csv', headers=1, pick_fields=[2, 'f3']) as stream:
+        assert stream.headers == ['f2', 'f3']
+        assert stream.read() == [['12', '13'], ['22', '23'], ['32', '33'], ['42', '43']]
+
+
+def test_stream_matrix_pick_fields_regex():
+    with Stream('data/matrix.csv', headers=1, pick_fields=[{'type': 'regex', 'value': 'f[23]'}]) as stream:
+        assert stream.headers == ['f2', 'f3']
+        assert stream.read() == [['12', '13'], ['22', '23'], ['32', '33'], ['42', '43']]
+
+
+def test_stream_matrix_skip_fields():
+    with Stream('data/matrix.csv', headers=1, skip_fields=[1, 'f4']) as stream:
+        assert stream.headers == ['f2', 'f3']
+        assert stream.read() == [['12', '13'], ['22', '23'], ['32', '33'], ['42', '43']]
+
+
+def test_stream_matrix_skip_fields_regex():
+    with Stream('data/matrix.csv', headers=1, skip_fields=[{'type': 'regex', 'value': 'f[14]'}]) as stream:
+        assert stream.headers == ['f2', 'f3']
+        assert stream.read() == [['12', '13'], ['22', '23'], ['32', '33'], ['42', '43']]
+
+
+def test_stream_matrix_limit_fields():
+    with Stream('data/matrix.csv', headers=1, limit_fields=1) as stream:
+        assert stream.headers == ['f1']
+        assert stream.read() == [['11'], ['21'], ['31'], ['41']]
+
+
+def test_stream_matrix_offset_fields():
+    with Stream('data/matrix.csv', headers=1, offset_fields=3) as stream:
+        assert stream.headers == ['f4']
+        assert stream.read() == [['14'], ['24'], ['34'], ['44']]
+
+
+def test_stream_matrix_limit_and_offset_fields():
+    with Stream('data/matrix.csv', headers=1, limit_fields=2, offset_fields=1) as stream:
+        assert stream.headers == ['f2', 'f3']
+        assert stream.read() == [['12', '13'], ['22', '23'], ['32', '33'], ['42', '43']]
 
 
 # Pick/skip/limit/offset rows
