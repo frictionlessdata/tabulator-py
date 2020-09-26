@@ -8,7 +8,7 @@
 
 A library for reading and writing tabular data (csv/xls/json/etc).
 
-> **[Important Notice]** We have released our new data framework called `frictionless`. This framework is logical continuation of `tabulator` that was extended to be a complete data solution. The change in not breaking for the existing software so no actions are required. Please read the [Migration Guide](https://github.com/frictionlessdata/frictionless-py/blob/master/docs/target/migration-guide/README.md) from `tabulator` to Frictionless Framework.
+> **[Important Notice]** We have released [Frictionless Framework](https://github.com/frictionlessdata/frictionless-py). This framework is logical continuation of `tabulator` that was extended to be a complete data solution. The change in not breaking for the existing software so no actions are required. Please read the [Migration Guide](https://github.com/frictionlessdata/frictionless-py/blob/master/docs/target/migration-guide/README.md) from `tabulator` to Frictionless Framework.
 > - we continue to bug-fix `tabulator@1.x` in this [repository](https://github.com/frictionlessdata/tabulator-py) as well as it's available on [PyPi](https://pypi.org/project/tabulator/) as it was before
 > - please note that `frictionless@3.x` version's API, we're working on at the moment, is not stable
 > - we will release `frictionless@4.x` by the end of 2020 to be the first SemVer/stable version
