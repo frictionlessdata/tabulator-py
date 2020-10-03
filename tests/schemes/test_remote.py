@@ -45,6 +45,7 @@ def test_loader_remote_b():
     assert chars.read() == b'id,name\n1,english\n2,' + spec + b'\n'
 
 
+@pytest.mark.skip
 @pytest.mark.remote
 def test_loader_no_timeout():
     loader = RemoteLoader()
