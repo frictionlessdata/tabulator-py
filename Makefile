@@ -34,7 +34,7 @@ templates:
 
 test:
 	pylama $(PACKAGE)
-	tox
+	pytest --cov ${PACKAGE} --cov-report term-missing --cov-fail-under 50
 
 version:
 	@echo $(VERSION)

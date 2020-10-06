@@ -60,7 +60,6 @@ TESTS_REQUIRE = [
     'pytest',
     'pytest-cov',
     'moto[server]',
-    'tox',
 ]
 README = read('README.md')
 VERSION = read(PACKAGE, 'VERSION')
