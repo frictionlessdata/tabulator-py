@@ -43,9 +43,6 @@ class AWSLoader(Loader):
 
     def load(self, source, mode='t', encoding=None):
 
-        # Prepare source
-        source = helpers.requote_uri(source)
-
         # Prepare bytes
         try:
             parts = urlparse(source, allow_fragments=False)
