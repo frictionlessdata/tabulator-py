@@ -668,12 +668,14 @@ Supports simple tables (no merged cells) with any legal combination of the td, t
 Usually `foramt='html'` would need to be specified explicitly as web URLs don't always use the `.html` extension.
 
 ```python
-stream = Stream('http://example.com/some/page.aspx', format='html' selector='.content .data table#id1')
+stream = Stream('http://example.com/some/page.aspx', format='html' selector='.content .data table#id1', raw_html=True)
 ```
 
 **Options**
 
 - **selector**: CSS selector for specifying which `table` element to extract. By default it's `table`, which takes the first `table` element in the document. If empty, will assume the entire page is the table to be extracted (useful with some Excel formats).
+
+- **raw_html**: False (default) to extract the textual contents of each cell. True to return the inner html without modification.
 
 ### Custom file sources and formats
 
