@@ -80,14 +80,11 @@ class HTMLTableParser(Parser):
             table.children('tbody').children('tr')
         )
         rows = [pq(r) for r in rows if len(r) > 0]
-        first_row = rows.pop(0)
-        headers = [pq(th).text() for th in first_row.find('th,td')]
-
         # Extract rows
-        rows = [pq(tr).find('td') for tr in rows]
+        rows = [pq(tr).children('td,th') for tr in rows]
         rows = [[self.__extractor(pq(td)) for td in tr]
                 for tr in rows if len(tr) > 0]
 
         # Yield rows
         for row_number, row in enumerate(rows, start=1):
-            yield (row_number, headers, row)
+            yield (row_number, None, row)
