@@ -19,15 +19,17 @@ class HTMLTableParser(Parser):
 
     options = [
         'selector',
+        'raw_html'
     ]
 
-    def __init__(self, loader, force_parse=False, selector='table'):
+    def __init__(self, loader, force_parse=False, selector='table', raw_html=False):
         self.__loader = loader
         self.__selector = selector
         self.__force_parse = force_parse
         self.__extended_rows = None
         self.__encoding = None
         self.__chars = None
+        self.__extractor = (lambda x: x.html()) if raw_html else (lambda x: x.text())
 
     @property
     def closed(self):
@@ -78,14 +80,11 @@ class HTMLTableParser(Parser):
             table.children('tbody').children('tr')
         )
         rows = [pq(r) for r in rows if len(r) > 0]
-        first_row = rows.pop(0)
-        headers = [pq(th).text() for th in first_row.find('th,td')]
-
         # Extract rows
-        rows = [pq(tr).find('td') for tr in rows]
-        rows = [[pq(td).text() for td in tr]
+        rows = [pq(tr).children('td,th') for tr in rows]
+        rows = [[self.__extractor(pq(td)) for td in tr]
                 for tr in rows if len(tr) > 0]
 
         # Yield rows
         for row_number, row in enumerate(rows, start=1):
-            yield (row_number, headers, row)
+            yield (row_number, None, row)

@@ -26,3 +26,11 @@ def test_stream_html(source, selector):
             {'id': '1', 'name': 'english'},
             {'id': '2', 'name': '中国人'}]
 
+def test_stream_html_raw_html():
+    with Stream('data/table3.html', selector='.mememe', headers=1, encoding='utf8', raw_html=True) as stream:
+        assert stream.headers == ['id', 'name']
+        assert stream.read(keyed=True) == [
+            {'id': '1', 'name': '<b>english</b>'},
+            {'id': '2', 'name': '中国人'}]
+
+
