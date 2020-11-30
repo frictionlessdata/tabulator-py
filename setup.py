@@ -49,7 +49,7 @@ INSTALL_FORMAT_ODS_REQUIRES = [
     'lxml>=3.0',
 ]
 INSTALL_PARSER_HTML_REQUIRES = [
-    'pyquery<2',
+    'pyquery<1.4.2',
 ]
 INSTALL_CCHARDET_REQUIRES = [
     'cchardet>=2.0',
