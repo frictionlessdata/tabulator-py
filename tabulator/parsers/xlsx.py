@@ -11,6 +11,7 @@ import shutil
 import atexit
 import openpyxl
 import datetime
+import re
 from itertools import chain
 from tempfile import NamedTemporaryFile
 from ..parser import Parser
@@ -141,7 +142,7 @@ class XLSXParser(Parser):
                 row_number,
                 None,
                 extract_row_values(
-                    row, self.__preserve_formatting, self.__adjust_floating_point_error
+                    row, self.__preserve_formatting, self.__adjust_floating_point_error,
                 ),
             )
 
@@ -347,7 +348,20 @@ def convert_excel_date_format_string(excel_date):
     return python_date
 
 
-def convert_excel_number_format_string(excel_number, value):
+def eformat(f, prec, exp_digits):
+    """
+    Formats to Scientific Notation, including precise exponent digits
+
+    """
+    s = "%.*e" % (prec, f)
+    mantissa, exp = s.split("e")
+    # add 1 to digits as 1 is taken by sign +/-
+    return "%sE%+0*d" % (mantissa, exp_digits + 1, int(exp))
+
+
+def convert_excel_number_format_string(
+    excel_number, value,
+):
     """
     A basic attempt to convert excel number_format to a number string
 
@@ -366,13 +380,25 @@ def convert_excel_number_format_string(excel_number, value):
     else:
         excel_number = multi_codes[0]
 
-    code = excel_number.split('.')
+    code = excel_number.split(".")
 
     if len(code) > 2:
         return None
     if len(code) < 2:
         # No decimals
         new_value = "{0:.0f}".format(value)
+
+    # Currently we do not support "engineering notation"
+    elif re.match(r"^0*E\+0*$", code[1]):
+        # Handle scientific notation
+
+        # Note, it will only actually be returned as a string if
+        # type is not inferred
+
+        prec = len(code[1]) - len(code[1].lstrip("0"))
+        exp_digits = len(code[1]) - len(code[1].rstrip("0"))
+        return eformat(value, prec, exp_digits)
+
     else:
         decimal_section = code[1]
         # Only pay attention to the 0, # and ? characters as they provide precision information
@@ -399,7 +425,7 @@ def convert_excel_number_format_string(excel_number, value):
 
 
 def extract_row_values(
-    row, preserve_formatting=False, adjust_floating_point_error=False
+    row, preserve_formatting=False, adjust_floating_point_error=False,
 ):
     if preserve_formatting:
         values = []
@@ -426,7 +452,7 @@ def extract_row_values(
                 value = round(cell.value, precision)
             elif isinstance(cell.value, (int, float)):
                 new_value = convert_excel_number_format_string(
-                    number_format, cell.value
+                    number_format, cell.value,
                 )
                 if new_value:
                     value = new_value
