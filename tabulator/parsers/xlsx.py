@@ -389,6 +389,8 @@ def convert_excel_number_format_string(
         new_value = "{0:.0f}".format(value)
 
     # Currently we do not support "engineering notation"
+    elif re.match(r"^#*0*E\+0*$", code[1]):
+        return value
     elif re.match(r"^0*E\+0*$", code[1]):
         # Handle scientific notation
 
