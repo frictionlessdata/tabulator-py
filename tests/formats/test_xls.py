@@ -95,6 +95,7 @@ def test_stream_xls_with_ints_floats_dates():
                                  [1997, 5.6, datetime(2009, 9, 20)],
                                  [1969, 11.7, datetime(2012, 8, 23)]]
 
+@pytest.mark.skip
 @pytest.mark.remote
 def test_fix_for_2007_xls():
     source = 'https://ams3.digitaloceanspaces.com/budgetkey-files/spending-reports/2018-3-משרד התרבות והספורט-לשכת הפרסום הממשלתית-2018-10-22-c457.xls'
