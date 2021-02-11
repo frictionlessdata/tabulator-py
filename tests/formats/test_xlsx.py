@@ -121,7 +121,6 @@ def test_stream_xlsx_preserve_formatting_percentage():
         ]
 
 
-
 def test_stream_xlsx_preserve_formatting_number_multicode():
     source = "data/special/number_format_multicode.xlsx"
     with Stream(
@@ -129,6 +128,11 @@ def test_stream_xlsx_preserve_formatting_number_multicode():
     ) as stream:
         assert stream.read() == [["4.5"], ["-9.032"], ["15.8"]]
 
+
+def test_stream_xlsx_scientific_notation():
+    source = "data/special/test_scientific_notation.xlsx"
+    with Stream(source, headers=1, preserve_formatting=True,) as stream:
+        assert stream.read() == [["4.273E-07"]]
 
 
 def test_stream_xlsx_workbook_cache():
