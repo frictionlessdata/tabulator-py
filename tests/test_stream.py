@@ -263,6 +263,7 @@ def test_stream_encoding_missmatch_handle_errors():
 
 # Allow html
 
+@pytest.mark.skip
 @pytest.mark.remote
 def test_stream_html_content():
     # Link to html file containing information about csv file
@@ -272,6 +273,7 @@ def test_stream_html_content():
     assert 'HTML' in str(excinfo.value)
 
 
+@pytest.mark.skip
 @pytest.mark.remote
 def test_stream_html_content_with_allow_html():
     # Link to html file containing information about csv file
