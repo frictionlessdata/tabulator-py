@@ -367,6 +367,9 @@ def convert_excel_number_format_string(
 
     The important goal here is to get proper amount of rounding
     """
+    if "@" in excel_number:
+        # We don't try to parse complicated strings
+        return str(value)
     percentage = False
     if excel_number.endswith("%"):
         value = value * 100
