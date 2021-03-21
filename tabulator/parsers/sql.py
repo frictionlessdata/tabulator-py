@@ -72,4 +72,4 @@ class SQLParser(Parser):
         query = sql.select(['*']).select_from(table).order_by(order)
         result = self.__engine.execute(query)
         for row_number, row in enumerate(iter(result), start=1):
-            yield (row_number, row.keys(), list(row))
+            yield (row_number, list(row.keys()), list(row))
