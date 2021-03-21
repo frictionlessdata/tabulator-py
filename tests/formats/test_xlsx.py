@@ -107,6 +107,7 @@ def test_stream_xlsx_preserve_formatting():
                 "mm/dd/yy": "05/20/40",
                 "mmddyy": "052040",
                 "mmddyyam/pmdd": "052040AM20",
+                "at_symbol": "259.153",
             }
         ]
 
