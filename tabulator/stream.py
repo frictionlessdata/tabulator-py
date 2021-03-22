@@ -130,7 +130,7 @@ class Stream(object):
             and values as their respective ``Parser`` class implementations.
             Defaults to None.
 
-        custom_loaders (dict, optional):
+        custom_writers (dict, optional):
             Dictionary with keys as writer format
             names, and values as their respective ``Writer`` class
             implementations. Defaults to None.
